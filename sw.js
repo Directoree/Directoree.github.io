@@ -4,7 +4,7 @@ workbox.setConfig({ modulePathPrefix: 'https://g.alicdn.com/kg/workbox/3.3.0/' }
 self.addEventListener('install', function (event) {
   event.waitUntil(
     caches.keys().then(function (names) {
-      var validSets = ["is-sw-0c3bf3","is-html-0c3bf3","is-jsdelivr-0c3bf3","is-theme-0c3bf3","is-json-0c3bf3"];
+      var validSets = ["is-sw-794d6e","is-html-794d6e","is-jsdelivr-794d6e","is-theme-794d6e","is-json-794d6e"];
       return Promise.all(
         names
           .filter(function (name) { return !~validSets.indexOf(name); })
@@ -18,16 +18,16 @@ self.addEventListener('install', function (event) {
 });
 
 workbox.routing.registerRoute(new RegExp('sw\\.js'), workbox.strategies.networkOnly({
-  cacheName: 'is-sw-0c3bf3',
+  cacheName: 'is-sw-794d6e',
 }));
 workbox.routing.registerRoute(new RegExp('https://cdn\\.jsdelivr\\.net'), workbox.strategies.staleWhileRevalidate({
-  cacheName: 'is-jsdelivr-0c3bf3',
+  cacheName: 'is-jsdelivr-794d6e',
 }));
 workbox.routing.registerRoute(new RegExp('/.*\\.(?:js|css|woff2|png|jpg|gif)l;/span>'), workbox.strategies.staleWhileRevalidate({
-  cacheName: 'is-theme-0c3bf3',
+  cacheName: 'is-theme-794d6e',
 }));
 workbox.routing.registerRoute(new RegExp('your_api_prefix/.*\\.json'), workbox.strategies.cacheFirst({
-  cacheName: 'is-json-0c3bf3',
+  cacheName: 'is-json-794d6e',
 }));
 
 workbox.routing.registerRoute(new RegExp('/.*(:?/[^\\.]*/?)$'), function(context) {
