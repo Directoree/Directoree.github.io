@@ -1,43 +1,950 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
+
+
+
 <head><meta name="generator" content="Hexo 3.9.0">
-<meta charset="utf-8">
-<title>Hash函数和消息认证 - Directoree</title>
-<base href="/">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="canonical" href="https://Directoree.github.io/post/Hash-Message-Authentication/">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon1.ico">
-<meta name="description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
-<meta name="keywords" content="Hash函数">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hash函数和消息认证">
-<meta property="og:url" content="https://Directoree.github.io/post/Hash-Message-Authentication/index.html">
-<meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.loli.net/2018/12/26/5c23997cdd19c.jpg">
-<meta property="og:updated_time" content="2018-12-28T07:12:10.198Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hash函数和消息认证">
-<meta name="twitter:description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/26/5c23997cdd19c.jpg">
-<link rel="stylesheet" href="//unpkg.com/hexo-theme-inside@2.0.0/source/fonts.b9b22ef890c930ac7a13.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc6202509.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc62025091.css">
-<link rel="stylesheet" href="/theme.1aa8fbef40bc2e8146ab.css">
-<script src="/config.e87b1bc36f7b917628d3.js"></script>
-<script type="application/ld+json">[{"@context":"http://schema.org","@type":"WebSite","publisher":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"url":"https://Directoree.github.io","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png","description":null,"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"}},{"@context":"http://schema.org","@type":"Article","articleSection":"密码学","url":"https://Directoree.github.io/post/Hash-Message-Authentication/","headline":"Hash函数和消息认证","image":"https://i.loli.net/2018/12/26/5c23997cdd19c.jpg","datePublished":"2018-12-26T12:59:42.000Z","dateModified":"2018-12-28T07:12:10.198Z","keywords":"Hash函数","description":null,"publisher":{"@type":"Organization","name":"Directoree","logo":{"@type":"ImageObject","url":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"}},"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://Directoree.github.io/post/Hash-Message-Authentication/"},"thumbnailUrl":"https://i.loli.net/2018/12/26/5c23997cdd19c.jpg"}]</script><script async src="//www.googletagmanager.com/gtag/js?id=UA-00000000-0"></script>
-<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag('js', new Date());gtag('config', 'UA-00000000-0');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/lib/crypto-js.js"></script>
-<script src="/lib/blog-encrypt.js"></script>
-<link rel="stylesheet" href="/css/blog-encrypt.css">
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  
+      <title>Hash函数和消息认证 - Directoree</title>
+  
+
+  
+  
+  <meta name="description" content>
+  <meta name="author" content="Directoree">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- load loadjs.js -->
+  <script src="/libs/loadjs/dist/loadjs.min.js"></script>
+
+<link rel="stylesheet" href="/libs/animate.css/animate.min.css">
+  <!-- load lightgallery -->
+<link rel="stylesheet" href="/css/lightgallery.css">
+<link rel="stylesheet" href="/libs/noty/lib/noty.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  
+
+
+
+
+
+
+    <link rel="stylesheet" href="/css/taurus.css">
+    
+        <link rel="stylesheet" href="/css/scheme-taurus/animations.css">
+    
+
+
+<link rel="stylesheet" href="/.css">
+
+  <!-- load font awesome 5 -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+  </script>
+  <!-- load mathjax -->
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax//libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+  <!-- load js-cookie -->
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="/js/social-share.min.js"></script>
+    <script src="/js/theme.js"></script>
+
+  <!-- include cookie.js -->
+  
+  
+
+  <!-- include comment system code -->
+  
+    <script src="//cdn1.lncld.net/static/js/3.6.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
-<body lang="en">
-<is-d2a57d></is-d2a57d>
-<script src="/runtime.26209474bfa8dc87a77c.js"></script>
-<script src="/polyfills.30f16c55deb40b06e14d.js"></script>
-<script src="/main.2f3a937787816eb74a37.en.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+ 
+
+<header id="header" class='header'>
+	<div class="header-title">
+		
+		<div class='header-logo'>
+			<a href='/'>
+				<img src='/images/theme-icon.svg' />
+			</a>
+		</div>
+		<div class='header-text'>
+			<h1>
+				<a href="/">Directoree</a>
+			</h1>
+			<subtitle>
+				爱你所爱，行你所行，听从你心，无问西东。
+			</subtitle>
+		</div>
+		
+	</div>
+	<div id='header-nav'>
+		
+
+
+
+<nav id="nav">
+	
+	
+	
+	<div class='nav-item' id='nav-item-toc'>
+		
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+	</div>
+	
+	<div class='nav-item' id='nav-item-archive'>
+		
+				<div class='nav-icon'>
+				
+			<a href="/archives/" title='Archives'>
+			<img src="/images/icons/blue-shadow/archive.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class='nav-item' id='nav-item-search'>
+		
+		<div class='nav-icon'>
+		
+			<a href="/search/" title='Search'>
+			<img src="/images/icons/blue-shadow/search.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class="nav-item" id='nav-item-more'>
+		<div class="nav-icon">
+				<a href='#' onclick='onClickMenuIcon(event);' ontouchstart='onClickMenuIcon(event);'>
+				<img src="/images/icons/blue-shadow/menu.svg" alt="">
+				</a>
+		</div>
+		<div class="nav-more-menu">
+				<i class="far fa-times-circle" id='nav-more-menu-close' onclick='onClickNavMenuClose(event);' ontouchstart='onClickNavMenuClose(event);'></i>
+		
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-内网称霸/">
+						<span>Kali-内网称霸</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/密码学/">
+						<span>密码学</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CTF/">
+						<span>Ctf</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CSS/">
+						<span>Css</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTML/">
+						<span>Html</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTTP协议/">
+						<span>Http协议</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Java/">
+						<span>Java</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/JavaScript/">
+						<span>Javascript</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Metasploit/">
+						<span>Metasploit</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/音乐/">
+						<span>音乐</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Network-Security/">
+						<span>Network-security</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/PHP/">
+						<span>Php</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/网络安全/">
+						<span>网络安全</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Python/">
+						<span>Python</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-SQLMAP/">
+						<span>Kali-sqlmap</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Web-Tools/">
+						<span>Web-tools</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XAMPP-DVWA/">
+						<span>Xampp-dvwa</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/算法/">
+						<span>算法</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/杂谈/">
+						<span>杂谈</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/C&C++/">
+						<span>C&c++</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Hexo-Github/">
+						<span>Hexo-github</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Docker/">
+						<span>Docker</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/SQLi/">
+						<span>Sqli</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XXE/">
+						<span>Xxe</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/MySQL/">
+						<span>Mysql</span>
+					</a>
+				</div>
+		</div>
+		
+	</div>
+	</div>
+</nav>
+
+	</div>
+</header>
+
+ 
+
+  
+
+
+
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div style="flex: 1;">
+      <style>
+    body {
+        background-color: white;
+    }
+</style>
+
+
+
+
+
+
+
+
+    
+        
+            
+            
+        
+    
+
+
+
+
+
+
+    
+    
+        
+    
+
+    
+        
+    
+
+
+
+
+
+
+
+
+
+<article class="article" id="/post/Hash-Message-Authentication/" data-name='Hash函数和消息认证' data-version="">
+
+    <!-- Title -->
+    <div class='article-header'>
+         
+         <h1 class='article-title'>
+            <a href="/post/Hash-Message-Authentication/">
+                Hash函数和消息认证
+            </a>
+        </h1>
+        <!-- TODO: support nested categories,display them nicely -->
+        
+        <ul class='article-categories'>
+            
+            
+                <li><a href="/categories/密码学/" data-no-instant>
+                    <img src="/images/密码学.svg" alt="密码学" onerror='if(this.src != "/images/uncategorized.svg") this.src="/images/uncategorized.svg"' title='密码学'/>
+                </a></li>
+            
+        </ul>
+        
+    </div>
+    
+    <!-- Date and Author -->
+    <div class='article-meta'>
+    <ul>
+            <li><i class='fa fa-calendar'></i> 2018-12-26</li>
+            
+            <li><i class="fa fa-user"></i> Directoree</li>
+            <li><i class="fas fa-copyright"></i>
+            
+                
+                
+            
+            
+                <a href=https://creativecommons.org/licenses/by-nc-nd/4.0/>CC BY-NC-ND 4.0</a>
+            
+            </li>
+    </ul>
+    
+<div class="tags">
+	
+		
+			<label class='tag-1'><a href="/tags/Hash函数/">Hash函数</a></label>
+		
+	
+	</div>
+
+    </div>
+    <div class='article-cards'>
+        <!-- Author Card -->
+        <!---
+        <div class='Card-article Card-author'>
+            <div class='card-title'>
+                <h3></h3>
+            </div>
+            <div class='card-content'>
+                    <div class="author-meta">
+                            <div class='author-figure'>
+                                <img src="" alt="">
+                            </div>
+                            <div class='author-name'>
+                                Directoree
+                            </div>
+                        </div>
+                        <div class="author-ai">
+                            <div class='author-intro'>
+                                <!-- TODO: auto generating author description -->
+                                <!-- 
+                            </div>
+                            <div class="author-articles">
+                                <!-- TODO: auto generating author articles -->
+                                <!-- <ul>
+                                    <li>Article 1</li>
+                                    <li>Article 2</li>
+                                    <li>Article 3</li>
+                                    <li>Article 4</li>
+                                    <li>Article 5</li>
+                                    <li>Article 6</li>
+                                </ul>
+                            </div>
+                        </div>
+            </div>
+            
+        </div> -->
+
+        <!-- Visit Card -->
+        <!-- <div class="Card-article Card-visit"> -->
+            <!-- <div class="card-title">
+  <h3>Post Visit</h3>
+</div>
+<div class="card-chart">
+  <div id='chart-post-visit'></div>
+</div> -->
+        <!-- </div> -->
+        
+        <!-- Auto Excerpt Card -->
+        <!-- <div class="Card-article Card-excerpt">
+            <div class="card-title">
+  <h3>Quick Read</h3>
+</div>
+<div class="card-text">
+  <p id='text-post-summary'>&ensp;&ensp;
+Hash函数  & 消息认证
+
+&ensp;&ensp;
+一、 Hash函数结构、MD5、SHA-1
+&ensp;&emsp;
+二、 消息认证&emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。
+认证分为：实体认证、消息认证。
+&ensp;
+1.1  消息认证码消息认证码：(MAC，Message Authentication...</p>
+</div>
+        </div> -->
+    </div>
+    
+    <!-- Gallery -->
+    <!-- TODO: add a slider to gallery -->
+    
+
+    <!-- Content -->
+    <!-- TODO: support table of content -->
+    <div class="article-toc" id='article-toc'>
+    
+        
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+    </div>
+    <div class='article-content'>
+    <p>&ensp;<br>&ensp;</p>
+<center><font color="#3CB371" face="Comic sans MS" size="5">Hash函数  & 消息认证</font></center>
+
+<p>&ensp;<br>&ensp;</p>
+<h3 id="一、-Hash函数结构、MD5、SHA-1"><a href="#一、-Hash函数结构、MD5、SHA-1" class="headerlink" title="一、 Hash函数结构、MD5、SHA-1"></a><font color="#FF6347" face="Comic sans MS">一、 Hash函数结构、MD5、SHA-1</font></h3><p><a href="https://i.loli.net/2018/12/27/5c24b73ee6580.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2018/12/27/5c24b73ee6580.png" alt="Hash函数.png"></a></p>
+<p>&ensp;<br>&emsp;</p>
+<h3 id="二、-消息认证"><a href="#二、-消息认证" class="headerlink" title="二、 消息认证"></a><font color="#FF6347" face="Comic sans MS">二、 消息认证</font></h3><p><font face="Comic sans MS">&emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。</font></p>
+<p><strong>认证分为：</strong>实体认证、消息认证。</p>
+<p>&ensp;</p>
+<h4 id="1-1-消息认证码"><a href="#1-1-消息认证码" class="headerlink" title="1.1  消息认证码"></a><font color="#20B2AA" face="Comic sans MS">1.1  消息认证码</font></h4><p><font face="Comic sans MS"><strong>消息认证码：(MAC，Message Authentication Code)或报文认证码</strong>，是用于提供数据源认证和数据完整性的密码校验值。<br><strong>MAC：</strong>是指消息被一密钥控制的公开函数作用后产生的、用作认证的、固定长度的数值，<strong>也称为密码校验和。</strong><br></font></p>
+<p><img src="https://i.loli.net/2018/12/28/5c25a1af1de45.png" alt="D3364.png"><br><img src="https://i.loli.net/2018/12/28/5c25a009059a5.png" alt="58D4.png"><br><img src="https://i.loli.net/2018/12/28/5c259da576af5.png" alt="图片21.png"><br><img src="https://i.loli.net/2018/12/28/5c259e5101bfd.png" alt="图片2.png"></p>
+<p>&emsp;<br>&emsp;</p>
+<h4 id="1-2-基于DES和Hash函数的消息认证码"><a href="#1-2-基于DES和Hash函数的消息认证码" class="headerlink" title="1.2  基于DES和Hash函数的消息认证码"></a><font color="#20B2AA" face="Comic sans MS">1.2  基于DES和Hash函数的消息认证码</font></h4><p><font face="Comic sans MS" color="red"><strong>消息认证码的构造主要有两种：</strong>基于分组密码、基于带密钥的Hash函数-HMAC。</font></p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS"> **1. 基于DES的消息认证码：**将需要认证的消息和密钥K经过16轮迭代后生成该消息认证码。
+</font></td></tr></table>
+
+<p><img src="https://i.loli.net/2018/12/28/5c25c7ecb59d9.png" alt="图片3.png"></p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS"> **2. 基于Hash函数的消息认证码HMAC：**HMAC生成的过程使用了2次Hash函数。
+</font></td></tr></table>
+
+<p><img src="https://i.loli.net/2018/12/28/5c25cbf610d03.png" alt="1R.png"><br><img src="https://i.loli.net/2018/12/28/5c25c8fb7288b.png" alt="图片4.png"></p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">描述：
+(1) K的左边填充0以产生一个b比特长的K<sup>+</sup> （例如Ki的长为160比特，b=512，则需填充44个零字节0x00）
+(2) K<sup>+</sup>与ipad 逐比特异或以产生b比特的分组Si 
+(3) 将M附于Si后
+(4) 将哈希函数H作用于步骤(3)产生的数据流
+(5) K<sup>+</sup>与opad逐比特异或,以产生b比特长的分组S<sub>0</sub>
+(6) 将步骤(4)得到的杂凑值链接在S<sub>0</sub>后
+(7) 将H作用于步骤(6)产生的数据流并输出最终结果HMAC
+</font></td></tr></table>
+
+<hr>
+<hr>
+<p>&emsp;<br>&emsp;<br>&emsp;<br>&emsp;</p>
+
+    
+    </div>
+    
+    
+        <div class="article-comment" id='article-comment'>
+            
+
+<h1>Comment</h1>
+
+  
+    <div id="comment-not-available">
+      Not available
+      <p><strong>For site maintainer: Please provide <code>appId</code> and <code>appKey</code> in your <code>_data/cutie.yml</code> file for <code>valine</code> comment system.</strong></p>
+    </div>
+  
+
+
+        </div>
+        
+</article>
+  </div>
+
+  
+
+<footer id='footer'>
+    <div class='footer-copyright'>
+        <div>
+            <p> Copyright by <a href="">Directoree </a> @ 2019</p>
+            <p>Designed by: <i class="fas fa-paint-brush"></i> <a href="https://moober.cn">Moober</a> and <i class="fas fa-graduation-cap"></i> <a href="https://qutang.github.io">Qu Tang</a> &bull; Theme: <a href="https://qutang.github.io/cutie/">Cutie 2.1.3-Taurus</a> &bull; Powered by <a href="http://hexo.io">Hexo.</a></p>
+        </div>
+    </div>
+    
+    <div class='footer-social'>
+        
+    </div>
+</footer>
+
+  <br>
+
+  <div id="footer-nav" class='footer-nav'>
+		
+
+
+
+<nav id="nav">
+	
+	
+	
+	<div class='nav-item' id='nav-item-toc'>
+		
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+	</div>
+	
+	<div class='nav-item' id='nav-item-archive'>
+		
+				<div class='nav-icon'>
+				
+			<a href="/archives/" title='Archives'>
+			<img src="/images/icons/blue-shadow/archive.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class='nav-item' id='nav-item-search'>
+		
+		<div class='nav-icon'>
+		
+			<a href="/search/" title='Search'>
+			<img src="/images/icons/blue-shadow/search.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class="nav-item" id='nav-item-more'>
+		<div class="nav-icon">
+				<a href='#' onclick='onClickMenuIcon(event);' ontouchstart='onClickMenuIcon(event);'>
+				<img src="/images/icons/blue-shadow/menu.svg" alt="">
+				</a>
+		</div>
+		<div class="nav-more-menu">
+				<i class="far fa-times-circle" id='nav-more-menu-close' onclick='onClickNavMenuClose(event);' ontouchstart='onClickNavMenuClose(event);'></i>
+		
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-内网称霸/">
+						<span>Kali-内网称霸</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/密码学/">
+						<span>密码学</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CTF/">
+						<span>Ctf</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CSS/">
+						<span>Css</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTML/">
+						<span>Html</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTTP协议/">
+						<span>Http协议</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Java/">
+						<span>Java</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/JavaScript/">
+						<span>Javascript</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Metasploit/">
+						<span>Metasploit</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/音乐/">
+						<span>音乐</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Network-Security/">
+						<span>Network-security</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/PHP/">
+						<span>Php</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/网络安全/">
+						<span>网络安全</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Python/">
+						<span>Python</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-SQLMAP/">
+						<span>Kali-sqlmap</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Web-Tools/">
+						<span>Web-tools</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XAMPP-DVWA/">
+						<span>Xampp-dvwa</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/算法/">
+						<span>算法</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/杂谈/">
+						<span>杂谈</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/C&C++/">
+						<span>C&c++</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Hexo-Github/">
+						<span>Hexo-github</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Docker/">
+						<span>Docker</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/SQLi/">
+						<span>Sqli</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XXE/">
+						<span>Xxe</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/MySQL/">
+						<span>Mysql</span>
+					</a>
+				</div>
+		</div>
+		
+	</div>
+	</div>
+</nav>
+
+	</div>
+
+  
+
+
+
+    
+
+
+
+
+
+
+
+    <script src="/js/lightgallery.min.js"></script>
+<script src="/js/lg-zoom.min.js"></script>
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $("#lightgallery").lightGallery(); 
+        $(".article-content img").each(function(){
+            console.log($(this).attr('src'))
+            $(this).attr('data-src', $(this).attr('src')).lightGallery({
+                selector: 'this'
+            })
+        });
+    });
+</script>
+
+
+
+
+
+
+<script type='text/javascript'>
+
+  
+  // update cookie if this page is opened (directly)
+  loadjs(['/libs/jshashes/hashes.min.js', '/libs/js-cookie/src/js.cookie.js', '/js/post.v2.js'], 'post-version');
+  loadjs.ready('post-version', function(){
+    
+    new Postv2('hashit_d3f60af1446857523687687dcc643f9628ffb3e4cd0ee981b93d0ce40cb2b08d').update('hashit_6b1a2b082662e876d1c360aa7cdcf9171f38c5ff9e8745e5c6e2d0b5341f33bb', function(){});
+  });
+  
+</script>
+
+
+
+<!-- <script src="/js/post.js"></script> -->
+
+<script src="/js/headroom.min.js"></script>
+
+<script data-no-instant type='text/javascript'>
+
+initHeadroom();
+
+changeLayoutOnTouchScreen();
+
+// 
+// var post = new Post('', '');
+// post.getCommentCount(window.location.pathname, function(count){
+//     $('#article-comment-count').text(count);
+// });
+// post.addVisitRecord(window.location.pathname, userip);
+// post.getVisitCount(window.location.pathname, function(count){
+//     $('#article-visit-count').text(count);
+// });
+
+// 
+</script>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>

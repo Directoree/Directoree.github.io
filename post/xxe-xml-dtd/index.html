@@ -1,43 +1,1115 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
+
+
+
 <head><meta name="generator" content="Hexo 3.9.0">
-<meta charset="utf-8">
-<title>XXE-XML - Directoree</title>
-<base href="/">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="canonical" href="https://Directoree.github.io/post/xxe-xml-dtd/">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon1.ico">
-<meta name="description" content="最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~">
-<meta name="keywords" content="XXE,XML,Web">
-<meta property="og:type" content="website">
-<meta property="og:title" content="XXE-XML">
-<meta property="og:url" content="https://Directoree.github.io/post/xxe-xml-dtd/index.html">
-<meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg">
-<meta property="og:updated_time" content="2019-07-16T16:57:12.928Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="XXE-XML">
-<meta name="twitter:description" content="最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~">
-<meta name="twitter:image" content="https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg">
-<link rel="stylesheet" href="//unpkg.com/hexo-theme-inside@2.0.0/source/fonts.b9b22ef890c930ac7a13.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc6202509.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc62025091.css">
-<link rel="stylesheet" href="/theme.1aa8fbef40bc2e8146ab.css">
-<script src="/config.e87b1bc36f7b917628d3.js"></script>
-<script type="application/ld+json">[{"@context":"http://schema.org","@type":"WebSite","publisher":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"url":"https://Directoree.github.io","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png","description":null,"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"}},{"@context":"http://schema.org","@type":"Article","articleSection":"XXE","url":"https://Directoree.github.io/post/xxe-xml-dtd/","headline":"XXE-XML","image":"https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg","datePublished":"2019-04-19T17:00:02.000Z","dateModified":"2019-07-16T16:57:12.928Z","keywords":"XXE,XML,Web","description":"最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~","publisher":{"@type":"Organization","name":"Directoree","logo":{"@type":"ImageObject","url":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"}},"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://Directoree.github.io/post/xxe-xml-dtd/"},"thumbnailUrl":"https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg"}]</script><script async src="//www.googletagmanager.com/gtag/js?id=UA-00000000-0"></script>
-<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag('js', new Date());gtag('config', 'UA-00000000-0');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/lib/crypto-js.js"></script>
-<script src="/lib/blog-encrypt.js"></script>
-<link rel="stylesheet" href="/css/blog-encrypt.css">
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  
+      <title>XXE-XML - Directoree</title>
+  
+
+  
+  
+  <meta name="description" content>
+  <meta name="author" content="Directoree">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- load loadjs.js -->
+  <script src="/libs/loadjs/dist/loadjs.min.js"></script>
+
+<link rel="stylesheet" href="/libs/animate.css/animate.min.css">
+  <!-- load lightgallery -->
+<link rel="stylesheet" href="/css/lightgallery.css">
+<link rel="stylesheet" href="/libs/noty/lib/noty.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  
+
+
+
+
+
+
+    <link rel="stylesheet" href="/css/taurus.css">
+    
+        <link rel="stylesheet" href="/css/scheme-taurus/animations.css">
+    
+
+
+<link rel="stylesheet" href="/.css">
+
+  <!-- load font awesome 5 -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+  </script>
+  <!-- load mathjax -->
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax//libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+  <!-- load js-cookie -->
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="/js/social-share.min.js"></script>
+    <script src="/js/theme.js"></script>
+
+  <!-- include cookie.js -->
+  
+  
+
+  <!-- include comment system code -->
+  
+    <script src="//cdn1.lncld.net/static/js/3.6.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
-<body lang="en">
-<is-d2a57d></is-d2a57d>
-<script src="/runtime.26209474bfa8dc87a77c.js"></script>
-<script src="/polyfills.30f16c55deb40b06e14d.js"></script>
-<script src="/main.2f3a937787816eb74a37.en.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+ 
+
+<header id="header" class='header'>
+	<div class="header-title">
+		
+		<div class='header-logo'>
+			<a href='/'>
+				<img src='/images/theme-icon.svg' />
+			</a>
+		</div>
+		<div class='header-text'>
+			<h1>
+				<a href="/">Directoree</a>
+			</h1>
+			<subtitle>
+				爱你所爱，行你所行，听从你心，无问西东。
+			</subtitle>
+		</div>
+		
+	</div>
+	<div id='header-nav'>
+		
+
+
+
+<nav id="nav">
+	
+	
+	
+	<div class='nav-item' id='nav-item-toc'>
+		
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+	</div>
+	
+	<div class='nav-item' id='nav-item-archive'>
+		
+				<div class='nav-icon'>
+				
+			<a href="/archives/" title='Archives'>
+			<img src="/images/icons/blue-shadow/archive.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class='nav-item' id='nav-item-search'>
+		
+		<div class='nav-icon'>
+		
+			<a href="/search/" title='Search'>
+			<img src="/images/icons/blue-shadow/search.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class="nav-item" id='nav-item-more'>
+		<div class="nav-icon">
+				<a href='#' onclick='onClickMenuIcon(event);' ontouchstart='onClickMenuIcon(event);'>
+				<img src="/images/icons/blue-shadow/menu.svg" alt="">
+				</a>
+		</div>
+		<div class="nav-more-menu">
+				<i class="far fa-times-circle" id='nav-more-menu-close' onclick='onClickNavMenuClose(event);' ontouchstart='onClickNavMenuClose(event);'></i>
+		
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-内网称霸/">
+						<span>Kali-内网称霸</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/密码学/">
+						<span>密码学</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CTF/">
+						<span>Ctf</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CSS/">
+						<span>Css</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTML/">
+						<span>Html</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTTP协议/">
+						<span>Http协议</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Java/">
+						<span>Java</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/JavaScript/">
+						<span>Javascript</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Metasploit/">
+						<span>Metasploit</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/音乐/">
+						<span>音乐</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Network-Security/">
+						<span>Network-security</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/PHP/">
+						<span>Php</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/网络安全/">
+						<span>网络安全</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Python/">
+						<span>Python</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-SQLMAP/">
+						<span>Kali-sqlmap</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Web-Tools/">
+						<span>Web-tools</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XAMPP-DVWA/">
+						<span>Xampp-dvwa</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/算法/">
+						<span>算法</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/杂谈/">
+						<span>杂谈</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/C&C++/">
+						<span>C&c++</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Hexo-Github/">
+						<span>Hexo-github</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Docker/">
+						<span>Docker</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/SQLi/">
+						<span>Sqli</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XXE/">
+						<span>Xxe</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/MySQL/">
+						<span>Mysql</span>
+					</a>
+				</div>
+		</div>
+		
+	</div>
+	</div>
+</nav>
+
+	</div>
+</header>
+
+ 
+
+  
+
+
+
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div style="flex: 1;">
+      <style>
+    body {
+        background-color: white;
+    }
+</style>
+
+
+
+
+
+
+
+
+    
+        
+            
+            
+        
+    
+
+
+
+
+
+
+    
+    
+        
+    
+
+    
+        
+    
+
+
+
+
+
+
+
+
+
+<article class="article" id="/post/xxe-xml-dtd/" data-name='XXE-XML' data-version="">
+
+    <!-- Title -->
+    <div class='article-header'>
+         
+         <h1 class='article-title'>
+            <a href="/post/xxe-xml-dtd/">
+                XXE-XML
+            </a>
+        </h1>
+        <!-- TODO: support nested categories,display them nicely -->
+        
+        <ul class='article-categories'>
+            
+            
+                <li><a href="/categories/XXE/" data-no-instant>
+                    <img src="/images/XXE.svg" alt="XXE" onerror='if(this.src != "/images/uncategorized.svg") this.src="/images/uncategorized.svg"' title='XXE'/>
+                </a></li>
+            
+        </ul>
+        
+    </div>
+    
+    <!-- Date and Author -->
+    <div class='article-meta'>
+    <ul>
+            <li><i class='fa fa-calendar'></i> 2019-04-20</li>
+            
+            <li><i class="fa fa-user"></i> Directoree</li>
+            <li><i class="fas fa-copyright"></i>
+            
+                
+                
+            
+            
+                <a href=https://creativecommons.org/licenses/by-nc-nd/4.0/>CC BY-NC-ND 4.0</a>
+            
+            </li>
+    </ul>
+    
+<div class="tags">
+	
+		
+			<label class='tag-1'><a href="/tags/Web/">Web</a></label>
+		
+	
+		
+			<label class='tag-2'><a href="/tags/XML/">Xml</a></label>
+		
+	
+		
+			<label class='tag-3'><a href="/tags/XXE/">Xxe</a></label>
+		
+	
+	</div>
+
+    </div>
+    <div class='article-cards'>
+        <!-- Author Card -->
+        <!---
+        <div class='Card-article Card-author'>
+            <div class='card-title'>
+                <h3></h3>
+            </div>
+            <div class='card-content'>
+                    <div class="author-meta">
+                            <div class='author-figure'>
+                                <img src="" alt="">
+                            </div>
+                            <div class='author-name'>
+                                Directoree
+                            </div>
+                        </div>
+                        <div class="author-ai">
+                            <div class='author-intro'>
+                                <!-- TODO: auto generating author description -->
+                                <!-- 
+                            </div>
+                            <div class="author-articles">
+                                <!-- TODO: auto generating author articles -->
+                                <!-- <ul>
+                                    <li>Article 1</li>
+                                    <li>Article 2</li>
+                                    <li>Article 3</li>
+                                    <li>Article 4</li>
+                                    <li>Article 5</li>
+                                    <li>Article 6</li>
+                                </ul>
+                            </div>
+                        </div>
+            </div>
+            
+        </div> -->
+
+        <!-- Visit Card -->
+        <!-- <div class="Card-article Card-visit"> -->
+            <!-- <div class="card-title">
+  <h3>Post Visit</h3>
+</div>
+<div class="card-chart">
+  <div id='chart-post-visit'></div>
+</div> -->
+        <!-- </div> -->
+        
+        <!-- Auto Excerpt Card -->
+        <!-- <div class="Card-article Card-excerpt">
+            <div class="card-title">
+  <h3>Quick Read</h3>
+</div>
+<div class="card-text">
+  <p id='text-post-summary'>最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~
+
+
+
+
+
+
+XXE-XML 
+
+
+
+
+
+
+一. XML1.1 基本概念
+
+什么是XML？
+为什么要使用XML？
+怎么使用XML？
+为什么着重强调DTD？
+
+
+1. XML 是什么？
+
+指可扩展标记语言（EXtensible Markup Language）。
+是一种很像HTML的标记语言。
+的设计宗旨是传输数据，而不是显示数据。
+标签没有被预定义。您需要自行定义标签。
+被设计为具有自我描述性。
+是 W3C 的推荐标准。
+
+可以参考：[XML是什么，它可以做什么？——XML详解]
+2. 为什么要使用XML？参考：[XML...</p>
+</div>
+        </div> -->
+    </div>
+    
+    <!-- Gallery -->
+    <!-- TODO: add a slider to gallery -->
+    
+
+    <!-- Content -->
+    <!-- TODO: support table of content -->
+    <div class="article-toc" id='article-toc'>
+    
+        
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+    </div>
+    <div class='article-content'>
+    <p>最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识<del>~</del></p>
+<a id="more"></a>
+
+<br>
+
+<br>
+
+<center><font color="#00B2EE" face="Comic sans MS" size="5">XXE-XML</font> </center>
+
+<br>
+
+<br>
+
+
+<h3 id="一-XML"><a href="#一-XML" class="headerlink" title="一. XML"></a><font color="#FF6347" face="Comic sans MS">一. XML</font></h3><h4 id="1-1-基本概念"><a href="#1-1-基本概念" class="headerlink" title="1.1 基本概念"></a><font color="#3CB371" face="Comic sans MS">1.1 基本概念</font></h4><blockquote>
+<ol>
+<li>什么是XML？</li>
+<li>为什么要使用XML？</li>
+<li>怎么使用XML？</li>
+<li>为什么着重强调DTD？</li>
+</ol>
+</blockquote>
+<p><strong>1. XML 是什么？</strong></p>
+<ul>
+<li>指可扩展标记语言（EXtensible Markup Language）。</li>
+<li>是一种很像HTML的标记语言。</li>
+<li>的设计宗旨是传输数据，而不是显示数据。</li>
+<li>标签没有被预定义。您需要自行定义标签。</li>
+<li>被设计为具有自我描述性。</li>
+<li>是 W3C 的推荐标准。</li>
+</ul>
+<p>可以参考：<font color="#00B2EE">[<a href="https://blog.csdn.net/Rain722/article/details/52925828" target="_blank" rel="noopener">XML是什么，它可以做什么？——XML详解</a>]</font><br><br></p>
+<p><strong>2. 为什么要使用XML？</strong><br>参考：<font color="#00B2EE">[<a href="http://www.runoob.com/xml/xml-usage.html" target="_blank" rel="noopener">XML 用途</a>]</font>     </p>
+<p><strong>(1) XML 把数据从 HTML 分离</strong></p>
+<blockquote>
+<ol>
+<li>如果您需要在 HTML 文档中显示动态数据，那么每当数据改变时将花费大量的时间来编辑 HTML。</li>
+<li>通过 XML，数据能够存储在独立的 XML 文件中。这样您就可以专注于使用 HTML/CSS 进行显示和布局，并确保修改底层数据不再需要对 HTML 进行任何的改变。</li>
+<li>通过使用几行 JavaScript 代码，您就可以读取一个外部 XML 文件，并更新您的网页的数据内容。</li>
+</ol>
+</blockquote>
+<p><strong>(2 )XML 简化数据共享</strong></p>
+<blockquote>
+<ol>
+<li>在真实的世界中，计算机系统和数据使用不兼容的格式来存储数据。</li>
+<li>XML 数据以纯文本格式进行存储，因此提供了一种独立于软件和硬件的数据存储方法。</li>
+<li>这让创建不同应用程序可以共享的数据变得更加容易。</li>
+</ol>
+</blockquote>
+<p><strong>(3) XML 简化数据传输</strong></p>
+<blockquote>
+<ol>
+<li>对开发人员来说，其中一项最费时的挑战一直是在互联网上的不兼容系统之间交换数据。</li>
+<li>由于可以通过各种不兼容的应用程序来读取数据，以 XML 交换数据降低了这种复杂性。</li>
+</ol>
+</blockquote>
+<p><strong>(4) XML 简化平台变更</strong></p>
+<blockquote>
+<ol>
+<li>升级到新的系统（硬件或软件平台），总是非常费时的。必须转换大量的数据，不兼容的数据经常会丢失。</li>
+<li>XML 数据以文本格式存储。这使得 XML 在不损失数据的情况下，更容易扩展或升级到新的操作系统、新的应用程序或新的浏览器。</li>
+</ol>
+</blockquote>
+<br>
+**3. 怎么使用？**
+
+<p>可以是这样</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>person</span> <span class="token attr-name">age</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too young<span class="token punctuation">"</span></span> <span class="token attr-name">experience</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too simple<span class="token punctuation">"</span></span> <span class="token attr-name">result</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>sometimes naive<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>也可以是这样</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>person</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>age</span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too young<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>experience</span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too simple<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>result</span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>sometimes naive<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>person</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>还可以这样</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>person</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>age</span><span class="token punctuation">></span></span>too young<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>age</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>experience</span><span class="token punctuation">></span></span>too simple<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>experience</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>result</span><span class="token punctuation">></span></span>sometimes naive<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>result</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>person</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>但是更推荐使用第三种！主流使用的也是第三种。<br><br></p>
+<p><strong>4. 为什么着重强调DTD？</strong></p>
+<p>DTD实体：DTD实体是用于定义引用普通文本或特殊字符的快捷方式的变量，可以内部声明或外部引用。</p>
+<p>实体又分为一般实体和参数实体</p>
+<ol>
+<li>一般实体的声明语法:<code>&lt;!ENTITY 实体名 &quot;实体内容&quot;&gt;</code><br>引用实体的方式：&amp;实体名；</li>
+<li>参数实体只能在DTD中使用，参数实体的声明格式： <code>&lt;!ENTITY % 实体名 &quot;实体内容&quot;&gt;</code><br>引用实体的方式：%实体名；</li>
+</ol>
+<p>1，何为XXE？<br>答： xxe也就是xml外部实体注入。也就是上述的那一部分。</p>
+<p>2，怎样构建外部实体注入？<br>方式一：直接通过DTD外部实体声明</p>
+<p>可参考：<font color="#00B2EE">[<a href="https://www.cnblogs.com/r00tuser/p/7255939.html" target="_blank" rel="noopener">xxe漏洞的学习与利用总结</a>]</font></p>
+<br>
+
+<h4 id="1-2-使用XML"><a href="#1-2-使用XML" class="headerlink" title="1.2 使用XML"></a><font color="#3CB371" face="Comic sans MS">1.2 使用XML</font></h4><p><strong>实际写文档一般这样用：（新版本）</strong>可参考<font color="#00B2EE">[<a href="http://www.runoob.com/dtd/dtd-building.html" target="_blank" rel="noopener">XML 文档构建模块</a>]</font></p>
+<blockquote>
+<p>所有的 XML 文档（以及 HTML 文档）均由以下简单的构建模块构成：</p>
+</blockquote>
+<ul>
+<li>元素</li>
+<li>属性</li>
+<li>实体   <ul>
+<li><code>&amp;lt;</code>表示<code>&lt;</code></li>
+<li><code>&amp;gt;</code>表示<code>&gt;</code></li>
+<li><code>&amp;amp;</code>表示<code>&amp;</code></li>
+<li><code>&amp;apos;</code>表示<code>&#39;</code></li>
+<li><code>&amp;quot;</code>表示<code>&quot;</code></li>
+</ul>
+</li>
+<li>PCDATA ：被解析的字符数据（parsed character data）</li>
+<li>CDATA  ：不会被解析的字符数据（character data）</li>
+<li>两种文档约束：DTD、Schema</li>
+</ul>
+<p>包含上面那几部分以后，文档还要有一个规范来约束，即需要对自己写的文档进行验证， 验证器会对在自己写的验证规则中对XML文件进行语法检查。</p>
+<p><strong>为什么要有约束？</strong><br>因为XML文件的标签和属性可以随意扩展，有时我们必须要限制每个文档有哪些元素，每个元素有哪些子元素，每个元素有哪些属性，属性的值是什么类型等。从而保证XML文档格式和数据的正确性。</p>
+<br>
+
+<p>实例</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token comment" spellcheck="true">&lt;!--文档的声明--></span>
+<span class="token comment" spellcheck="true">&lt;!--还有个属性standalone:很少使用，是否是一个单独的XML文件，取值是true或false。默认是true--></span>
+<span class="token comment" spellcheck="true">&lt;!--元素 note、to、from、body等叫做元素，Tove叫做To这个元素的值value，而sex叫做属性，
+female叫做属性的值--></span>
+<span class="token comment" spellcheck="true">&lt;!--注释和HTML一样--></span>
+<span class="token prolog">&lt;?xml version="1.0" encoding="UTF-8"?></span>   
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>note</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>to</span> <span class="token attr-name">sex</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">'</span>female<span class="token punctuation">'</span></span><span class="token punctuation">></span></span>Tove<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>to</span><span class="token punctuation">></span></span>       
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>from</span><span class="token punctuation">></span></span>Jani<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>from</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>heading</span><span class="token punctuation">></span></span>Reminder<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>heading</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>Don't forget me this weekend!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>note</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<br>
+
+<p><strong>XML由七种组成元素构成</strong>（老版本）</p>
+<ul>
+<li>文档的声明</li>
+<li>元素</li>
+<li>属性</li>
+<li>注释</li>
+<li>实体字符，如<ul>
+<li><code>&amp;lt;</code>表示<code>&lt;</code></li>
+<li><code>&amp;gt;</code>表示<code>&gt;</code></li>
+<li><code>&amp;amp;</code>表示<code>&amp;</code></li>
+<li><code>&amp;apos;</code>表示<code>&#39;</code></li>
+<li><code>&amp;quot;</code>表示<code>&quot;</code></li>
+</ul>
+</li>
+<li>字符数据区 [!CDATA[内容]]</li>
+<li>处理指令</li>
+</ul>
+<br>
+
+<p>关于学习的资料可参考：<font color="#00B2EE">[<a href="http://www.runoob.com/xml/xml-tutorial.html" target="_blank" rel="noopener">XML 教程</a>]</font>、<font color="#00B2EE">[<a href="https://www.cnblogs.com/jb8164/articles/736515.html" target="_blank" rel="noopener">XML 文档结构简介（一）</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/RookiexiaoMu_a/article/details/89193062" target="_blank" rel="noopener">XML</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/weixin_37641832/article/details/89219411" target="_blank" rel="noopener">XML</a>]</font></p>
+<p>下面是我的一些关于学习XML的笔记😁(●ˇ∀ˇ●)</p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94b9af6.jpg" alt="201.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94bf2ac.jpg" alt="202.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94af924.jpg" alt="203.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94886b8.jpg" alt="204.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94ac31a.jpg" alt="205.jpg"></p>
+<p><br><br><br></p>
+<h3 id="二-DTD"><a href="#二-DTD" class="headerlink" title="二. DTD"></a><font color="#FF6347" face="Comic sans MS">二. DTD</font></h3><h4 id="2-1-基本概念"><a href="#2-1-基本概念" class="headerlink" title="2.1 基本概念"></a><font color="#3CB371" face="Comic sans MS">2.1 基本概念</font></h4><p>DTD为英文(Document Type Definition)，中文意思为“文档类型定义”。</p>
+<p>DTD肩负着两重任务：一方面它帮助你编写合法的代码，另一方面它让浏览器正确地显示器代码。</p>
+<p>DTD扮演着很重要的角色，会使代码变得规范性，打个比方：</p>
+<blockquote>
+<p>良好的xml文档：符合xml的语法规则。<br>有效的xml文档：符合xml语法规则的同时还需要符合DTD文档类型定义。<br>利用DTD可以对xml文档的各个节点进行约束定义，使开发遵循一套“标准”。<br>DTD可以约束xml文档出现的元素，元素名称，元素的先后顺序，属性等。</p>
+</blockquote>
+<p>推荐参考：<font color="#00B2EE">[<a href="https://blog.csdn.net/wff900703/article/details/80457635" target="_blank" rel="noopener">XML中的DTD是什么？</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/sinat_32366329/article/details/80188837" target="_blank" rel="noopener">XML之自定义DTD约束</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/Yeoman92/article/details/53055749" target="_blank" rel="noopener">XML中DTD介绍及使用</a>]</font></p>
+<br>
+
+<h4 id="2-2-使用DTD"><a href="#2-2-使用DTD" class="headerlink" title="2.2 使用DTD"></a><font color="#3CB371" face="Comic sans MS">2.2 使用DTD</font></h4><p><br><br></p>
+<h3 id="三-XXE漏洞"><a href="#三-XXE漏洞" class="headerlink" title="三. XXE漏洞"></a><font color="#FF6347" face="Comic sans MS">三. XXE漏洞</font></h3>
+    
+    </div>
+    
+    
+        <div class="article-comment" id='article-comment'>
+            
+
+<h1>Comment</h1>
+
+  
+    <div id="comment-not-available">
+      Not available
+      <p><strong>For site maintainer: Please provide <code>appId</code> and <code>appKey</code> in your <code>_data/cutie.yml</code> file for <code>valine</code> comment system.</strong></p>
+    </div>
+  
+
+
+        </div>
+        
+</article>
+  </div>
+
+  
+
+<footer id='footer'>
+    <div class='footer-copyright'>
+        <div>
+            <p> Copyright by <a href="">Directoree </a> @ 2019</p>
+            <p>Designed by: <i class="fas fa-paint-brush"></i> <a href="https://moober.cn">Moober</a> and <i class="fas fa-graduation-cap"></i> <a href="https://qutang.github.io">Qu Tang</a> &bull; Theme: <a href="https://qutang.github.io/cutie/">Cutie 2.1.3-Taurus</a> &bull; Powered by <a href="http://hexo.io">Hexo.</a></p>
+        </div>
+    </div>
+    
+    <div class='footer-social'>
+        
+    </div>
+</footer>
+
+  <br>
+
+  <div id="footer-nav" class='footer-nav'>
+		
+
+
+
+<nav id="nav">
+	
+	
+	
+	<div class='nav-item' id='nav-item-toc'>
+		
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+	</div>
+	
+	<div class='nav-item' id='nav-item-archive'>
+		
+				<div class='nav-icon'>
+				
+			<a href="/archives/" title='Archives'>
+			<img src="/images/icons/blue-shadow/archive.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class='nav-item' id='nav-item-search'>
+		
+		<div class='nav-icon'>
+		
+			<a href="/search/" title='Search'>
+			<img src="/images/icons/blue-shadow/search.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class="nav-item" id='nav-item-more'>
+		<div class="nav-icon">
+				<a href='#' onclick='onClickMenuIcon(event);' ontouchstart='onClickMenuIcon(event);'>
+				<img src="/images/icons/blue-shadow/menu.svg" alt="">
+				</a>
+		</div>
+		<div class="nav-more-menu">
+				<i class="far fa-times-circle" id='nav-more-menu-close' onclick='onClickNavMenuClose(event);' ontouchstart='onClickNavMenuClose(event);'></i>
+		
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-内网称霸/">
+						<span>Kali-内网称霸</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/密码学/">
+						<span>密码学</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CTF/">
+						<span>Ctf</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CSS/">
+						<span>Css</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTML/">
+						<span>Html</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTTP协议/">
+						<span>Http协议</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Java/">
+						<span>Java</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/JavaScript/">
+						<span>Javascript</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Metasploit/">
+						<span>Metasploit</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/音乐/">
+						<span>音乐</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Network-Security/">
+						<span>Network-security</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/PHP/">
+						<span>Php</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/网络安全/">
+						<span>网络安全</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Python/">
+						<span>Python</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-SQLMAP/">
+						<span>Kali-sqlmap</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Web-Tools/">
+						<span>Web-tools</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XAMPP-DVWA/">
+						<span>Xampp-dvwa</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/算法/">
+						<span>算法</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/杂谈/">
+						<span>杂谈</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/C&C++/">
+						<span>C&c++</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Hexo-Github/">
+						<span>Hexo-github</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Docker/">
+						<span>Docker</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/SQLi/">
+						<span>Sqli</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XXE/">
+						<span>Xxe</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/MySQL/">
+						<span>Mysql</span>
+					</a>
+				</div>
+		</div>
+		
+	</div>
+	</div>
+</nav>
+
+	</div>
+
+  
+
+
+
+    
+
+
+
+
+
+
+
+    <script src="/js/lightgallery.min.js"></script>
+<script src="/js/lg-zoom.min.js"></script>
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $("#lightgallery").lightGallery(); 
+        $(".article-content img").each(function(){
+            console.log($(this).attr('src'))
+            $(this).attr('data-src', $(this).attr('src')).lightGallery({
+                selector: 'this'
+            })
+        });
+    });
+</script>
+
+
+
+
+
+
+<script type='text/javascript'>
+
+  
+  // update cookie if this page is opened (directly)
+  loadjs(['/libs/jshashes/hashes.min.js', '/libs/js-cookie/src/js.cookie.js', '/js/post.v2.js'], 'post-version');
+  loadjs.ready('post-version', function(){
+    
+    new Postv2('hashit_ae9dfe465743e8ef54a24ce1e3570e4cb7eac3202f2e64c5058528ef4e39a26e').update('hashit_d7ba4c0891429123081d1af7cd2c99ec631c905a6bae11d83eeea2266c05e8f1', function(){});
+  });
+  
+</script>
+
+
+
+<!-- <script src="/js/post.js"></script> -->
+
+<script src="/js/headroom.min.js"></script>
+
+<script data-no-instant type='text/javascript'>
+
+initHeadroom();
+
+changeLayoutOnTouchScreen();
+
+// 
+// var post = new Post('', '');
+// post.getCommentCount(window.location.pathname, function(count){
+//     $('#article-comment-count').text(count);
+// });
+// post.addVisitRecord(window.location.pathname, userip);
+// post.getVisitCount(window.location.pathname, function(count){
+//     $('#article-visit-count').text(count);
+// });
+
+// 
+</script>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>

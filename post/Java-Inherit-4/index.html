@@ -1,43 +1,1213 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
+
+
+
 <head><meta name="generator" content="Hexo 3.9.0">
-<meta charset="utf-8">
-<title>Java构造方法、对象创建、继承(4.5-4.6) - Directoree</title>
-<base href="/">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="canonical" href="https://Directoree.github.io/post/Java-Inherit-4/">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon1.ico">
-<meta name="description" content="&amp;ensp;&amp;ensp; 继承  &amp;ensp;&amp;ensp; 一、 构造方法📒定义： 构造方法是一种特殊的、与类同名的方法，专门用于创建对象，完成初始化工作。  &amp;emsp; **📒构造方法的特殊性：**  **(1)构造方法的方法名与类名相同。** **(2)构造方法没有返回类型，也不能写void。** **(3)构造方法的主要作用是完成对类对象的初始化工作。** **(4)构造方法一般不能由">
-<meta name="keywords" content="Java学习">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Java构造方法、对象创建、继承(4.5-4.6)">
-<meta property="og:url" content="https://Directoree.github.io/post/Java-Inherit-4/index.html">
-<meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;ensp;&amp;ensp; 继承  &amp;ensp;&amp;ensp; 一、 构造方法📒定义： 构造方法是一种特殊的、与类同名的方法，专门用于创建对象，完成初始化工作。  &amp;emsp; **📒构造方法的特殊性：**  **(1)构造方法的方法名与类名相同。** **(2)构造方法没有返回类型，也不能写void。** **(3)构造方法的主要作用是完成对类对象的初始化工作。** **(4)构造方法一般不能由">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.loli.net/2018/12/25/5c21082154dab.jpg">
-<meta property="og:updated_time" content="2019-07-16T16:49:26.805Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Java构造方法、对象创建、继承(4.5-4.6)">
-<meta name="twitter:description" content="&amp;ensp;&amp;ensp; 继承  &amp;ensp;&amp;ensp; 一、 构造方法📒定义： 构造方法是一种特殊的、与类同名的方法，专门用于创建对象，完成初始化工作。  &amp;emsp; **📒构造方法的特殊性：**  **(1)构造方法的方法名与类名相同。** **(2)构造方法没有返回类型，也不能写void。** **(3)构造方法的主要作用是完成对类对象的初始化工作。** **(4)构造方法一般不能由">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/25/5c21082154dab.jpg">
-<link rel="stylesheet" href="//unpkg.com/hexo-theme-inside@2.0.0/source/fonts.b9b22ef890c930ac7a13.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc6202509.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc62025091.css">
-<link rel="stylesheet" href="/theme.1aa8fbef40bc2e8146ab.css">
-<script src="/config.e87b1bc36f7b917628d3.js"></script>
-<script type="application/ld+json">[{"@context":"http://schema.org","@type":"WebSite","publisher":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"url":"https://Directoree.github.io","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png","description":null,"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"}},{"@context":"http://schema.org","@type":"Article","articleSection":"Java","url":"https://Directoree.github.io/post/Java-Inherit-4/","headline":"Java构造方法、对象创建、继承(4.5-4.6)","image":"https://i.loli.net/2018/12/25/5c21082154dab.jpg","datePublished":"2018-12-24T16:15:10.000Z","dateModified":"2019-07-16T16:49:26.805Z","keywords":"Java学习","description":null,"publisher":{"@type":"Organization","name":"Directoree","logo":{"@type":"ImageObject","url":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"}},"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://Directoree.github.io/post/Java-Inherit-4/"},"thumbnailUrl":"https://i.loli.net/2018/12/25/5c21082154dab.jpg"}]</script><script async src="//www.googletagmanager.com/gtag/js?id=UA-00000000-0"></script>
-<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag('js', new Date());gtag('config', 'UA-00000000-0');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/lib/crypto-js.js"></script>
-<script src="/lib/blog-encrypt.js"></script>
-<link rel="stylesheet" href="/css/blog-encrypt.css">
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  
+      <title>Java构造方法、对象创建、继承(4.5-4.6) - Directoree</title>
+  
+
+  
+  
+  <meta name="description" content>
+  <meta name="author" content="Directoree">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- load loadjs.js -->
+  <script src="/libs/loadjs/dist/loadjs.min.js"></script>
+
+<link rel="stylesheet" href="/libs/animate.css/animate.min.css">
+  <!-- load lightgallery -->
+<link rel="stylesheet" href="/css/lightgallery.css">
+<link rel="stylesheet" href="/libs/noty/lib/noty.css">
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  
+
+
+
+
+
+
+    <link rel="stylesheet" href="/css/taurus.css">
+    
+        <link rel="stylesheet" href="/css/scheme-taurus/animations.css">
+    
+
+
+<link rel="stylesheet" href="/.css">
+
+  <!-- load font awesome 5 -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+  </script>
+  <!-- load mathjax -->
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax//libs/mathjax/2.7.4/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+  <!-- load js-cookie -->
+  <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="/js/social-share.min.js"></script>
+    <script src="/js/theme.js"></script>
+
+  <!-- include cookie.js -->
+  
+  
+
+  <!-- include comment system code -->
+  
+    <script src="//cdn1.lncld.net/static/js/3.6.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+  
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="/images/favicon.png">
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
-<body lang="en">
-<is-d2a57d></is-d2a57d>
-<script src="/runtime.26209474bfa8dc87a77c.js"></script>
-<script src="/polyfills.30f16c55deb40b06e14d.js"></script>
-<script src="/main.2f3a937787816eb74a37.en.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+ 
+
+<header id="header" class='header'>
+	<div class="header-title">
+		
+		<div class='header-logo'>
+			<a href='/'>
+				<img src='/images/theme-icon.svg' />
+			</a>
+		</div>
+		<div class='header-text'>
+			<h1>
+				<a href="/">Directoree</a>
+			</h1>
+			<subtitle>
+				爱你所爱，行你所行，听从你心，无问西东。
+			</subtitle>
+		</div>
+		
+	</div>
+	<div id='header-nav'>
+		
+
+
+
+<nav id="nav">
+	
+	
+	
+	<div class='nav-item' id='nav-item-toc'>
+		
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+	</div>
+	
+	<div class='nav-item' id='nav-item-archive'>
+		
+				<div class='nav-icon'>
+				
+			<a href="/archives/" title='Archives'>
+			<img src="/images/icons/blue-shadow/archive.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class='nav-item' id='nav-item-search'>
+		
+		<div class='nav-icon'>
+		
+			<a href="/search/" title='Search'>
+			<img src="/images/icons/blue-shadow/search.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class="nav-item" id='nav-item-more'>
+		<div class="nav-icon">
+				<a href='#' onclick='onClickMenuIcon(event);' ontouchstart='onClickMenuIcon(event);'>
+				<img src="/images/icons/blue-shadow/menu.svg" alt="">
+				</a>
+		</div>
+		<div class="nav-more-menu">
+				<i class="far fa-times-circle" id='nav-more-menu-close' onclick='onClickNavMenuClose(event);' ontouchstart='onClickNavMenuClose(event);'></i>
+		
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-内网称霸/">
+						<span>Kali-内网称霸</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/密码学/">
+						<span>密码学</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CTF/">
+						<span>Ctf</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CSS/">
+						<span>Css</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTML/">
+						<span>Html</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTTP协议/">
+						<span>Http协议</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Java/">
+						<span>Java</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/JavaScript/">
+						<span>Javascript</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Metasploit/">
+						<span>Metasploit</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/音乐/">
+						<span>音乐</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Network-Security/">
+						<span>Network-security</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/PHP/">
+						<span>Php</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/网络安全/">
+						<span>网络安全</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Python/">
+						<span>Python</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-SQLMAP/">
+						<span>Kali-sqlmap</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Web-Tools/">
+						<span>Web-tools</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XAMPP-DVWA/">
+						<span>Xampp-dvwa</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/算法/">
+						<span>算法</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/杂谈/">
+						<span>杂谈</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/C&C++/">
+						<span>C&c++</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Hexo-Github/">
+						<span>Hexo-github</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Docker/">
+						<span>Docker</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/SQLi/">
+						<span>Sqli</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XXE/">
+						<span>Xxe</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/MySQL/">
+						<span>Mysql</span>
+					</a>
+				</div>
+		</div>
+		
+	</div>
+	</div>
+</nav>
+
+	</div>
+</header>
+
+ 
+
+  
+
+
+
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div style="flex: 1;">
+      <style>
+    body {
+        background-color: white;
+    }
+</style>
+
+
+
+
+
+
+
+
+    
+        
+            
+            
+        
+    
+
+
+
+
+
+
+    
+    
+        
+    
+
+    
+        
+    
+
+
+
+
+
+
+
+
+
+<article class="article" id="/post/Java-Inherit-4/" data-name='Java构造方法、对象创建、继承(4.5-4.6)' data-version="">
+
+    <!-- Title -->
+    <div class='article-header'>
+         
+         <h1 class='article-title'>
+            <a href="/post/Java-Inherit-4/">
+                Java构造方法、对象创建、继承(4.5-4.6)
+            </a>
+        </h1>
+        <!-- TODO: support nested categories,display them nicely -->
+        
+        <ul class='article-categories'>
+            
+            
+                <li><a href="/categories/Java/" data-no-instant>
+                    <img src="/images/Java.svg" alt="Java" onerror='if(this.src != "/images/uncategorized.svg") this.src="/images/uncategorized.svg"' title='Java'/>
+                </a></li>
+            
+        </ul>
+        
+    </div>
+    
+    <!-- Date and Author -->
+    <div class='article-meta'>
+    <ul>
+            <li><i class='fa fa-calendar'></i> 2018-12-25</li>
+            
+            <li><i class="fa fa-user"></i> Directoree</li>
+            <li><i class="fas fa-copyright"></i>
+            
+                
+                
+            
+            
+                <a href=https://creativecommons.org/licenses/by-nc-nd/4.0/>CC BY-NC-ND 4.0</a>
+            
+            </li>
+    </ul>
+    
+<div class="tags">
+	
+		
+			<label class='tag-1'><a href="/tags/Java学习/">Java学习</a></label>
+		
+	
+	</div>
+
+    </div>
+    <div class='article-cards'>
+        <!-- Author Card -->
+        <!---
+        <div class='Card-article Card-author'>
+            <div class='card-title'>
+                <h3></h3>
+            </div>
+            <div class='card-content'>
+                    <div class="author-meta">
+                            <div class='author-figure'>
+                                <img src="" alt="">
+                            </div>
+                            <div class='author-name'>
+                                Directoree
+                            </div>
+                        </div>
+                        <div class="author-ai">
+                            <div class='author-intro'>
+                                <!-- TODO: auto generating author description -->
+                                <!-- 
+                            </div>
+                            <div class="author-articles">
+                                <!-- TODO: auto generating author articles -->
+                                <!-- <ul>
+                                    <li>Article 1</li>
+                                    <li>Article 2</li>
+                                    <li>Article 3</li>
+                                    <li>Article 4</li>
+                                    <li>Article 5</li>
+                                    <li>Article 6</li>
+                                </ul>
+                            </div>
+                        </div>
+            </div>
+            
+        </div> -->
+
+        <!-- Visit Card -->
+        <!-- <div class="Card-article Card-visit"> -->
+            <!-- <div class="card-title">
+  <h3>Post Visit</h3>
+</div>
+<div class="card-chart">
+  <div id='chart-post-visit'></div>
+</div> -->
+        <!-- </div> -->
+        
+        <!-- Auto Excerpt Card -->
+        <!-- <div class="Card-article Card-excerpt">
+            <div class="card-title">
+  <h3>Quick Read</h3>
+</div>
+<div class="card-text">
+  <p id='text-post-summary'>&ensp;&ensp;
+继承
+
+&ensp;&ensp;
+一、 构造方法📒定义： 构造方法是一种特殊的、与类同名的方法，专门用于创建对象，完成初始化工作。 
+&emsp;
+**📒构造方法的特殊性：**...</p>
+</div>
+        </div> -->
+    </div>
+    
+    <!-- Gallery -->
+    <!-- TODO: add a slider to gallery -->
+    
+
+    <!-- Content -->
+    <!-- TODO: support table of content -->
+    <div class="article-toc" id='article-toc'>
+    
+        
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+    </div>
+    <div class='article-content'>
+    <p>&ensp;<br>&ensp;</p>
+<center><font color="#3CB371" face="Comic sans MS" size="5">继承</font></center>
+
+<p>&ensp;<br>&ensp;</p>
+<h3 id="一、-构造方法"><a href="#一、-构造方法" class="headerlink" title="一、 构造方法"></a><font color="#FF6347" face="Comic sans MS">一、 构造方法</font></h3><p><font color="red"><strong>📒定义：</strong></font> 构造方法是一种特殊的、与类同名的方法，专门用于<font color="red">创建对象，完成初始化工作。</font> </p>
+<p>&emsp;</p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS"><font color="red">**📒构造方法的特殊性：**</font> 
+**(1)构造方法的方法名与类名相同。**
+**(2)构造方法没有返回类型，也不能写void。**
+**(3)构造方法的主要作用是完成对类对象的初始化工作。**
+**(4)构造方法一般不能由编程人员显式地直接调用，而是用new来调用。**
+**(5)在创建一个类的新对象的同时，系统会自动调用该类的构造方法为新对象初始化。**
+**(6)在Java中，每个类都至少有一个构造方法，如果没有显示地定义构造方法，Java
+   会自动提供一个缺省的构造方法。**
+</font></td></tr></table>
+
+<p>&emsp;<br>&emsp;</p>
+<h4 id="1-1-构造方法说明"><a href="#1-1-构造方法说明" class="headerlink" title="1.1  构造方法说明"></a><font color="#3CB371" face="Comic sans MS">1.1  构造方法说明</font></h4><p><font color="red"><strong>📒构造方法说明形式如下：</strong></font><br><font color="red">[构造方法修饰符] 方法名（[形式参数列表]）[throws异常列表] {方法体}</font> </p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">**📒当构造一个类的实例时，编译器主要完成以下3件事情：**
+(1) 为对象分配内存空间(堆)；
+(2) 按缺省值初始化对象中的实例变量的值；
+(3) 调用对象的构造方法(可以在构造方法中初始化其他的值)；
+(4) 对象变量都是引用型变量。
+</font></td></tr></table>
+
+<p>&emsp;<br>&emsp;</p>
+<h4 id="1-2-构造方法的重载"><a href="#1-2-构造方法的重载" class="headerlink" title="1.2  构造方法的重载"></a><font color="#3CB371" face="Comic sans MS">1.2  构造方法的重载</font></h4><table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">(1)  缺省的构造方法：如果没有定义构造方法，则Java自动提供了一个缺省的构造方法，如下：
+public Person(){}；//对象成员变量的初值按Java规定
+(2)  带参数的构造方法：按需要将一些指定的参数传递给构造方法 
+ 例如：public Person(String n){Name=n;}
+**📒定义构造方法注意：**
+&emsp;只要类中显式定义了一个或多个构造方法，而且所有显式定义的构造方法都带参数，那么将失去缺省
+   构造方法。
+</font></td></tr></table>
+
+<pre class="line-numbers language-java"><code class="language-java"><span class="token function">PersonC</span><span class="token punctuation">(</span>String n <span class="token punctuation">,</span><span class="token keyword">int</span> a<span class="token punctuation">)</span><span class="token punctuation">{</span>
+   name<span class="token operator">=</span>n<span class="token punctuation">;</span>
+   age<span class="token operator">=</span>a<span class="token punctuation">;</span>
+   System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"The Person's name is "</span><span class="token operator">+</span>name<span class="token operator">+</span><span class="token string">",age is "</span><span class="token operator">+</span>age<span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">}</span> 
+ <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String args<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+      PersonC per1<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">PersonC</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      PersonC per2<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">PersonC</span><span class="token punctuation">(</span><span class="token string">"wang li"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+      PersonC per3<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">PersonC</span><span class="token punctuation">(</span><span class="token string">"li ming"</span><span class="token punctuation">,</span><span class="token number">24</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br>&emsp;</p>
+<h4 id="1-3-对象的创建"><a href="#1-3-对象的创建" class="headerlink" title="1.3  对象的创建"></a><font color="#3CB371" face="Comic sans MS">1.3  对象的创建</font></h4><table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">**1.3.1 📒对象说明：**
+对象说明的语法形式为：
+&emsp;&emsp;&emsp;<font color="red">类名&emsp;对象名；</font>
+**1.3.2. 📒对象的实例化和初始化:**
+**对象构造的语法形式为：**
+&emsp;&emsp;&emsp;<font color="red">对象名=new 类构造方法名([实参表]);</font> 
+**由new操作符和相应的构造方法完成：**
+new以类为模板，开辟空间并执行相应的构造方法，完成对象的实例化和初始化，并返回该对象的一个引
+用（即该对象所在的内存首地址)
+</font></td></tr></table>
+
+<p>&emsp;<br>&emsp;</p>
+<h4 id="1-4-this的使用"><a href="#1-4-this的使用" class="headerlink" title="1.4  this的使用"></a><font color="#3CB371" face="Comic sans MS">1.4  this的使用</font></h4><table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">**1.4.1 📒使用this来访问成员变量及方法**
+在方法及构造方法中，可以使用this来访问对象的属性和方法 .
+**1.4.2. 📒构造方法中，用this调用另一构造方法：**
+**1.4.3. 📒使用this的注意事项：**
+(1)通过this不仅可以引用该类中定义的变量和方法，还可以引用该类的父类中定义的成员变量和方法。
+(2)在所有的非static方法中，都隐含了一个参数this。而static方法中，不能使用this。
+</font></td></tr></table>
+
+<pre class="line-numbers language-java"><code class="language-java"><span class="token number">1.4</span><span class="token punctuation">.</span><span class="token number">1</span>
+ <span class="token function">Person</span><span class="token punctuation">(</span>String n<span class="token punctuation">,</span><span class="token keyword">int</span> a<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        name<span class="token operator">=</span>n<span class="token punctuation">;</span>
+        age<span class="token operator">=</span>a<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> 
+等价于如下：
+ <span class="token function">Person</span><span class="token punctuation">(</span>String name<span class="token punctuation">,</span><span class="token keyword">int</span> age<span class="token punctuation">)</span>
+           <span class="token punctuation">{</span><span class="token keyword">this</span><span class="token punctuation">.</span>name<span class="token operator">=</span>name<span class="token punctuation">;</span>
+             <span class="token keyword">this</span><span class="token punctuation">.</span>age<span class="token operator">=</span>age<span class="token punctuation">;</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token number">1.4</span><span class="token punctuation">.</span><span class="token number">2</span> 
+ <span class="token function">Desk</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>   Color<span class="token operator">=</span><span class="token string">""</span><span class="token punctuation">;</span>
+           Length<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+         Width<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+         Height<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span><span class="token punctuation">}</span> 
+ <span class="token function">Desk</span><span class="token punctuation">(</span>String C<span class="token punctuation">,</span><span class="token keyword">int</span> L<span class="token punctuation">,</span><span class="token keyword">int</span> W<span class="token punctuation">,</span><span class="token keyword">int</span> H<span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>Color<span class="token operator">=</span>C<span class="token punctuation">;</span>
+     Length<span class="token operator">=</span>L<span class="token punctuation">;</span>
+   Width<span class="token operator">=</span>W<span class="token punctuation">;</span>
+   Height<span class="token operator">=</span>H<span class="token punctuation">;</span><span class="token punctuation">}</span> 
+ <span class="token function">Desk</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">this</span><span class="token punctuation">(</span><span class="token string">""</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br>&emsp;</p>
+<h3 id="二、-继承"><a href="#二、-继承" class="headerlink" title="二、 继承"></a><font color="#FF6347" face="Comic sans MS">二、 继承</font></h3><h4 id="2-1-类继承语法形式"><a href="#2-1-类继承语法形式" class="headerlink" title="2.1  类继承语法形式"></a><font color="#3CB371" face="Comic sans MS">2.1  类继承语法形式</font></h4><table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">**2.1.1 📒类继承语法形式如下：**
+&emsp;&emsp;<font color="red">class&emsp;SubClassName&emsp;extends&emsp;SupperClassName</font>
+extends：继承关键词
+SubClassName：新的子类名
+SupperClassName：继承的父类名，必须有且只能一个（即每个子类有且只能有一个父类）
+**2.1.2 📒子类的特性:**
+(1) 子类拥有其父类的所有属性和方法。但父类中说明为private的属性和方法，子类不可直接访问。
+(2) 子类可以对父类的方法覆盖或重载。
+</font></td></tr></table>
+
+<p>&emsp;<br>&emsp;</p>
+<h4 id="2-2-属性的继承、隐藏和添加"><a href="#2-2-属性的继承、隐藏和添加" class="headerlink" title="2.2  属性的继承、隐藏和添加"></a><font color="#3CB371" face="Comic sans MS">2.2  属性的继承、隐藏和添加</font></h4><p><strong>注意：属性叫隐藏，方法叫覆盖</strong><br><font face="Comic sans MS"><strong>2.2.1 📒属性的继承：</strong><br>• 子类可以继承父类的所有属性（只要该属性没有private修饰）<br>• 通过属性的继承，子类不需要把父类属性的定义部分重复定义一遍，这样做的好处是减少程序维护的工作量。<br><font color="red">例如：ColorPoint类自动具有Point类的坐标a,b属性</font></font><br>&emsp;<br><font face="Comic sans MS"><strong>2.2.2 📒属性的隐藏：</strong><br>子类重新定义一个与父类那里继承来的成员变量完全相同的变量，就称作属性的隐藏。</font></p>
+<pre class="line-numbers language-java"><code class="language-java"> <span class="token keyword">class</span> <span class="token class-name">living</span>
+<span class="token punctuation">{</span>   <span class="token keyword">public</span> <span class="token keyword">int</span> age<span class="token punctuation">;</span> <span class="token punctuation">}</span>
+<span class="token keyword">class</span> <span class="token class-name">human</span> <span class="token keyword">extends</span> <span class="token class-name">living</span>
+<span class="token punctuation">{</span>   <span class="token keyword">public</span> <span class="token keyword">int</span> age<span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//将父类的age隐藏</span>
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String args<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+   <span class="token punctuation">{</span> human h1<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">human</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> h1<span class="token punctuation">.</span>age<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">;</span><span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br><font face="Comic sans MS"><strong>2.2.3 📒属性的添加：</strong></font><br>在定义子类时，加上的新的属性变量，就可以使子类比父类多一些属性</p>
+<p><font color="red">例如：ColorPoint类比父类Point多了一个属性，颜色（color）</font></p>
+<p>&emsp;<br>&emsp;</p>
+<h4 id="2-3-方法的继承、覆盖、重载和添加"><a href="#2-3-方法的继承、覆盖、重载和添加" class="headerlink" title="2.3  方法的继承、覆盖、重载和添加"></a><font color="#3CB371" face="Comic sans MS">2.3  方法的继承、覆盖、重载和添加</font></h4><p><font face="Comic sans MS"><strong>2.3.1 📒方法的继承：</strong><br>父类的非私有方法也可以被子类自动继承。例如类A具有method()方法，那它的子类B不定义该方法也同样拥有method()。</font></p>
+<p>&emsp;<br><font face="Comic sans MS"><strong>2.3.2 📒方法的覆盖：</strong></font></p>
+<p><font color="red"><strong>方法的覆盖</strong></font>(方法用覆盖这个词修饰，属性用隐藏这个词来修饰)<br>覆盖：在子类中定义的方法和父类中的方法的首部是一样的，包括方法名、参数列表、返回类型和异常抛出。但方法体的实现改变了。<br><img src="https://i.loli.net/2018/12/26/5c23095dc4ba6.png" alt="1.png"></p>
+<p><font face="Comic sans MS" color="red"><strong>例如:</strong></font></p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">A</span><span class="token punctuation">{</span>
+……
+<span class="token keyword">int</span> <span class="token function">method</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">)</span>
+<span class="token keyword">throws</span> Exception<span class="token punctuation">{</span>
+……
+<span class="token punctuation">}</span>
+……
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">B</span> <span class="token keyword">extends</span> <span class="token class-name">A</span><span class="token punctuation">{</span>
+……
+<span class="token keyword">int</span> <span class="token function">method</span><span class="token punctuation">(</span><span class="token keyword">int</span> x<span class="token punctuation">,</span> <span class="token keyword">int</span> y<span class="token punctuation">)</span> <span class="token keyword">throws</span>  <span class="token comment" spellcheck="true">//覆盖父类的方法method(int x, int y)</span>
+IOException<span class="token punctuation">{</span>
+……
+<span class="token punctuation">}</span>
+……
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br><font face="Comic sans MS" color="red">覆盖的效果：当一个B类对象调用method方法时它只会使用B类的method版本，而父类A的method版本被覆盖掉了</font><br><font face="Comic sans MS"><strong>在覆盖时要注意以下几点：</strong><br>（1）覆盖的方法的<font color="#00B2EE"><strong>首部</strong></font>必须要和被覆盖的方法的首部完全匹配，才能达到覆盖的效果；<br>（2）覆盖的方法的<font color="#00B2EE"><strong>返回值类型</strong></font>必须和被覆盖的方法的返回值类型一致；<br>（3）覆盖的方法所<font color="#00B2EE"><strong>抛出的异常</strong></font>必须和被覆盖方法的所抛出的异常一致，或者是其子类；<br>（4）被覆盖的方法<font color="#00B2EE"><strong>不能为private</strong></font>，否则在其子类中只是新定义了一个方法，并没有对其进行覆盖</font><br>&emsp;<br><font face="Comic sans MS"><strong>2.3.3 📒方法的重载：</strong><br><font color="red"><strong>含义：方法名相同，但参数列表不同</strong></font><br>通过方法的覆盖，能够修改对象的同名方法的具体实现体，相同的方法在各个子类中实现的版本可以不一样.<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp; —&ensp;—实现多个类中多态性的基础之一<br><font color="red"><strong>重载的效果：</strong></font>父类A的method版本不会被覆盖掉，相当于在子类B中有两个method方法，一个来自父类，一个自己加的，它们之间的参数列表不一样.<br><font color="red"><strong>注意：</strong></font><br>（1）在使用重载时只能通过不同的参数表样式。<br>（2）不能通过访问权限、返回类型、抛出的异常进行重载；(但是同一类里面的成员方法可以这样重载)<br>（3）被重载的方法不能为private，否则在其子类中只是新定义了一个方法，并没有对其进行重载。</font></p>
+<p><font color="red"><strong>特别注意：</strong></font>在继承机制中，不允许在子类中降低成员(包括变量和方法)的访问权限（访问权限大小关系是private &lt; 缺省 &lt; protected &lt; public）。即如果一个方法在父类中是protected的，那么在子类中要重载或覆盖该方法时，就不能把该方法改成是缺省或private，否则会出现编译错误。<br>&emsp;<br><font color="green"><em>习题1：分析下列程序输出结果</em> </font></p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">A</span>
+<span class="token punctuation">{</span>          <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">PrintNumber</span><span class="token punctuation">(</span><span class="token keyword">int</span> a<span class="token punctuation">)</span>
+           <span class="token punctuation">{</span>          System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token operator">++</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token punctuation">}</span>            
+<span class="token punctuation">}</span>
+<span class="token keyword">class</span> <span class="token class-name">B</span> <span class="token keyword">extends</span> <span class="token class-name">A</span>
+<span class="token punctuation">{</span>          <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">PrintNumber</span><span class="token punctuation">(</span><span class="token keyword">int</span> a<span class="token punctuation">,</span><span class="token keyword">int</span> b<span class="token punctuation">)</span>
+           <span class="token punctuation">{</span>          System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token punctuation">}</span>  
+           <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String args<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+         <span class="token punctuation">{</span>  
+                   B b<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">B</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                   b<span class="token punctuation">.</span><span class="token function">PrintNumber</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">;</span>         
+          <span class="token punctuation">}</span>   
+<span class="token punctuation">}</span>
+输出结果：<span class="token number">101</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br><font color="green"><em>习题2：分析下列程序输出结果</em> </font></p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">A</span>
+<span class="token punctuation">{</span>          <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">PrintNumber</span><span class="token punctuation">(</span><span class="token keyword">int</span> a<span class="token punctuation">)</span>
+           <span class="token punctuation">{</span>          System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token operator">++</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token punctuation">}</span>            
+<span class="token punctuation">}</span>
+<span class="token keyword">class</span> <span class="token class-name">B</span> <span class="token keyword">extends</span> <span class="token class-name">A</span>
+<span class="token punctuation">{</span>          <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">PrintNumber</span><span class="token punctuation">(</span><span class="token keyword">int</span> a<span class="token punctuation">)</span>
+           <span class="token punctuation">{</span>          System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token operator">--</span>a<span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token punctuation">}</span>  
+           <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String args<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+         <span class="token punctuation">{</span>  
+                   B b<span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">B</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                   b<span class="token punctuation">.</span><span class="token function">PrintNumber</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">;</span>         
+          <span class="token punctuation">}</span>   
+<span class="token punctuation">}</span>
+输出结果：<span class="token number">99</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br>&emsp;<br><font face="Comic sans MS"><strong>2.3.4 📒方法的添加：</strong><br><font color="red"><strong>子类可以新加一些方法，以针对子类实现相应的功能.</strong></font><br></font></p>
+<p>&emsp;<br>&emsp;</p>
+<h5 id="2-4-静态成员变量的继承"><a href="#2-4-静态成员变量的继承" class="headerlink" title="2.4  静态成员变量的继承"></a><font color="#3CB371" face="Comic sans MS">2.4  静态成员变量的继承</font></h5><p><font face="Comic sans MS">(1)某类的静态成员为该类及该类的所有子类所共有；<br>(2)如果子类中新定义的静态成员变量与父类中的某个静态成员变量同名，则这两个静态成员变量相互独立。</font></p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">a</span>
+<span class="token punctuation">{</span>
+  <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">int</span> b<span class="token operator">=</span><span class="token number">10</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//静态属性</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">class</span> <span class="token class-name">test</span> <span class="token keyword">extends</span> <span class="token class-name">a</span>
+<span class="token punctuation">{</span> 
+  <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String args<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+  <span class="token punctuation">{</span>
+    test<span class="token punctuation">.</span>b<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">;</span>
+    System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>a<span class="token punctuation">.</span>b<span class="token punctuation">)</span><span class="token punctuation">;</span>        
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+输出结果：<span class="token number">20</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span>
+<span class="token keyword">class</span> <span class="token class-name">living</span>
+<span class="token punctuation">{</span>
+       <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">int</span> age<span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//静态属性               </span>
+<span class="token punctuation">}</span>
+<span class="token keyword">class</span> <span class="token class-name">human</span> <span class="token keyword">extends</span> <span class="token class-name">living</span>
+<span class="token punctuation">{</span> 
+       <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">int</span> age<span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//静态属性</span>
+       <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String args<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token punctuation">{</span>
+               human<span class="token punctuation">.</span>age<span class="token operator">=</span><span class="token number">20</span><span class="token punctuation">;</span>
+               System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>living<span class="token punctuation">.</span>age<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>   
+<span class="token punctuation">}</span>
+输出结果：<span class="token number">0</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br>&emsp;</p>
+<h4 id="2-5-super的使用"><a href="#2-5-super的使用" class="headerlink" title="2.5  super的使用"></a><font color="#3CB371" face="Comic sans MS">2.5  super的使用</font></h4><p><font color="red" face="Comic sans MS">super：代表父类对象，在继承中有重要的作用</font><br><font face="Comic sans MS">📒<strong>使用情况：</strong><br>(1)  子类隐藏了超类中的变量或方法，而在程序中又要使用超类中被隐藏的变量或方法时<br><font color="red">&emsp;&emsp;格式：super.变量 ;  super.方法([参数表])</font><br>(2)  在子类的构造方法中引用超类的构造方法时<br><font color="red">&emsp;&emsp;格式： super([参数表])<br>📒<strong>注意:</strong>  构造方法不能被继承，但是子类的构造方法能确保它的直接父类<br>和间接父类的构造方法都被调用，但是注意一点：<strong>子类构造方法中调用父类构造方法时，调用语句必须放在子类构造方法中的第一句.</strong></font></font><br>&emsp;<br>&emsp;<br><font face="Comic sans MS"><br><strong>1.  📒使用super访问父类的属性和方法</strong><br><img src="https://i.loli.net/2018/12/26/5c232ab96c4be.png" alt="1.png"><br>&emsp;<br>&emsp;<br><strong>2.  📒使用super在子类中调用父类的构造方法</strong><br><img src="https://i.loli.net/2018/12/26/5c23311cb1dd4.png" alt="2.png"></font></p>
+<p>&emsp;<br><strong>3.  📒使用super的注意事项</strong><br>(1)通过super不仅可以访问直接父类中定义的属性和方法，还可以访问间接父类中定义的属性和方法。<br>(2)由于它指的是父类对象，所以super不能在static环境中使用，包括类变量、类方法和static语句块。<br>(3)使用super不能访问本类定义的属性和方法。<br>(4)在构造方法中使用super时，super语句必须放在第一句<br>(5)在子类的构造方法中，super可以不明确使用，也可以明确使用。<br></p>
+<p>&emsp;<br><font face="Comic sans MS"><strong>4.  📒明确使用super调用父类构造方法</strong></font></p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">Point</span><span class="token punctuation">{</span>
+    <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+    Point（<span class="token keyword">int</span> x）<span class="token punctuation">{</span>
+     <span class="token keyword">this</span><span class="token punctuation">.</span>x<span class="token operator">=</span>x<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+｝
+
+<span class="token keyword">class</span> <span class="token class-name">MapPoint</span> <span class="token keyword">extends</span> <span class="token class-name">Point</span><span class="token punctuation">{</span>
+<span class="token function">MapPoint</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">super</span><span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//明确使用</span>
+　System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"MapPoint()"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span><span class="token punctuation">{</span>
+　　<span class="token keyword">new</span> <span class="token class-name">MapPoint</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+　　<span class="token punctuation">}</span>
+
+｝<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br>&emsp;<br><font face="Comic sans MS"><strong>5.  📒不明确使用super调用父类构造方法</strong></font><br><font color="#FF6347">&emsp;<strong>当父类重载自己的构造函数时，在子类的构造函数中要明确写出到底是使用父类的哪一个构造函数！！！否则编译器不知道在子类中到底是调用父类的哪一个构造方法！</strong><br></font></p>
+<p><font color="red"><strong>如下:</strong></font></p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">Point</span><span class="token punctuation">{</span>
+    <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+    Point（<span class="token keyword">int</span> x）<span class="token punctuation">{</span>
+     <span class="token keyword">this</span><span class="token punctuation">.</span>x<span class="token operator">=</span>x<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+｝
+
+<span class="token keyword">class</span> <span class="token class-name">MapPoint</span> <span class="token keyword">extends</span> <span class="token class-name">Point</span><span class="token punctuation">{</span>
+<span class="token function">MapPoint</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+　System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"MapPoint()"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+　　<span class="token punctuation">}</span>
+<span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span><span class="token punctuation">{</span>
+　　<span class="token keyword">new</span> <span class="token class-name">MapPoint</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+　　<span class="token punctuation">}</span>
+｝
+<span class="token comment" spellcheck="true">//编译会出错</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><font face="楷体">答案：因为子类中没有明确使用super，系统会自动在构造方法中加上super()，来调用直接父类的不带参数的构造方法，由于Point类中没有定义不带参数的构造方法，所以编译通不过。以上代码相当于：<br></font></p>
+<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">class</span> <span class="token class-name">Point</span><span class="token punctuation">{</span>
+    <span class="token keyword">int</span> x<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>
+    Point（<span class="token keyword">int</span> x）<span class="token punctuation">{</span>
+     <span class="token keyword">this</span><span class="token punctuation">.</span>x<span class="token operator">=</span>x<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+｝
+
+<span class="token keyword">class</span> <span class="token class-name">MapPoint</span> <span class="token keyword">extends</span> <span class="token class-name">Point</span><span class="token punctuation">{</span>
+<span class="token function">MapPoint</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">{</span>
+　<span class="token keyword">super</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//此处不能缺省</span>
+　System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token string">"MapPoint()"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+　　<span class="token punctuation">}</span>
+<span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span><span class="token punctuation">{</span>
+　　<span class="token keyword">new</span> <span class="token class-name">MapPoint</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+　　<span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br><strong>解决方法：</strong><br>(1)在MapPoint的构造方法中，明确使用super来调用父类已有的构造方法，如super(3);<br>(2)在Point中加入一个不带参数的构造方法，如Point{} 　　　　　<br>(3)去掉Point中全部的构造方法，则编译器会自动加入一个不带参数的构造方法，称为缺省构造方法。</p>
+<p>&emsp;<br><strong>6.  📒构造方法的调用顺序</strong><br><font color="red"><strong>一个复杂对象的构造方法调用顺序如下：</strong></font></p>
+<p>(1)首先调用父类的构造方法。这个步骤会反复递归，使继承阶层的根源最先被构建，然后是次一层的子类，直至最末一层子类为止；（即先调用最根部的父类，然后依次调用该父类的子类的子类的……..）<br>(2)根据各个成员的声明顺序，执行成员变量的初始化赋值；<br>(3)执行该构造方法中的各语句</p>
+<p>&emsp;<br>&emsp;</p>
+<h3 id="三、-抽象类与抽象方法abstract"><a href="#三、-抽象类与抽象方法abstract" class="headerlink" title="三、 抽象类与抽象方法abstract"></a><font color="#FF6347" face="Comic sans MS">三、 抽象类与抽象方法abstract</font></h3><p><font color="red" face="Comic sans MS"><strong>类似于它是一个模板！！！</strong></font></p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">(1)abstract关键字修饰的类和方法
+(2)抽象类不能创建任何对象，抽象类必须产生其子类，由子类创建对象。
+(3)抽象类中可以包含抽象方法，也可以不包含抽象方法，但如果类中的某一方法是抽象的，整个类就必须被说
+    明成抽象的。 
+(4)抽象方法在子类中必须被实现，否则子类仍是抽象的。
+(5)抽象类不是可有可无的。
+(6)(类、成员方法、成员属性)访问权限修饰符为abstract。</font></td></tr></table>
+
+<pre class="line-numbers language-java"><code class="language-java"><span class="token punctuation">[</span>例<span class="token number">4</span><span class="token operator">-</span><span class="token number">17</span><span class="token punctuation">]</span>  抽象类举例
+<span class="token keyword">abstract</span> <span class="token keyword">class</span> <span class="token class-name">Shape</span> 
+<span class="token punctuation">{</span>  <span class="token keyword">abstract</span>  <span class="token keyword">double</span>  <span class="token function">area</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
+    <span class="token keyword">abstract</span> <span class="token keyword">void</span> <span class="token function">draw</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>                                         
+ <span class="token comment" spellcheck="true">//上述方法对一般图形无法定义其实现</span>
+<span class="token keyword">class</span> <span class="token class-name">Rectangle</span>  <span class="token keyword">extends</span> <span class="token class-name">Shape</span>  <span class="token punctuation">{</span>
+<span class="token keyword">int</span> width<span class="token punctuation">;</span>                        
+       <span class="token keyword">int</span> length<span class="token punctuation">;</span>                       
+<span class="token keyword">public</span> <span class="token keyword">double</span> <span class="token function">area</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+<span class="token comment" spellcheck="true">//矩型类实现了Shape类的抽象方法area()</span>
+   <span class="token keyword">return</span> width<span class="token operator">*</span>length<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">draw</span> <span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>  … …     
+<span class="token comment" spellcheck="true">//矩型类实现了Shape类的抽象方法draw()，详细可由自己完成} </span>
+<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br>&emsp;</p>
+<h3 id="四、-final类和final方法"><a href="#四、-final类和final方法" class="headerlink" title="四、 final类和final方法 "></a><font color="#FF6347" face="Comic sans MS">四、 final类和final方法 </font></h3><h4 id="4-1-final类"><a href="#4-1-final类" class="headerlink" title="4.1  final类"></a><font color="#3CB371" face="Comic sans MS">4.1  final类</font></h4><table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">如果一个类被final修饰符所修饰和限定，说明这个类不能被继承，即不可能有子类——最终类
+             例如：*java.lang.System*
+**📒作用：**
+final修饰符通常是出于安全的目的而使用的，因为不能继承final类，人们就不能重载或覆盖它的任何方法。
+如果允许一个类被继承，其允许被重载或覆盖的方法可能会被改写。保证某个特定的方法在类层次关系上
+的某层以后只有一个定义，这对于那些安全性非常关键的类是非常必要的。</font></td></tr></table>
+
+<p>&emsp;<br>&emsp;</p>
+<h4 id="4-2-final方法"><a href="#4-2-final方法" class="headerlink" title="4.2  final方法"></a><font color="#3CB371" face="Comic sans MS">4.2  final方法</font></h4><table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">final修饰符所修饰的方法，是不能被子类所覆盖的方法。
+📒**作用：**固定了这个方法所对应的具体操作，可以防止子类对父类关键
+            方法的错误的重定义，保证了程序的安全性和正确性。
+📒**注意：**所有已被private修饰符限定为私有的方法，以及所有包含在final类中的方法，都被默认为是
+            final的。
+            因为这些方法不可能被子类所继承，所以不可能被重载，自然都是最终的方法。
+</font></td></tr></table>
+
+<p>&emsp;<br>&emsp;<br>&emsp;<br>&emsp;</p>
+
+    
+    </div>
+    
+    
+        <div class="article-comment" id='article-comment'>
+            
+
+<h1>Comment</h1>
+
+  
+    <div id="comment-not-available">
+      Not available
+      <p><strong>For site maintainer: Please provide <code>appId</code> and <code>appKey</code> in your <code>_data/cutie.yml</code> file for <code>valine</code> comment system.</strong></p>
+    </div>
+  
+
+
+        </div>
+        
+</article>
+  </div>
+
+  
+
+<footer id='footer'>
+    <div class='footer-copyright'>
+        <div>
+            <p> Copyright by <a href="">Directoree </a> @ 2019</p>
+            <p>Designed by: <i class="fas fa-paint-brush"></i> <a href="https://moober.cn">Moober</a> and <i class="fas fa-graduation-cap"></i> <a href="https://qutang.github.io">Qu Tang</a> &bull; Theme: <a href="https://qutang.github.io/cutie/">Cutie 2.1.3-Taurus</a> &bull; Powered by <a href="http://hexo.io">Hexo.</a></p>
+        </div>
+    </div>
+    
+    <div class='footer-social'>
+        
+    </div>
+</footer>
+
+  <br>
+
+  <div id="footer-nav" class='footer-nav'>
+		
+
+
+
+<nav id="nav">
+	
+	
+	
+	<div class='nav-item' id='nav-item-toc'>
+		
+
+
+<div class='toc-container'>
+<i class="far fa-times-circle" id='toc-close' onclick='closeTOC(event);' ontouchstart='closeTOC(event);'></i>
+
+</div>
+<div class="toc-button" onclick='toggleTOC(event);' ontouchstart='toggleTOC(event);'>
+    <img src="/images/icons/blue-shadow/toc.svg" alt="">
+</div>
+
+	</div>
+	
+	<div class='nav-item' id='nav-item-archive'>
+		
+				<div class='nav-icon'>
+				
+			<a href="/archives/" title='Archives'>
+			<img src="/images/icons/blue-shadow/archive.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class='nav-item' id='nav-item-search'>
+		
+		<div class='nav-icon'>
+		
+			<a href="/search/" title='Search'>
+			<img src="/images/icons/blue-shadow/search.svg" alt="">
+			</a>
+		</div>
+	</div>
+	<div class="nav-item" id='nav-item-more'>
+		<div class="nav-icon">
+				<a href='#' onclick='onClickMenuIcon(event);' ontouchstart='onClickMenuIcon(event);'>
+				<img src="/images/icons/blue-shadow/menu.svg" alt="">
+				</a>
+		</div>
+		<div class="nav-more-menu">
+				<i class="far fa-times-circle" id='nav-more-menu-close' onclick='onClickNavMenuClose(event);' ontouchstart='onClickNavMenuClose(event);'></i>
+		
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-内网称霸/">
+						<span>Kali-内网称霸</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/密码学/">
+						<span>密码学</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CTF/">
+						<span>Ctf</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/CSS/">
+						<span>Css</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTML/">
+						<span>Html</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/HTTP协议/">
+						<span>Http协议</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Java/">
+						<span>Java</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/JavaScript/">
+						<span>Javascript</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Metasploit/">
+						<span>Metasploit</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/音乐/">
+						<span>音乐</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Network-Security/">
+						<span>Network-security</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/PHP/">
+						<span>Php</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/网络安全/">
+						<span>网络安全</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Python/">
+						<span>Python</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Kali-SQLMAP/">
+						<span>Kali-sqlmap</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Web-Tools/">
+						<span>Web-tools</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XAMPP-DVWA/">
+						<span>Xampp-dvwa</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/算法/">
+						<span>算法</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/杂谈/">
+						<span>杂谈</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/C&C++/">
+						<span>C&c++</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Hexo-Github/">
+						<span>Hexo-github</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/Docker/">
+						<span>Docker</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/SQLi/">
+						<span>Sqli</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/XXE/">
+						<span>Xxe</span>
+					</a>
+				</div>
+		</div>
+		
+		<div class='nav-more-item'>
+				<div class="nav-name">
+					<a class='nav-link' href="/categories/MySQL/">
+						<span>Mysql</span>
+					</a>
+				</div>
+		</div>
+		
+	</div>
+	</div>
+</nav>
+
+	</div>
+
+  
+
+
+
+    
+
+
+
+
+
+
+
+    <script src="/js/lightgallery.min.js"></script>
+<script src="/js/lg-zoom.min.js"></script>
+<script type='text/javascript'>
+    $(document).ready(function() {
+        $("#lightgallery").lightGallery(); 
+        $(".article-content img").each(function(){
+            console.log($(this).attr('src'))
+            $(this).attr('data-src', $(this).attr('src')).lightGallery({
+                selector: 'this'
+            })
+        });
+    });
+</script>
+
+
+
+
+
+
+<script type='text/javascript'>
+
+  
+  // update cookie if this page is opened (directly)
+  loadjs(['/libs/jshashes/hashes.min.js', '/libs/js-cookie/src/js.cookie.js', '/js/post.v2.js'], 'post-version');
+  loadjs.ready('post-version', function(){
+    
+    new Postv2('hashit_e3543999d84c7fae1a17137c7c96dd4208ae3b0d046158ffaa8e4cd1bff58f35').update('hashit_3f3989673134fb49ce87c18c13d94167b0e33fa9da592ed726af10c48bc7c1e6', function(){});
+  });
+  
+</script>
+
+
+
+<!-- <script src="/js/post.js"></script> -->
+
+<script src="/js/headroom.min.js"></script>
+
+<script data-no-instant type='text/javascript'>
+
+initHeadroom();
+
+changeLayoutOnTouchScreen();
+
+// 
+// var post = new Post('', '');
+// post.getCommentCount(window.location.pathname, function(count){
+//     $('#article-comment-count').text(count);
+// });
+// post.addVisitRecord(window.location.pathname, userip);
+// post.getVisitCount(window.location.pathname, function(count){
+//     $('#article-visit-count').text(count);
+// });
+
+// 
+</script>
+
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
 </body>
 </html>
