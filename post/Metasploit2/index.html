@@ -1,43 +1,419 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head><meta name="generator" content="Hexo 3.9.0">
-<meta charset="utf-8">
-<title>Metasploit工具Meterpreter的命令速查表 - Directoree</title>
-<base href="/">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="canonical" href="https://Directoree.github.io/post/Metasploit2/">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon1.ico">
-<meta name="description" content="&amp;nbsp;&amp;nbsp; msfpayload反弹shell使用的一些命令集&amp;nbsp; 一、核心命令 – 帮助菜单  background – 将当前会话移动到背景变成一个session，当再次使用时再用sessions -i ID调用bgkill – 杀死一个背景 meterpreter 脚本bglist – 提供所有正在运行的后台脚本的列表bgrun – 作为一个后台线程运行脚本channe">
-<meta name="keywords" content="远程木马攻击,Meterpreter命令">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Metasploit工具Meterpreter的命令速查表">
-<meta property="og:url" content="https://Directoree.github.io/post/Metasploit2/index.html">
-<meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;nbsp;&amp;nbsp; msfpayload反弹shell使用的一些命令集&amp;nbsp; 一、核心命令 – 帮助菜单  background – 将当前会话移动到背景变成一个session，当再次使用时再用sessions -i ID调用bgkill – 杀死一个背景 meterpreter 脚本bglist – 提供所有正在运行的后台脚本的列表bgrun – 作为一个后台线程运行脚本channe">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c20d130083b4.jpg">
-<meta property="og:updated_time" content="2018-12-24T12:29:39.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Metasploit工具Meterpreter的命令速查表">
-<meta name="twitter:description" content="&amp;nbsp;&amp;nbsp; msfpayload反弹shell使用的一些命令集&amp;nbsp; 一、核心命令 – 帮助菜单  background – 将当前会话移动到背景变成一个session，当再次使用时再用sessions -i ID调用bgkill – 杀死一个背景 meterpreter 脚本bglist – 提供所有正在运行的后台脚本的列表bgrun – 作为一个后台线程运行脚本channe">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/24/5c20d130083b4.jpg">
-<link rel="stylesheet" href="//unpkg.com/hexo-theme-inside@2.0.0/source/fonts.b9b22ef890c930ac7a13.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc6202509.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc62025091.css">
-<link rel="stylesheet" href="/theme.1aa8fbef40bc2e8146ab.css">
-<script src="/config.302a1a37fe54614e7344.js"></script>
-<script type="application/ld+json">[{"@context":"http://schema.org","@type":"WebSite","publisher":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"url":"https://Directoree.github.io","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png","description":null,"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"}},{"@context":"http://schema.org","@type":"Article","articleSection":"Metasploit","url":"https://Directoree.github.io/post/Metasploit2/","headline":"Metasploit工具Meterpreter的命令速查表","image":"https://i.loli.net/2018/12/24/5c20d130083b4.jpg","datePublished":"2018-11-17T11:37:44.000Z","dateModified":"2018-12-24T12:29:39.000Z","keywords":"远程木马攻击,Meterpreter命令","description":null,"publisher":{"@type":"Organization","name":"Directoree","logo":{"@type":"ImageObject","url":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"}},"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://Directoree.github.io/post/Metasploit2/"},"thumbnailUrl":"https://i.loli.net/2018/12/24/5c20d130083b4.jpg"}]</script><script async src="//www.googletagmanager.com/gtag/js?id=UA-00000000-0"></script>
-<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag('js', new Date());gtag('config', 'UA-00000000-0');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/lib/crypto-js.js"></script>
-<script src="/lib/blog-encrypt.js"></script>
-<link rel="stylesheet" href="/css/blog-encrypt.css">
+  <meta charset="utf-8">
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Metasploit工具Meterpreter的命令速查表 |  Directoree
+  </title>
+  
+  <link rel="shortcut icon" href="/favicon5.png">
+  
+  <link rel="stylesheet" href="/css/style.css">  <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">  <script src="/js/pace.min.js"></script>
+
+  
+
+  
+
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
-<body lang="en">
-<is-d2a57d></is-d2a57d>
-<script src="/runtime.26209474bfa8dc87a77c.js"></script>
-<script src="/polyfills.30f16c55deb40b06e14d.js"></script>
-<script src="/main.2f3a937787816eb74a37.en.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Metasploit2" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Metasploit工具Meterpreter的命令速查表
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/post/Metasploit2/" class="article-date">
+  <time datetime="2018-11-17T11:37:44.000Z" itemprop="datePublished">2018-11-17</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Metasploit/">Metasploit</a>
+  </div>
+
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>&nbsp;<br>&nbsp;</p>
+<h4 id="msfpayload反弹shell使用的一些命令集"><a href="#msfpayload反弹shell使用的一些命令集" class="headerlink" title="msfpayload反弹shell使用的一些命令集"></a><font face="楷体">msfpayload反弹shell使用的一些命令集</font></h4><p>&nbsp;</p>
+<h5 id="一、核心命令-–-帮助菜单"><a href="#一、核心命令-–-帮助菜单" class="headerlink" title="一、核心命令 – 帮助菜单"></a>一、核心命令 – 帮助菜单<font face="Arail"></font></h5><blockquote>
+<blockquote>
+<p><font color="#dd0000">background</font> – 将当前会话移动到背景变成一个session，当再次使用时再用sessions -i ID调用<br>bgkill – 杀死一个背景 meterpreter 脚本<br>bglist – 提供所有正在运行的后台脚本的列表<br>bgrun – 作为一个后台线程运行脚本<br>channel – 显示活动频道<br>close – 关闭通道<br>exit – 终止 meterpreter 会话<br>help – 帮助菜单<br>interact – 与通道进行交互<br>irb – 进入 Ruby 脚本模式<br><font color="#dd0000">migrate</font> – 移动到一个指定的 PID 的活动进程<br>quit – 终止 meterpreter 会话<br>read – 从通道读取数据<br><font color="#dd0000">run</font> – 执行以后它选定的 meterpreter 脚本<br>use – 加载 meterpreter 的扩展<br>write – 将数据写入到一个通道<br></p>
+</blockquote>
+</blockquote>
+<h4 id="二、文件系统命令"><a href="#二、文件系统命令" class="headerlink" title="二、文件系统命令"></a><font color="#dd0000">二、文件系统命令</font><font face="Arail"></font></h4><blockquote>
+<blockquote>
+<p>cat -读取并输出到标准输出文件的内容<br>cd -更改目录对受害人<br>del -删除文件对受害人<br>download-从受害者系统文件下载<br>edit-用 vim编辑文件<br>getlwd -打印本地目录<br>getwd -打印工作目录<br>lcd -更改本地目录<br>lpwd -打印本地目录<br>ls -列出在当前目录中的文件列表<br>mkdir -在受害者系统上的创建目录<br>pwd -输出工作目录<br>rm -删除文件<br>rmdir -受害者系统上删除目录<br>upload-从攻击者的系统往受害者系统上传文件<br></p>
+</blockquote>
+</blockquote>
+<h4 id="三、网络命令"><a href="#三、网络命令" class="headerlink" title="三、网络命令"></a>三、网络命令<font face="Arail"></font></h4><blockquote>
+<blockquote>
+<p>portfwd -端口转发<br>route -查看或修改受害者路由表<br></p>
+</blockquote>
+</blockquote>
+<h4 id="四、系统命令"><a href="#四、系统命令" class="headerlink" title="四、系统命令"></a>四、系统命令<font face="Arail"></font></h4><blockquote>
+<blockquote>
+<p>clearav -清除了受害者的计算机上的事件日志<br>drop_token -被盗的令牌<br>execute-执行命令<br>getpid -获取当前进程 ID (PID)<br>getprivs -尽可能获取尽可能多的特权<br>getuid -获取作为运行服务器的用户<br>kill -终止指定 PID 的进程<br><font color="#dd0000">ps</font> -列出正在运行的进程<br>reboot-重新启动受害人的计算机<br>reg -与受害人的注册表进行交互<br>rev2self -在受害者机器上调用 RevertToSelf()<br><font color="#dd0000">shell</font> -在受害者计算机上打开一个shell<br>shutdown-关闭了受害者的计算机<br>steal_token -试图窃取指定的 (PID) 进程的令牌<br>sysinfo -获取有关受害者计算机操作系统和名称等的详细信息<br></p>
+</blockquote>
+</blockquote>
+<h5 id="五、用户界面命令"><a href="#五、用户界面命令" class="headerlink" title="五、用户界面命令"></a>五、用户界面命令<font face="Arail"></font></h5><blockquote>
+<blockquote>
+<p>enumdesktops -列出所有可访问台式机<br>getdesktop -获取当前的 meterpreter 桌面<br>idletime -检查长时间以来，受害者系统空闲进程<br>keyscan_dump -键盘记录软件的内容转储<br>keyscan_start -启动时与如 Word 或浏览器的进程相关联的键盘记录软件<br>keyscan_stop -停止键盘记录软件<br>screenshot-抓去 meterpreter 桌面的屏幕截图<br>set_desktop -更改 meterpreter 桌面<br>uictl -启用用户界面组件的一些控件<br></p>
+</blockquote>
+</blockquote>
+<h4 id="六、特权升级命令"><a href="#六、特权升级命令" class="headerlink" title="六、特权升级命令"></a>六、特权升级命令<font face="Arail"></font></h4><blockquote>
+<blockquote>
+<p>getsystem -获得系统管理员权限<br></p>
+</blockquote>
+</blockquote>
+<h4 id="七、密码转储命令"><a href="#七、密码转储命令" class="headerlink" title="七、密码转储命令"></a>七、密码转储命令<font face="Arail"></font></h4><blockquote>
+<blockquote>
+<p>hashdump -抓去哈希密码 (SAM) 文件中的值<br></p>
+</blockquote>
+</blockquote>
+<h4 id="八、Timestomp-命令"><a href="#八、Timestomp-命令" class="headerlink" title="八、Timestomp 命令"></a>八、Timestomp 命令<font face="Arail"></font></h4><blockquote>
+<blockquote>
+<p>timestomp -操作修改，访问，并创建一个文件的属性<br></p>
+</blockquote>
+</blockquote>
+<p>&nbsp;<br>&nbsp;<br>&nbsp;</p>
+
+      
+      <!-- 打赏 -->
+      
+        <div class="page-reward">
+          <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+            <div class="tooltip tooltip-east">
+              <span class="tooltip-item">
+                赏
+              </span>
+              <span class="tooltip-content">
+                <span class="tooltip-text">
+                  <span class="tooltip-inner">
+                    <p class="reward-p"><i class="icon icon-quo-left"></i>请我喝杯咖啡吧~<i
+                        class="icon icon-quo-right"></i></p>
+                    <div class="reward-box">
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/alipay.jpg">
+                        <span class="reward-type">支付宝</span>
+                      </div>
+                      
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/wechat.png">
+                        <span class="reward-type">微信</span>
+                      </div>
+                      
+                    </div>
+                  </span>
+                </span>
+              </span>
+            </div>
+          </a>
+        </div>
+        
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://Directoree.github.io/post/Metasploit2/" data-id="ck3yhrojt002hqeho2i6n5v6g"
+        class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Meterpreter命令/">Meterpreter命令</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/远程木马攻击/">远程木马攻击</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/post/Metasploit3/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Metasploit之渗透安卓实战
+          
+        </div>
+      </a>
+    
+    
+      <a href="/post/薛之谦-《渡》专辑/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">薛之谦-《渡》专辑</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        notify: false,
+        verify: false,
+        app_id: 'chaSYi8FMdJBwzIBpxeNjqWC-gzGzoHsz',
+        app_key: 'PqqkLYgPkHvH1BmyQqySWnSK',
+        path: window.location.pathname,
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2015-2019
+        Directoree
+      </li>
+      <li>
+        
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a> by shenyu
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <ul class="list-inline">
+  <li>PV:<span id="busuanzi_value_page_pv"></span></li>
+  <li>UV:<span id="busuanzi_value_site_uv"></span></li>
+</ul>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    
+    <aside class="sidebar">
+      
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/猫咪.svg" alt="Directoree"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/links">链接</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://music.163.com/#/user/home?id=455041480">音乐</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/book">资源</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/notes">笔记</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="https://treecatee.github.io/" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<script src="/js/ayer.js"></script>
+
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </div>
 </body>
+
 </html>

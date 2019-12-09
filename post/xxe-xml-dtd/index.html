@@ -1,43 +1,544 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head><meta name="generator" content="Hexo 3.9.0">
-<meta charset="utf-8">
-<title>XXE-XML - Directoree</title>
-<base href="/">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="canonical" href="https://Directoree.github.io/post/xxe-xml-dtd/">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon1.ico">
-<meta name="description" content="最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~">
-<meta name="keywords" content="Web,XXE,XML">
-<meta property="og:type" content="website">
-<meta property="og:title" content="XXE-XML">
-<meta property="og:url" content="https://Directoree.github.io/post/xxe-xml-dtd/index.html">
-<meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg">
-<meta property="og:updated_time" content="2019-07-16T16:57:12.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="XXE-XML">
-<meta name="twitter:description" content="最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~">
-<meta name="twitter:image" content="https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg">
-<link rel="stylesheet" href="//unpkg.com/hexo-theme-inside@2.0.0/source/fonts.b9b22ef890c930ac7a13.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc6202509.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc62025091.css">
-<link rel="stylesheet" href="/theme.1aa8fbef40bc2e8146ab.css">
-<script src="/config.302a1a37fe54614e7344.js"></script>
-<script type="application/ld+json">[{"@context":"http://schema.org","@type":"WebSite","publisher":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"url":"https://Directoree.github.io","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png","description":null,"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"}},{"@context":"http://schema.org","@type":"Article","articleSection":"XXE","url":"https://Directoree.github.io/post/xxe-xml-dtd/","headline":"XXE-XML","image":"https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg","datePublished":"2019-04-19T17:00:02.000Z","dateModified":"2019-07-16T16:57:12.000Z","keywords":"Web,XXE,XML","description":"最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识~","publisher":{"@type":"Organization","name":"Directoree","logo":{"@type":"ImageObject","url":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"}},"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://Directoree.github.io/post/xxe-xml-dtd/"},"thumbnailUrl":"https://i.loli.net/2019/04/20/5cb9fa4757dd7.jpg"}]</script><script async src="//www.googletagmanager.com/gtag/js?id=UA-00000000-0"></script>
-<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag('js', new Date());gtag('config', 'UA-00000000-0');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/lib/crypto-js.js"></script>
-<script src="/lib/blog-encrypt.js"></script>
-<link rel="stylesheet" href="/css/blog-encrypt.css">
+  <meta charset="utf-8">
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    XXE-XML |  Directoree
+  </title>
+  
+  <link rel="shortcut icon" href="/favicon5.png">
+  
+  <link rel="stylesheet" href="/css/style.css">  <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">  <script src="/js/pace.min.js"></script>
+
+  
+
+  
+
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
-<body lang="en">
-<is-d2a57d></is-d2a57d>
-<script src="/runtime.26209474bfa8dc87a77c.js"></script>
-<script src="/polyfills.30f16c55deb40b06e14d.js"></script>
-<script src="/main.2f3a937787816eb74a37.en.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-xxe-xml-dtd" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  XXE-XML
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/post/xxe-xml-dtd/" class="article-date">
+  <time datetime="2019-04-19T17:00:02.000Z" itemprop="datePublished">2019-04-20</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/XXE/">XXE</a>
+  </div>
+
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>最近遇到一些事，使我不得不抓紧时间学习一下XXE相关的漏洞知识<del>~</del></p>
+<a id="more"></a>
+
+<br>
+
+<br>
+
+<center><font color="#00B2EE" face="Comic sans MS" size="5">XXE-XML</font> </center>
+
+<br>
+
+<br>
+
+
+<h3 id="一-XML"><a href="#一-XML" class="headerlink" title="一. XML"></a><font color="#FF6347" face="Comic sans MS">一. XML</font></h3><h4 id="1-1-基本概念"><a href="#1-1-基本概念" class="headerlink" title="1.1 基本概念"></a><font color="#3CB371" face="Comic sans MS">1.1 基本概念</font></h4><blockquote>
+<ol>
+<li>什么是XML？</li>
+<li>为什么要使用XML？</li>
+<li>怎么使用XML？</li>
+<li>为什么着重强调DTD？</li>
+</ol>
+</blockquote>
+<p><strong>1. XML 是什么？</strong></p>
+<ul>
+<li>指可扩展标记语言（EXtensible Markup Language）。</li>
+<li>是一种很像HTML的标记语言。</li>
+<li>的设计宗旨是传输数据，而不是显示数据。</li>
+<li>标签没有被预定义。您需要自行定义标签。</li>
+<li>被设计为具有自我描述性。</li>
+<li>是 W3C 的推荐标准。</li>
+</ul>
+<p>可以参考：<font color="#00B2EE">[<a href="https://blog.csdn.net/Rain722/article/details/52925828" target="_blank" rel="noopener">XML是什么，它可以做什么？——XML详解</a>]</font><br><br></p>
+<p><strong>2. 为什么要使用XML？</strong><br>参考：<font color="#00B2EE">[<a href="http://www.runoob.com/xml/xml-usage.html" target="_blank" rel="noopener">XML 用途</a>]</font>     </p>
+<p><strong>(1) XML 把数据从 HTML 分离</strong></p>
+<blockquote>
+<ol>
+<li>如果您需要在 HTML 文档中显示动态数据，那么每当数据改变时将花费大量的时间来编辑 HTML。</li>
+<li>通过 XML，数据能够存储在独立的 XML 文件中。这样您就可以专注于使用 HTML/CSS 进行显示和布局，并确保修改底层数据不再需要对 HTML 进行任何的改变。</li>
+<li>通过使用几行 JavaScript 代码，您就可以读取一个外部 XML 文件，并更新您的网页的数据内容。</li>
+</ol>
+</blockquote>
+<p><strong>(2 )XML 简化数据共享</strong></p>
+<blockquote>
+<ol>
+<li>在真实的世界中，计算机系统和数据使用不兼容的格式来存储数据。</li>
+<li>XML 数据以纯文本格式进行存储，因此提供了一种独立于软件和硬件的数据存储方法。</li>
+<li>这让创建不同应用程序可以共享的数据变得更加容易。</li>
+</ol>
+</blockquote>
+<p><strong>(3) XML 简化数据传输</strong></p>
+<blockquote>
+<ol>
+<li>对开发人员来说，其中一项最费时的挑战一直是在互联网上的不兼容系统之间交换数据。</li>
+<li>由于可以通过各种不兼容的应用程序来读取数据，以 XML 交换数据降低了这种复杂性。</li>
+</ol>
+</blockquote>
+<p><strong>(4) XML 简化平台变更</strong></p>
+<blockquote>
+<ol>
+<li>升级到新的系统（硬件或软件平台），总是非常费时的。必须转换大量的数据，不兼容的数据经常会丢失。</li>
+<li>XML 数据以文本格式存储。这使得 XML 在不损失数据的情况下，更容易扩展或升级到新的操作系统、新的应用程序或新的浏览器。</li>
+</ol>
+</blockquote>
+<br>
+**3. 怎么使用？**
+
+<p>可以是这样</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>person</span> <span class="token attr-name">age</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too young<span class="token punctuation">"</span></span> <span class="token attr-name">experience</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too simple<span class="token punctuation">"</span></span> <span class="token attr-name">result</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>sometimes naive<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>也可以是这样</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>person</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>age</span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too young<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>experience</span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>too simple<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>result</span> <span class="token attr-name">value</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>sometimes naive<span class="token punctuation">"</span></span> <span class="token punctuation">/></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>person</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>还可以这样</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>person</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>age</span><span class="token punctuation">></span></span>too young<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>age</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>experience</span><span class="token punctuation">></span></span>too simple<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>experience</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>result</span><span class="token punctuation">></span></span>sometimes naive<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>result</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>person</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>但是更推荐使用第三种！主流使用的也是第三种。<br><br></p>
+<p><strong>4. 为什么着重强调DTD？</strong></p>
+<p>DTD实体：DTD实体是用于定义引用普通文本或特殊字符的快捷方式的变量，可以内部声明或外部引用。</p>
+<p>实体又分为一般实体和参数实体</p>
+<ol>
+<li>一般实体的声明语法:<code>&lt;!ENTITY 实体名 &quot;实体内容&quot;&gt;</code><br>引用实体的方式：&amp;实体名；</li>
+<li>参数实体只能在DTD中使用，参数实体的声明格式： <code>&lt;!ENTITY % 实体名 &quot;实体内容&quot;&gt;</code><br>引用实体的方式：%实体名；</li>
+</ol>
+<p>1，何为XXE？<br>答： xxe也就是xml外部实体注入。也就是上述的那一部分。</p>
+<p>2，怎样构建外部实体注入？<br>方式一：直接通过DTD外部实体声明</p>
+<p>可参考：<font color="#00B2EE">[<a href="https://www.cnblogs.com/r00tuser/p/7255939.html" target="_blank" rel="noopener">xxe漏洞的学习与利用总结</a>]</font></p>
+<br>
+
+<h4 id="1-2-使用XML"><a href="#1-2-使用XML" class="headerlink" title="1.2 使用XML"></a><font color="#3CB371" face="Comic sans MS">1.2 使用XML</font></h4><p><strong>实际写文档一般这样用：（新版本）</strong>可参考<font color="#00B2EE">[<a href="http://www.runoob.com/dtd/dtd-building.html" target="_blank" rel="noopener">XML 文档构建模块</a>]</font></p>
+<blockquote>
+<p>所有的 XML 文档（以及 HTML 文档）均由以下简单的构建模块构成：</p>
+</blockquote>
+<ul>
+<li>元素</li>
+<li>属性</li>
+<li>实体   <ul>
+<li><code>&amp;lt;</code>表示<code>&lt;</code></li>
+<li><code>&amp;gt;</code>表示<code>&gt;</code></li>
+<li><code>&amp;amp;</code>表示<code>&amp;</code></li>
+<li><code>&amp;apos;</code>表示<code>&#39;</code></li>
+<li><code>&amp;quot;</code>表示<code>&quot;</code></li>
+</ul>
+</li>
+<li>PCDATA ：被解析的字符数据（parsed character data）</li>
+<li>CDATA  ：不会被解析的字符数据（character data）</li>
+<li>两种文档约束：DTD、Schema</li>
+</ul>
+<p>包含上面那几部分以后，文档还要有一个规范来约束，即需要对自己写的文档进行验证， 验证器会对在自己写的验证规则中对XML文件进行语法检查。</p>
+<p><strong>为什么要有约束？</strong><br>因为XML文件的标签和属性可以随意扩展，有时我们必须要限制每个文档有哪些元素，每个元素有哪些子元素，每个元素有哪些属性，属性的值是什么类型等。从而保证XML文档格式和数据的正确性。</p>
+<br>
+
+<p>实例</p>
+<pre class="line-numbers language-xml"><code class="language-xml"><span class="token comment" spellcheck="true">&lt;!--文档的声明--></span>
+<span class="token comment" spellcheck="true">&lt;!--还有个属性standalone:很少使用，是否是一个单独的XML文件，取值是true或false。默认是true--></span>
+<span class="token comment" spellcheck="true">&lt;!--元素 note、to、from、body等叫做元素，Tove叫做To这个元素的值value，而sex叫做属性，
+female叫做属性的值--></span>
+<span class="token comment" spellcheck="true">&lt;!--注释和HTML一样--></span>
+<span class="token prolog">&lt;?xml version="1.0" encoding="UTF-8"?></span>   
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>note</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>to</span> <span class="token attr-name">sex</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">'</span>female<span class="token punctuation">'</span></span><span class="token punctuation">></span></span>Tove<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>to</span><span class="token punctuation">></span></span>       
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>from</span><span class="token punctuation">></span></span>Jani<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>from</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>heading</span><span class="token punctuation">></span></span>Reminder<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>heading</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">></span></span>Don't forget me this weekend!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">></span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>note</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<br>
+
+<p><strong>XML由七种组成元素构成</strong>（老版本）</p>
+<ul>
+<li>文档的声明</li>
+<li>元素</li>
+<li>属性</li>
+<li>注释</li>
+<li>实体字符，如<ul>
+<li><code>&amp;lt;</code>表示<code>&lt;</code></li>
+<li><code>&amp;gt;</code>表示<code>&gt;</code></li>
+<li><code>&amp;amp;</code>表示<code>&amp;</code></li>
+<li><code>&amp;apos;</code>表示<code>&#39;</code></li>
+<li><code>&amp;quot;</code>表示<code>&quot;</code></li>
+</ul>
+</li>
+<li>字符数据区 [!CDATA[内容]]</li>
+<li>处理指令</li>
+</ul>
+<br>
+
+<p>关于学习的资料可参考：<font color="#00B2EE">[<a href="http://www.runoob.com/xml/xml-tutorial.html" target="_blank" rel="noopener">XML 教程</a>]</font>、<font color="#00B2EE">[<a href="https://www.cnblogs.com/jb8164/articles/736515.html" target="_blank" rel="noopener">XML 文档结构简介（一）</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/RookiexiaoMu_a/article/details/89193062" target="_blank" rel="noopener">XML</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/weixin_37641832/article/details/89219411" target="_blank" rel="noopener">XML</a>]</font></p>
+<p>下面是我的一些关于学习XML的笔记😁(●ˇ∀ˇ●)</p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94b9af6.jpg" alt="201.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94bf2ac.jpg" alt="202.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94af924.jpg" alt="203.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94886b8.jpg" alt="204.jpg"></p>
+<p><img src="https://i.loli.net/2019/04/20/5cb9fc94ac31a.jpg" alt="205.jpg"></p>
+<p><br><br><br></p>
+<h3 id="二-DTD"><a href="#二-DTD" class="headerlink" title="二. DTD"></a><font color="#FF6347" face="Comic sans MS">二. DTD</font></h3><h4 id="2-1-基本概念"><a href="#2-1-基本概念" class="headerlink" title="2.1 基本概念"></a><font color="#3CB371" face="Comic sans MS">2.1 基本概念</font></h4><p>DTD为英文(Document Type Definition)，中文意思为“文档类型定义”。</p>
+<p>DTD肩负着两重任务：一方面它帮助你编写合法的代码，另一方面它让浏览器正确地显示器代码。</p>
+<p>DTD扮演着很重要的角色，会使代码变得规范性，打个比方：</p>
+<blockquote>
+<p>良好的xml文档：符合xml的语法规则。<br>有效的xml文档：符合xml语法规则的同时还需要符合DTD文档类型定义。<br>利用DTD可以对xml文档的各个节点进行约束定义，使开发遵循一套“标准”。<br>DTD可以约束xml文档出现的元素，元素名称，元素的先后顺序，属性等。</p>
+</blockquote>
+<p>推荐参考：<font color="#00B2EE">[<a href="https://blog.csdn.net/wff900703/article/details/80457635" target="_blank" rel="noopener">XML中的DTD是什么？</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/sinat_32366329/article/details/80188837" target="_blank" rel="noopener">XML之自定义DTD约束</a>]</font>、<font color="#00B2EE">[<a href="https://blog.csdn.net/Yeoman92/article/details/53055749" target="_blank" rel="noopener">XML中DTD介绍及使用</a>]</font></p>
+<br>
+
+<h4 id="2-2-使用DTD"><a href="#2-2-使用DTD" class="headerlink" title="2.2 使用DTD"></a><font color="#3CB371" face="Comic sans MS">2.2 使用DTD</font></h4><p><br><br></p>
+<h3 id="三-XXE漏洞"><a href="#三-XXE漏洞" class="headerlink" title="三. XXE漏洞"></a><font color="#FF6347" face="Comic sans MS">三. XXE漏洞</font></h3>
+      
+      <!-- 打赏 -->
+      
+        <div class="page-reward">
+          <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+            <div class="tooltip tooltip-east">
+              <span class="tooltip-item">
+                赏
+              </span>
+              <span class="tooltip-content">
+                <span class="tooltip-text">
+                  <span class="tooltip-inner">
+                    <p class="reward-p"><i class="icon icon-quo-left"></i>请我喝杯咖啡吧~<i
+                        class="icon icon-quo-right"></i></p>
+                    <div class="reward-box">
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/alipay.jpg">
+                        <span class="reward-type">支付宝</span>
+                      </div>
+                      
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/wechat.png">
+                        <span class="reward-type">微信</span>
+                      </div>
+                      
+                    </div>
+                  </span>
+                </span>
+              </span>
+            </div>
+          </a>
+        </div>
+        
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://Directoree.github.io/post/xxe-xml-dtd/" data-id="ck3yhrol50064qehobvxjn9jj"
+        class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XML/">XML</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XXE/">XXE</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/post/c-grammer/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            浅谈 C 和其他语言
+          
+        </div>
+      </a>
+    
+    
+      <a href="/post/ancientcityoftaierzhaung/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">台儿庄古镇</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        notify: false,
+        verify: false,
+        app_id: 'chaSYi8FMdJBwzIBpxeNjqWC-gzGzoHsz',
+        app_key: 'PqqkLYgPkHvH1BmyQqySWnSK',
+        path: window.location.pathname,
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2015-2019
+        Directoree
+      </li>
+      <li>
+        
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a> by shenyu
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <ul class="list-inline">
+  <li>PV:<span id="busuanzi_value_page_pv"></span></li>
+  <li>UV:<span id="busuanzi_value_site_uv"></span></li>
+</ul>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    
+    <aside class="sidebar">
+      
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/猫咪.svg" alt="Directoree"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/links">链接</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://music.163.com/#/user/home?id=455041480">音乐</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/book">资源</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/notes">笔记</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="https://treecatee.github.io/" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<script src="/js/ayer.js"></script>
+
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </div>
 </body>
+
 </html>

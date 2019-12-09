@@ -1,43 +1,390 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head><meta name="generator" content="Hexo 3.9.0">
-<meta charset="utf-8">
-<title>算法复习笔记 - Directoree</title>
-<base href="/">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="canonical" href="https://Directoree.github.io/post/algorithm/">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon1.ico">
-<meta name="description" content="&amp;nbsp;11.19复习笔记 二、递归与分治策略(1)递归与分治 (2)二分搜索技术 (3)线性时间选择、最接近点对&amp;nbsp;&amp;nbsp;11.20复习笔记 三、动态规划(1)矩阵连乘 (2)最长公共子序列 (3)最长子段和、凸多边形、图像压缩 (4)电路布线 (5)流水作业调度、0-1背包&amp;nbsp;&amp;nbsp;11.21复习笔记 四、贪心算法(1)活动安排、背包问题 (2)最优装载、哈夫曼">
-<meta name="keywords" content="算法学习">
-<meta property="og:type" content="website">
-<meta property="og:title" content="算法复习笔记">
-<meta property="og:url" content="https://Directoree.github.io/post/algorithm/index.html">
-<meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;nbsp;11.19复习笔记 二、递归与分治策略(1)递归与分治 (2)二分搜索技术 (3)线性时间选择、最接近点对&amp;nbsp;&amp;nbsp;11.20复习笔记 三、动态规划(1)矩阵连乘 (2)最长公共子序列 (3)最长子段和、凸多边形、图像压缩 (4)电路布线 (5)流水作业调度、0-1背包&amp;nbsp;&amp;nbsp;11.21复习笔记 四、贪心算法(1)活动安排、背包问题 (2)最优装载、哈夫曼">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c20cf96b08d6.jpg">
-<meta property="og:updated_time" content="2019-01-19T08:35:23.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="算法复习笔记">
-<meta name="twitter:description" content="&amp;nbsp;11.19复习笔记 二、递归与分治策略(1)递归与分治 (2)二分搜索技术 (3)线性时间选择、最接近点对&amp;nbsp;&amp;nbsp;11.20复习笔记 三、动态规划(1)矩阵连乘 (2)最长公共子序列 (3)最长子段和、凸多边形、图像压缩 (4)电路布线 (5)流水作业调度、0-1背包&amp;nbsp;&amp;nbsp;11.21复习笔记 四、贪心算法(1)活动安排、背包问题 (2)最优装载、哈夫曼">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/24/5c20cf96b08d6.jpg">
-<link rel="stylesheet" href="//unpkg.com/hexo-theme-inside@2.0.0/source/fonts.b9b22ef890c930ac7a13.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc6202509.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc62025091.css">
-<link rel="stylesheet" href="/theme.1aa8fbef40bc2e8146ab.css">
-<script src="/config.302a1a37fe54614e7344.js"></script>
-<script type="application/ld+json">[{"@context":"http://schema.org","@type":"WebSite","publisher":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"url":"https://Directoree.github.io","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png","description":null,"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"}},{"@context":"http://schema.org","@type":"Article","articleSection":"算法","url":"https://Directoree.github.io/post/algorithm/","headline":"算法复习笔记","image":"https://i.loli.net/2018/12/24/5c20cf96b08d6.jpg","datePublished":"2018-11-28T08:50:23.000Z","dateModified":"2019-01-19T08:35:23.000Z","keywords":"算法学习","description":null,"publisher":{"@type":"Organization","name":"Directoree","logo":{"@type":"ImageObject","url":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"}},"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://Directoree.github.io/post/algorithm/"},"thumbnailUrl":"https://i.loli.net/2018/12/24/5c20cf96b08d6.jpg"}]</script><script async src="//www.googletagmanager.com/gtag/js?id=UA-00000000-0"></script>
-<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag('js', new Date());gtag('config', 'UA-00000000-0');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/lib/crypto-js.js"></script>
-<script src="/lib/blog-encrypt.js"></script>
-<link rel="stylesheet" href="/css/blog-encrypt.css">
+  <meta charset="utf-8">
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    算法复习笔记 |  Directoree
+  </title>
+  
+  <link rel="shortcut icon" href="/favicon5.png">
+  
+  <link rel="stylesheet" href="/css/style.css">  <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">  <script src="/js/pace.min.js"></script>
+
+  
+
+  
+
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
-<body lang="en">
-<is-d2a57d></is-d2a57d>
-<script src="/runtime.26209474bfa8dc87a77c.js"></script>
-<script src="/polyfills.30f16c55deb40b06e14d.js"></script>
-<script src="/main.2f3a937787816eb74a37.en.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-algorithm" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  算法复习笔记
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/post/algorithm/" class="article-date">
+  <time datetime="2018-11-28T08:50:23.000Z" itemprop="datePublished">2018-11-28</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/算法/">算法</a>
+  </div>
+
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>&nbsp;<font face="楷体">11.19复习笔记</font></p>
+<h3 id="二、递归与分治策略"><a href="#二、递归与分治策略" class="headerlink" title="二、递归与分治策略"></a><font face="楷体">二、递归与分治策略</font></h3><h4 id="1-递归与分治"><a href="#1-递归与分治" class="headerlink" title="(1)递归与分治"></a><font face="楷体">(1)递归与分治</font></h4><p><a href="https://s1.ax1x.com/2018/11/19/FpNSaQ.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/19/FpNSaQ.jpg" alt="1"></a><br><a href="https://s1.ax1x.com/2018/11/19/FpNp5j.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/19/FpNp5j.jpg" alt="2"></a></p>
+<h4 id="2-二分搜索技术"><a href="#2-二分搜索技术" class="headerlink" title="(2)二分搜索技术"></a><font face="楷体">(2)二分搜索技术</font></h4><p><a href="https://s1.ax1x.com/2018/11/19/FpNCPs.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/19/FpNCPs.jpg" alt="3"></a></p>
+<h4 id="3-线性时间选择、最接近点对"><a href="#3-线性时间选择、最接近点对" class="headerlink" title="(3)线性时间选择、最接近点对"></a><font face="楷体">(3)线性时间选择、最接近点对</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV2eBt.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV2eBt.jpg" alt="3"></a><br>&nbsp;<br>&nbsp;<br><font face="楷体">11.20复习笔记</font></p>
+<h3 id="三、动态规划"><a href="#三、动态规划" class="headerlink" title="三、动态规划"></a><font face="楷体">三、动态规划</font></h3><h4 id="1-矩阵连乘"><a href="#1-矩阵连乘" class="headerlink" title="(1)矩阵连乘"></a><font face="楷体">(1)矩阵连乘</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV23cj.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV23cj.jpg" alt="4"></a></p>
+<h4 id="2-最长公共子序列"><a href="#2-最长公共子序列" class="headerlink" title="(2)最长公共子序列"></a><font face="楷体">(2)最长公共子序列</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV2UEV.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV2UEV.jpg" alt="5"></a></p>
+<h4 id="3-最长子段和、凸多边形、图像压缩"><a href="#3-最长子段和、凸多边形、图像压缩" class="headerlink" title="(3)最长子段和、凸多边形、图像压缩"></a><font face="楷体">(3)最长子段和、凸多边形、图像压缩</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV2B34.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV2B34.jpg" alt="6"></a></p>
+<h4 id="4-电路布线"><a href="#4-电路布线" class="headerlink" title="(4)电路布线"></a><font face="楷体">(4)电路布线</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV2yuR.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV2yuR.jpg" alt="7"></a></p>
+<h4 id="5-流水作业调度、0-1背包"><a href="#5-流水作业调度、0-1背包" class="headerlink" title="(5)流水作业调度、0-1背包"></a><font face="楷体">(5)流水作业调度、0-1背包</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV22E6.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV22E6.jpg" alt="8"></a><br>&nbsp;<br>&nbsp;<br><font face="楷体">11.21复习笔记</font></p>
+<h3 id="四、贪心算法"><a href="#四、贪心算法" class="headerlink" title="四、贪心算法"></a><font face="楷体">四、贪心算法</font></h3><h4 id="1-活动安排、背包问题"><a href="#1-活动安排、背包问题" class="headerlink" title="(1)活动安排、背包问题"></a><font face="楷体">(1)活动安排、背包问题</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV25gH.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV25gH.jpg" alt="9"></a></p>
+<h4 id="2-最优装载、哈夫曼编码、单源最短路径"><a href="#2-最优装载、哈夫曼编码、单源最短路径" class="headerlink" title="(2)最优装载、哈夫曼编码、单源最短路径"></a><font face="楷体">(2)最优装载、哈夫曼编码、单源最短路径</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV2LUf.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV2LUf.jpg" alt="10"></a></p>
+<h4 id="3-最小生成树"><a href="#3-最小生成树" class="headerlink" title="(3)最小生成树"></a><font face="楷体">(3)最小生成树</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FV2jPS.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FV2jPS.jpg" alt="11"></a></p>
+<h4 id="4-多机调度问题"><a href="#4-多机调度问题" class="headerlink" title="(4)多机调度问题"></a><font face="楷体">(4)多机调度问题</font></h4><p><a href="https://s1.ax1x.com/2018/11/28/FVRurR.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FVRurR.jpg" alt="12"></a></p>
+<h3 id="五、回溯法"><a href="#五、回溯法" class="headerlink" title="五、回溯法"></a><font face="楷体">五、回溯法</font></h3><p><a href="https://s1.ax1x.com/2018/11/28/FVR1IK.jpg" target="_blank" rel="noopener"><img src="https://s1.ax1x.com/2018/11/28/FVR1IK.jpg" alt="13"></a></p>
+
+      
+      <!-- 打赏 -->
+      
+        <div class="page-reward">
+          <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+            <div class="tooltip tooltip-east">
+              <span class="tooltip-item">
+                赏
+              </span>
+              <span class="tooltip-content">
+                <span class="tooltip-text">
+                  <span class="tooltip-inner">
+                    <p class="reward-p"><i class="icon icon-quo-left"></i>请我喝杯咖啡吧~<i
+                        class="icon icon-quo-right"></i></p>
+                    <div class="reward-box">
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/alipay.jpg">
+                        <span class="reward-type">支付宝</span>
+                      </div>
+                      
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/wechat.png">
+                        <span class="reward-type">微信</span>
+                      </div>
+                      
+                    </div>
+                  </span>
+                </span>
+              </span>
+            </div>
+          </a>
+        </div>
+        
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://Directoree.github.io/post/algorithm/" data-id="ck3yhroks004yqehom6mb581a"
+        class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/算法学习/">算法学习</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/post/Network-security/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            网络安全复习笔记
+          
+        </div>
+      </a>
+    
+    
+      <a href="/post/HTTPS-password/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">内网称霸之《HTTPS账号密码获取》</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        notify: false,
+        verify: false,
+        app_id: 'chaSYi8FMdJBwzIBpxeNjqWC-gzGzoHsz',
+        app_key: 'PqqkLYgPkHvH1BmyQqySWnSK',
+        path: window.location.pathname,
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2015-2019
+        Directoree
+      </li>
+      <li>
+        
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a> by shenyu
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <ul class="list-inline">
+  <li>PV:<span id="busuanzi_value_page_pv"></span></li>
+  <li>UV:<span id="busuanzi_value_site_uv"></span></li>
+</ul>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    
+    <aside class="sidebar">
+      
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/猫咪.svg" alt="Directoree"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/links">链接</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://music.163.com/#/user/home?id=455041480">音乐</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/book">资源</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/notes">笔记</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="https://treecatee.github.io/" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<script src="/js/ayer.js"></script>
+
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </div>
 </body>
+
 </html>

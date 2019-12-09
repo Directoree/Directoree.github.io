@@ -1,43 +1,410 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head><meta name="generator" content="Hexo 3.9.0">
-<meta charset="utf-8">
-<title>Hash函数和消息认证 - Directoree</title>
-<base href="/">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0">
-<link rel="canonical" href="https://Directoree.github.io/post/Hash-Message-Authentication/">
-<link rel="icon" type="image/x-icon" href="/favicon/favicon1.ico">
-<meta name="description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
-<meta name="keywords" content="Hash函数">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Hash函数和消息认证">
-<meta property="og:url" content="https://Directoree.github.io/post/Hash-Message-Authentication/index.html">
-<meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
-<meta property="og:locale" content="default">
-<meta property="og:image" content="https://i.loli.net/2018/12/26/5c23997cdd19c.jpg">
-<meta property="og:updated_time" content="2018-12-28T07:12:10.000Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hash函数和消息认证">
-<meta name="twitter:description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/26/5c23997cdd19c.jpg">
-<link rel="stylesheet" href="//unpkg.com/hexo-theme-inside@2.0.0/source/fonts.b9b22ef890c930ac7a13.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc6202509.css">
-<link rel="stylesheet" href="/styles.a2d344c41a1bc62025091.css">
-<link rel="stylesheet" href="/theme.1aa8fbef40bc2e8146ab.css">
-<script src="/config.302a1a37fe54614e7344.js"></script>
-<script type="application/ld+json">[{"@context":"http://schema.org","@type":"WebSite","publisher":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"url":"https://Directoree.github.io","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png","description":null,"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"}},{"@context":"http://schema.org","@type":"Article","articleSection":"密码学","url":"https://Directoree.github.io/post/Hash-Message-Authentication/","headline":"Hash函数和消息认证","image":"https://i.loli.net/2018/12/26/5c23997cdd19c.jpg","datePublished":"2018-12-26T12:59:42.000Z","dateModified":"2018-12-28T07:12:10.000Z","keywords":"Hash函数","description":null,"publisher":{"@type":"Organization","name":"Directoree","logo":{"@type":"ImageObject","url":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"}},"author":{"@type":"Person","name":"Directoree","description":"得之我幸，失之我命。","image":"https://i.loli.net/2019/04/10/5cadb3a1a5567.png"},"inLanguage":{"@type":"Language","alternateName":"en"},"mainEntityOfPage":{"@type":"WebPage","@id":"https://Directoree.github.io/post/Hash-Message-Authentication/"},"thumbnailUrl":"https://i.loli.net/2018/12/26/5c23997cdd19c.jpg"}]</script><script async src="//www.googletagmanager.com/gtag/js?id=UA-00000000-0"></script>
-<script>window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments)};gtag('js', new Date());gtag('config', 'UA-00000000-0');</script><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<script src="/lib/crypto-js.js"></script>
-<script src="/lib/blog-encrypt.js"></script>
-<link rel="stylesheet" href="/css/blog-encrypt.css">
+  <meta charset="utf-8">
+    
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>
+    Hash函数和消息认证 |  Directoree
+  </title>
+  
+  <link rel="shortcut icon" href="/favicon5.png">
+  
+  <link rel="stylesheet" href="/css/style.css">  <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">  <script src="/js/pace.min.js"></script>
+
+  
+
+  
+
 <link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
 <link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
-<body lang="en">
-<is-d2a57d></is-d2a57d>
-<script src="/runtime.26209474bfa8dc87a77c.js"></script>
-<script src="/polyfills.30f16c55deb40b06e14d.js"></script>
-<script src="/main.2f3a937787816eb74a37.en.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-<span id="busuanzi_container_site_pv">本站总访问量<span id="busuanzi_value_site_pv"></span>次</span>
+
+</html>
+
+<body>
+  <div id="app">
+    <main class="content">
+      <section class="outer">
+  <article id="post-Hash-Message-Authentication" class="article article-type-post" itemscope
+  itemprop="blogPost" data-scroll-reveal>
+
+  <div class="article-inner">
+    
+    <header class="article-header">
+       
+<h1 class="article-title sea-center" style="border-left:0" itemprop="name">
+  Hash函数和消息认证
+</h1>
+  
+
+    </header>
+    
+
+    
+    <div class="article-meta">
+      <a href="/post/Hash-Message-Authentication/" class="article-date">
+  <time datetime="2018-12-26T12:59:42.000Z" itemprop="datePublished">2018-12-26</time>
+</a>
+      
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/密码学/">密码学</a>
+  </div>
+
+    </div>
+    
+
+    
+    
+    <div class="tocbot"></div>
+
+
+
+
+
+    
+
+    <div class="article-entry" itemprop="articleBody">
+      
+
+
+      
+
+      
+      <p>&ensp;<br>&ensp;</p>
+<center><font color="#3CB371" face="Comic sans MS" size="5">Hash函数  & 消息认证</font></center>
+
+<p>&ensp;<br>&ensp;</p>
+<h3 id="一、-Hash函数结构、MD5、SHA-1"><a href="#一、-Hash函数结构、MD5、SHA-1" class="headerlink" title="一、 Hash函数结构、MD5、SHA-1"></a><font color="#FF6347" face="Comic sans MS">一、 Hash函数结构、MD5、SHA-1</font></h3><p><a href="https://i.loli.net/2018/12/27/5c24b73ee6580.png" target="_blank" rel="noopener"><img src="https://i.loli.net/2018/12/27/5c24b73ee6580.png" alt="Hash函数.png"></a></p>
+<p>&ensp;<br>&emsp;</p>
+<h3 id="二、-消息认证"><a href="#二、-消息认证" class="headerlink" title="二、 消息认证"></a><font color="#FF6347" face="Comic sans MS">二、 消息认证</font></h3><p><font face="Comic sans MS">&emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。</font></p>
+<p><strong>认证分为：</strong>实体认证、消息认证。</p>
+<p>&ensp;</p>
+<h4 id="1-1-消息认证码"><a href="#1-1-消息认证码" class="headerlink" title="1.1  消息认证码"></a><font color="#20B2AA" face="Comic sans MS">1.1  消息认证码</font></h4><p><font face="Comic sans MS"><strong>消息认证码：(MAC，Message Authentication Code)或报文认证码</strong>，是用于提供数据源认证和数据完整性的密码校验值。<br><strong>MAC：</strong>是指消息被一密钥控制的公开函数作用后产生的、用作认证的、固定长度的数值，<strong>也称为密码校验和。</strong><br></font></p>
+<p><img src="https://i.loli.net/2018/12/28/5c25a1af1de45.png" alt="D3364.png"><br><img src="https://i.loli.net/2018/12/28/5c25a009059a5.png" alt="58D4.png"><br><img src="https://i.loli.net/2018/12/28/5c259da576af5.png" alt="图片21.png"><br><img src="https://i.loli.net/2018/12/28/5c259e5101bfd.png" alt="图片2.png"></p>
+<p>&emsp;<br>&emsp;</p>
+<h4 id="1-2-基于DES和Hash函数的消息认证码"><a href="#1-2-基于DES和Hash函数的消息认证码" class="headerlink" title="1.2  基于DES和Hash函数的消息认证码"></a><font color="#20B2AA" face="Comic sans MS">1.2  基于DES和Hash函数的消息认证码</font></h4><p><font face="Comic sans MS" color="red"><strong>消息认证码的构造主要有两种：</strong>基于分组密码、基于带密钥的Hash函数-HMAC。</font></p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS"> **1. 基于DES的消息认证码：**将需要认证的消息和密钥K经过16轮迭代后生成该消息认证码。
+</font></td></tr></table>
+
+<p><img src="https://i.loli.net/2018/12/28/5c25c7ecb59d9.png" alt="图片3.png"></p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS"> **2. 基于Hash函数的消息认证码HMAC：**HMAC生成的过程使用了2次Hash函数。
+</font></td></tr></table>
+
+<p><img src="https://i.loli.net/2018/12/28/5c25cbf610d03.png" alt="1R.png"><br><img src="https://i.loli.net/2018/12/28/5c25c8fb7288b.png" alt="图片4.png"></p>
+<table><tr><td bgcolor="#ADD8E6"><font face="Comic sans MS">描述：
+(1) K的左边填充0以产生一个b比特长的K<sup>+</sup> （例如Ki的长为160比特，b=512，则需填充44个零字节0x00）
+(2) K<sup>+</sup>与ipad 逐比特异或以产生b比特的分组Si 
+(3) 将M附于Si后
+(4) 将哈希函数H作用于步骤(3)产生的数据流
+(5) K<sup>+</sup>与opad逐比特异或,以产生b比特长的分组S<sub>0</sub>
+(6) 将步骤(4)得到的杂凑值链接在S<sub>0</sub>后
+(7) 将H作用于步骤(6)产生的数据流并输出最终结果HMAC
+</font></td></tr></table>
+
+<hr>
+<hr>
+<p>&emsp;<br>&emsp;<br>&emsp;<br>&emsp;</p>
+
+      
+      <!-- 打赏 -->
+      
+        <div class="page-reward">
+          <a href="javascript:void(0);" class="page-reward-btn tooltip-top" target="_self">
+            <div class="tooltip tooltip-east">
+              <span class="tooltip-item">
+                赏
+              </span>
+              <span class="tooltip-content">
+                <span class="tooltip-text">
+                  <span class="tooltip-inner">
+                    <p class="reward-p"><i class="icon icon-quo-left"></i>请我喝杯咖啡吧~<i
+                        class="icon icon-quo-right"></i></p>
+                    <div class="reward-box">
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/alipay.jpg">
+                        <span class="reward-type">支付宝</span>
+                      </div>
+                      
+                      
+                      <div class="reward-box-item">
+                        <img class="reward-img" src="/images/wechat.png">
+                        <span class="reward-type">微信</span>
+                      </div>
+                      
+                    </div>
+                  </span>
+                </span>
+              </span>
+            </div>
+          </a>
+        </div>
+        
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://Directoree.github.io/post/Hash-Message-Authentication/" data-id="ck3yhroji001hqeho67dalbpc"
+        class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hash函数/">Hash函数</a></li></ul>
+
+    </footer>
+
+  </div>
+
+  
+  
+  <nav class="article-nav">
+    
+      <a href="/post/Java-Interface-Package5/" class="article-nav-link">
+        <strong class="article-nav-caption">上一篇</strong>
+        <div class="article-nav-title">
+          
+            Java接口、包(4.7-4.8)
+          
+        </div>
+      </a>
+    
+    
+      <a href="/post/Java-Inherit-4/" class="article-nav-link">
+        <strong class="article-nav-caption">下一篇</strong>
+        <div class="article-nav-title">Java构造方法、对象创建、继承(4.5-4.6)</div>
+      </a>
+    
+  </nav>
+
+
+  
+
+  
+  
+<!-- valine评论 -->
+<div id="vcomments-box">
+    <div id="vcomments">
+    </div>
+</div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src='//unpkg.com/valine@1.3.10/dist/Valine.min.js'></script>
+<script>
+    new Valine({
+        el: '#vcomments',
+        notify: false,
+        verify: false,
+        app_id: 'chaSYi8FMdJBwzIBpxeNjqWC-gzGzoHsz',
+        app_key: 'PqqkLYgPkHvH1BmyQqySWnSK',
+        path: window.location.pathname,
+        avatar: 'mp',
+        placeholder: '给我的文章加点评论吧~',
+        recordIP: true
+    });
+    const infoEle = document.querySelector('#vcomments .info');
+    if (infoEle && infoEle.childNodes && infoEle.childNodes.length > 0) {
+        infoEle.childNodes.forEach(function (item) {
+            item.parentNode.removeChild(item);
+        });
+    }
+</script>
+<style>
+    #vcomments-box {
+        padding: 5px 30px;
+    }
+
+    @media screen and (max-width: 800px) {
+        #vcomments-box {
+            padding: 5px 0px;
+        }
+    }
+
+    #vcomments-box #vcomments {
+        background-color: #fff;
+    }
+
+    .v .vlist .vcard .vh {
+        padding-right: 20px;
+    }
+
+    .v .vlist .vcard {
+        padding-left: 10px;
+    }
+</style>
+
+  
+
+  
+  
+  
+
+</article>
+</section>
+      <footer class="footer">
+  <div class="outer">
+    <ul class="list-inline">
+      <li>
+        &copy;
+        2015-2019
+        Directoree
+      </li>
+      <li>
+        
+        
+        
+        <a href="https://hexo.io" target="_blank">Hexo</a> Theme <a href="https://github.com/Shen-Yu/hexo-theme-ayer" target="_blank">Ayer</a> by shenyu
+        
+      </li>
+    </ul>
+    <ul class="list-inline">
+      <li>
+        
+        
+        <ul class="list-inline">
+  <li>PV:<span id="busuanzi_value_page_pv"></span></li>
+  <li>UV:<span id="busuanzi_value_site_uv"></span></li>
+</ul>
+        
+      </li>
+      <li>
+        <!-- cnzz统计 -->
+        
+        <script type="text/javascript" src='https://s9.cnzz.com/z_stat.php?id=1278069914&amp;web_id=1278069914'></script>
+        
+      </li>
+    </ul>
+  </div>
+</footer>
+    <div class="to_top">
+        <div class="totop" id="totop">
+  <i class="ri-arrow-up-line"></i>
+</div>
+      </div>
+    </main>
+    
+    <aside class="sidebar">
+      
+        <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+  <div class="logo">
+    <a href="/"><img src="/images/猫咪.svg" alt="Directoree"></a>
+  </div>
+  
+  <ul class="nav nav-main">
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/">主页</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/archives">目录</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/tags">标签</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/links">链接</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="https://music.163.com/#/user/home?id=455041480">音乐</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/book">资源</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/notes">笔记</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="http://shenyu-vip.lofter.com">摄影</a>
+    </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link" href="/about">关于我</a>
+    </li>
+    
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      
+      <a class="nav-item-link nav-item-search"  title="Search">
+        <i class="ri-search-line"></i>
+      </a>
+      
+      
+      <a class="nav-item-link" target="_blank" href="https://treecatee.github.io/" title="RSS Feed">
+        <i class="ri-rss-line"></i>
+      </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+      </aside>
+      <script src="/js/jquery-2.0.3.min.js"></script>
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+<script src="/js/lazyload.min.js"></script>
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
+
+  <script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+  <script src="/js/tocbot.min.js"></script>
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
+
+
+<script>
+  var ayerConfig = {
+    mathjax: true
+  }
+</script>
+
+<script src="/js/ayer.js"></script>
+
+
+  <script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+      tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+  });
+
+  MathJax.Hub.Queue(function() {
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+  });
+</script>
+
+<script src="https://cdn.bootcss.com/mathjax/2.7.6/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+
+  </div>
 </body>
+
 </html>
