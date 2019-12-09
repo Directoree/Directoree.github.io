@@ -100,7 +100,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/CTF-Basic-knowledge/" data-id="ck3yivbob0009ubhoniykuub7"
+      <a data-url="https://Directoree.github.io/post/CTF-Basic-knowledge/" data-id="ck3yk617p0003yshok0ne0c8d"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li></ul>
@@ -167,7 +167,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/CTF-SMB-Information-leakage/" data-id="ck3yivbo90007ubhoopiw5tch"
+      <a data-url="https://Directoree.github.io/post/CTF-SMB-Information-leakage/" data-id="ck3yk617v0009yshoqd4htd2k"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SMB/">SMB</a></li></ul>
@@ -234,7 +234,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/CTF-SSH-service-penetration/" data-id="ck3yivbof000gubho80hf2enn"
+      <a data-url="https://Directoree.github.io/post/CTF-SSH-service-penetration/" data-id="ck3yk617z000gyshov4f8f464"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSH/">SSH</a></li></ul>
@@ -301,7 +301,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/CTF-SSH-private-key-leak/" data-id="ck3yivboc000bubhoztvw7hgc"
+      <a data-url="https://Directoree.github.io/post/CTF-SSH-private-key-leak/" data-id="ck3yk617x000byshoes58g8vz"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SSH/">SSH</a></li></ul>
@@ -359,145 +359,16 @@
       
 
       
-      <h2 id="0x01-内存存储结构"><a href="#0x01-内存存储结构" class="headerlink" title="0x01 内存存储结构"></a><font color="#03a9f4" face="Comic sans MS">0x01 内存存储结构</font></h2><blockquote>
-<p>为什么要这么分配内存？<br>（1）一个进程在运行过程中，代码是根据流程依次执行的，只需要访问一次，当然跳转和递归有可能使代码执行多次，而数据一般都需要访问多次，因此单独开辟空间以方便访问和节约空间。<br>（2）临时数据及需要再次使用的代码在运行时放入栈区中，生命周期短。<br>（3）全局数据和静态数据有可能在整个程序执行过程中都需要访问，因此单独存储管理。<br>（4）堆区由用户自由分配，以便管理。</p>
-</blockquote>
-<p>存储结构分为：<strong>可执行代码存储时结构</strong>和<strong>运行时存储结构</strong>。结构图如下，左边为可执行代码存储时结构，右边为运行时存储结构。</p>
-<p><img src="https://i.loli.net/2019/06/17/5d0735f3ea5bb52011.png" alt="806053-20170722131756261-1095755633.png"></p>
-<h3 id="0x001-可执行代码存储时结构"><a href="#0x001-可执行代码存储时结构" class="headerlink" title="0x001 可执行代码存储时结构"></a><font color="#3CB371" face="Comic sans MS">0x001 可执行代码存储时结构</font></h3><p>当一个<strong><code>.c</code></strong>或<strong><code>.cpp</code></strong>文件编译后生    成可执行文件时，可执行文件在存储（也就是还没有载入到内存中）的时候，分为：<font color="#FF7F00"><strong>代码区</strong></font>、<font color="#FF7F00"><strong>数据区</strong></font>和<font color="#FF7F00"><strong>未初始化数据区</strong></font>3个部分。</p>
-<blockquote>
-<p>注意：</p>
-</blockquote>
-<ul>
-<li>代码区：text segment</li>
-<li>数据区：局初始化数据区/静态数据区（initialized data segment/data segment）</li>
-<li>未初始化区：亦称BSS区（uninitialized data segment）</li>
-</ul>
-<ol>
-<li><p><strong>代码区</strong>（text segment）。存放CPU执行的机器指令（machine instructions）。通常，代码区是<font color="#FF7F00"><strong>可共享</strong></font>的（即另外的执行程序可以调用它），因为对于频繁被执行的程序，只需要在内存中有一份代码即可。代码区通常是<font color="#FF7F00"><strong>只读</strong></font>的，使其只读的原因是防止程序意外地修改了它的指令。另外，代码区还规划了局部变量的相关信息。</p>
-</li>
-<li><p><strong>全局初始化数据区/静态数据区</strong>（initialized data segment/data segment）。该区包含了在程序中明确<font color="#FF7F00"><strong>已被初始化的全局变量、静态变量</strong></font>（包括全局静态变量和局部静态变量）和常量数据（如字符串常量）。</p>
-</li>
-<li><p><strong>未初始化数据区</strong>。亦称BSS区（uninitialized data segment），存入的是<font color="#FF7F00"><strong>全局未初始化变量</strong></font>。BSS这个叫法是根据一个早期的汇编运算符而来，这个汇编运算符标志着一个块的开始。BSS区的数据在程序开始执行之前被内核初始化为0或者空指针（NULL）</p>
-</li>
-</ol>
-<h3 id="0x002-运行时存储结构"><a href="#0x002-运行时存储结构" class="headerlink" title="0x002 运行时存储结构"></a><font color="#3CB371" face="Comic sans MS">0x002 运行时存储结构</font></h3><p>一个正在运行着的C编译程序占用的内存分为<strong>代码区</strong>、<strong>初始化数据区</strong>、<strong>未初始化数据区</strong>、<strong>堆区</strong>和<strong>栈区</strong>5个部分。</p>
-<ol>
-<li><p>代码区（text segment/code segment）。代码区指令根据程序设计流程依次执行，对于顺序指令，则只会执行一次（每个进程），如果反复，则需要使用跳转指令，如果进行递归，则需要借助栈来实现。</p>
-<ul>
-<li><strong>代码段（区）</strong>：定义： 代码段（code segment/text segment ）通常是指用来存放程序执行代码的一块内存区域。这部分区域的大小在程序运行前就已经确定，并且内存区域通常属于只读, 某些架构也允许代码段为可写，即允许修改程序。在代码段中，也有可能包含一些只读的常数变量，例如字符串常量等。代码区的指令中包括操作码和要操作的对象（或对象地址引用）。如果是立即数（即具体的数值，如5），将直接包含在代码中；如果是局部数据，将在栈区分配空间，然后引用该数据地址；如果是BSS区和数据区，在代码中同样将引用该数据地址。另外，代码段还规划了局部数据所申请的内存空间信息。</li>
-</ul>
-</li>
-<li><p>全局初始化数据区/静态数据区（Data Segment）。只初始化一次。</p>
-<ul>
-<li><strong>数据段（区）</strong>： 数据段（data segment ）通常是指用来存放程序中已初始化的全局变量的一块内存区域。数据段属于静态内存分配。data段中的静态数据区存放的是程序中已初始化的全局变量、静态变量和常量。</li>
-</ul>
-</li>
-<li><p>未初始化数据区（BSS）。在运行时改变其值。</p>
-<ul>
-<li><strong>BSS 段（区）</strong>： BSS 段（bss segment ）通常是指用来存放程序中未初始化的全局变量的一块内存区域。BSS 是英文Block Started by Symbol 的简称。BSS 段属于静态内存分配，即程序一开始就将其清零了。一般在初始化时BSS段部分将会清零。</li>
-</ul>
-</li>
-<li><p>栈区（stack）。由编译器自动分配释放，存放函数的参数值、局部变量的值等。存放函数的参数值、局部变量的值，以及在进行任务切换时存放当前任务的上下文内容。其操作方式类似于数据结构中的栈。每当一个函数被调用，该函数返回地址和一些关于调用的信息，比如某些寄存器的内容，被存储到栈区。然后这个被调用的函数再为它的自动变量和临时变量在栈区上分配空间，这就是C实现函数递归调用的方法。每执行一次递归函数调用，一个新的栈框架就会被使用，这样这个新实例栈里的变量就不会和该函数的另一个实例栈里面的变量混淆。</p>
-<ul>
-<li><strong>栈(stack)</strong> ：栈又称<font color="#FF7F00"><strong>堆栈</strong></font>， 是用户存放程序临时创建的局部变量，也就是说我们函数括弧”{}”中定义的变量（但不包括static 声明的变量，static 意味着在数据段中存放变量）。除此以外，在函数被调用时，其参数也会被压入发起调用的进程栈中，并且待到调用结束后，函数的返回值也会被存放回栈中。由于栈的先进先出特点，所以栈特别方便用来保存/ 恢复调用现场。从这个意义上讲，我们可以把堆栈看成一个寄存、交换临时数据的内存区。</li>
-</ul>
-</li>
-<li><p>堆区（heap）。用于动态内存分配。堆在内存中位于bss区和栈区之间。一般由程序员分配和释放，若程序员不释放，程序结束时有可能由OS回收。</p>
-<ul>
-<li><strong>堆(heap)</strong>： 堆是用于存放进程运行中被动态分配的内存段，它的大小并不固定，可动态扩张或缩减。当进程调用malloc 等函数分配内存时，新分配的内存就被动态添加到堆上（堆被扩张）；当利用free 等函数释放内存时，被释放的内存从堆中被剔除（堆被缩减）。在将应用程序加载到内存空间执行时，操作系统负责代码段、数据段和BSS段的加载，并将在内存中为这些段分配空间。栈段亦由操作系统分配和管理，而不需要程序员显示地管理；堆段由程序员自己管理，即显式地申请和释放空间。</li>
-</ul>
-</li>
-</ol>
-<p>C语言程序编译完成之后，已初始化的全局变量保存在DATA段中，未初始化的全局变量保存在BSS段中。TEXT和DATA段都在可执行文件中，由系统从可执行文件中加载；而BSS段不在可执行文件中，由系统初始化。BSS段只保存没有值的变量，所以事实上它并不需要保存这些变量的映像。运行时所需要的BSS段大小记录在目标文件中，但是BSS段并不占据目标文件的任何空间。</p>
-<p>以下两图来自于《C语言专家编程》</p>
-<p><img src="https://s2.ax1x.com/2019/06/17/VHfXtO.png" alt="VHfXtO.png"></p>
-<p><img src="https://s2.ax1x.com/2019/06/17/VHfjhD.png" alt="VHfjhD.png"></p>
-<br>
-
-<h3 id="0x003-几个基本概念"><a href="#0x003-几个基本概念" class="headerlink" title="0x003 几个基本概念"></a><font color="#3CB371" face="Comic sans MS">0x003 几个基本概念</font></h3><p>在C语言中，关于内存管理的知识点比较多，如函数、变量、作用域、指针等，在探究C语言内存管理机制时，先简单复习下这几个基本概念：</p>
-<ol>
-<li><p>变量：需要搞清楚这几种变量类型：</p>
-<ul>
-<li>全局变量（外部变量）：出现在代码块<strong><code>{}</code></strong>之外的变量就是全局变量。</li>
-<li>局部变量（自动变量）：一般情况下，代码块<strong><code>{}</code></strong>内部定义的变量就是自动变量，也可使用auto显示定义。</li>
-<li>静态变量：是指内存位置在程序执行期间一直不改变的变量，用关键字static修饰。代码块内部的静态变量只能被这个代码块内部访问，代码块外部的静态变量只能被定义这个变量的文件访问。</li>
-</ul>
-</li>
-</ol>
-<p>注意：extern修饰变量时，根据具体情况，既可以看作是定义也可以看作是声明；但extern修饰函数时只能是定义，没有二义性。</p>
-<ol start="2">
-<li><p>作用域：通常指的是变量的作用域，广义上讲，也有函数作用域及文件作用域等。我理解的作用域就是指某个事物能够存在的区域或范围，比如一滴水只有在0-100摄氏度之间才能存在，超出这个范围，广义上讲的“水”就不存在了，它就变成了冰或气体。</p>
-</li>
-<li><p>函数：不解释。</p>
-</li>
-</ol>
-<p>注意：C语言中函数默认都是全局的，可以使用static关键字将函数声明为静态函数（只能被定义这个函数的文件访问的函数）。</p>
-<h2 id="0x02-栈与堆"><a href="#0x02-栈与堆" class="headerlink" title="0x02 栈与堆"></a><font color="#03a9f4" face="Comic sans MS">0x02 栈与堆</font></h2><p>栈与堆是两个概念，特别要注意<font color="#FF7F00"><strong>数据结构</strong></font>中的栈与堆和<font color="#FF7F00"><strong>内存管理中</strong></font>的栈与堆是<strong>两个不相关</strong>的概念。</p>
-<h3 id="0x001-数据结构中的栈与堆"><a href="#0x001-数据结构中的栈与堆" class="headerlink" title="0x001 数据结构中的栈与堆"></a><font color="#3CB371" face="Comic sans MS">0x001 数据结构中的栈与堆</font></h3><p><strong>栈</strong>：是一种连续储存的数据结构，具有先进后出的性质。通常的操作有入栈（圧栈）、出栈和栈顶元素。想要读取栈中的某个元素，就要将其之前的所有元素出栈才能完成。类比现实中的箱子一样。</p>
-<blockquote>
-<p>栈是一种运算受限的线性表，其限制是指只仅允许在表的一端进行插入和删除操作，这一端被称为栈顶（Top），相对地，把另一端称为栈底（Bottom）。把新元素放到栈顶元素的上面，使之成为新的栈顶元素称作进栈、入栈或压栈（Push）；把栈顶元素删除，使其相邻的元素成为新的栈顶元素称作出栈或退栈（Pop）。这种受限的运算使栈拥有“先进后出”的特性（First In Last Out），简称FILO。<br>栈分顺序栈和链式栈两种。栈是一种线性结构，所以可以使用数组或链表（单向链表、双向链表或循环链表）作为底层数据结构。使用数组实现的栈叫做顺序栈，使用链表实现的栈叫做链式栈，二者的区别是顺序栈中的元素地址连续，链式栈中的元素地址不连续。</p>
-</blockquote>
-<p><strong>堆</strong>：是一种非连续的树形储存数据结构，每个节点有一个值，整棵树是经过排序的。特点是根结点的值最小（或最大），且根结点的两个子树也是一个堆。常用来实现优先队列，存取随意。</p>
-<blockquote>
-<p>像是一颗倒立的大树：堆是一种经过排序的树形数据结构，每个节点都有一个值。通常我们所说的堆的数据结构是指二叉树。堆的特点是根节点的值最小（或最大），且根节点的两个树也是一个堆。由于堆的这个特性，常用来实现优先队列，堆的存取是随意的，这就如同我们在图书馆的书架上取书，虽然书的摆放是有顺序的，但是我们想取任意一本时不必像栈一样，先取出前面所有的书，书架这种机制不同于箱子，我们可以直接取出我们想要的书。</p>
-</blockquote>
-<h3 id="0x002-内存分配中的堆和栈"><a href="#0x002-内存分配中的堆和栈" class="headerlink" title="0x002 内存分配中的堆和栈"></a><font color="#3CB371" face="Comic sans MS">0x002 内存分配中的堆和栈</font></h3><p><strong>栈</strong>：是由编译器在需要时自动分配的，不需要时自动清除的变量存储区。里面的变量通常是局部变量、函数参数等。<br><strong>堆</strong>：是由malloc()等函数或new分配的内存块，内存释放由程序员手动控制，在C语言为free函数完成。</p>
-<p><font size="4"><strong>栈和堆的主要区别有以下几点：</strong></font></p>
-<ol>
-<li><p><font color="#FF7F00"><strong>申请方式和回收方式不同(管理方式不同)。</strong></font>栈编译器自动管理，无需程序员手工控制；而堆空间的申请释放工作由程序员控制，容易产生内存泄漏。</p>
-</li>
-<li><p><font color="#FF7F00"><strong>内存增长方向不同。</strong></font>堆的增长方向是向上的，即向着内存地址增加的方向；栈的增长方向是向下的，即向着内存地址减小的方向。这和栈申请大小是相关的，因为栈顶的地址和栈的最大容量是系统预先规定好的，所以再次申请地址时只能从高地址向低地址存放局部变量或者形式参数。</p>
-</li>
-<li><p><font color="#FF7F00"><strong>申请大小的限制。</strong></font></p>
-</li>
-</ol>
-<p><strong>栈</strong>是向低地址扩展的数据结构，是一块连续的内存区域。这句话的意思是栈顶的地址和栈的最大容量是系统预先规定好的，当申请的空间超过栈的剩余空间时，将提示溢出。因此，用户能从栈获得的<strong>空间较小</strong>。栈不会很大，一般都是以K为单位。如果在程序中直接将较大的数组保存在函数内的栈变量中，很可能会内存溢出，严格来说应该叫栈溢出（当栈空间以满，但还往栈内存压变量，这个就叫栈溢出）。<br><strong>堆</strong>是向高地址扩展的数据结构，是不连续的内存区域。因为系统是用链表来存储空闲内存地址的，且链表的遍历方向是由低地址向高地址。由此可见，堆获得的空间较灵活，也较大。栈中元素都是一一对应的，不会存在一个内存块从栈中间弹出的情况。</p>
-<ol start="4">
-<li><font color="#FF7F00"><strong>申请后系统的响应不同。</strong></font></li>
-</ol>
-<p><strong>栈：</strong>只要栈的剩余空间大于所申请空间，系统将为程序提供内存，否则将报异常提示栈溢出。<br><strong>堆：</strong>首先应该知道操作系统有一个记录空闲内存地址的链表，当系统收到程序的申请时，会遍历该链表，寻找第一个空间大于所申请空间的堆结点，然后将该结点从空闲结点链表中删除，并将该结点的空间分配给程序。对于大多数系统，会在这块内存空间中的首地址处记录本次分配的大小，这样，代码中的delete语句才能正确的释放本内存空间。由于找到的堆结点的大小不一定正好等于申请的大小，系统会自动的将多余的那部分重新放入空闲链表中。也就是说堆会在申请后还要做一些后续的工作这就会引出申请效率的问题。</p>
-<ol start="5">
-<li><font color="#FF7F00"><strong>分配效率不同。</strong></font></li>
-</ol>
-<p><strong>栈：</strong>由系统自动分配，速度较快。但程序员是无法控制的。<br><strong>堆：</strong>是由new分配的内存，一般速度比较慢，而且容易产生内存碎片，不过用起来最方便。</p>
-<blockquote>
-<p>栈是机器系统提供的数据结构，计算机会在底层对栈提供支持：分配专门的寄存器存放栈的地址，压栈出栈都有专门的指令执行。堆则是C函数库提供的，它的机制很复杂，例如为了分配一块内存，库函数会按照一定的算法（具体的算法可以参考数据结构/操作系统）在堆内存中搜索可用的足够大的空间，如果没有足够大的空间（可能是由于内存碎片太多），就有需要操作系统来重新整理内存空间，这样就有机会分到足够大小的内存，然后返回。显然，堆的效率比栈要低得多。</p>
-</blockquote>
-<ol start="6">
-<li><font color="#FF7F00"><strong>是否产生碎片。</strong></font></li>
-</ol>
-<p><strong>堆：</strong>对于堆来讲，频繁的malloc/free（new/delete）势必会造成内存空间的不连续，从而<strong>造成大量的碎片</strong>，使程序效率降低（虽然程序在退出后操作系统会对内存进行回收管理）。<br><strong>栈：</strong>对于栈来讲，则不会产生碎片。</p>
-<ol start="7">
-<li><font color="#FF7F00"><strong>栈和堆中的存储内容不同。</strong></font></li>
-</ol>
-<p><strong>栈：</strong>在函数调用时，第一个进栈的是主函数中后的下一条指令（函数调用语句的下一条可执行语句）的地址，然后是函数的各个参数，在大多数的C编译器中，参数是由右往左入栈的，然后是函数中的局部变量。注意静态变量是不入栈的。当本次函数调用结束后，局部变量先出栈，然后是参数，最后栈顶指针指向最开始存的地址，也就是主函数中的下一条指令，程序由该点继续运行。栈中的内存是在程序编译完成以后就可以确定的，不论占用空间大小，还是每个变量的类型。<br><strong>堆：</strong>一般是在堆的头部用一个字节存放堆的大小。堆中的具体内容由程序员安排。</p>
-<p>下面附上一张栈和堆地址增长方向的对比图：<br><img src="https://i.loli.net/2019/06/17/5d0759163057393552.png" alt="806053-20170723012539965-796179889.png"></p>
-<h2 id="0x03-操作系统中的内存分配"><a href="#0x03-操作系统中的内存分配" class="headerlink" title="0x03 操作系统中的内存分配"></a><font color="#03a9f4" face="Comic sans MS">0x03 操作系统中的内存分配</font></h2><p>操作系统在管理内存时，最小单位不是字节，而是内存页（32位操作系统的内存页一般是4K）。比如，初次申请1K内存，操作系统会分配1个内存页，也就是4K内存。4K是一个折中的选择，因为：内存页越大，内存浪费越多，但操作系统内存调度效率高，不用频繁分配和释放内存；内存页越小，内存浪费越少，但操作系统内存调度效率低，需要频繁分配和释放内存。嵌入式系统的内存内存资源很稀缺，其内存页会更小，因此在嵌入式开发当中需要特别注意。</p>
-<br>
-
-
-
-<p>参考资料：</p>
-<ul>
-<li><font color="#00B2EE"><a href="https://www.cnblogs.com/tuhooo/p/7221136.html" target="_blank" rel="noopener">《深入理解C语言内存管理》
-</a></font></li>
-<li><font color="#00B2EE"><a href="https://www.cnblogs.com/yif1991/p/5049638.html" target="_blank" rel="noopener">《C语言知识整理（3）：内存管理（详细版）》
-</a></font></li>
-<li><font color="#00B2EE"><a href="https://www.cnblogs.com/kimiway/p/3224607.html" target="_blank" rel="noopener">《C语言内存管理详解》
-</a></font></li>
-<li><font color="#00B2EE"><a href="https://blog.csdn.net/K346K346/article/details/80849966" target="_blank" rel="noopener">《堆与栈的区别》
-</a></font></li>
-<li><font color="#00B2EE"><a href="https://blog.csdn.net/qq_41035588/article/details/81953424" target="_blank" rel="noopener">《【C语言】数据结构和内存中的堆和栈》
-</a></font></li>
-</ul>
-
+      <p>(｡◕︎‿◕︎)ﾉﾟ･ﾟ･*</p>
+      
+      <a class="article-more-link" href="/post/memory-management/">阅读更多...</a>
+      
       
       <!-- 打赏 -->
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/memory-management/" data-id="ck3yivbqb005lubholp3fnam4"
+      <a data-url="https://Directoree.github.io/post/memory-management/" data-id="ck3yk61a0005oyshoe6vcb5pz"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-Memory/">C-Memory</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/内存管理/">内存管理</a></li></ul>
@@ -555,327 +426,16 @@
       
 
       
-      <h2 id="0x01-malloc-amp-calloc"><a href="#0x01-malloc-amp-calloc" class="headerlink" title="0x01 malloc() &amp; calloc()"></a><font color="#03a9f4" face="Comic sans MS">0x01 malloc() &amp; calloc()</font></h2><ul>
-<li><p><strong>void *malloc ( size );</strong></p>
-<ul>
-<li>malloc的作用是在内存的动态存储区中分配一个长度为size的<font color="#FF7F00"><strong>连续空间</strong></font>。如果由malloc()函数分配的内存空间原来没有被使用过，则其中的每一位可能都是0；反之,如果这部分内存曾经被分配过,则其中可能遗留有各种各样的数据。所以一般mallc()要配合memset()函数使用。</li>
-</ul>
-</li>
-<li><p><strong>void *calloc ( n, size );</strong></p>
-<ul>
-<li>calloc() 在内存中动态地分配 n 个长度为 size 的<font color="#FF7F00"><strong>连续空间</strong></font>，并将每一个字节都初始化为 0。所以它的结果是分配了 num x size 个字节长度的内存空间，并且每个字节的值都是0。</li>
-</ul>
-<br>
-
-</li>
-</ul>
-<p><font color="#FF7F00"><strong>1. 相似点：</strong></font></p>
-<ol>
-<li>动态内存申请都需要用到头文件<strong><code>#include &lt;stdlib.h&gt;</code></strong>。</li>
-<li>malloc()、calloc()申请的内存类型都是 <strong><code>void*</code></strong> 类型的，需要强制转化为指定类型；</li>
-</ol>
-<p> <strong>注意：</strong>函数的返回值类型是<strong><code>void*</code></strong>，void 并不是说没有返回值或者返回空指针，而是返回的指针类型未知。所以在使用 calloc() 时通常需要进行强制类型转换，将 void 指针转换成我们希望的类型，例如：</p>
-<pre class="line-numbers language-c"><code class="language-c"> <span class="token keyword">char</span> <span class="token operator">*</span>ptr <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">100</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// 分配100个字节的内存空间</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<ol start="3">
-<li><p><strong>返回值：</strong></p>
-<ul>
-<li>如果调用成功,函数malloc()和函数calloc()都将返回所分配的内存空间的<font color="#FF7F00"><strong>首地址</strong></font>。</li>
-<li>如果调用失败，则返回 NULL。</li>
-</ul>
-</li>
-<li><p><strong>申请了内存空间后，必须检查是否分配成功</strong>。</p>
-<ul>
-<li>函数同样要注意这点：如果所申请的内存块大于目前堆上剩余内存块（整块），则内存分配会失败，函数返回NULL。注意这里说的“堆上剩余内存块”不是所有剩余内存块之和，是指堆上剩余内存块中与上次申请的内存地址连续的那部分，因为malloc函数申请的是<strong>连续的一块内存</strong>。既然malloc函数申请内存有不成功的可能，那我们在使用指向这块内存的指针时，必须用<strong><code>if（p!=NULL）</code></strong>语句来验证内存确实分配成功了。</li>
-</ul>
-</li>
-<li><p>二者返回的地址是连续的：下面两种方式申请<strong>地址大小</strong>是相等的</p>
-<pre class="line-numbers language-c"><code class="language-c"><span class="token keyword">char</span> <span class="token operator">*</span>str1 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">calloc</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token keyword">char</span> <span class="token operator">*</span>str2 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-</li>
-</ol>
-<br>
-
-<p><font color="#FF7F00"><strong>2. 不相同点：</strong></font></p>
-<ol>
-<li>函数malloc()和函数calloc()的主要区别是<strong>前者不能初始化所分配的内存空间,而后者能</strong>。如果由malloc()函数分配的内存空间原来没有被使用过，则其中的每一位可能都是0；反之，如果这部分内存曾经被分配过，则其中可能遗留有各种各样的数据。</li>
-<li>函数calloc()会将所分配的内存空间中的每一位都初始化为零，也就是说,如果你是为字符类型或整数类型的元素分配内存，那么这些元素将保证会被初始化为0；如果你是为指针类型的元素分配内存,那么这些元素通常会被初始化为空指针；如果你为实型数据分配内存，则这些元素会被初始化为浮点型的零。</li>
-<li>calloc 可以代替 malloc + memset，但是 malloc + memset 代替不了 calloc。 calloc 大块内存时，如果是从系统分配，就可以免了 memset 的操作，快很多。memset可以设任意数，calloc只能设0 。calloc表示申请 n x size大小的内存，malloc只有一个参数。</li>
-</ol>
-<br>
-
-<p><font color="#FF7F00"><strong>3. 以下两种方式完全等价：</strong></font></p>
-<pre class="line-numbers language-c"><code class="language-c"><span class="token comment" spellcheck="true">// calloc() 分配内存空间并初始化</span>
-<span class="token keyword">char</span> <span class="token operator">*</span>str1 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">calloc</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token comment" spellcheck="true">// malloc() 分配内存空间并用 memset() 初始化</span>
-<span class="token keyword">char</span> <span class="token operator">*</span>str2 <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span><span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token function">memset</span><span class="token punctuation">(</span>str2<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">20</span><span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="0x02-realloc"><a href="#0x02-realloc" class="headerlink" title="0x02 realloc()"></a><font color="#03a9f4" face="Comic sans MS">0x02 realloc()</font></h2><p>函数原型：<strong><code>realloc(void *p, addsize)</code></strong></p>
-<p><strong>一、基本特性</strong></p>
-<ol>
-<li><p>realloc()函数可以重用或扩展以前用malloc()、calloc()及realloc()函数自身分配的内存。</p>
-</li>
-<li><p>realloc()函数需两个参数：一个是包含地址的指针（该地址由之前的malloc()、calloc()或realloc()函数返回），另一个是要新分配的内存字节数。</p>
-</li>
-<li><p>realloc()函数分配第二个参数指定的内存量，并把第一个参数指针指向的之前分配的内容复制到新配的内存中，且复制的内容长度等于新旧内存区域中较小的那一个。即新内存大于原内存，则原内存所有内容复制到新内存，如果新内存小于原内存，只复制长度等于新内存空间的内容。</p>
-</li>
-<li><p>realloc()函数的第一个参数若为空指针，相当于分配第二个参数指定的新内存空间，此时等价于malloc()、calloc()或realloc()函数。</p>
-</li>
-<li><p>如果是将分配的内存扩大，则有以下3种情况：</p>
-<blockquote>
-<ul>
-<li>如果当前内存段后面有需要的内存空间，则直接扩展这段内存空间，realloc()将返回<strong>原指针</strong>。  </li>
-<li>如果当前内存段后面的空闲字节不够，那么就使用堆中的第一个能够满足这一要求的内存块，将目前的数据复制到新的位置，并<font color="red" size="5"><strong>自动</strong></font>将原来的数据块释放掉，不需要使用free()再释放一次，返回新的内存块首地址（不同于之前malloc申请的首地址）。</li>
-<li>如果申请失败，将返回NULL，此时，原来的指针仍然有效。</li>
-</ul>
-</blockquote>
-<br>
-
-</li>
-</ol>
-<p><strong>二、注意事项</strong></p>
-<ol>
-<li><p><strong>第一个参数要么是空指针，要么是指向以前分配的内存。如果不指向以前分配的内存或指向已释放的内存，结果就是不确定的。</strong></p>
-</li>
-<li><p><font color="#FF7F00"><strong>如果调用成功，不管当前内存段后面的空闲空间是否满足要求，都会释放掉原来的指针，重新返回一个指针，虽然返回的指针有可能和原来的指针一样，即不能再次释放掉原来的指针。</strong></font></p>
-</li>
-</ol>
-<p>举例（不需要手动free释放原来的首地址指针，realloc若新申请成功会自动释放原来的首地址。），实现在一个按升序排序的数组中查找x应插入的位置，将x插入数组中，使数组元素仍按升序排列。<br><strong>注意：</strong>注意代码45行 <strong><code>free(pNumber);</code></strong>，如果注释掉，则结果正确。如果不注释掉则错误。</p>
-<pre class="line-numbers language-c"><code class="language-c"><span class="token macro property">#<span class="token directive keyword">include</span><span class="token string">&lt;stdio.h></span></span>
-<span class="token macro property">#<span class="token directive keyword">include</span><span class="token string">&lt;stdlib.h></span></span>
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">{</span>
-    <span class="token keyword">int</span> n <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">int</span> index <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">int</span> insert_data <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
-    <span class="token keyword">int</span> <span class="token operator">*</span>pNumber <span class="token operator">=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
-    <span class="token keyword">int</span> <span class="token operator">*</span>pNewArray <span class="token operator">=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Input array size:\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%d"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>n<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    pNumber <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">int</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">calloc</span><span class="token punctuation">(</span>n<span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>pNumber <span class="token operator">==</span> <span class="token constant">NULL</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Not enough memory\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">//输入插入前已按升序排序的数组元素提示信息</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Input array:\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%d"</span><span class="token punctuation">,</span> pNumber<span class="token operator">+</span>i<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">//输入待插入的元素x提示信息：</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Input x:\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token function">scanf</span><span class="token punctuation">(</span><span class="token string">"%d"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>insert_data<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment" spellcheck="true">//确定待插入位置的索引值</span>
-    <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token keyword">if</span><span class="token punctuation">(</span>insert_data <span class="token operator">&lt;</span> <span class="token operator">*</span><span class="token punctuation">(</span>pNumber<span class="token operator">+</span>i<span class="token punctuation">)</span><span class="token punctuation">)</span>
-        <span class="token punctuation">{</span>
-            index <span class="token operator">=</span> i<span class="token punctuation">;</span>
-            <span class="token keyword">break</span><span class="token punctuation">;</span>
-        <span class="token punctuation">}</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">//用realloc()新分配一块内存，用于存储原数组和新插入的值</span>
-    pNewArray <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">int</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">realloc</span><span class="token punctuation">(</span>pNumber<span class="token punctuation">,</span> <span class="token punctuation">(</span>n<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">*</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token keyword">int</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>pNewArray <span class="token operator">==</span> <span class="token constant">NULL</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"Not enough memory\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token comment" spellcheck="true">//free(pNumber); </span>
-    <span class="token comment" spellcheck="true">//输出新分配的内存空间的值，查看是否实现了复制</span>
-    <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%4d"</span><span class="token punctuation">,</span> pNewArray<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token comment" spellcheck="true">//待插入位置及后面的所有数据依次向后移1位</span>
-    <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> n<span class="token punctuation">;</span> i  <span class="token operator">></span> index<span class="token punctuation">;</span> i<span class="token operator">--</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token operator">*</span><span class="token punctuation">(</span>pNewArray<span class="token operator">+</span>i<span class="token punctuation">)</span> <span class="token operator">=</span> pNewArray<span class="token punctuation">[</span>i<span class="token number">-1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token operator">*</span><span class="token punctuation">(</span>pNewArray <span class="token operator">+</span> index<span class="token punctuation">)</span> <span class="token operator">=</span> insert_data<span class="token punctuation">;</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"After insert %d:\n"</span><span class="token punctuation">,</span> insert_data<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">for</span><span class="token punctuation">(</span>i <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span> i <span class="token operator">&lt;</span> n<span class="token operator">+</span><span class="token number">1</span><span class="token punctuation">;</span> i<span class="token operator">++</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%4d"</span><span class="token punctuation">,</span> <span class="token operator">*</span><span class="token punctuation">(</span>pNewArray<span class="token operator">+</span>i<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token function">free</span><span class="token punctuation">(</span>pNewArray<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<br>
-
-<h2 id="0x03-free-amp-memset"><a href="#0x03-free-amp-memset" class="headerlink" title="0x03 free() &amp; memset()"></a><font color="#03a9f4" face="Comic sans MS">0x03 free() &amp; memset()</font></h2><h3 id="0x001-free"><a href="#0x001-free" class="headerlink" title="0x001 free()"></a><font color="#00C5CD" face="Comic sans MS">0x001 free()</font></h3><p>free()函数声明：<strong><code>void free(void *ptr);</code></strong></p>
-<blockquote>
-<p><strong>说明：</strong>释放ptr指向的内存空间，ptr必须是之前调用过malloc,calloc,realloc这三个函数返回的，否则，如果free(ptr)已经执行过了，而又没有重新赋值给ptr的话，又执行一次free(ptr)会导致意外发生（undefined behavior occurs.），如果ptr指向的是NULL，则不会做任何操作。</p>
-</blockquote>
-<p>示例：</p>
-<pre class="line-numbers language-c"><code class="language-c"><span class="token macro property">#<span class="token directive keyword">include</span><span class="token string">&lt;stdio.h></span></span>
-<span class="token macro property">#<span class="token directive keyword">include</span><span class="token string">&lt;stdlib.h></span></span>
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token punctuation">{</span>
-    <span class="token keyword">char</span> <span class="token operator">*</span>p <span class="token operator">=</span> <span class="token constant">NULL</span><span class="token punctuation">;</span>
-    p <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token keyword">char</span><span class="token operator">*</span><span class="token punctuation">)</span><span class="token function">malloc</span><span class="token punctuation">(</span><span class="token keyword">sizeof</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">if</span><span class="token punctuation">(</span>p<span class="token operator">==</span><span class="token constant">NULL</span><span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"You are failed to applicate the memory.\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-        <span class="token function">exit</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token function">free</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">;</span>
-    p<span class="token operator">=</span><span class="token constant">NULL</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">//一定要给p赋个值NULL，否则再次free(p)会报错</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<br>
-
-<p>其实它就做了一件事：<font color="#FF7F00"><strong>斩断指针变量与这块内存的关系</strong></font>。</p>
-<blockquote>
-<p>free函数就是把这块内存和p之间的所有关系斩断。从此p和那块内存之间再无瓜葛。<strong>至于指针变量p本身保存的地址并没有改变（即指针p的值仍然是刚才的地址，只是再也不能通过p来使用刚才的地址了。），但是它对这个地址处的那块内存却已经没有所有权了。那块被释放的内存里面保存的值也没有改变，只是再也没有办法使用了</strong>。</p>
-</blockquote>
-<ol>
-<li>这就是free函数的功能。按照上面的分析，如果对p连续两次以上使用free函数，肯定会发生错误。因为第一使用free函数时，p所属的内存已经被释放，第二次使用时已经无内存可释放了。</li>
-<li>malloc两次只free一次会内存泄漏；malloc一次free两次肯定会出错。也就是说，在程序中malloc的使用次数一定要和free相等，否则必有错误。这种错误主要发生在循环使用malloc函数时，不要把malloc和free对数弄错了。</li>
-<li>内存释放之后，既然使用free函数之后指针变量p本身保存的地址并没有改变，那我们就需要重新把p的值变为NULL。</li>
-<li>释放完块内存之后，没有把指针置NULL，这个指针就成为了“<strong>野指针</strong>”，也有书叫“<strong>悬垂指针</strong>”。这是很危险的，而且也是经常出错的地方。所以一定要记住一条：<font color="red"><strong>free完之后，一定要给指针置NULL</strong></font>。</li>
-</ol>
-<p><strong>注意：</strong>内存已经被释放了，但是继续通过指针来使用！</p>
-<blockquote>
-<p><strong>这里一般有三种情况：</strong><br>第一种：就是上面所说的，free（p）之后，继续通过p指针来访问内存。解决的办法就是给p置NULL。<br>第二种：函数返回栈内存。这是初学者最容易犯的错误。比如在函数内部定义了一个数组，却用return语句返回指向该数组的指针。解决的办法就是弄明白栈上变量的生命周期。<br>第三种：内存使用太复杂，弄不清到底哪块内存被释放，哪块没有被释放。解决的办法是重新设计程序，改善对象之间的调用关系。</p>
-</blockquote>
-<h3 id="0x002-memset"><a href="#0x002-memset" class="headerlink" title="0x002 memset()"></a><font color="#00C5CD" face="Comic sans MS">0x002 memset()</font></h3><p>函数声明：<strong><code>void *memset(void *s, int c, unsigned long n);</code></strong></p>
-<p>定义变量时一定要进行初始化，尤其是数组和结构体这种占用内存大的数据结构。在使用数组的时候经常因为没有初始化而产生“烫烫烫烫烫烫”这样的野值，俗称“乱码”。</p>
-<p>每种类型的变量都有各自的初始化方法，memset() 函数可以说是初始化内存的“万能函数”，通常为新申请的内存进行初始化工作。它是直接操作内存空间，mem即“内存”（memory）的意思。该函数的原型为：</p>
-<pre class="line-numbers language-c"><code class="language-c"><span class="token macro property"># <span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
-<span class="token keyword">void</span> <span class="token operator">*</span><span class="token function">memset</span><span class="token punctuation">(</span><span class="token keyword">void</span> <span class="token operator">*</span>s<span class="token punctuation">,</span> <span class="token keyword">int</span> c<span class="token punctuation">,</span> <span class="token keyword">unsigned</span> <span class="token keyword">long</span> n<span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p><strong>函数的功能是：</strong>将指针变量 s 所指向的前 n 字节的内存单元用一个“整数” c 替换，注意 c 是 int 型。s 是 void* 型的指针变量，所以它可以为任何类型的数据进行初始化。</p>
-<p>memset() 的作用是在一段内存块中填充某个给定的值。因为它只能填充一个值，所以该函数的初始化为原始初始化，无法将变量初始化为程序中需要的数据。用memset初始化完后，后面程序中再向该内存空间中存放需要的数据。</p>
-<p>memset 一般使用“0”初始化内存单元，而且通常是给数组或结构体进行初始化。一般的变量如 char、int、float、double 等类型的变量直接初始化即可，没有必要用 memset。如果用 memset 的话反而显得麻烦。</p>
-<p>当然，数组也可以直接进行初始化，但 memset 是对较大的数组或结构体进行清零初始化的最快方法，因为它是直接对内存进行操作的。</p>
-<p>这时有人会问：“字符串数组不是最好用’\0’进行初始化吗？那么可以用 memset 给字符串数组进行初始化吗？也就是说参数 c 可以赋值为’\0’吗？”</p>
-<p>可以的。虽然参数 c 要求是一个整数，但是整型和字符型是互通的。但是赋值为 ‘\0’ 和 0 是等价的，因为字符 ‘\0’ 在内存中就是 0。所以在 memset 中初始化为 0 也具有结束标志符 ‘\0’ 的作用，所以通常我们就写“0”。</p>
-<p>memset 函数的第三个参数 n 的值一般用 sizeof()  获取，这样比较专业。注意，如果是对指针变量所指向的内存单元进行清零初始化，那么一定要先对这个指针变量进行初始化，即一定要先让它指向某个有效的地址。而且用memset给指针变量如p所指向的内存单元进行初始化时，n 千万别写成 sizeof(p)，这是新手经常会犯的错误。因为 p 是指针变量，不管 p 指向什么类型的变量，sizeof(p) 的值都是 4。</p>
-<p>下面写一个程序：</p>
-<pre class="line-numbers language-c"><code class="language-c"><span class="token macro property"># <span class="token directive keyword">include</span> <span class="token string">&lt;stdio.h></span></span>
-<span class="token macro property"># <span class="token directive keyword">include</span> <span class="token string">&lt;string.h></span></span>
-<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token keyword">void</span><span class="token punctuation">)</span>
-<span class="token punctuation">{</span>
-    <span class="token keyword">int</span> i<span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//循环变量</span>
-    <span class="token keyword">char</span> str<span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
-    <span class="token keyword">char</span> <span class="token operator">*</span>p <span class="token operator">=</span> str<span class="token punctuation">;</span>
-    <span class="token function">memset</span><span class="token punctuation">(</span>str<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>str<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//只能写sizeof(str), 不能写sizeof(p)</span>
-    <span class="token keyword">for</span> <span class="token punctuation">(</span>i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span> i<span class="token operator">&lt;</span><span class="token number">10</span><span class="token punctuation">;</span> <span class="token operator">++</span>i<span class="token punctuation">)</span>
-    <span class="token punctuation">{</span>
-        <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%d\x20"</span><span class="token punctuation">,</span> str<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token keyword">return</span> <span class="token number">0</span><span class="token punctuation">;</span>
-<span class="token punctuation">}</span>
-根据memset函数的不同，输出结果也不同，分为以下几种情况：
-<span class="token function">memset</span><span class="token punctuation">(</span>p<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//地址的大小都是4字节</span>
-<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span>
-
-<span class="token function">memset</span><span class="token punctuation">(</span>p<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span><span class="token operator">*</span>p<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//*p表示的是一个字符变量, 只有一字节</span>
-<span class="token number">0</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span> <span class="token operator">-</span><span class="token number">52</span>
-
-<span class="token function">memset</span><span class="token punctuation">(</span>p<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>str<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
-
-<span class="token function">memset</span><span class="token punctuation">(</span>str<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token keyword">sizeof</span><span class="token punctuation">(</span>str<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span>
-
-<span class="token function">memset</span><span class="token punctuation">(</span>p<span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">,</span> <span class="token number">10</span><span class="token punctuation">)</span><span class="token punctuation">;</span>  <span class="token comment" spellcheck="true">//直接写10也行, 但不专业</span>
-<span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span> <span class="token number">0</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="0x04-Summary"><a href="#0x04-Summary" class="headerlink" title="0x04 Summary"></a><font color="#03a9f4" face="Comic sans MS">0x04 Summary</font></h2><h3 id="0x001-C-C-程序内存分配"><a href="#0x001-C-C-程序内存分配" class="headerlink" title="0x001 C/C++程序内存分配"></a><font color="#00C5CD" face="Comic sans MS">0x001 C/C++程序内存分配</font></h3><p><img src="https://i.loli.net/2019/06/06/5cf8befa94fbc58191.png" alt="20180818211016694.png"></p>
-<blockquote>
-<p><font color="#FF7F00"><strong>注意：</strong></font></p>
-</blockquote>
-<ol>
-<li>内存泄漏(仅存在程序运行时，程序退出，OS将回收所有资源)是指那些本应该回收（不再使用）的内存对象无法被系统回收的现象。在c/c++中需要程序猿手动释放内存对象，所以在C/C++中更容易存在内存泄漏。java引入了自动回收机制，使得在C/C++中令人头疼的内存问题得到了有效的改善，但这并不意味着java程序员不关注内存，因为垃圾回收机制不能完全保证内存对象在该释放的地方释放.</li>
-<li>内存溢出指的是系统在为某段执行指令（程序）分配内存的时候，发现内存不足，抛出错误。</li>
-</ol>
-<br>
-
-<h3 id="0x002-C-C-内存分配方式"><a href="#0x002-C-C-内存分配方式" class="headerlink" title="0x002 C/C++内存分配方式"></a><font color="#00C5CD" face="Comic sans MS">0x002 C/C++内存分配方式</font></h3><blockquote>
-<ol>
-<li><font color="#FF7F00"><strong>在栈上创建</strong></font><br>在执行函数时，函数内局部变量的存储单元都可以在栈上创建，函数执行结束时这些存储单元自动被释放.栈内存分配运算内置于处理器的指令集中，效率很高，但是分配的内存容量有限.</li>
-<li><font color="#FF7F00"><strong>从堆上分配，亦称动态内存分配</strong></font><br>程序在运行的时候用malloc或new申请任意多少的内存，程序员自己负责在何时用free或delete释放内存.动态内存的生存期由用户决定，使用非常灵活，但问题也最多.</li>
-<li><font color="#FF7F00"><strong>从静态存储区域分配</strong></font><br>内存在程序编译的时候就已经分配好，这块内存在程序的整个运行期间都存在.例如全局变量、static变量.</li>
-</ol>
-</blockquote>
-<br>
-
-<h3 id="0x003-C语言内存申请相关的函数"><a href="#0x003-C语言内存申请相关的函数" class="headerlink" title="0x003 C语言内存申请相关的函数"></a><font color="#00C5CD" face="Comic sans MS">0x003 C语言内存申请相关的函数</font></h3><blockquote>
-<ol>
-<li><strong>alloca</strong> 是向栈申请内存,因此无需释放.</li>
-<li><strong>malloc</strong> 分配的内存是位于堆中的，并且没有初始化内存的内容，malloc() 不初始化，里边数据是未知的垃圾数据，因此基本上malloc之后,调用函数memset来初始化这部分的内存空间.</li>
-<li><strong>calloc</strong> 则将初始化这部分的内存，设置为0。</li>
-<li><strong>realloc</strong> 则对malloc申请的内存进行大小的调整。</li>
-<li>申请的内存最终需要通过函数free来释放。<br><font color="#FF7F00"><strong>注意：</strong></font><br>当程序运行过程中malloc了,但是没有free的话,会造成内存泄漏.一部分的内存没有被使用,但是由于没有free,因此系统认为这部分内存还在使用,造成不断的向系统申请内存,使得系统可用内存不断减少.但是内存泄漏仅仅指程序在运行时,程序退出时,OS将回收所有的资源.因此,适当的重起一下程序,有时候还是有点作用.</li>
-</ol>
-</blockquote>
-<br>
-
-<h3 id="0x004-malloc，realloc，calloc函数声明"><a href="#0x004-malloc，realloc，calloc函数声明" class="headerlink" title="0x004 malloc，realloc，calloc函数声明"></a><font color="#00C5CD" face="Comic sans MS">0x004 malloc，realloc，calloc函数声明</font></h3><blockquote>
-<ul>
-<li><strong>void* malloc(unsigned size)</strong>;</li>
-</ul>
-</blockquote>
-<ul>
-<li><strong>void* realloc(void* ptr, unsigned newsize)</strong>;</li>
-<li><strong>void* calloc(size_t numElements, size_t sizeOfElement)</strong>; </li>
-</ul>
-<blockquote>
-<p><font color="#FF7F00"><strong>注意：</strong></font>都在stdlib.h函数库内，它们的返回值都是请求系统分配的地址,如果请求失败就返回NULL.<br>(1)函数malloc()<br>在内存的动态存储区中分配一块长度为size字节的连续区域，参数size为需要内存空间的长度，返回该区域的首地址.<br>(2)函数calloc()<br>与malloc相似,参数sizeOfElement为申请地址的单位元素长度,numElements为元素个数，即在内存中申请numElements*sizeOfElement字节大小的连续地址空间.<br>(3)函数realloc()<br>给一个已经分配了地址的指针重新分配空间,参数ptr为原有的空间地址,newsize是重新申请的地址长度.</p>
-</blockquote>
-<br>
-
-<ol>
-<li><font color="#FF7F00"><strong>函数malloc不能初始化所分配的内存空间，而函数calloc能</strong></font>。如果由malloc()函数分配的内存空间原来没有被使用过，则其中的每一位可能都是0；反之, 如果这部分内存曾经被分配过，则其中可能遗留有各种各样的垃圾数据。也就是说，使用malloc()函数的程序开始时(内存空间还没有被重新分配)能正常进行,但经过一段时间(内存空间还已经被重新分配)可能会出现问题。</li>
-<li>函数calloc() 会将所分配的内存空间中的每一位都初始化为零，也就是说，如果你是为字符类型或整数类型的元素分配内存，那么这些元素将保证会被初始化为0；如果你是为指针类型的元素分配内存,那么这些元素通常会被初始化为空指针；如果你为实型数据分配内存，则这些元素会被初始化为浮点型的零。</li>
-<li>函数malloc向系统申请分配指定size个字节的内存空间.返回类型是 void*类型。void*表示未确定类型的指针。<font color="#FF7F00"><strong>C,C++规定，void* 类型可以强制转换为任何其它类型的指针</strong></font>。 </li>
-<li>realloc可以对给定的指针所指的空间进行扩大或者缩小，无论是扩张或是缩小，原有内存的中内容将保持不变.当然，对于缩小，则被缩小的那一部分的内容会丢失。realloc并不保证调整后的内存空间和原来的内存空间保持同一内存地址。相反，realloc返回的指针很可能指向一个新的地址。</li>
-<li>realloc是从堆上分配内存的。当扩大一块内存空间时，realloc()试图直接从堆上现存的数据后面的那些字节中获得附加的字节，如果能够满足，自然天下太平；如果数据后面的字节不够，问题就出来了，那么就使用堆上第一个有足够大小的自由块，现存的数据然后就被拷贝至新的位置，而老块则放回到堆上。这句话传递的一个重要的信息就是数据可能被移动。</li>
-</ol>
-<br>
-
-<p>参考资料：<br>参考资料：</p>
-<ul>
-<li><p><font color="#00B2EE"><a href="https://www.runoob.com/cprogramming/c-memory-management.html" target="_blank" rel="noopener">《C 内存管理》
-</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="http://c.biancheng.net/c/" target="_blank" rel="noopener">《C语言中文网-C语言教程》
-</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="http://c.biancheng.net/cpp/u/cjinjie/list_48_2.html" target="_blank" rel="noopener">《C语言深度剖析【进阶篇】》
-</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://www.cnblogs.com/chunzhulovefeiyue/p/6821317.html" target="_blank" rel="noopener">《如何使用 malloc 函数》</a>]</font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://blog.csdn.net/qq_41035588/article/details/81813480" target="_blank" rel="noopener">《【C语言】malloc、calloc、realloc的区别》</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://blog.csdn.net/qq_41119046/article/details/80057135" target="_blank" rel="noopener">《C语言—动态内存分配之malloc与realloc的区别》</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://www.cnblogs.com/stevenwuzheng/p/5484986.html" target="_blank" rel="noopener">《C语言中malloc()和calloc()c函数用法》</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://blog.csdn.net/sinat_35297665/article/details/78925121" target="_blank" rel="noopener">《C语言calloc()函数：分配内存空间并初始化》</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://blog.csdn.net/21aspnet/article/details/1540020" target="_blank" rel="noopener">《关于C语言中的malloc和free函数的用法》</a></font> </p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://wenku.baidu.com/view/d48102f0d1d233d4b14e852458fb770bf78a3bdf.html" target="_blank" rel="noopener">《c语言深度剖析》----陈正冲
-</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="https://www.cnblogs.com/xkfz007/archive/2012/02/27/2369562.html" target="_blank" rel="noopener">《读书笔记之：C语言深度剖析》
-</a></font></p>
-</li>
-<li><p><font color="#00B2EE"><a href="http://c.biancheng.net/view/231.html" target="_blank" rel="noopener">《memset函数及其用法，C语言memset函数详解》
-</a></font></p>
-</li>
-</ul>
-
+      <p>🙂️</p>
+      
+      <a class="article-more-link" href="/post/memory/">阅读更多...</a>
+      
       
       <!-- 打赏 -->
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/memory/" data-id="ck3yivbqe005wubhonizoh2uy"
+      <a data-url="https://Directoree.github.io/post/memory/" data-id="ck3yk61a1005syshosawu5gch"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-Memory/">C-Memory</a></li></ul>
@@ -942,7 +502,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/Network-attack-and-defense/" data-id="ck3yivbp3002eubhozuwm4ro7"
+      <a data-url="https://Directoree.github.io/post/Network-attack-and-defense/" data-id="ck3yk618t002pyshoemtttjfj"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Security/">Security</a></li></ul>
@@ -1009,7 +569,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/sqli-labs/" data-id="ck3yivbqc005pubho0qarvi65"
+      <a data-url="https://Directoree.github.io/post/sqli-labs/" data-id="ck3yk61a3005uyshosgj7zbj4"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SQLi/">SQLi</a></li></ul>
@@ -1076,7 +636,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/c-grammer/" data-id="ck3yivbq40055ubhozgnwzhz3"
+      <a data-url="https://Directoree.github.io/post/c-grammer/" data-id="ck3yk619t0058yshohr4a682n"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C</a></li></ul>
@@ -1143,7 +703,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://Directoree.github.io/post/xxe-xml-dtd/" data-id="ck3yivbqd005uubho1z880h60"
+      <a data-url="https://Directoree.github.io/post/xxe-xml-dtd/" data-id="ck3yk61a4005yysho531ot8ie"
         class="article-share-link">分享</a>
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Web/">Web</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XML/">XML</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XXE/">XXE</a></li></ul>
