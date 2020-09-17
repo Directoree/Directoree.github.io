@@ -1,82 +1,155 @@
-<!DOCTYPE html><html data-theme="light"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Java数组(3.9) | Directoree</title><meta name="description" content="Java数组(3.9)"><meta name="keywords" content="Java学习,Java语言"><meta name="author" content="Directoree"><meta name="copyright" content="Directoree"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Java数组(3.9)"><meta name="twitter:description" content="Java数组(3.9)"><meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><meta property="og:type" content="article"><meta property="og:title" content="Java数组(3.9)"><meta property="og:url" content="https://Directoree.github.io/post/Java-Language-2-4/"><meta property="og:site_name" content="Directoree"><meta property="og:description" content="Java数组(3.9)"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'true'
-var t = Cookies.get("theme");
-if (autoChangeMode == '1'){
-const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
-
-if (t === undefined){
-  if (isLightMode) activateLightMode()
-  else if (isDarkMode) activateDarkMode()
-  else if (isNotSpecified || hasNoSupport){
-    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-    now = new Date();
-    hour = now.getHours();
-    isNight = hour < 6 || hour >= 18
-    isNight ? activateDarkMode() : activateLightMode()
-}
-} else if (t == 'light') activateLightMode()
-else activateDarkMode()
-
-
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
-
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="https://Directoree.github.io/post/Java-Language-2-4/"><link rel="prev" title="Wireshark简单介绍和数据包分析" href="https://Directoree.github.io/post/Wireshark-1/"><link rel="next" title="Java简单语句、复合语句、控制语句(3.7-3.8)" href="https://Directoree.github.io/post/Java-Language-2-3/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+<!DOCTYPE html><html data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Java数组(3.9) | Directoree</title><meta name="keywords" content="Java学习,Java语言"><meta name="author" content="Directoree"><meta name="copyright" content="Directoree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="&amp;ensp;&amp;ensp; 数组  &amp;emsp;&amp;emsp; 一、 一维数组  数组： 相同类型的数据元素按顺序组成的一种线性表，元素在数组中的相对位置由下标来指定。数组中的每个元素通过数组名加下标进行引用。  数组有什么用处？ 例：定义100个int型变量，求这100个变量的和。int x1,x2,x3…x100;int sum;sum&#x3D;x1+x2+…+x100;这样程序很复杂。例：定义100个i">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java数组(3.9)">
+<meta property="og:url" content="https://directoree.github.io/post/Java-Language-2-4/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="&amp;ensp;&amp;ensp; 数组  &amp;emsp;&amp;emsp; 一、 一维数组  数组： 相同类型的数据元素按顺序组成的一种线性表，元素在数组中的相对位置由下标来指定。数组中的每个元素通过数组名加下标进行引用。  数组有什么用处？ 例：定义100个int型变量，求这100个变量的和。int x1,x2,x3…x100;int sum;sum&#x3D;x1+x2+…+x100;这样程序很复杂。例：定义100个i">
+<meta property="og:locale">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg">
+<meta property="article:published_time" content="2019-01-13T03:30:23.000Z">
+<meta property="article:modified_time" content="2019-07-16T16:50:12.000Z">
+<meta property="article:author" content="Directoree">
+<meta property="article:tag" content="Java学习">
+<meta property="article:tag" content="Java语言">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://directoree.github.io/post/Java-Language-2-4/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
   root: '/',
+  hexoversion: '5.1.1',
   algolia: undefined,
   localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
   copy: {
     success: 'Copy successfully',
     error: 'Copy error',
     noSupport: 'The browser does not support'
   },
-  bookmark: {
-    title: 'Snackbar.bookmark.title',
-    message_prev: 'Press',
-    message_next: 'to bookmark this page'
+  relativeDate: {
+    homepage: false,
+    post: false
   },
-  runtime_unit: 'days',
-  runtime: true,
-  copyright: undefined,
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Directoree","link":"Link: ","source":"Source: Directoree","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
   ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
+  lightbox: 'fancybox',
   Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
   baiduPush: false,
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
   isHome: false,
-  isPost: true
-  
-}</script><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
-<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">Directoree</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> Search</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">80</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">44</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">Catalog</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#一、-一维数组"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">一、 一维数组 </span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-1-一维数组的说明"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">1.1  一维数组的说明</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-2-创建数组空间"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">1.2  创建数组空间</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-3-数组的初始化"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">1.3  数组的初始化</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-4-数组元素的使用"><span class="toc_mobile_items-number">1.4.</span> <span class="toc_mobile_items-text">1.4  数组元素的使用</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-5-一维数组使用举例"><span class="toc_mobile_items-number">1.5.</span> <span class="toc_mobile_items-text">1.5  一维数组使用举例</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#二、-二维数组"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">二、 二维数组 </span></a></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一、-一维数组"><span class="toc-number">1.</span> <span class="toc-text">一、 一维数组 </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-一维数组的说明"><span class="toc-number">1.1.</span> <span class="toc-text">1.1  一维数组的说明</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-创建数组空间"><span class="toc-number">1.2.</span> <span class="toc-text">1.2  创建数组空间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-数组的初始化"><span class="toc-number">1.3.</span> <span class="toc-text">1.3  数组的初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-数组元素的使用"><span class="toc-number">1.4.</span> <span class="toc-text">1.4  数组元素的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-一维数组使用举例"><span class="toc-number">1.5.</span> <span class="toc-text">1.5  一维数组使用举例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二、-二维数组"><span class="toc-number">2.</span> <span class="toc-text">二、 二维数组 </span></a></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png)"><div id="post-info"><div id="post-title"><div class="posttitle">Java数组(3.9)</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> Created 2019-01-13<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> Updated 2019-07-17</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Java/">Java</a></span><div class="post-meta-wordcount"><div class="post-meta-pv-cv"><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>Post View:</span><span id="busuanzi_value_page_pv"></span></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><p>&ensp;<br>&ensp;</p>
-<center><font color="#3CB371" face="Comic sans MS" size="5">数组</font></center>
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2019-07-17 00:50:12'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'true'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><meta name="generator" content="Hexo 5.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">81</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">45</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80%E3%80%81-%E4%B8%80%E7%BB%B4%E6%95%B0%E7%BB%84"><span class="toc-text">一、 一维数组 </span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-%E4%B8%80%E7%BB%B4%E6%95%B0%E7%BB%84%E7%9A%84%E8%AF%B4%E6%98%8E"><span class="toc-text">1.1  一维数组的说明</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-%E5%88%9B%E5%BB%BA%E6%95%B0%E7%BB%84%E7%A9%BA%E9%97%B4"><span class="toc-text">1.2  创建数组空间</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-%E6%95%B0%E7%BB%84%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96"><span class="toc-text">1.3  数组的初始化</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-4-%E6%95%B0%E7%BB%84%E5%85%83%E7%B4%A0%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="toc-text">1.4  数组元素的使用</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-5-%E4%B8%80%E7%BB%B4%E6%95%B0%E7%BB%84%E4%BD%BF%E7%94%A8%E4%B8%BE%E4%BE%8B"><span class="toc-text">1.5  一维数组使用举例</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C%E3%80%81-%E4%BA%8C%E7%BB%B4%E6%95%B0%E7%BB%84"><span class="toc-text">二、 二维数组 </span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Directoree</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Java数组(3.9)</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2019-01-13T03:30:23.000Z" title="Created 2019-01-13 11:30:23">2019-01-13</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2019-07-16T16:50:12.000Z" title="Updated 2019-07-17 00:50:12">2019-07-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Java/">Java</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>&ensp;<br>&ensp;</p>
+<center><font color="#3CB371" face="Comic sans MS" size=5>数组</font></center>
 
 <p>&emsp;<br>&emsp;</p>
-<h3 id="一、-一维数组"><a href="#一、-一维数组" class="headerlink" title="一、 一维数组 "></a><font color="#FF6347" face="Comic sans MS">一、 一维数组 </font></h3><p><font face="Comic sans MS"><font color="red"> <strong>数组：</strong> </font><font color="#00B2EE"><strong>相同类型的数据元素按顺序组成的一种线性表</strong></font>，元素在数组中的相对位置由下标来指定。数组中的每个元素通过数组名加下标进行引用。</font></p>
+<h3 id="一、-一维数组"><a href="#一、-一维数组" class="headerlink" title="一、 一维数组 "></a><font color="#FF6347" face="Comic sans MS">一、 一维数组 </font></h3><p><font face="Comic sans MS"><font color="red"> <strong>数组：</strong> </font><font color="#00B2EE"><strong>相同类型的数据元素按顺序组成的一种线性表</strong></font>，元素在数组中的相对位置由下标来指定。数组中的每个元素通过数组名加下标进行引用。</p>
 <p><font color="red"> <strong>数组有什么用处？</strong> </font><br><font color="#009ACD"><em>例：定义100个int型变量，求这100个变量的和。</em></font><br>int x1,x2,x3…x100;<br>int sum;<br>sum=x1+x2+…+x100;<br>这样程序很复杂。<br><font color="#009ACD"><em>例：定义100个int型变量，求这100个变量的和。</em></font><br>有了数组后，可以这样编程：<br>int [] x=new int[100];<br>int sum=0;<br>for(int i=0;i&lt;100;i++)<br>{<br>     sum=sum+x[i];<br>}<br>这样使得程序编写方便很多。</p>
-<p><font color="red"> <strong>注意：</strong> </font><br>Java中，数组是独立的<font color="#00B2EE"><strong>类</strong></font>，有自身的方法，<font color="#00B2EE"><strong>不只是变量的集合</strong></font>。在Java里创建一个数组，需要做如下的工作：<br>   （1）说明一个变量来存放该数组。<br>   （2）<font color="#00B2EE"><strong>建立一个新的数组对象</strong></font>（即创建数组空间）并把它赋给这个数组变量。<br>   （3）在该数组中存储信息。<br></p>
+<p><font color="red"> <strong>注意：</strong> </font><br>Java中，数组是独立的<font color="#00B2EE"><strong>类</strong></font>，有自身的方法，<font color="#00B2EE"><strong>不只是变量的集合</strong></font>。在Java里创建一个数组，需要做如下的工作：<br>   （1）说明一个变量来存放该数组。<br>   （2）<font color="#00B2EE"><strong>建立一个新的数组对象</strong></font>（即创建数组空间）并把它赋给这个数组变量。<br>   （3）在该数组中存储信息。<br></font></p>
 <p>&emsp;&emsp;<font color="red"> <strong>↓↓</strong> </font></p>
 <blockquote>
 <p>例如：String list[ ]=new String[3];<br>             list[0]=“one”;<br>             list[1]=“two”;</p>
@@ -87,24 +160,24 @@ function activateLightMode(){
 <p>例如：int list[ ];<br>            int[] list;<br>            String[] args;<br>            String args[];</p>
 </blockquote>
 <p>&emsp;<br>&emsp;</p>
-<h4 id="1-2-创建数组空间"><a href="#1-2-创建数组空间" class="headerlink" title="1.2  创建数组空间"></a><font color="#3CB371" face="Comic sans MS">1.2  创建数组空间</font></h4><p><font face="Comic sans MS">创建数组空间必须声明数组的长度，以确定所开辟的内存空间的大小，在Java中实际上就是通过new创建一个新的数组对象并把它赋给这个数组变量。其语法格式如下：<br><font color="red">&emsp;&emsp;&emsp;数组名=new 数组元素类型[数组元素个数]</font><br>例如：int[] list;   list=new int[3];</font></p>
-<p>数组的说明和构造合并在一起，其语法格式如下：<br><font color="red">&emsp;&emsp;&emsp;          类型 数组名[ ]=new 数组元素类型[数组元素个数]；]</font><br>例如：int list[ ]=new int[3];<br></p>
+<h4 id="1-2-创建数组空间"><a href="#1-2-创建数组空间" class="headerlink" title="1.2  创建数组空间"></a><font color="#3CB371" face="Comic sans MS">1.2  创建数组空间</font></h4><p><font face="Comic sans MS">创建数组空间必须声明数组的长度，以确定所开辟的内存空间的大小，在Java中实际上就是通过new创建一个新的数组对象并把它赋给这个数组变量。其语法格式如下：<br><font color="red">&emsp;&emsp;&emsp;数组名=new 数组元素类型[数组元素个数]</font><br>例如：int[] list;   list=new int[3];</p>
+<p>数组的说明和构造合并在一起，其语法格式如下：<br><font color="red">&emsp;&emsp;&emsp;          类型 数组名[ ]=new 数组元素类型[数组元素个数]；]</font><br>例如：int list[ ]=new int[3];<br></font></p>
 <p>&emsp;<br>&emsp;</p>
-<h4 id="1-3-数组的初始化"><a href="#1-3-数组的初始化" class="headerlink" title="1.3  数组的初始化"></a><font color="#3CB371" face="Comic sans MS">1.3  数组的初始化</font></h4><p><font face="Comic sans MS"><font color="red"><strong>1. 数组的初始化方式有两种：</strong></font><br>(1) 像初始化简单类型一样自动初始化数组，即在说明数组的同时进行初始化；<br>&emsp;&emsp;<font color="red">     int a[]={1,2,3,4}</font><br>(2) 先定义数组，然后为每个元素赋值。例如：<br>&emsp;&emsp;<font color="red">     int b[]=new int[3];</font><br>&emsp;&emsp;<font color="red">     b[0]=8;b[1]=9;</font><br>&emsp;<br><font color="red"><strong>2. 这样初始化也可以!</strong></font><br>另一种形式1：<br><font color="red">int[] a=new int[]{1,2,3,4};</font>&emsp;&emsp; 等价于: int[] a={1,2,3,4}<br>{}中的元素个数决定了[]中的元素个数。{}中的元素取值决定了数组a各个元素的取值。</font></p>
-<p>另一种形式2：<br><font color="red">int[] a;<br>a=new int[]{1,2,3,4};</font><br>等价于：int[] a=new int[3];<br>&emsp;&emsp;&emsp;&emsp; a[0]=1;a[1]=2;a[2]=3;<br>&emsp;&emsp;&emsp;&emsp; a[3]=4<br></p>
+<h4 id="1-3-数组的初始化"><a href="#1-3-数组的初始化" class="headerlink" title="1.3  数组的初始化"></a><font color="#3CB371" face="Comic sans MS">1.3  数组的初始化</font></h4><p><font face="Comic sans MS"><font color="red"><strong>1. 数组的初始化方式有两种：</strong></font><br>(1) 像初始化简单类型一样自动初始化数组，即在说明数组的同时进行初始化；<br>&emsp;&emsp;<font color="red">     int a[]={1,2,3,4}</font><br>(2) 先定义数组，然后为每个元素赋值。例如：<br>&emsp;&emsp;<font color="red">     int b[]=new int[3];</font><br>&emsp;&emsp;<font color="red">     b[0]=8;b[1]=9;</font><br>&emsp;<br><font color="red"><strong>2. 这样初始化也可以!</strong></font><br>另一种形式1：<br><font color="red">int[] a=new int[]{1,2,3,4};</font>&emsp;&emsp; 等价于: int[] a={1,2,3,4}<br>{}中的元素个数决定了[]中的元素个数。{}中的元素取值决定了数组a各个元素的取值。</p>
+<p>另一种形式2：<br><font color="red">int[] a;<br>a=new int[]{1,2,3,4};</font><br>等价于：int[] a=new int[3];<br>&emsp;&emsp;&emsp;&emsp; a[0]=1;a[1]=2;a[2]=3;<br>&emsp;&emsp;&emsp;&emsp; a[3]=4<br></font></p>
 <blockquote>
 <p>但是这样定义是错误的：<br>int[] a;<br>a={1,2,3,4};</p>
 </blockquote>
 <p><font face="Comic sans MS"><font color="red"><strong>定义数组要注意：</strong></font><br>(1) 不能这样定义数组：<br>&emsp;&emsp;&emsp;&emsp;          int a[5];<br>(2)不能这样初始化数组：<br>&emsp;&emsp;&emsp;&emsp;          int[] a;   a={1,2,3,4};<br>(3)使用new 创建数组之后，数组中的每个元素被自动初始化为0。<br>&emsp;&emsp;&emsp;&emsp;         int [] a=new int[10];<br>&emsp;&emsp;&emsp;&emsp;         for(int i=0;i&lt;10;i++)<br>&emsp;&emsp;&emsp;&emsp;           { System.out.println(“a[“+i+”]=”+a[i]);<br>&emsp;&emsp;&emsp;&emsp;           }<br></font></p>
 <p>&emsp;<br>&emsp;</p>
-<h4 id="1-4-数组元素的使用"><a href="#1-4-数组元素的使用" class="headerlink" title="1.4  数组元素的使用"></a><font color="#3CB371" face="Comic sans MS">1.4  数组元素的使用</font></h4><p><font face="Comic sans MS">数组元素的表示方式为：<br>&emsp;&emsp;&emsp;&emsp; <font color="red">数组名[下标]</font><br>&emsp;<br><font color="red"><strong>使用数组时要注意：</strong></font><br>（1）数组越界异常:<font color="#00B2EE"><strong>Java在对数组元素操作时会对数组下标进行越界检查，以保证安全性。</strong></font>若在Java程序中超出了对数组下标的使用范围则在运行此程序时将出现如下错误信息：<br>&emsp;&emsp;    <em>Exception in thread “main”             Java.lang.ArrayIndexOutOfBoundsException</em><br>如下的错误即数组越界：int x[]={1,2,3,4};System.out.println(x[4]);</font></p>
+<h4 id="1-4-数组元素的使用"><a href="#1-4-数组元素的使用" class="headerlink" title="1.4  数组元素的使用"></a><font color="#3CB371" face="Comic sans MS">1.4  数组元素的使用</font></h4><p><font face="Comic sans MS">数组元素的表示方式为：<br>&emsp;&emsp;&emsp;&emsp; <font color="red">数组名[下标]</font><br>&emsp;<br><font color="red"><strong>使用数组时要注意：</strong></font><br>（1）数组越界异常:<font color="#00B2EE"><strong>Java在对数组元素操作时会对数组下标进行越界检查，以保证安全性。</strong></font>若在Java程序中超出了对数组下标的使用范围则在运行此程序时将出现如下错误信息：<br>&emsp;&emsp;    <em>Exception in thread “main”             Java.lang.ArrayIndexOutOfBoundsException</em><br>如下的错误即数组越界：int x[]={1,2,3,4};System.out.println(x[4]);</p>
 <p>（2）每个数组都有一个属性length来指明其长度，字符串String用length()。<br>&emsp;&emsp;<font color="red">         <strong>list.length;</strong></font></p>
-<p>（3）空指针异常<br></p>
+<p>（3）空指针异常<br></font></p>
 <pre class="line-numbers language-java"><code class="language-java">数组长度lengh的使用
-<span class="token keyword">int</span> x<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token punctuation">}</span><span class="token punctuation">;</span>                  <span class="token keyword">int</span> x<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> x<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">;</span>                  <span class="token keyword">int</span> x<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span><span class="token number">4</span><span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span><span class="token punctuation">;</span>
 <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span><span class="token number">100</span><span class="token punctuation">;</span>i<span class="token operator">++</span><span class="token punctuation">)</span>              <span class="token keyword">for</span><span class="token punctuation">(</span><span class="token keyword">int</span> i<span class="token operator">=</span><span class="token number">0</span><span class="token punctuation">;</span>i<span class="token operator">&lt;</span>x<span class="token punctuation">.</span>length<span class="token punctuation">;</span>i<span class="token operator">++</span><span class="token punctuation">)</span>    
-<span class="token punctuation">{</span>  System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>        <span class="token punctuation">{</span> System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
-<span class="token punctuation">}</span>                                   <span class="token punctuation">}</span>
+<span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span>  System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>        <span class="token operator">&amp;</span>#<span class="token number">123</span><span class="token punctuation">;</span> System<span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span> 
+<span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>                                   <span class="token operator">&amp;</span>#<span class="token number">125</span><span class="token punctuation">;</span>
 
 空指针如下使用会导致错误
 <span class="token keyword">int</span> x<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token keyword">new</span> <span class="token class-name">int</span><span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
@@ -116,9 +189,9 @@ x<span class="token punctuation">[</span><span class="token number">0</span><spa
 <span class="token punctuation">[</span>例3-14<span class="token punctuation">]</span> 数组作为函数的参数
 
 <span class="token punctuation">[</span>例3-12<span class="token punctuation">]</span> HalfDollars.java 练习数组的创建与使用
-class HalfDollars<span class="token punctuation">{</span>
-    public static void main<span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span><span class="token punctuation">{</span>
-        int<span class="token punctuation">[</span><span class="token punctuation">]</span> denver<span class="token operator">=</span><span class="token punctuation">{</span>15000006,18810000,20752110<span class="token punctuation">}</span><span class="token punctuation">;</span>
+class HalfDollars<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+    public static void main<span class="token punctuation">(</span>String<span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
+        int<span class="token punctuation">[</span><span class="token punctuation">]</span> denver<span class="token operator">=</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;15000006,18810000,20752110&amp;#125;;</span>
         int<span class="token punctuation">[</span><span class="token punctuation">]</span> philadelphia<span class="token operator">=</span>new int<span class="token punctuation">[</span>denver.length<span class="token punctuation">]</span><span class="token punctuation">;</span>
         int<span class="token punctuation">[</span><span class="token punctuation">]</span> total<span class="token operator">=</span>new int<span class="token punctuation">[</span>denver.length<span class="token punctuation">]</span><span class="token punctuation">;</span>
         int average<span class="token punctuation">;</span>
@@ -135,8 +208,8 @@ class HalfDollars<span class="token punctuation">{</span>
         System.out.println<span class="token punctuation">(</span><span class="token string">"1994 production:"</span>+total<span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         System.out.println<span class="token punctuation">(</span><span class="token string">"1995 production:"</span>+total<span class="token punctuation">[</span>2<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
         System.out.println<span class="token punctuation">(</span><span class="token string">"Average production:"</span>+average<span class="token punctuation">)</span><span class="token punctuation">;</span>
-      <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+      <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
 运行结果：
 1993 production:30020006
 1994 production:37519000
@@ -146,54 +219,54 @@ Average production:36546372
 
 <span class="token punctuation">[</span>例3-13<span class="token punctuation">]</span> ChoiceSort.java 数组的越界
 public class ChoiceSort
-<span class="token punctuation">{</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
     public static void main<span class="token punctuation">(</span>String arg<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-     <span class="token punctuation">{</span>   int i,min<span class="token punctuation">;</span>
-          int str<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token punctuation">{</span>2,13,41,58,32<span class="token punctuation">}</span><span class="token punctuation">;</span>
+     <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;   int i,min;</span>
+          int str<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;2,13,41,58,32&amp;#125;;</span>
           for<span class="token punctuation">(</span>i<span class="token operator">=</span>0<span class="token punctuation">;</span>i<span class="token operator">&lt;</span>5<span class="token punctuation">;</span>i++<span class="token punctuation">)</span>
-          <span class="token punctuation">{</span>
+          <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
              min<span class="token operator">=</span>i<span class="token punctuation">;</span>
             for<span class="token punctuation">(</span>int j<span class="token operator">=</span>i+1<span class="token punctuation">;</span>j<span class="token operator">&lt;</span>6<span class="token punctuation">;</span>j++<span class="token punctuation">)</span>
-             <span class="token punctuation">{</span>      
+             <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;      </span>
                if<span class="token punctuation">(</span>str<span class="token punctuation">[</span>min<span class="token punctuation">]</span><span class="token operator">></span>str<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">)</span>
-                  <span class="token punctuation">{</span>
+                  <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;</span>
                   int at<span class="token operator">=</span>str<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token punctuation">;</span>
                   str<span class="token punctuation">[</span>j<span class="token punctuation">]</span><span class="token operator">=</span>str<span class="token punctuation">[</span>min<span class="token punctuation">]</span><span class="token punctuation">;</span>
                   str<span class="token punctuation">[</span>min<span class="token punctuation">]</span><span class="token operator">=</span>at<span class="token punctuation">;</span>
-                 <span class="token punctuation">}</span>
-             <span class="token punctuation">}</span>  
-          <span class="token punctuation">}</span>
+                 <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+             <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;  </span>
+          <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
         for<span class="token punctuation">(</span>i<span class="token operator">=</span>0<span class="token punctuation">;</span>i<span class="token operator">&lt;</span>5<span class="token punctuation">;</span>i++<span class="token punctuation">)</span>
         System.out.println<span class="token punctuation">(</span>str<span class="token punctuation">[</span>i<span class="token punctuation">]</span>+<span class="token string">" "</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
-<span class="token punctuation">}</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
 运行结果：
 程序没能正常运行，抛出了“java.lang.ArrayIndexOutOfBoundsException”异常。 
 
 
 例<span class="token punctuation">[</span>3-14<span class="token punctuation">]</span> test.java 数组作为函数的参数
 class <span class="token function">test</span>  
-<span class="token punctuation">{</span>   static void change<span class="token punctuation">(</span>int <span class="token punctuation">[</span><span class="token punctuation">]</span> a<span class="token punctuation">)</span>  //输出a<span class="token punctuation">[</span>0<span class="token punctuation">]</span>和a<span class="token punctuation">[</span>1<span class="token punctuation">]</span>中大的那个数
-    <span class="token punctuation">{</span>    int t<span class="token punctuation">;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;   static void change(int [] a)  //输出a[0]和a[1]中大的那个数</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;    int t;</span>
          if<span class="token punctuation">(</span>a<span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token operator">&lt;</span>a<span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token punctuation">)</span>
-         <span class="token punctuation">{</span>        t<span class="token operator">=</span>a<span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token punctuation">;</span>
+         <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;        t=a[0];</span>
                   a<span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token operator">=</span>a<span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token punctuation">;</span>
                   a<span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token operator">=</span>t<span class="token punctuation">;</span>
-         <span class="token punctuation">}</span>
+         <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
          System.out.println<span class="token punctuation">(</span>a<span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-    <span class="token punctuation">}</span>
+    <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
     public static void main<span class="token punctuation">(</span>String args<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-   <span class="token punctuation">{</span>    int x<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token operator">=</span><span class="token punctuation">{</span>5,12<span class="token punctuation">}</span><span class="token punctuation">;</span>
+   <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;    int x[]=&amp;#123;5,12&amp;#125;;</span>
         change<span class="token punctuation">(</span>x<span class="token punctuation">)</span><span class="token punctuation">;</span>     //调用过后，数组x可能发生变化
-   <span class="token punctuation">}</span>
-<span class="token punctuation">}</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+   <span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span>
+<span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <hr>
 <hr>
 <p>&emsp;<br>&emsp;</p>
 <h3 id="二、-二维数组"><a href="#二、-二维数组" class="headerlink" title="二、 二维数组 "></a><font color="#FF6347" face="Comic sans MS">二、 二维数组 </font></h3><p><font face="Comic sans MS">Java中的多维数组实际上是数组的数组。不一定是规则的矩阵数组。<br><font color="red">多维数组：数组的数组，例如，二维数组为一个特殊的一维数组，其每个元素又是一个一维数组<br></font></font></p>
-<p><a href="https://i.loli.net/2019/01/13/5c3ad27f549bb.png" data-fancybox="group" data-caption="1.png" class="fancybox"><img src="https://i.loli.net/2019/01/13/5c3ad27f549bb.png" alt="1.png" title="1.png"></a>)<a href="https://i.loli.net/2019/01/13/5c3ad282ed579.png" data-fancybox="group" data-caption="2.png" class="fancybox"><img src="https://i.loli.net/2019/01/13/5c3ad282ed579.png" alt="2.png" title="2.png"></a></p>
-<p>&emsp;<br>&emsp;<br><font face="Comic sans MS"><font color="#00B2EE"><strong>二维数组说明的格式为：</strong></font><br><font color="red">&emsp;  类型    数组名[ ][ ]；<br>      或                  类型[ ][ ]     数组名；<br></font><br>例如，说明一个整型的二维数组如下：<br><font color="red">&emsp;    int intArray[ ][ ];或 int[ ][ ] intArray;<br></font></font></p>
-<p>&emsp;<br><font color="#00B2EE"><strong>二维数组的创建：</strong></font><br>直接为每一维分配空间，如：<br><font color="red">&emsp;       int a[ ][ ]=new int[2][3];</font><br></p>
+<p><img src="https://i.loli.net/2019/01/13/5c3ad27f549bb.png" alt="1.png"><img src="https://i.loli.net/2019/01/13/5c3ad282ed579.png" alt="2.png"></p>
+<p>&emsp;<br>&emsp;<br><font face="Comic sans MS"><font color="#00B2EE"><strong>二维数组说明的格式为：</strong></font><br><font color="red">&emsp;  类型    数组名[ ][ ]；<br>      或                  类型[ ][ ]     数组名；<br></font><br>例如，说明一个整型的二维数组如下：<br><font color="red">&emsp;    int intArray[ ][ ];或 int[ ][ ] intArray;<br></font></p>
+<p>&emsp;<br><font color="#00B2EE"><strong>二维数组的创建：</strong></font><br>直接为每一维分配空间，如：<br><font color="red">&emsp;       int a[ ][ ]=new int[2][3];</font><br></font></p>
 <p>|||<br>:-: | :-: | :-:<br>a[0][0]|a[0][1]|a[0][2]<br>a[1][0]|a[1][1]|a[1][2]</p>
 <p>&emsp;<br><font face="Comic sans MS"><font color="#00B2EE"><strong>从最高维开始，分别为每一维分配空间，如：</strong></font><br>int b[ ][ ]=new int[2][ ];<br>b[0]=new int[3];<br>b[1]=new int[5];<br></font></p>
 <table>
@@ -220,12 +293,23 @@ class <span class="token function">test</span>
               a<span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token operator">=</span>2； a<span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token operator">=</span>3
               a<span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token operator">=</span>1； a<span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token operator">=</span>5
               a<span class="token punctuation">[</span>2<span class="token punctuation">]</span><span class="token punctuation">[</span>0<span class="token punctuation">]</span><span class="token operator">=</span>3； a<span class="token punctuation">[</span>2<span class="token punctuation">]</span><span class="token punctuation">[</span>1<span class="token punctuation">]</span><span class="token operator">=</span>4  
-等价于：int a<span class="token punctuation">[</span> <span class="token punctuation">]</span><span class="token punctuation">[</span> <span class="token punctuation">]</span><span class="token operator">=</span><span class="token punctuation">{</span><span class="token punctuation">{</span>2,3<span class="token punctuation">}</span>,<span class="token punctuation">{</span>1,5<span class="token punctuation">}</span>,<span class="token punctuation">{</span>3,4<span class="token punctuation">}</span><span class="token punctuation">}</span><span class="token punctuation">;</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>&emsp;<br><font face="Comic sans MS"><font color="red"><strong>总结：与数组操作相关的系统函数</strong></font><br><font color="#00B2EE"><strong>（1）使用Arrays.sort来对数组排序</strong></font><br>int x[]=new int[]{3,2,1,4};<br>java.util.Arrays.sort(x);  //对数组x内的元素进行排序（升序）<br>for(int i=0;i &lt; x.length;i++)<br>{<br>      System.out.println(x[i]);<br>}</font></p>
+等价于：int a<span class="token punctuation">[</span> <span class="token punctuation">]</span><span class="token punctuation">[</span> <span class="token punctuation">]</span><span class="token operator">=</span><span class="token operator">&amp;</span><span class="token comment" spellcheck="true">#123;&amp;#123;2,3&amp;#125;,&amp;#123;1,5&amp;#125;,&amp;#123;3,4&amp;#125;&amp;#125;; </span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>&emsp;<br><font face="Comic sans MS"><font color="red"><strong>总结：与数组操作相关的系统函数</strong></font><br><font color="#00B2EE"><strong>（1）使用Arrays.sort来对数组排序</strong></font><br>int x[]=new int[]{3,2,1,4};<br>java.util.Arrays.sort(x);  //对数组x内的元素进行排序（升序）<br>for(int i=0;i &lt; x.length;i++)<br>{<br>      System.out.println(x[i]);<br>}</p>
 <p><font color="#00B2EE"><strong>（2）使用Arrays.binarySearch函数对数组进行二分查找</strong></font><br>int [] x=new int[]{2,5,1,6,8,3};<br>java.util.Arrays.sort(x);<br>System.out.println(java.util.Arrays.binarySearch(x,1));   //二分查找，在数组x中查找1，输出0 ;如果没找到，则会输出一个&lt;0的数</p>
 <p><font color="#00B2EE"><strong>（3）使用System.arraycopy函数拷贝数组</strong></font><br>int [] x;<br>x=new int[]{3,1,2,4};<br>int [] y;<br>y=new int[4];<br>System.arraycopy(x,0,y,0,4);<br>//将数组x内的 4个元素拷贝给数组y </p>
-<p><font color="#00B2EE"><strong>（4）使用Ayyars.fill函数填充数组</strong></font><br>int [] x;<br>x=new int[]{3,1,2,4};<br>java.util.Arrays.fill(x,7);    //数组x中的4个元素都改为7<br></p>
+<p><font color="#00B2EE"><strong>（4）使用Ayyars.fill函数填充数组</strong></font><br>int [] x;<br>x=new int[]{3,1,2,4};<br>java.util.Arrays.fill(x,7);    //数组x中的4个元素都改为7<br></font></p>
 <hr>
 <hr>
 <p>&emsp;<br>&emsp;<br>&emsp;<br>&emsp;</p>
-</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Directoree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://Directoree.github.io/post/Java-Language-2-4/">https://Directoree.github.io/post/Java-Language-2-4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java学习/">Java学习    </a><a class="post-meta__tags" href="/tags/Java语言/">Java语言    </a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/wechat.jpg" alt="微信"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/post/Wireshark-1/"><img class="prev_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">Previous Post</div><div class="prev_info"><span>Wireshark简单介绍和数据包分析</span></div></a></div><div class="next-post pull_right"><a href="/post/Java-Language-2-3/"><img class="next_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">Next Post</div><div class="next_info"><span>Java简单语句、复合语句、控制语句(3.7-3.8)</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> Recommend</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/post/Java-Language-2-2/" title="Java运算符和数据类型转换(3.4-3.6)"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Java运算符和数据类型转换(3.4-3.6)</div></div></a></div><div class="relatedPosts_item"><a href="/post/Java-Language-2-3/" title="Java简单语句、复合语句、控制语句(3.7-3.8)"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Java简单语句、复合语句、控制语句(3.7-3.8)</div></div></a></div><div class="relatedPosts_item"><a href="/post/Java-Language-2-1/" title="Java语言基础的字符常变量等(3.1-3.3)"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Java语言基础的字符常变量等(3.1-3.3)</div></div></a></div><div class="relatedPosts_item"><a href="/post/Java-IO-1/" title="Java的输入输出"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Java的输入输出</div></div></a></div><div class="relatedPosts_item"><a href="/post/Java-Exception-Handling7/" title="Java-异常处理(5)"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Java-异常处理(5)</div></div></a></div><div class="relatedPosts_item"><a href="/post/Java-Access-Permissions-3/" title="Java类、成员变量、static访问权限(4.1-4.4)"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Java类、成员变量、static访问权限(4.1-4.4)</div></div></a></div></div><div class="clear_both"></div></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>Driven </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="Read Mode"></i><i class="fa fa-plus" id="font_plus" title="Increase font size"></i><i class="fa fa-minus" id="font_minus" title="Decrease font size"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="Traditional Chinese and Simplified Chinese Conversion" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="Dark Mode"></i></div><div id="rightside-config-show"><div id="rightside_config" title="Setting"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="Table of Contents" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="Back to top" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Directoree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://directoree.github.io/post/Java-Language-2-4/">https://directoree.github.io/post/Java-Language-2-4/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Java%E5%AD%A6%E4%B9%A0/">Java学习</a><a class="post-meta__tags" href="/tags/Java%E8%AF%AD%E8%A8%80/">Java语言</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/Wireshark-1/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Wireshark简单介绍和数据包分析</div></div></a></div><div class="next-post pull-right"><a href="/post/Java-Language-2-3/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Java简单语句、复合语句、控制语句(3.7-3.8)</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/post/Java-Language-2-1/" title="Java语言基础的字符常变量等(3.1-3.3)"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2018-12-20</div><div class="title">Java语言基础的字符常变量等(3.1-3.3)</div></div></a></div><div><a href="/post/Java-Language-2-2/" title="Java运算符和数据类型转换(3.4-3.6)"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-01-11</div><div class="title">Java运算符和数据类型转换(3.4-3.6)</div></div></a></div><div><a href="/post/Java-Language-2-3/" title="Java简单语句、复合语句、控制语句(3.7-3.8)"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-01-12</div><div class="title">Java简单语句、复合语句、控制语句(3.7-3.8)</div></div></a></div><div><a href="/post/Java-Access-Permissions-3/" title="Java类、成员变量、static访问权限(4.1-4.4)"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2018-12-23</div><div class="title">Java类、成员变量、static访问权限(4.1-4.4)</div></div></a></div><div><a href="/post/Java-IO-1/" title="Java的输入输出"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2018-12-14</div><div class="title">Java的输入输出</div></div></a></div><div><a href="/post/Java-Interface-Package5/" title="Java接口、包(4.7-4.8)"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2018-12-26</div><div class="title">Java接口、包(4.7-4.8)</div></div></a></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    $.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js', function () {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

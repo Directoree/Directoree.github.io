@@ -1,76 +1,148 @@
-<!DOCTYPE html><html data-theme="light"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Python-模块和包 | Directoree</title><meta name="description" content="Python-模块和包"><meta name="keywords" content="Python语言"><meta name="author" content="Directoree"><meta name="copyright" content="Directoree"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Python-模块和包"><meta name="twitter:description" content="Python-模块和包"><meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><meta property="og:type" content="article"><meta property="og:title" content="Python-模块和包"><meta property="og:url" content="https://Directoree.github.io/post/Python-Modules-Packages/"><meta property="og:site_name" content="Directoree"><meta property="og:description" content="Python-模块和包"><meta property="og:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'true'
-var t = Cookies.get("theme");
-if (autoChangeMode == '1'){
-const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
-
-if (t === undefined){
-  if (isLightMode) activateLightMode()
-  else if (isDarkMode) activateDarkMode()
-  else if (isNotSpecified || hasNoSupport){
-    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-    now = new Date();
-    hour = now.getHours();
-    isNight = hour < 6 || hour >= 18
-    isNight ? activateDarkMode() : activateLightMode()
-}
-} else if (t == 'light') activateLightMode()
-else activateDarkMode()
-
-
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
-
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="https://Directoree.github.io/post/Python-Modules-Packages/"><link rel="prev" title="Python-函数式编程" href="https://Directoree.github.io/post/Python-FunctionalProgramming/"><link rel="next" title="Python-生成器与迭代器" href="https://Directoree.github.io/post/Python-generator-iterator/"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+<!DOCTYPE html><html data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Python-模块和包 | Directoree</title><meta name="keywords" content="Python语言"><meta name="author" content="Directoree"><meta name="copyright" content="Directoree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta name="description" content="from…import…😀">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Python-模块和包">
+<meta property="og:url" content="https://directoree.github.io/post/Python-Modules-Packages/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="from…import…😀">
+<meta property="og:locale">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg">
+<meta property="article:published_time" content="2019-03-03T10:28:06.000Z">
+<meta property="article:modified_time" content="2019-07-16T16:56:05.000Z">
+<meta property="article:author" content="Directoree">
+<meta property="article:tag" content="Python语言">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://directoree.github.io/post/Python-Modules-Packages/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
   root: '/',
+  hexoversion: '5.1.1',
   algolia: undefined,
   localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
   copy: {
     success: 'Copy successfully',
     error: 'Copy error',
     noSupport: 'The browser does not support'
   },
-  bookmark: {
-    title: 'Snackbar.bookmark.title',
-    message_prev: 'Press',
-    message_next: 'to bookmark this page'
+  relativeDate: {
+    homepage: false,
+    post: false
   },
-  runtime_unit: 'days',
-  runtime: true,
-  copyright: undefined,
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Directoree","link":"Link: ","source":"Source: Directoree","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
   ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
+  lightbox: 'fancybox',
   Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
   baiduPush: false,
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
   isHome: false,
-  isPost: true
-  
-}</script><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
-<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">Directoree</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> Search</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">80</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">44</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div><div id="mobile-sidebar-toc"><div class="toc_mobile_headline">Catalog</div><div class="sidebar-toc__content"><ol class="toc_mobile_items"><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#一-模块与包的意义"><span class="toc_mobile_items-number">1.</span> <span class="toc_mobile_items-text">一. 模块与包的意义</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-1-什么是模块？"><span class="toc_mobile_items-number">1.1.</span> <span class="toc_mobile_items-text">1.1 什么是模块？</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-2-为什么要使用模块？"><span class="toc_mobile_items-number">1.2.</span> <span class="toc_mobile_items-text">1.2 为什么要使用模块？</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#1-3-什么是包？"><span class="toc_mobile_items-number">1.3.</span> <span class="toc_mobile_items-text">1.3 什么是包？</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#二-使用模块-无包组织"><span class="toc_mobile_items-number">2.</span> <span class="toc_mobile_items-text">二. 使用模块 -- 无包组织</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#2-1-import-语句"><span class="toc_mobile_items-number">2.1.</span> <span class="toc_mobile_items-text">2.1 import 语句</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#2-2-from-…-import-语句"><span class="toc_mobile_items-number">2.2.</span> <span class="toc_mobile_items-text">2.2 from … import 语句</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#2-3-from-…-import-语句"><span class="toc_mobile_items-number">2.3.</span> <span class="toc_mobile_items-text">2.3 from … import * 语句</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#三-使用模块-有包组织"><span class="toc_mobile_items-number">3.</span> <span class="toc_mobile_items-text">三. 使用模块 -- 有包组织</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#四-init-、-all-、-name-、-author-、-doc-、dir-函数"><span class="toc_mobile_items-number">4.</span> <span class="toc_mobile_items-text">四. __init__、__all__、__name__、__author__、__doc__、dir()函数</span></a><ol class="toc_mobile_items-child"><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#4-1-init-、-all"><span class="toc_mobile_items-number">4.1.</span> <span class="toc_mobile_items-text">4.1 __init__、__all__</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#4-1-name-、-main"><span class="toc_mobile_items-number">4.2.</span> <span class="toc_mobile_items-text">4.1 __name__、__main__</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#4-3-author-、-doc"><span class="toc_mobile_items-number">4.3.</span> <span class="toc_mobile_items-text">4.3 __author__、__doc__</span></a></li><li class="toc_mobile_items-item toc_mobile_items-level-4"><a class="toc_mobile_items-link" href="#4-4-dir-函数"><span class="toc_mobile_items-number">4.4.</span> <span class="toc_mobile_items-text">4.4 dir()函数</span></a></li></ol></li><li class="toc_mobile_items-item toc_mobile_items-level-3"><a class="toc_mobile_items-link" href="#五-非公开函数"><span class="toc_mobile_items-number">5.</span> <span class="toc_mobile_items-text">五. 非公开函数</span></a></li></ol></div></div></div><div id="body-wrap"><i class="fa fa-arrow-right" id="toggle-sidebar" aria-hidden="true">     </i><div class="auto_open" id="sidebar"><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#一-模块与包的意义"><span class="toc-number">1.</span> <span class="toc-text">一. 模块与包的意义</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-什么是模块？"><span class="toc-number">1.1.</span> <span class="toc-text">1.1 什么是模块？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-为什么要使用模块？"><span class="toc-number">1.2.</span> <span class="toc-text">1.2 为什么要使用模块？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-什么是包？"><span class="toc-number">1.3.</span> <span class="toc-text">1.3 什么是包？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二-使用模块-无包组织"><span class="toc-number">2.</span> <span class="toc-text">二. 使用模块 -- 无包组织</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-import-语句"><span class="toc-number">2.1.</span> <span class="toc-text">2.1 import 语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-from-…-import-语句"><span class="toc-number">2.2.</span> <span class="toc-text">2.2 from … import 语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-from-…-import-语句"><span class="toc-number">2.3.</span> <span class="toc-text">2.3 from … import * 语句</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三-使用模块-有包组织"><span class="toc-number">3.</span> <span class="toc-text">三. 使用模块 -- 有包组织</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四-init-、-all-、-name-、-author-、-doc-、dir-函数"><span class="toc-number">4.</span> <span class="toc-text">四. __init__、__all__、__name__、__author__、__doc__、dir()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-init-、-all"><span class="toc-number">4.1.</span> <span class="toc-text">4.1 __init__、__all__</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-name-、-main"><span class="toc-number">4.2.</span> <span class="toc-text">4.1 __name__、__main__</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-author-、-doc"><span class="toc-number">4.3.</span> <span class="toc-text">4.3 __author__、__doc__</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-4-dir-函数"><span class="toc-number">4.4.</span> <span class="toc-text">4.4 dir()函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#五-非公开函数"><span class="toc-number">5.</span> <span class="toc-text">五. 非公开函数</span></a></li></ol></div></div></div><main id="content-outer"><div id="top-container" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png)"><div id="post-info"><div id="post-title"><div class="posttitle">Python-模块和包</div></div><div id="post-meta"><time class="post-meta__date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> Created 2019-03-03<span class="post-meta__separator">|</span><i class="fa fa-history fa-fw" aria-hidden="true"></i> Updated 2019-07-17</time><span class="post-meta__separator">|</span><span><i class="fa fa-inbox post-meta__icon fa-fw" aria-hidden="true"></i><a class="post-meta__categories" href="/categories/Python/">Python</a></span><div class="post-meta-wordcount"><div class="post-meta-pv-cv"><span><i class="fa fa-eye post-meta__icon fa-fw" aria-hidden="true"> </i>Post View:</span><span id="busuanzi_value_page_pv"></span></div></div></div></div></div><div class="layout layout_post" id="content-inner">   <article id="post"><div class="article-container" id="post-content"><p>from…import…😀</p>
+  isHighlightShrink: false,
+  isSidebar: true,
+  postUpdate: '2019-07-17 00:56:05'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'true'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><meta name="generator" content="Hexo 5.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">81</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">45</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div></div><div id="body-wrap"><div id="sidebar"><i class="fas fa-arrow-right on" id="toggle-sidebar"></i><div class="sidebar-toc"><div class="sidebar-toc__title">Catalog</div><div class="sidebar-toc__progress"><span class="progress-notice">You've read</span><span class="progress-num">0</span><span class="progress-percentage">%</span><div class="sidebar-toc__progress-bar">     </div></div><div class="sidebar-toc__content"><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%80-%E6%A8%A1%E5%9D%97%E4%B8%8E%E5%8C%85%E7%9A%84%E6%84%8F%E4%B9%89"><span class="toc-text">一. 模块与包的意义</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1-1-%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%9D%97%EF%BC%9F"><span class="toc-text">1.1 什么是模块？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%9D%97%EF%BC%9F"><span class="toc-text">1.2 为什么要使用模块？</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#1-3-%E4%BB%80%E4%B9%88%E6%98%AF%E5%8C%85%EF%BC%9F"><span class="toc-text">1.3 什么是包？</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%8C-%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%9D%97-%E6%97%A0%E5%8C%85%E7%BB%84%E7%BB%87"><span class="toc-text">二. 使用模块 -- 无包组织</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#2-1-import-%E8%AF%AD%E5%8F%A5"><span class="toc-text">2.1 import 语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-2-from-%E2%80%A6-import-%E8%AF%AD%E5%8F%A5"><span class="toc-text">2.2 from … import 语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2-3-from-%E2%80%A6-import-%E8%AF%AD%E5%8F%A5"><span class="toc-text">2.3 from … import * 语句</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%B8%89-%E4%BD%BF%E7%94%A8%E6%A8%A1%E5%9D%97-%E6%9C%89%E5%8C%85%E7%BB%84%E7%BB%87"><span class="toc-text">三. 使用模块 -- 有包组织</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9B%9B-init-%E3%80%81-all-%E3%80%81-name-%E3%80%81-author-%E3%80%81-doc-%E3%80%81dir-%E5%87%BD%E6%95%B0"><span class="toc-text">四. __init__、__all__、__name__、__author__、__doc__、dir()函数</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-init-%E3%80%81-all"><span class="toc-text">4.1 __init__、__all__</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-1-name-%E3%80%81-main"><span class="toc-text">4.1 __name__、__main__</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-3-author-%E3%80%81-doc"><span class="toc-text">4.3 __author__、__doc__</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-4-dir-%E5%87%BD%E6%95%B0"><span class="toc-text">4.4 dir()函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BA%94-%E9%9D%9E%E5%85%AC%E5%BC%80%E5%87%BD%E6%95%B0"><span class="toc-text">五. 非公开函数</span></a></li></ol></div></div></div><header class="post-bg" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Directoree</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="post-info"><div id="post-title"><div class="posttitle">Python-模块和包</div></div><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">Created</span><time class="post-meta-date-created" datetime="2019-03-03T10:28:06.000Z" title="Created 2019-03-03 18:28:06">2019-03-03</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">Updated</span><time class="post-meta-date-updated" datetime="2019-07-16T16:56:05.000Z" title="Updated 2019-07-17 00:56:05">2019-07-17</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Python/">Python</a></span></div><div class="meta-secondline"> <span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">Post View:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout_post" id="content-inner"><article id="post"><div class="post-content" id="article-container"><p>from…import…😀</p>
 <a id="more"></a>
 
 
@@ -78,7 +150,7 @@ function activateLightMode(){
 
 <br>
 
-<center><font color="#00B2EE" face="Comic sans MS" size="5">模块和包</font> </center>
+<center><font color="#00B2EE" face="Comic sans MS" size=5>模块和包</font> </center>
 
 <br>
 
@@ -131,12 +203,12 @@ function activateLightMode(){
 <p>有个包按照如下目录存放文件：</p>
 <p>mycompany<br>├─ __init__.py<br>├─ abc.py<br>└─ xyz.py</p>
 <blockquote>
-<p><font face="Microsoft YaHei">引入了包以后，只要顶层的包名不与别人冲突，那所有模块都不会与别人冲突。现在，<strong><code>abc.py</code></strong> 模块的名字就变成了 <strong><code>mycompany.abc</code></strong> ，类似的，<strong><code>xyz.py</code></strong> 的模块名变成了 <strong><code>mycompany.xyz</code></strong> 。</font></p>
+<p><font face="Microsoft YaHei">引入了包以后，只要顶层的包名不与别人冲突，那所有模块都不会与别人冲突。现在，**<code>abc.py</code>** 模块的名字就变成了 <strong><code>mycompany.abc</code></strong> ，类似的，**<code>xyz.py</code>** 的模块名变成了 <strong><code>mycompany.xyz</code></strong> 。</font></p>
 </blockquote>
 <br>
 
 <p>类似的，可以有多级目录，组成多级层次的包结构。比如如下的目录结构：</p>
-<p>mycompany<br> ├─ web<br> │  ├─ __init__.py<br> │  ├─ utils.py<br> │  └─ <a href="http://www.py" target="_blank" rel="noopener">www.py</a><br> ├─ __init__.py<br> ├─ abc.py<br> └─ xyz.py</p>
+<p>mycompany<br> ├─ web<br> │  ├─ __init__.py<br> │  ├─ utils.py<br> │  └─ <a target="_blank" rel="noopener" href="http://www.py/">www.py</a><br> ├─ __init__.py<br> ├─ abc.py<br> └─ xyz.py</p>
 <blockquote>
 <p><font face="Microsoft YaHei">文件<code>www.py</code> 的模块名就是<code>mycompany.web.www</code>，两个文件utils.py的模块名分别是<code>mycompany.utils</code>和 <code>mycompany.web.utils</code></font></p>
 </blockquote>
@@ -163,7 +235,7 @@ function activateLightMode(){
 <ol>
 <li><font face="Microsoft YaHei"><strong>import 语句：</strong> <strong><code>import module1[, module2[,... moduleN]</code></strong></font></li>
 <li><font face="Microsoft YaHei"><strong>from … import 语句：</strong> <strong><code>from  modname import  name1[, name2[, ... nameN]]</code></strong> </font></li>
-<li><font face="Microsoft YaHei"><strong>from … import * 语句：</strong> <strong><code>from  modname import *</code></strong></font></li>
+<li><font face="Microsoft YaHei">*<em>from … import * 语句：*</em> <strong><code>from  modname import *</code></strong></font></li>
 <li><font face="Microsoft YaHei"><strong>__name__属性：</strong> 用来分清该模块是调用者还是被其他模块调用。</font></li>
 <li><font face="Microsoft YaHei"><strong>dir() 函数：</strong> 用来查找模块中定义的名字，返回一个有序字符串列表。</font></li>
 </ol>
@@ -284,7 +356,7 @@ None
 
 <p><font color="#00B2EE" face="Comic sans MS">4. <strong>import …from * 语句：</strong></font></p>
 <blockquote>
-<p><font color="red" face="Comic sans MS" size="4"><strong>注意：这种导入方法必须要注意<code>__init__.py</code>里面的属性<code>__all__</code>已经设置好。<code>__all__</code>是用于控制from…import *</strong><br></font></p>
+<p><font color="red" face="Comic sans MS" size=4><strong>注意：这种导入方法必须要注意<code>__init__.py</code>里面的属性<code>__all__</code>已经设置好。<code>__all__</code>是用于控制from…import *</strong><br></font></p>
 </blockquote>
 <p><font face="Microsoft YaHei">Python 会进入文件系统，找到这个包里面所有的子模块，一个一个的把它们都导入进来。但是很不幸，这个方法在 Windows平台上工作的就不是非常好，因为Windows是一个大小写不区分的系统。</font></p>
 <p><font face="Microsoft YaHei">在这类平台上，没有人敢担保一个叫做 ECHO.py 的文件导入为模块 echo 还是 Echo 甚至 ECHO。</font></p>
@@ -299,7 +371,7 @@ None
 <ol>
 <li><font face="Microsoft YaHei">注意当使用<code>from package import item</code>这种形式的时候，对应的<font color="#FF7F00"><strong>item既可以是包里面的子模块（子包），或者包里面定义的其他名称，比如函数，类或者变量</strong></font>。</font></li>
 <li><font face="Microsoft YaHei">import语法会首先把item当作一个包定义的名称，如果没找到，再试图按照一个模块去导入。如果还没找到，恭喜，一个:exc:ImportError 异常被抛出了。</font></li>
-<li><font face="Microsoft YaHei">反之，如果使用形如<code>import item.subitem.subsubitem</code>这种导入形式，<font color="#FF7F00"><strong>最后一项可以是包或者模块（不可以是类，函数或者变量的名字），除了最后一项，都必须是包。</strong></font>。</font></li>
+<li><font face="Microsoft YaHei">反之，如果使用形如<code>import item.subitem.subsubitem</code>这种导入形式，<font color="#FF7F00"><strong>最后一项可以是包或者模块（不可以是类，函数或者变量的名字），除了最后一项，都必须是包。</strong></font>。</li>
 </ol>
 <br>
 
@@ -328,8 +400,8 @@ None
 </li>
 <li><p><font face="Microsoft YaHei">__name__就是标识模块的名字的一个系统变量。这里分两种情况：</font></p>
 <ol>
-<li><font face="Microsoft YaHei">假如当前模块是主模块（也就是调用其他模块的模块），那么此模块名字就是<strong>main</strong>，即__name__==__main__。可以执行后面的内容；</font></li>
-<li><font face="Microsoft YaHei">假如此模块是被import的，其值为被调用模块所属的路径。</font></li>
+<li><font face="Microsoft YaHei">假如当前模块是主模块（也就是调用其他模块的模块），那么此模块名字就是__main__，即__name__==__main__。可以执行后面的内容；</font></li>
+<li><font face="Microsoft YaHei">假如此模块是被import的，其值为被调用模块所属的路径。</li>
 </ol>
 </li>
 </ol>
@@ -446,4 +518,15 @@ test3<span class="token punctuation">.</span>py
 <p><font face="Microsoft YaHei"><strong>外部不需要引用的函数全部定义成private，只有外部需要引用的函数才定义为public。</strong><br></font></p>
 <hr>
 <hr>
-</div></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Directoree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://Directoree.github.io/post/Python-Modules-Packages/">https://Directoree.github.io/post/Python-Modules-Packages/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python语言/">Python语言    </a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js"></script></div></div><div class="post-reward"><a class="reward-button button--primary button--animated"> <i class="fa fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/wechat.jpg" alt="微信"><div class="post-qr-code__desc">微信</div></li><li class="reward-item"><img class="lazyload post-qr-code__img" src="/img/alipay.jpg" alt="支付寶"><div class="post-qr-code__desc">支付寶</div></li></ul></div></a></div><nav class="pagination_post" id="pagination"><div class="prev-post pull_left"><a href="/post/Python-FunctionalProgramming/"><img class="prev_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">Previous Post</div><div class="prev_info"><span>Python-函数式编程</span></div></a></div><div class="next-post pull_right"><a href="/post/Python-generator-iterator/"><img class="next_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="onerror=null;src='/img/404.jpg'"><div class="label">Next Post</div><div class="next_info"><span>Python-生成器与迭代器</span></div></a></div></nav><div class="relatedPosts"><div class="relatedPosts_headline"><i class="fa fa-fw fa-thumbs-up" aria-hidden="true"></i><span> Recommend</span></div><div class="relatedPosts_list"><div class="relatedPosts_item"><a href="/post/Python-Basics/" title="Python-基础"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Python-基础</div></div></a></div><div class="relatedPosts_item"><a href="/post/Python-ConditionalStatements-loops/" title="Python-条件语句与循环"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Python-条件语句与循环</div></div></a></div><div class="relatedPosts_item"><a href="/post/Python-Coding/" title="Python-字符编码&字符串&格式化"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Python-字符编码&字符串&格式化</div></div></a></div><div class="relatedPosts_item"><a href="/post/Python-Function/" title="Python-函数"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Python-函数</div></div></a></div><div class="relatedPosts_item"><a href="/post/Python-Grammar/" title="Python-基础语法"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Python-基础语法</div></div></a></div><div class="relatedPosts_item"><a href="/post/Python-FileContents/" title="Python-文件系统"><img class="relatedPosts_cover lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png"><div class="relatedPosts_main is-center"><div class="relatedPosts_date"><i class="fa fa-calendar fa-fw" aria-hidden="true"></i> 2020-09-14</div><div class="relatedPosts_title">Python-文件系统</div></div></a></div></div><div class="clear_both"></div></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>Driven </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><i class="fa fa-book" id="readmode" title="Read Mode"></i><i class="fa fa-plus" id="font_plus" title="Increase font size"></i><i class="fa fa-minus" id="font_minus" title="Decrease font size"></i><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="Traditional Chinese and Simplified Chinese Conversion" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="Dark Mode"></i></div><div id="rightside-config-show"><div id="rightside_config" title="Setting"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-list-ul close" id="mobile-toc-button" title="Table of Contents" aria-hidden="true"></i><i class="fa fa-arrow-up" id="go-up" title="Back to top" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async></script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
+</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">Author: </span><span class="post-copyright-info"><a href="mailto:undefined">Directoree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">Link: </span><span class="post-copyright-info"><a href="https://directoree.github.io/post/Python-Modules-Packages/">https://directoree.github.io/post/Python-Modules-Packages/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">Copyright Notice: </span><span class="post-copyright-info">All articles in this blog are licensed under <a target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a> unless stating additionally.</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python%E8%AF%AD%E8%A8%80/">Python语言</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> Donate<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/Python-FunctionalProgramming/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Previous Post</div><div class="prev_info">Python-函数式编程</div></div></a></div><div class="next-post pull-right"><a href="/post/Python-generator-iterator/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/404.jpg'"><div class="pagination-info"><div class="label">Next Post</div><div class="next_info">Python-生成器与迭代器</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> Related Articles</span></div><div class="relatedPosts-list"><div><a href="/post/Python-Basics/" title="Python-基础"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-02-27</div><div class="title">Python-基础</div></div></a></div><div><a href="/post/Python-Coding/" title="Python-字符编码&字符串&格式化"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-02-28</div><div class="title">Python-字符编码&字符串&格式化</div></div></a></div><div><a href="/post/Python-ConditionalStatements-loops/" title="Python-条件语句与循环"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-01</div><div class="title">Python-条件语句与循环</div></div></a></div><div><a href="/post/Python-Function/" title="Python-函数"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-02</div><div class="title">Python-函数</div></div></a></div><div><a href="/post/Python-FunctionalProgramming/" title="Python-函数式编程"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-04</div><div class="title">Python-函数式编程</div></div></a></div><div><a href="/post/Python-Operators/" title="Python-运算符"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-01</div><div class="title">Python-运算符</div></div></a></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="Read Mode"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button class="close" id="mobile-toc-button" type="button" title="Table Of Contents"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    $.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js', function () {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>

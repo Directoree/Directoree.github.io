@@ -1,79 +1,473 @@
-<!DOCTYPE html><html data-theme="light"><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5"><title>Directoree - 爱你所爱，行你所行，听从你心，无问西东。</title><meta name="description"><meta name="author" content="Directoree"><meta name="copyright" content="Directoree"><meta name="format-detection" content="telephone=no"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="preconnect" href="//cdn.jsdelivr.net"><link rel="preconnect" href="https://fonts.googleapis.com" crossorigin><link rel="preconnect" href="//busuanzi.ibruce.info"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="Directoree"><meta name="twitter:description"><meta name="twitter:image" content="https://Directoree.github.io/img/avatar.png"><meta property="og:type" content="website"><meta property="og:title" content="Directoree"><meta property="og:url" content="https://Directoree.github.io/page/4/"><meta property="og:site_name" content="Directoree"><meta property="og:description"><meta property="og:image" content="https://Directoree.github.io/img/avatar.png"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><script src="https://cdn.jsdelivr.net/npm/js-cookie/dist/js.cookie.min.js"></script><script>const autoChangeMode = 'true'
-var t = Cookies.get("theme");
-if (autoChangeMode == '1'){
-const isDarkMode = window.matchMedia("(prefers-color-scheme: dark)").matches
-const isLightMode = window.matchMedia("(prefers-color-scheme: light)").matches
-const isNotSpecified = window.matchMedia("(prefers-color-scheme: no-preference)").matches
-const hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
-
-if (t === undefined){
-  if (isLightMode) activateLightMode()
-  else if (isDarkMode) activateDarkMode()
-  else if (isNotSpecified || hasNoSupport){
-    console.log('You specified no preference for a color scheme or your browser does not support it. I Schedule dark mode during night time.')
-    now = new Date();
-    hour = now.getHours();
-    isNight = hour < 6 || hour >= 18
-    isNight ? activateDarkMode() : activateLightMode()
-}
-} else if (t == 'light') activateLightMode()
-else activateDarkMode()
-
-
-} else if (autoChangeMode == '2'){
-  now = new Date();
-  hour = now.getHours();
-  isNight = hour < 6 || hour >= 18
-  if(t === undefined) isNight? activateDarkMode() : activateLightMode()
-  else if (t === 'light') activateLightMode()
-  else activateDarkMode() 
-} else {
-  if ( t == 'dark' ) activateDarkMode()
-  else if ( t == 'light') activateLightMode()
-}
-
-function activateDarkMode(){
-  document.documentElement.setAttribute('data-theme', 'dark')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-    document.querySelector('meta[name="theme-color"]').setAttribute('content','#000')
-  }
-}
-function activateLightMode(){
-  document.documentElement.setAttribute('data-theme', 'light')
-  if (document.querySelector('meta[name="theme-color"]') !== null){
-  document.querySelector('meta[name="theme-color"]').setAttribute('content','#fff')
-  }
-}</script><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@latest/css/font-awesome.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><link rel="canonical" href="https://Directoree.github.io/page/4/"><link rel="preload" href="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/index.jpg" as="image"><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Titillium+Web"><script>var GLOBAL_CONFIG = { 
+<!DOCTYPE html><html data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Directoree - 爱你所爱，行你所行，听从你心，无问西东。</title><meta name="author" content="Directoree"><meta name="copyright" content="Directoree"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta http-equiv="Cache-Control" content="no-transform"><meta http-equiv="Cache-Control" content="no-siteapp"><meta property="og:type" content="website">
+<meta property="og:title" content="Directoree">
+<meta property="og:url" content="https://directoree.github.io/page/4/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:locale">
+<meta property="og:image" content="https://directoree.github.io/img/avatar.png">
+<meta property="article:author" content="Directoree">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://directoree.github.io/img/avatar.png"><link rel="shortcut icon" href="/img/favicon.ico"><link rel="canonical" href="https://directoree.github.io/page/4/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css"><script>var GLOBAL_CONFIG = { 
   root: '/',
+  hexoversion: '5.1.1',
   algolia: undefined,
   localSearch: {"path":"search.xml","languages":{"hits_empty":"We didn't find any results for the search: ${query}"}},
-  translate: {"defaultEncoding":2,"translateDelay":0,"cookieDomain":"https://xxx/","msgToTraditionalChinese":"繁","msgToSimplifiedChinese":"简"},
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: undefined,
   copy: {
     success: 'Copy successfully',
     error: 'Copy error',
     noSupport: 'The browser does not support'
   },
-  bookmark: {
-    title: 'Snackbar.bookmark.title',
-    message_prev: 'Press',
-    message_next: 'to bookmark this page'
+  relativeDate: {
+    homepage: false,
+    post: false
   },
-  runtime_unit: 'days',
-  runtime: true,
-  copyright: undefined,
+  runtime: 'days',
+  date_suffix: {
+    just: 'Just',
+    min: 'minutes ago',
+    hour: 'hours ago',
+    day: 'days ago',
+    month: 'months ago'
+  },
+  copyright: {"limitCount":50,"languages":{"author":"Author: Directoree","link":"Link: ","source":"Source: Directoree","info":"Copyright is owned by the author. For commercial reprints, please contact the author for authorization. For non-commercial reprints, please indicate the source."}},
   ClickShowText: undefined,
-  medium_zoom: false,
-  fancybox: true,
+  lightbox: 'fancybox',
   Snackbar: undefined,
+  justifiedGallery: {
+    js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+    css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+  },
   baiduPush: false,
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+};
+
+var saveToLocal = {
+  set: function setWithExpiry(key, value, ttl) {
+    const now = new Date()
+    const expiryDay = ttl * 86400000
+    const item = {
+      value: value,
+      expiry: now.getTime() + expiryDay,
+    }
+    localStorage.setItem(key, JSON.stringify(item))
+  },
+
+  get: function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key)
+
+    if (!itemStr) {
+      return undefined
+    }
+    const item = JSON.parse(itemStr)
+    const now = new Date()
+
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key)
+      return undefined
+    }
+    return item.value
+  }
+}</script><script id="config_change">var GLOBAL_CONFIG_SITE = { 
+  isPost: false,
   isHome: true,
-  isPost: false
-  
-}</script><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
-<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><header> <div id="page-header"><span class="pull_left" id="blog_name"><a class="blog_title" id="site-name" href="/">Directoree</a></span><span class="toggle-menu pull_right close"><a class="site-page"><i class="fa fa-bars fa-fw" aria-hidden="true"></i></a></span><span class="pull_right menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></span><span class="pull_right" id="search_button"><a class="site-page social-icon search"><i class="fa fa-search fa-fw"></i><span> Search</span></a></span></div></header><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">80</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">44</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div></div><hr><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page"><i class="fa-fw fa fa-list" aria-hidden="true"></i><span> 清单</span><i class="fa fa-chevron-down menus-expand" aria-hidden="true"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div></div><div id="body-wrap"><nav class="full_page" id="nav" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/index.jpg)"><div id="site-info"><div id="site-title"><span class="blogtitle">Directoree</span></div><div id="site-sub-title"><span class="subtitle"></span></div><div id="site-social-icons"><a class="social-icon" href="https://github.com/Directoree" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a><a class="social-icon" href="mailto:zhao_yilong@aliyun.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a><a class="social-icon" href="/atom.xml" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a><a class="social-icon" href="http://sighttp.qq.com/msgrd?v=1&amp;uin=1003432683" target="_blank"><i class="fa fa-qq" aria-hidden="true"></i></a></div></div><div class="scroll-down"><i class="fa fa-angle-down scroll-down-effects"></i></div></nav><main id="content-outer"><div class="layout_page" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item article-container"><div class="post_cover left_radius"><a href="/post/Python-Basics/" title="Python-基础"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Python-基础"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/Python-Basics/" title="Python-基础">Python-基础</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-27</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/Python/">Python</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover right_radius"><a href="/post/PHP-SessionManagement/" title="PHP-会话管理和控制"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-会话管理和控制"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-SessionManagement/" title="PHP-会话管理和控制">PHP-会话管理和控制</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-26</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover left_radius"><a href="/post/PHP-MySQL/" title="PHP操作MySQL数据库"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP操作MySQL数据库"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-MySQL/" title="PHP操作MySQL数据库">PHP操作MySQL数据库</a><span class="article-meta"><i class="fa fa-thumb-tack article-meta__icon sticky"></i><span class="sticky">Sticky</span><span class="article-meta__separator" style="margin-right: 0.3rem">|</span></span><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-24</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover right_radius"><a href="/post/MySQL-Primer/" title="MySQL入门"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL入门"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/MySQL-Primer/" title="MySQL入门">MySQL入门</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-23</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/MySQL/">MySQL</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover left_radius"><a href="/post/PHP-Upload/" title="PHP-文件上传"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-文件上传"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-Upload/" title="PHP-文件上传">PHP-文件上传</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-21</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover right_radius"><a href="/post/PHP-FileSystem/" title="PHP-文件系统"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-文件系统"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-FileSystem/" title="PHP-文件系统">PHP-文件系统</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-20</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover left_radius"><a href="/post/PHP-function/" title="PHP-函数"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-函数"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-function/" title="PHP-函数">PHP-函数</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-15</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover right_radius"><a href="/post/PHP-Regular-Expression/" title="PHP-正则表达式"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-正则表达式"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-Regular-Expression/" title="PHP-正则表达式">PHP-正则表达式</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-14</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover left_radius"><a href="/post/PHP-namespace/" title="PHP-命名空间"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-命名空间"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-namespace/" title="PHP-命名空间">PHP-命名空间</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-14</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><div class="recent-post-item article-container"><div class="post_cover right_radius"><a href="/post/PHP-1/" title="PHP基础语法"><img class="post_bg lazyload" data-src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP基础语法"></a></div><div class="recent-post-info">  <a class="article-title" href="/post/PHP-1/" title="PHP基础语法">PHP基础语法</a><time class="post-meta__date"><i class="fa fa-calendar" aria-hidden="true"></i> 2019-02-13</time><span class="article-meta"><span class="article-meta__separator">|</span><i class="fa fa-inbox article-meta__icon" aria-hidden="true"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><div class="content"></div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-fw fa-chevron-left" aria-hidden="true"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-fw fa-chevron-right" aria-hidden="true"></i></a></div></nav></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"><div class="author-info__name">Directoree</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">80</div></a></div><div class="card-info-data-item is-center">      <a href="/tags/"><div class="headline">Tags</div><div class="length_num">44</div></a></div><div class="card-info-data-item is-center">     <a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div><div class="card-info-bookmark is-center"><a class="bookmark button--primary button--animated" id="bookmark-it" href="javascript:;" title="Add to bookmark" target="_self"><i class="fa fa-bookmark" aria-hidden="true"></i><span>Add to bookmark</span></a></div><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Directoree" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a><a class="social-icon" href="mailto:zhao_yilong@aliyun.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a><a class="social-icon" href="/atom.xml" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a><a class="social-icon" href="http://sighttp.qq.com/msgrd?v=1&amp;uin=1003432683" target="_blank"><i class="fa fa-qq" aria-hidden="true"></i></a></div></div></div><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fa fa-bullhorn card-announcement-animation" aria-hidden="true"></i><span>Announcement</span></div><div class="announcement_content">得之我幸，失之我命😫</div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fa fa-history" aria-hidden="true"></i><span>Recent Post</span></div><div class="aside-recent-item"> <div class="aside-recent-post"><a href="/post/css-app-notes/"><div class="aside-post-cover"><img class="aside-post-bg lazyload" data-src="https://i.loli.net/2018/12/24/5c20d00794e53.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" title="CSS:APP 读书笔记" alt="CSS:APP 读书笔记"></div><div class="aside-post-title"><div class="aside-post_title" href="/post/css-app-notes/" title="CSS:APP 读书笔记">CSS:APP 读书笔记</div><time class="aside-post_meta post-meta__date">2020-09-14</time></div></a></div><div class="aside-recent-post"><a href="/post/computer-second-level-chen/"><div class="aside-post-cover"><img class="aside-post-bg lazyload" data-src="https://i.loli.net/2019/05/01/5cc9b356972c7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" title="计算机二级（星辰）" alt="计算机二级（星辰）"></div><div class="aside-post-title"><div class="aside-post_title" href="/post/computer-second-level-chen/" title="计算机二级（星辰）">计算机二级（星辰）</div><time class="aside-post_meta post-meta__date">2020-01-30</time></div></a></div><div class="aside-recent-post"><a href="/post/2019year-endsummary/"><div class="aside-post-cover"><img class="aside-post-bg lazyload" data-src="https://i.loli.net/2019/01/11/5c388e8172b3b.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" title="2019年终总结" alt="2019年终总结"></div><div class="aside-post-title"><div class="aside-post_title" href="/post/2019year-endsummary/" title="2019年终总结">2019年终总结</div><time class="aside-post_meta post-meta__date">2019-12-31</time></div></a></div><div class="aside-recent-post"><a href="/post/CTF-Basic-knowledge/"><div class="aside-post-cover"><img class="aside-post-bg lazyload" data-src="https://i.loli.net/2019/07/22/5d348c49a5f7149330.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" title="CTF-Basic-knowledge" alt="CTF-Basic-knowledge"></div><div class="aside-post-title"><div class="aside-post_title" href="/post/CTF-Basic-knowledge/" title="CTF-Basic-knowledge">CTF-Basic-knowledge</div><time class="aside-post_meta post-meta__date">2019-07-21</time></div></a></div><div class="aside-recent-post"><a href="/post/CTF-SMB-Information-leakage/"><div class="aside-post-cover"><img class="aside-post-bg lazyload" data-src="https://i.loli.net/2019/07/13/5d28b0723b7ab75620.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" title="CTF-SMB-Information-leakage" alt="CTF-SMB-Information-leakage"></div><div class="aside-post-title"><div class="aside-post_title" href="/post/CTF-SMB-Information-leakage/" title="CTF-SMB-Information-leakage">CTF-SMB-Information-leakage</div><time class="aside-post_meta post-meta__date">2019-07-17</time></div></a></div></div></div></div><div class="card-widget card-categories"><div class="card-content"><div class="item-headline"><i class="fa fa-folder-open" aria-hidden="true"></i><span>Categories</span></div><ul class="aside-category-item">       <li class="aside-category-list"><a class="aside-category-list_link" href="/categories/C-C/"><span class="aside-category-list_name">C&amp;C++</span><span class="aside-category-list_length">3</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/CSS/"><span class="aside-category-list_name">CSS</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/CTF/"><span class="aside-category-list_name">CTF</span><span class="aside-category-list_length">5</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Docker/"><span class="aside-category-list_name">Docker</span><span class="aside-category-list_length">2</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/HTML/"><span class="aside-category-list_name">HTML</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/HTTP协议/"><span class="aside-category-list_name">HTTP协议</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Hexo-Github/"><span class="aside-category-list_name">Hexo-Github</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Java/"><span class="aside-category-list_name">Java</span><span class="aside-category-list_length">10</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/JavaScript/"><span class="aside-category-list_name">JavaScript</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Kali-SQLMAP/"><span class="aside-category-list_name">Kali-SQLMAP</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Kali-内网称霸/"><span class="aside-category-list_name">Kali-内网称霸</span><span class="aside-category-list_length">4</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Metasploit/"><span class="aside-category-list_name">Metasploit</span><span class="aside-category-list_length">3</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/MySQL/"><span class="aside-category-list_name">MySQL</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Network-Security/"><span class="aside-category-list_name">Network-Security</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/PHP/"><span class="aside-category-list_name">PHP</span><span class="aside-category-list_length">8</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Python/"><span class="aside-category-list_name">Python</span><span class="aside-category-list_length">12</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/SQLi/"><span class="aside-category-list_name">SQLi</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/Web-Tools/"><span class="aside-category-list_name">Web-Tools</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/XAMPP-DVWA/"><span class="aside-category-list_name">XAMPP-DVWA</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/XXE/"><span class="aside-category-list_name">XXE</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/密码学/"><span class="aside-category-list_name">密码学</span><span class="aside-category-list_length">4</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/总结/"><span class="aside-category-list_name">总结</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/杂谈/"><span class="aside-category-list_name">杂谈</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/算法/"><span class="aside-category-list_name">算法</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/网络安全/"><span class="aside-category-list_name">网络安全</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/计算机二级/"><span class="aside-category-list_name">计算机二级</span><span class="aside-category-list_length">1</span></a></li><li class="aside-category-list"><a class="aside-category-list_link" href="/categories/音乐/"><span class="aside-category-list_name">音乐</span><span class="aside-category-list_length">9</span></a></li></ul></div></div><div class="card-widget card-tags"><div class="card-content"><div class="item-headline"><i class="fa fa-tags" aria-hidden="true"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/ARP欺骗/" style="font-size: 19.43px; color: #99a0a9">ARP欺骗</a> <a href="/tags/C/" style="font-size: 18.29px; color: #999ea4">C</a> <a href="/tags/C-Memory/" style="font-size: 17.14px; color: #999b9e">C-Memory</a> <a href="/tags/CS-APP/" style="font-size: 16px; color: #999">CS:APP</a> <a href="/tags/CSS/" style="font-size: 16px; color: #999">CSS</a> <a href="/tags/CTF/" style="font-size: 20.57px; color: #99a2af">CTF</a> <a href="/tags/Cookie/" style="font-size: 16px; color: #999">Cookie</a> <a href="/tags/DVWA/" style="font-size: 16px; color: #999">DVWA</a> <a href="/tags/Docker/" style="font-size: 17.14px; color: #999b9e">Docker</a> <a href="/tags/Github/" style="font-size: 16px; color: #999">Github</a> <a href="/tags/HTML/" style="font-size: 16px; color: #999">HTML</a> <a href="/tags/Hash函数/" style="font-size: 16px; color: #999">Hash函数</a> <a href="/tags/JavaScript/" style="font-size: 16px; color: #999">JavaScript</a> <a href="/tags/Java学习/" style="font-size: 22.86px; color: #99a7ba">Java学习</a> <a href="/tags/Java访问权限/" style="font-size: 16px; color: #999">Java访问权限</a> <a href="/tags/Java语言/" style="font-size: 19.43px; color: #99a0a9">Java语言</a> <a href="/tags/Meterpreter命令/" style="font-size: 16px; color: #999">Meterpreter命令</a> <a href="/tags/MySQL/" style="font-size: 17.14px; color: #999b9e">MySQL</a> <a href="/tags/PHP语言/" style="font-size: 21.71px; color: #99a4b4">PHP语言</a> <a href="/tags/Python语言/" style="font-size: 24px; color: #99a9bf">Python语言</a> <a href="/tags/SMB/" style="font-size: 16px; color: #999">SMB</a> <a href="/tags/SQLMAP命令/" style="font-size: 16px; color: #999">SQLMAP命令</a> <a href="/tags/SQLi/" style="font-size: 16px; color: #999">SQLi</a> <a href="/tags/SSH/" style="font-size: 17.14px; color: #999b9e">SSH</a> <a href="/tags/Security/" style="font-size: 16px; color: #999">Security</a> <a href="/tags/User-Agen/" style="font-size: 16px; color: #999">User-Agen</a> <a href="/tags/Web/" style="font-size: 17.14px; color: #999b9e">Web</a> <a href="/tags/Wireshark/" style="font-size: 16px; color: #999">Wireshark</a> <a href="/tags/XML/" style="font-size: 16px; color: #999">XML</a> <a href="/tags/XXE/" style="font-size: 16px; color: #999">XXE</a> <a href="/tags/msfvenom/" style="font-size: 16px; color: #999">msfvenom</a> <a href="/tags/信安数学/" style="font-size: 16px; color: #999">信安数学</a> <a href="/tags/内存管理/" style="font-size: 16px; color: #999">内存管理</a> <a href="/tags/分组密码/" style="font-size: 16px; color: #999">分组密码</a> <a href="/tags/博客搭建/" style="font-size: 16px; color: #999">博客搭建</a> <a href="/tags/安全指导/" style="font-size: 16px; color: #999">安全指导</a> <a href="/tags/安全笔记/" style="font-size: 16px; color: #999">安全笔记</a> <a href="/tags/安卓渗透/" style="font-size: 16px; color: #999">安卓渗透</a> <a href="/tags/序列密码/" style="font-size: 16px; color: #999">序列密码</a> <a href="/tags/总结/" style="font-size: 16px; color: #999">总结</a> <a href="/tags/杂谈/" style="font-size: 16px; color: #999">杂谈</a> <a href="/tags/算法学习/" style="font-size: 16px; color: #999">算法学习</a> <a href="/tags/远程木马攻击/" style="font-size: 18.29px; color: #999ea4">远程木马攻击</a> <a href="/tags/逆向入门/" style="font-size: 16px; color: #999">逆向入门</a></div></div></div><div class="card-widget card-archives"><div class="card-content"><div class="item-headline"><i class="fa fa-archive" aria-hidden="true"></i><span>Archives</span></div><ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/"><span class="archive-list-date">2020年09月</span><span class="archive-list-count">1</span></a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/01/"><span class="archive-list-date">2020年01月</span><span class="archive-list-count">1</span></a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/12/"><span class="archive-list-date">2019年12月</span><span class="archive-list-count">1</span></a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/"><span class="archive-list-date">2019年07月</span><span class="archive-list-count">4</span></a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/06/"><span class="archive-list-date">2019年06月</span><span class="archive-list-count">3</span></a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/05/"><span class="archive-list-date">2019年05月</span><span class="archive-list-count">2</span></a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/04/"><span class="archive-list-date">2019年04月</span><span class="archive-list-count">3</span></a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/"><span class="archive-list-date">2019年03月</span><span class="archive-list-count">11</span></a></li><li class="archive-list-item"><a class="archive-list-link-more" href="/archives">More</a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fa fa-line-chart" aria-hidden="true"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="webinfo-article-name">Article :</div><div class="webinfo-article-count">80</div></div><div class="webinfo-item"><div class="webinfo-runtime-name">Run time :</div><div class="webinfo-runtime-count" id="webinfo-runtime-count" start_date="6/7/2018 00:00:00">     </div></div><div class="webinfo-item">      <div class="webinfo-site-uv-name">UV :</div><div class="webinfo-site-uv-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="webinfo-site-name">PV :</div><div class="webinfo-site-pv-count" id="busuanzi_value_site_pv"></div></div></div></div></div></div></div></main><footer id="footer" data-type="color"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>Driven </span><a href="http://hexo.io"><span>Hexo</span></a><span class="footer-separator">|</span><span>Theme </span><a href="https://github.com/jerryc127/hexo-theme-butterfly"><span>Butterfly</span></a></div></div></footer></div><section class="rightside" id="rightside"><div id="rightside-config-hide"><a class="translate_chn_to_cht" id="translateLink" href="javascript:translatePage();" title="Traditional Chinese and Simplified Chinese Conversion" target="_self">繁</a><i class="darkmode fa fa-moon-o" id="darkmode" title="Dark Mode"></i></div><div id="rightside-config-show"><div id="rightside_config" title="Setting"><i class="fa fa-cog" aria-hidden="true"></i></div><i class="fa fa-arrow-up" id="go-up" title="Back to top" aria-hidden="true"></i></div></section><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="/js/tw_cn.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><script src="https://cdn.jsdelivr.net/npm/instant.page@latest/instantpage.min.js" type="module"></script><script src="https://cdn.jsdelivr.net/npm/lazysizes@latest/lazysizes.min.js" async></script><script src="https://cdn.jsdelivr.net/npm/typed.js"></script><script>var typed = new Typed(".subtitle", {
-strings: '今日事&#44;今日畢,Never put off till tomorrow what you can do today'.split(","),
-startDelay: 300,
-typeSpeed: 100,
-loop: true,
-backSpeed: 50
-});</script><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts"></div></div></div><hr><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fa fa-times"></i></span></div><div class="search-mask"></div></body></html>
+  isHighlightShrink: false,
+  isSidebar: false,
+  postUpdate: '2020-09-17 16:20:23'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>var activateDarkMode = function () {
+  document.documentElement.setAttribute('data-theme', 'dark')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+  }
+}
+var activateLightMode = function () {
+  document.documentElement.setAttribute('data-theme', 'light')
+  if (document.querySelector('meta[name="theme-color"]') !== null) {
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+  }
+}
+
+var autoChangeMode = 'true'
+var t = saveToLocal.get('theme')
+if (autoChangeMode === '1') {
+  var isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches
+  var isLightMode = window.matchMedia('(prefers-color-scheme: light)').matches
+  var isNotSpecified = window.matchMedia('(prefers-color-scheme: no-preference)').matches
+  var hasNoSupport = !isDarkMode && !isLightMode && !isNotSpecified
+
+  if (t === undefined) {
+    if (isLightMode) activateLightMode()
+    else if (isDarkMode) activateDarkMode()
+    else if (isNotSpecified || hasNoSupport) {
+      var now = new Date()
+      var hour = now.getHours()
+      var isNight = hour <= 6 || hour >= 18
+      isNight ? activateDarkMode() : activateLightMode()
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addListener(function (e) {
+      if (saveToLocal.get('theme') === undefined) {
+        e.matches ? activateDarkMode() : activateLightMode()
+      }
+    })
+  } else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else if (autoChangeMode === '2') {
+  now = new Date()
+  hour = now.getHours()
+  isNight = hour <= 6 || hour >= 18
+  if (t === undefined) isNight ? activateDarkMode() : activateLightMode()
+  else if (t === 'light') activateLightMode()
+  else activateDarkMode()
+} else {
+  if (t === 'dark') activateDarkMode()
+  else if (t === 'light') activateLightMode()
+}</script><meta name="generator" content="Hexo 5.1.1"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><div id="mobile-sidebar"><div id="menu_mask"></div><div id="mobile-sidebar-menus"><div class="mobile_author_icon"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="mobile_post_data"><div class="mobile_data_item is-center"><div class="mobile_data_link"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">81</div></a></div></div><div class="mobile_data_item is-center">      <div class="mobile_data_link"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">45</div></a></div></div><div class="mobile_data_item is-center">     <div class="mobile_data_link"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div></div></div><div id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/index.jpg)"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">Directoree</a></span><span id="menus"><div id="search_button"><a class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> Search</span></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fa fa-home"></i><span> 主页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fa fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fa fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fa fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/link/"><i class="fa-fw fa fa-link"></i><span> 友链</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fa fa-heart"></i><span> 关于</span></a></div><div class="menus_item"><a class="site-page" href="javascript:void(0);"><i class="fa-fw fa fa-list"></i><span> 清单</span><i class="fas fa-chevron-down expand"></i></a><ul class="menus_item_child"><li><a class="site-page" href="/music/"><i class="fa-fw fa fa-music"></i><span> Music</span></a></li><li><a class="site-page" href="/movies/"><i class="fa-fw fa fa-film"></i><span> Movie</span></a></li></ul></div></div><span class="close" id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></span></span></nav><div id="site-info"><h1 id="site_title">Directoree</h1><div id="site_subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/Directoree" target="_blank" title=""><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:zhao_yilong@aliyun.com" target="_blank" title=""><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://sighttp.qq.com/msgrd?v=1&amp;uin=1003432683" target="_blank" title=""><i class="fab fa-qq"></i></a></div></div><div id="scroll_down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout_page" id="content-inner"><div class="recent-posts" id="recent-posts"><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/Python-Grammar/" title="Python-基础语法">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Python-基础语法"></a></div><div class="recent-post-info"><a class="article-title" href="/post/Python-Grammar/" title="Python-基础语法">Python-基础语法</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-27T08:06:40.000Z" title="Created 2019-02-27 16:06:40">2019-02-27</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Python/">Python</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/Python%E8%AF%AD%E8%A8%80/">Python语言</a></span></div><div class="content">请务必注意，Python程序是大小写敏感的，如果写错了大小写，程序会报错。
+
+
+&ensp;&ensp;
+Python 基础语法 
+
+&emsp;&emsp;
+一. 标识符一、标识符定义规则
+
+在 Python 里，标识符由字母、数字、下划线组成。
+
+在 Python 中，所有标识符不能以数字开头。
+
+Python 中的标识符是区分大小写的。
+
+以下划线开头的标识符是有特殊意义的。
+
+以单下划线开头 _foo 的代表不能直接访问的类属性，需通过类提供的接口进行访问，不能用 from xxx import * 而导入。
+以双下划线开头的 __foo 代表类的私有成员，以双下划线开头和结尾的 __foo__ 代表 Python 里特殊方法专用的标识，如 __init__() 代表类的构造函数。
+
+
+
+
+
+二、Python 保留字符
+下面的列表显示了在Python中的保留字。这些保留字不能用作常数或变数，或任何其他标识符名称。
+|||:-:|:-:|:-:|and    |exec    |notassert    |finally    |orbreak    |for    |passc ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/Python-Basics/" title="Python-基础">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Python-基础"></a></div><div class="recent-post-info"><a class="article-title" href="/post/Python-Basics/" title="Python-基础">Python-基础</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-27T02:18:37.000Z" title="Created 2019-02-27 10:18:37">2019-02-27</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/Python/">Python</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/Python%E8%AF%AD%E8%A8%80/">Python语言</a></span></div><div class="content">从今天开始Python的学习吧……ヾ(๑╹◡╹)ﾉ”
+
+本文参考：[Python3 教程][廖雪峰的官方网站Python教程][Python编程：从入门到实践][Python 中文学习大本营-Python 3.6.X 官方教程]
+&ensp;&ensp;
+Python 基础 
+
+
+
+&emsp;&emsp;
+一. 基础语法参见本站博客：[Python-基础语法]
+
+
+
+
+二. 变量和数据类型参见本站博客：[Python-变量和数据类型]
+
+
+
+
+三. 运算符参见本站博客：[Python-运算符]
+
+
+
+
+四. 条件语句与循环参见本站博客：[Python-条件语句与循环]
+
+
+
+
+五. 字符编码、字符串、格式化参见本站博客：[Python-字符编码&amp;字符串&amp;格式化]
+
+
+
+
+六. 列表、元组、字典、集合参见本站博客：[Python-列表、元组、字典、集合]
+
+
+
+
+七. 函数参见本站博客：[Python-函数]
+
+
+
+
+八. 生成器与迭代器参见本站博客：[Python-生成器与迭代器]
+
+
+
+
+九. 模块和包参见本站博客：[Python-模块和包]
+
+
+
+
+十. 函数式编 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/PHP-SessionManagement/" title="PHP-会话管理和控制">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-会话管理和控制"></a></div><div class="recent-post-info"><a class="article-title" href="/post/PHP-SessionManagement/" title="PHP-会话管理和控制">PHP-会话管理和控制</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-26T09:22:53.000Z" title="Created 2019-02-26 17:22:53">2019-02-26</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a></span></div><div class="content">(。・∀・)ノ
+
+
+&ensp;&ensp;
+PHP 会话管理和控制
+
+&emsp;&emsp;
+一. 前言标准的http协议是无状态的，无连接的。？？？什么意思？⊙﹏⊙∥
+
+【无状态】
+
+
+协议对于事务处理没有记忆能力【事物处理】【记忆能力】
+对同一个url请求没有上下文关系【上下文关系】
+每次的请求都是独立的，它的执行情况和结果与前面的请求和之后的请求是无直接关系的，它不会受前面的请求应答情况直接影响，也不会直接影响后面的请求应答情况【无直接联系】【受直接影响】
+服务器中没有保存客户端的状态，客户端必须每次带上自己的状态去请求服务器【状态】
+
+
+【无连接】
+
+
+每一个访问都是无连接，服务器挨个处理访问队列里的访问，处理完一个就关闭连接，这事儿就完了，然后处理下一个新的
+无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接
+
+&emsp;具体内容以及为什么使用Session和Cookie参考下面博文：[http协议无状态中的 “状态” 到底指的是什么？！]
+&emsp;&emsp;
+二. Cookie概述什么是Cookie？请参考本站博客[ ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/PHP-MySQL/" title="PHP操作MySQL数据库">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP操作MySQL数据库"></a></div><div class="recent-post-info"><a class="article-title" href="/post/PHP-MySQL/" title="PHP操作MySQL数据库">PHP操作MySQL数据库</a><div class="article-meta-wrap"><span class="article-meta"><i class="fas fa-thumbtack article-meta__icon sticky"></i><span class="sticky">Sticky</span><span class="article-meta__separator">|</span></span><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-24T02:32:17.000Z" title="Created 2019-02-24 10:32:17">2019-02-24</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a><span class="article-meta__link">•</span><a class="article-meta__tags" href="/tags/MySQL/">MySQL</a></span></div><div class="content">😁
+
+&ensp;&ensp;
+PHP操作MySQL数据库
+
+
+
+&emsp;&emsp;
+一. 数据库连接步骤将数据库连接整理成了最重要的8个步骤，我戏称它为：“数据库连接天龙八步”。😊  (。・∀・)ノ
+&emsp;
+第一步:  连接数据库服务器[PHP mysql_connect() 函数]
+
+
+
+类型
+说明
+
+
+
+函数
+mysqli_connect()
+
+
+函数原型
+mysql_connect(server,user,pwd,newlink,clientflag)
+
+
+功能
+连接到mysql数据库服务器
+
+
+返回值
+如果成功，则返回一个 MySQL 连接标识，失败则返回 FALSE。
+
+
+参数1
+主机
+
+
+参数2
+数据库服务器登陆名
+
+
+参数3
+密码
+
+
+参数4
+数据库的名称
+
+
+参数5
+数据库服务器端口不填默认3306
+
+
+
+对于参数4，数据库名称在此步已填并择，不需要执行第三步。
+
+&emsp;
+第二步:  判断错误[PHP mysqli_errno() 函数]
+
+
+
+类型
+说明
+
+
+
+函数
+mysqli_errno(connection)
+
+
+功能/返回值
+返回连接错 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/MySQL-Primer/" title="MySQL入门">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="MySQL入门"></a></div><div class="recent-post-info"><a class="article-title" href="/post/MySQL-Primer/" title="MySQL入门">MySQL入门</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-23T06:23:42.000Z" title="Created 2019-02-23 14:23:42">2019-02-23</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/MySQL/">MySQL</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a><span class="article-meta__link">•</span><a class="article-meta__tags" href="/tags/MySQL/">MySQL</a></span></div><div class="content">内容好多啊◑﹏◐[那看视频吧…..] ٩(๑❛ᴗ❛๑)۶  (๑&gt;◡&lt;๑)
+
+&ensp;&ensp;
+MySQL入门
+
+
+&emsp;&emsp;
+一. MySQL介绍1.  MySQL数据库简称MySQL，是一款由瑞典MySQL AB公司开发并且应用广泛的数据管理系统，MySQL数据库因其体积小、速度快、总体拥有成本低 受到很多的热捧。现在,MySQL的所有者世界上最著名的数据库企业——Oracle所有。
+2.  MySQL的应用，在国内的企业包括：百度、阿里、腾讯、新浪、搜狐、网易等等企业，全部都在使用MySQL数据库。
+3.  MySQL是一种开放源代码的关系型数据库管理系统（RDBMS） ，MySQL数据库系统使用最常用的数据库管理语言–结构化查询语言（SQL）进行数据库管理。由于MySQL是开放源代码的，因此任何人都可以在GPL的许可下下载并根据个性化的需要对其进行修改。MySQL因为其速度、可靠性和适应性而备受关注。大多数人都认为在不需要事务化处理的情况下，MySQL是管理内容最好的选择。
+4.  PHP与很多数据库结合都很紧密。由于，PHP和MySQL都是开 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/PHP-Upload/" title="PHP-文件上传">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-文件上传"></a></div><div class="recent-post-info"><a class="article-title" href="/post/PHP-Upload/" title="PHP-文件上传">PHP-文件上传</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-21T06:10:14.000Z" title="Created 2019-02-21 14:10:14">2019-02-21</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a></span></div><div class="content">(。・∀・)ノ
+
+
+&ensp;&ensp;
+PHP 文件上传
+
+&emsp;&emsp;
+一. 修改php.ini文件一般情况需要修改：[可以使用ctrl+f 搜索相关配置项。]
+
+
+
+配置项
+功能说明
+
+
+
+file_uploads
+on为开启文件上传功能，off为关闭
+
+
+post_max_size
+系统允许的POST传参的最大值
+
+
+upload_max_filesize
+系统允许的上传文件的最大值
+
+
+memory_limit
+内存使用限制
+
+
+max_execution_time
+(1)脚本执行时间,参数的单位为秒。(2)这个参数是设定脚本的最大执行时间。(3)也可以根据需求做适当的改变。通常不需要来修改，系统默认值即可。超大文件上传的时候，可能会涉及到这一项参数的修改。(4)上传时间太长了，会超时。如果你将此项参数设为0，则是不限制超时时间，不建议使用。
+
+
+
+建议尺寸： file_size(文件大小) &lt; upload_max_filesize &lt; post_max_size &lt; memory_limit
+
+ &emsp;&emsp;
+三. is_up ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/PHP-FileSystem/" title="PHP-文件系统">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-文件系统"></a></div><div class="recent-post-info"><a class="article-title" href="/post/PHP-FileSystem/" title="PHP-文件系统">PHP-文件系统</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-20T05:29:20.000Z" title="Created 2019-02-20 13:29:20">2019-02-20</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a></span></div><div class="content">学习文件处理本质上面就是学习文件处理的函数。 ヾ(๑╹◡╹)ﾉ”
+
+
+&ensp;&ensp;
+PHP 文件系统
+
+&emsp;&emsp;
+一. 读取文件&emsp;
+1.1 readfile读取文件读取一个文件内容的函数：int readfile ( string $文件名)
+
+功能：传入一个文件路径，输出这个文件里面的内容。
+
+&lt;?php
+   //linux类的读取方式
+   readfile("/home/paul/test.txt");
+   //windows类的读取方式
+   readfile("c:\\boot.ini");
+?>
+
+注意：上面的代码中windows的斜线是\斜线，可能会转义掉一些字符。因此，我们写的时候写上两个斜线。
+
+&emsp;&emsp;
+1.2 file_get_contents打开文件上面的是单纯打文件就直接输出了，有没有打开文件后，能够赋值给一个变量的操作方式呢。string file_get_contents ( string filename)
+
+功能：传入一个文件或文件路径，打开这个文件返回文件的内容。文件的内容是一个字符串。 ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/PHP-function/" title="PHP-函数">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-函数"></a></div><div class="recent-post-info"><a class="article-title" href="/post/PHP-function/" title="PHP-函数">PHP-函数</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-15T12:25:45.000Z" title="Created 2019-02-15 20:25:45">2019-02-15</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a></span></div><div class="content">PHP函数分为自定义函数和系统函数 (oﾟvﾟ)ノ
+
+
+&ensp;&ensp;
+PHP 函数
+
+
+&emsp;&emsp;
+一. 自定义函数1.1 自定义函数函数基本概念我们在实际开发过程当中需要有很多功能都需要反复使用到，而这些反复需要使用到的功能，我们能定义成功能（函数），就尽可能定义成功能（函数）。使用的时候，吼一下它的名字即可。  那我们来学一下自定义函数的语法规定，语法规定如下：  function 函数名([参数名1[=值1], 参数名2[=值2], 参数名n[=值n]]){       函数中的功能体    [return 返回值]}
+**上面的语法规定中发现了如下特点，产生如下语未能规定：**
+1. 函数以**function**开始
+2. function后面接空格，空格后接函数名
+3. 函数名与变量命名规则基本一样，但是不同的是：**函数名不区分大小写**
+4. 所谓参数其实就是变量
+5. 函数名后接括号，括号内跟参数，参数全都有[]（中括号）括起来了，代表参数可填可不填
+6. 如果有参数的话，参数后可以接(＝)等号，等号接默认值。参数值也是用[](中括号)括起来 ...</div></div></div><div class="recent-post-item"><div class="post_cover left_radius"><a href="/post/PHP-Regular-Expression/" title="PHP-正则表达式">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-正则表达式"></a></div><div class="recent-post-info"><a class="article-title" href="/post/PHP-Regular-Expression/" title="PHP-正则表达式">PHP-正则表达式</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-14T13:40:36.000Z" title="Created 2019-02-14 21:40:36">2019-02-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a></span></div><div class="content">世界上最难懂的是道士的鬼符、医生的处方和程序员的正则表达示。(ง •_•)ง
+
+
+&ensp;&ensp;
+PHP 正则表达式
+
+&emsp;&emsp;
+正则表达示我们其实之前经常看到，它主要用在以下一些地方：1.匹配邮箱、手机号码、验证码2.替换敏感的关键词。例如：涉及政治和骂人的话3.文章采集。4.早期的表情替换技术,ubb文件编码、markdown编辑器替换等5.以后自己写模板引擎也需要用到正则表达示其他….
+
+正则表达式是一种描述字符串结果的语法规则，是一个特定的格式化模式，可以匹配、替换、截取匹配的字符串。常用的语言基本上都有正则表达式，如JavaScript、java等。其实，只有了解一种语言的正则使用，其他语言的正则使用起来，就相对简单些。文本主要围绕解决下面问题展开。
+
+
+
+1. 定界符定界符，就是定一个边界，边界以内的就是正则表达示。PHP的正则表达示定界符的规定如下：定界符，不能用a-zA-Z0-9\ 其他的都可以用。必须成对出现，有开始就有结束。我们来例几个例子：
+
+
+
+例子
+说明
+
+
+
+/中间写正则/
+正确
+
+
+$中间写正则$
+正确
+
+
+%中间写正则%
+正确
+ ...</div></div></div><div class="recent-post-item"><div class="post_cover right_radius"><a href="/post/PHP-namespace/" title="PHP-命名空间">     <img class="post_bg" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="PHP-命名空间"></a></div><div class="recent-post-info"><a class="article-title" href="/post/PHP-namespace/" title="PHP-命名空间">PHP-命名空间</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">Created</span><time datetime="2019-02-14T02:09:57.000Z" title="Created 2019-02-14 10:09:57">2019-02-14</time></span><span class="article-meta"><span class="article-meta__separator">|</span><i class="fas fa-inbox article-meta__icon"></i><a class="article-meta__categories" href="/categories/PHP/">PHP</a></span><span class="article-meta tags"><span class="article-meta__separator">|</span><i class="fas fa-tag article-meta__icon"></i><a class="article-meta__tags" href="/tags/PHP%E8%AF%AD%E8%A8%80/">PHP语言</a></span></div><div class="content">(oﾟvﾟ)ノ
+
+
+
+
+如果没有定义任何命名空间，所有的类与函数的定义都是在全局空间，与 PHP 引入命名空间概念前一样。在名称前加上前缀 \ 表示该名称是全局空间中的名称，即使该名称位于其它的命名空间中时也是如此。对于函数和常量来说，如果当前命名空间中不存在该函数或常量，PHP 会退而使用全局空间中的函数或常量。
+
+
+
+
+名称解析遵循下列规则：
+
+
+
+对完全限定名称的函数，类和常量的调用在编译时解析。例如 new \A\B 解析为类 A\B。
+所有的非限定名称和限定名称（非完全限定名称）根据当前的导入规则在编译时进行转换。例如，如果命名空间 A\B\C 被导入为 C，那么对 C\D\e() 的调用就会被转换为 A\B\C\D\e()。
+在命名空间内部，所有的没有根据导入规则转换的限定名称均会在其前面加上当前的命名空间名称。例如，在命名空间 A\B 内部调用C\D\e()，则 C\D\e() 会被转换为 A\B\C\D\e() 。
+非限定类名根据当前的导入规则在编译时转换（用全名代替短的导入名称）。例如，如果命名空间 A\B\C 导入为C，则 new C() 被转换为 new A\B\ ...</div></div></div><nav id="pagination"><div class="pagination"><a class="extend prev" rel="prev" href="/page/3/"><i class="fas fa-chevron-left fa-fw"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/5/"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside_content" id="aside_content"><div class="card-widget card-info"><div class="card-content"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">Directoree</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">Articles</div><div class="length_num">81</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">Tags</div><div class="length_num">45</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">Categories</div><div class="length_num">27</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://Treecatee.github.io"><i class="fab fa-github"></i><span>Treecatee</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/Directoree" target="_blank" title=""><i class="fab fa-github"></i></a><a class="social-icon" href="mailto:zhao_yilong@aliyun.com" target="_blank" title=""><i class="fas fa-envelope"></i></a><a class="social-icon" href="http://sighttp.qq.com/msgrd?v=1&amp;uin=1003432683" target="_blank" title=""><i class="fab fa-qq"></i></a></div></div></div><div class="sticky_layout"><div class="card-widget card-announcement"><div class="card-content"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>Announcement</span></div><div class="announcement_content">会者定离，一期一祈。</div></div></div><div class="card-widget card-recent-post"><div class="card-content"><div class="item-headline"><i class="fas fa-history"></i><span>Recent Post</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/post/updatetheme/" title="博客主题更新"><img src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="博客主题更新"/></a><div class="content"><a class="title" href="/post/updatetheme/" title="博客主题更新">博客主题更新</a><time datetime="2020-09-17T07:07:29.000Z" title="Created 2020-09-17 15:07:29">2020-09-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/css-app-notes/" title="CSS:APP 读书笔记"><img src="https://i.loli.net/2018/12/24/5c20d00794e53.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CSS:APP 读书笔记"/></a><div class="content"><a class="title" href="/post/css-app-notes/" title="CSS:APP 读书笔记">CSS:APP 读书笔记</a><time datetime="2020-09-14T07:11:13.000Z" title="Created 2020-09-14 15:11:13">2020-09-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/computer-second-level-chen/" title="计算机二级（星辰）"><img src="https://i.loli.net/2019/05/01/5cc9b356972c7.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="计算机二级（星辰）"/></a><div class="content"><a class="title" href="/post/computer-second-level-chen/" title="计算机二级（星辰）">计算机二级（星辰）</a><time datetime="2020-01-30T07:10:35.000Z" title="Created 2020-01-30 15:10:35">2020-01-30</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/2019year-endsummary/" title="2019年终总结"><img src="https://i.loli.net/2019/01/11/5c388e8172b3b.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="2019年终总结"/></a><div class="content"><a class="title" href="/post/2019year-endsummary/" title="2019年终总结">2019年终总结</a><time datetime="2019-12-31T08:47:52.000Z" title="Created 2019-12-31 16:47:52">2019-12-31</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/post/CTF-Basic-knowledge/" title="CTF-Basic-knowledge"><img src="https://i.loli.net/2019/07/22/5d348c49a5f7149330.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="CTF-Basic-knowledge"/></a><div class="content"><a class="title" href="/post/CTF-Basic-knowledge/" title="CTF-Basic-knowledge">CTF-Basic-knowledge</a><time datetime="2019-07-21T15:58:20.000Z" title="Created 2019-07-21 23:58:20">2019-07-21</time></div></div></div></div></div><div class="card-widget card-categories"><div class="card-content"><div class="item-headline"><i class="fas fa-folder-open"></i><span>Categories</span></div><ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/C-C/"><span class="card-category-list-name">C&C++</span><span class="card-category-list-count">3</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/CSS/"><span class="card-category-list-name">CSS</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/CTF/"><span class="card-category-list-name">CTF</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Docker/"><span class="card-category-list-name">Docker</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/HTML/"><span class="card-category-list-name">HTML</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/HTTP%E5%8D%8F%E8%AE%AE/"><span class="card-category-list-name">HTTP协议</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Hexo-Github/"><span class="card-category-list-name">Hexo-Github</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Java/"><span class="card-category-list-name">Java</span><span class="card-category-list-count">10</span></a></li>
+            <li class="card-category-list-item more is-center"><a class="card-category-list-link-more" href="/categories/">
+                <span>More</span><i class="fas fa-angle-right"></i></a></li>
+            </ul></div></div><div class="card-widget card-tags"><div class="card-content"><div class="item-headline"><i class="fas fa-tags"></i><span>Tags</span></div><div class="card-tag-cloud"><a href="/tags/ARP%E6%AC%BA%E9%AA%97/" style="font-size: 1.27em; color: #99a0a9">ARP欺骗</a> <a href="/tags/Blog/" style="font-size: 1.1em; color: #999">Blog</a> <a href="/tags/C/" style="font-size: 1.21em; color: #999ea4">C</a> <a href="/tags/C-Memory/" style="font-size: 1.16em; color: #999b9e">C-Memory</a> <a href="/tags/CS-APP/" style="font-size: 1.1em; color: #999">CS:APP</a> <a href="/tags/CSS/" style="font-size: 1.1em; color: #999">CSS</a> <a href="/tags/CTF/" style="font-size: 1.33em; color: #99a2af">CTF</a> <a href="/tags/Cookie/" style="font-size: 1.1em; color: #999">Cookie</a> <a href="/tags/DVWA/" style="font-size: 1.1em; color: #999">DVWA</a> <a href="/tags/Docker/" style="font-size: 1.16em; color: #999b9e">Docker</a> <a href="/tags/Github/" style="font-size: 1.1em; color: #999">Github</a> <a href="/tags/HTML/" style="font-size: 1.1em; color: #999">HTML</a> <a href="/tags/Hash%E5%87%BD%E6%95%B0/" style="font-size: 1.1em; color: #999">Hash函数</a> <a href="/tags/JavaScript/" style="font-size: 1.1em; color: #999">JavaScript</a> <a href="/tags/Java%E5%AD%A6%E4%B9%A0/" style="font-size: 1.44em; color: #99a7ba">Java学习</a> <a href="/tags/Java%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90/" style="font-size: 1.1em; color: #999">Java访问权限</a> <a href="/tags/Java%E8%AF%AD%E8%A8%80/" style="font-size: 1.27em; color: #99a0a9">Java语言</a> <a href="/tags/Meterpreter%E5%91%BD%E4%BB%A4/" style="font-size: 1.1em; color: #999">Meterpreter命令</a> <a href="/tags/MySQL/" style="font-size: 1.16em; color: #999b9e">MySQL</a> <a href="/tags/PHP%E8%AF%AD%E8%A8%80/" style="font-size: 1.39em; color: #99a4b4">PHP语言</a> <a href="/tags/Python%E8%AF%AD%E8%A8%80/" style="font-size: 1.5em; color: #99a9bf">Python语言</a> <a href="/tags/SMB/" style="font-size: 1.1em; color: #999">SMB</a> <a href="/tags/SQLMAP%E5%91%BD%E4%BB%A4/" style="font-size: 1.1em; color: #999">SQLMAP命令</a> <a href="/tags/SQLi/" style="font-size: 1.1em; color: #999">SQLi</a> <a href="/tags/SSH/" style="font-size: 1.16em; color: #999b9e">SSH</a> <a href="/tags/Security/" style="font-size: 1.1em; color: #999">Security</a> <a href="/tags/User-Agen/" style="font-size: 1.1em; color: #999">User-Agen</a> <a href="/tags/Web/" style="font-size: 1.16em; color: #999b9e">Web</a> <a href="/tags/Wireshark/" style="font-size: 1.1em; color: #999">Wireshark</a> <a href="/tags/XML/" style="font-size: 1.1em; color: #999">XML</a> <a href="/tags/XXE/" style="font-size: 1.1em; color: #999">XXE</a> <a href="/tags/msfvenom/" style="font-size: 1.1em; color: #999">msfvenom</a> <a href="/tags/%E4%BF%A1%E5%AE%89%E6%95%B0%E5%AD%A6/" style="font-size: 1.1em; color: #999">信安数学</a> <a href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" style="font-size: 1.1em; color: #999">内存管理</a> <a href="/tags/%E5%88%86%E7%BB%84%E5%AF%86%E7%A0%81/" style="font-size: 1.1em; color: #999">分组密码</a> <a href="/tags/%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA/" style="font-size: 1.1em; color: #999">博客搭建</a> <a href="/tags/%E5%AE%89%E5%85%A8%E6%8C%87%E5%AF%BC/" style="font-size: 1.1em; color: #999">安全指导</a> <a href="/tags/%E5%AE%89%E5%85%A8%E7%AC%94%E8%AE%B0/" style="font-size: 1.1em; color: #999">安全笔记</a> <a href="/tags/%E5%AE%89%E5%8D%93%E6%B8%97%E9%80%8F/" style="font-size: 1.1em; color: #999">安卓渗透</a> <a href="/tags/%E5%BA%8F%E5%88%97%E5%AF%86%E7%A0%81/" style="font-size: 1.1em; color: #999">序列密码</a></div></div></div><div class="card-widget card-archives"><div class="card-content"><div class="item-headline"><i class="fas fa-archive"></i><span>Archives</span></div><ul class="card-archive-list"><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/09/"><span class="card-archive-list-date">September 2020</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2020/01/"><span class="card-archive-list-date">January 2020</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/12/"><span class="card-archive-list-date">December 2019</span><span class="card-archive-list-count">1</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/07/"><span class="card-archive-list-date">July 2019</span><span class="card-archive-list-count">4</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/06/"><span class="card-archive-list-date">June 2019</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/05/"><span class="card-archive-list-date">May 2019</span><span class="card-archive-list-count">2</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/04/"><span class="card-archive-list-date">April 2019</span><span class="card-archive-list-count">3</span></a></li><li class="card-archive-list-item"><a class="card-archive-list-link" href="/archives/2019/03/"><span class="card-archive-list-date">March 2019</span><span class="card-archive-list-count">11</span></a></li><li class="card-archive-list-item more is-center"><a class="card-archive-list-link-more" href="/archives/">
+              <span>More</span><i class="fas fa-angle-right"  ></i></a></li></ul></div></div><div class="card-widget card-webinfo"><div class="card-content"><div class="item-headline"><i class="fas fa-chart-line"></i><span>Info</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">Article :</div><div class="item-count">81</div></div><div class="webinfo-item"><div class="item-name">Run time :</div><div class="item-count" id="runtimeshow" data-publishDate="2018-11-13T16:00:00.000Z"></div></div><div class="webinfo-item"><div class="item-name">UV :</div><div class="item-count" id="busuanzi_value_site_uv"></div></div><div class="webinfo-item"><div class="item-name">PV :</div><div class="item-count" id="busuanzi_value_site_pv"></div></div><div class="webinfo-item"><div class="item-name">Last Push :</div><div class="item-count" id="last-push-date" data-lastPushDate="2020-09-17T08:20:23.376Z"></div></div></div></div></div></div></div></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>Framework </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>Theme </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="Switch Between Light And Dark Mode"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="Setting"><i class="fas fa-cog"></i></button><button id="go-up" type="button" title="Back To Top"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">Local search</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="Search for Posts" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>Powered by</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (document.getElementsByClassName('mermaid').length) {
+  if (window.mermaidJsLoad) mermaid.init()
+  else {
+    $.getScript('https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js', function () {
+      window.mermaidJsLoad = true
+      mermaid.initialize({
+        theme: 'default',
+      })
+      false && mermaid.init()
+    })
+  }
+}</script><script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></div></body></html>
