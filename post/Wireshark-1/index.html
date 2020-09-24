@@ -19,7 +19,7 @@
   localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
   translate: undefined,
   noticeOutdate: undefined,
-  highlight: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
   copy: {
     success: '复制成功',
     error: '复制错误',
@@ -170,9 +170,8 @@ if (autoChangeMode === '1') {
 <p>&emsp;<br><strong>保存过滤</strong><br>在Filter栏上，填好Filter的表达式后，点击 + 按钮，取个名字。比如 “test”。点击OK后Filter栏上就多了个”test” 的按钮。</font></p>
 <p><img src="https://i.loli.net/2019/01/19/5c4302ec99520.png" alt="19-5.png"></p>
 <p>&emsp;<br><font face="Comic sans MS"><strong>过滤表达式的规则</strong><br>表达式规则<br>&emsp;&emsp;1. 协议过滤 比如TCP，只显示TCP协议。<br>&emsp;&emsp;2. IP 过滤 比如 ip.src ==192.168.1.102显示源地址为192.168.1.102，ip.dst==192.168.1.102, 目标地址为192.168.1.102<br>&emsp;&emsp;3. 端口过滤 tcp.port ==80, 端口为80的 tcp.srcport == 80, 只显示TCP协议的愿端口为80的。<br>&emsp;&emsp;4. Http模式过滤 http.request.method==”GET”, 只显示HTTP GET方法的。<br>&emsp;&emsp;5. 逻辑运算符为 AND/ OR 常用的过滤表达式<br></font></p>
-<pre class="line-numbers language-bash"><code class="language-bash">过滤表达式                                                      用途
-http                                                    只查看HTTP协议的记录
-ip.src<span class="token operator">==</span>192.168.1.102 or ip.dst<span class="token operator">==</span>192.168.1.102      源地址或者目标地址是192.168.1.102<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">过滤表达式                                                      用途</span><br><span class="line">http                                                    只查看HTTP协议的记录</span><br><span class="line">ip.src==192.168.1.102 or ip.dst==192.168.1.102      源地址或者目标地址是192.168.1.102</span><br></pre></td></tr></table></figure>
+
 <p>&emsp;<br>&emsp;</p>
 <h4 id="2-封包列表-Packet-List-Pane"><a href="#2-封包列表-Packet-List-Pane" class="headerlink" title="2. 封包列表(Packet List Pane)"></a><font color="red" face="Comic sans MS"><strong>2. 封包列表(Packet List Pane)</strong></font></h4><p><font face="Comic sans MS">封包列表的面板中显示，编号，时间戳，源地址，目标地址，协议，长度，以及封包信息。 <font color="#00B2EE"><strong>你可以看到不同的协议用了不同的颜色显示。</strong></font><br>你也可以修改这些显示颜色的规则，<code>View-&gt;ColoringRules</code>。</font></p>
 <p><img src="https://i.loli.net/2019/01/19/5c4308567081a.png" alt="19-6.png"></p>

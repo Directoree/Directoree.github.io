@@ -19,7 +19,7 @@
   localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
   translate: undefined,
   noticeOutdate: undefined,
-  highlight: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
   copy: {
     success: '复制成功',
     error: '复制错误',
@@ -174,9 +174,7 @@ if (autoChangeMode === '1') {
 <li>在主目录下建立了uplogs.txt文件，目的是记录容器的更新；</li>
 <li>在 /var/www/html建立test1.php文件，内容为：</li>
 </ul>
-<pre class="line-numbers language-php"><code class="language-php">     <span class="token delimiter">&lt;?php</span>
-      <span class="token keyword">echo</span> <span class="token function">phpinfo</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
-     <span class="token delimiter">?></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  <span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> phpinfo();</span><br><span class="line">  <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 <p>   但是在客户机浏览器看到显示为空，上网查了一下，需要修改PHP配置，如下：<br>   vim /etc/php/7.2/apache2/php.ini   修改PHP配置信息将short_open_tags=on；<br>   参考链接： <a target="_blank" rel="noopener" href="https://www.cnblogs.com/smallrookie/p/5635814.html">https://www.cnblogs.com/smallrookie/p/5635814.html</a> </p>
 <p><strong>二、将建立好的容器转为镜像并部署到 Dockerhub</strong></p>
 <ol>
@@ -203,16 +201,16 @@ if (autoChangeMode === '1') {
 <p><img src="https://i.loli.net/2019/04/02/5ca244ed60683.png" alt="1.png"></p>
 <p><strong>三、准备在ubuntu18.04（2）里装ThinkPHP5</strong></p>
 <p><strong>注意</strong>：安装ThinkPHP5只需要在Apache2或者其他服务器的根目录下放tp5这个文件夹就好了。<br>特别需要注意的是，我在win10系统然后进入ThinkPHP官网下载的文件拿到Ubuntu下面来用老是不行，按照跨平台性和理论性来说无论在哪一个系统下面都能用。下面做了些探索，但是最后的解决方法是：在Ubuntu系统下到<a target="_blank" rel="noopener" href="http://www.thinkphp.cn/">官网</a>下载<a target="_blank" rel="noopener" href="http://www.thinkphp.cn/donate/download/id/1278.html">ThinkPHP5.0.24完整版</a>，然后用Docker命令将本地文件复制到容器里面，注意我这里没有复制到镜像，命令参考：</p>
-<pre class="line-numbers language-ubuntu"><code class="language-ubuntu">docker cp 本地文件的路径（绝对路径） 容器ID:容器中存放该文件的路径位置   
-docker cp /opt/etc/lampp/htdocs/tp5 7862sc25dsc1:/var/www/html/ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker cp 本地文件的路径（绝对路径） 容器ID:容器中存放该文件的路径位置   </span><br><span class="line">docker cp &#x2F;opt&#x2F;etc&#x2F;lampp&#x2F;htdocs&#x2F;tp5 7862sc25dsc1:&#x2F;var&#x2F;www&#x2F;html&#x2F; </span><br></pre></td></tr></table></figure>
+
 <p><br /> 实际方法参考上述即可，下面是我初期安装ThinkPHP5的探索，也是可以安装的，如果不想麻烦可略过….</p>
 <ol>
 <li>本来想的挺好的在里面装个ThinkPHP5就直接用了，无奈<code>composer.phar</code>都已经安装好了，但是如下的错误始终无法解决： </li>
 </ol>
-<pre class="line-numbers language-linux"><code class="language-linux">root@7b8832c95393:/var/www/html# sudo composer create-project topthink/thinkphp tp5
-bash: sudo: command not found<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<pre class="line-numbers language-linux"><code class="language-linux">root@7b8832c95393:/var/www/html# composer create-project topthink/thinkphp tp5
-Do not run Composer as root/super user! See https://getcomposer.org/root for details<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@7b8832c95393:&#x2F;var&#x2F;www&#x2F;html# sudo composer create-project topthink&#x2F;thinkphp tp5</span><br><span class="line">bash: sudo: command not found</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@7b8832c95393:&#x2F;var&#x2F;www&#x2F;html# composer create-project topthink&#x2F;thinkphp tp5</span><br><span class="line">Do not run Composer as root&#x2F;super user! See https:&#x2F;&#x2F;getcomposer.org&#x2F;root for details</span><br></pre></td></tr></table></figure>
+
 <p>docker里面的ubuntu不能用<code>sudo</code>因为自身就是root了，我不想建立用户组，管理有些麻烦；</p>
 <ol start="2">
 <li>第二个问题就是<code>Do not run Composer as root/super user! See https://getcomposer.org/root for details</code>，根据报错知道不能直接用root或者超级用户，网上找了些方法都是建立用户组的用户就好了。但是后来没办法我确实建立了一个用户组和一个用户，然后本以为这样就可以了，然后我就去安装TP5了，没想到报错说是没有cache….算了，是在没时间去搞这些花里胡哨的了。</li>
@@ -260,99 +258,13 @@ Do not run Composer as root/super user! See https://getcomposer.org/root for det
 
 <h3 id="三-ThinkPHP5-0和ThinkPHP5-1的文件结构"><a href="#三-ThinkPHP5-0和ThinkPHP5-1的文件结构" class="headerlink" title="三. ThinkPHP5.0和ThinkPHP5.1的文件结构"></a><font color="#FF6347" face="Comic sans MS">三. ThinkPHP5.0和ThinkPHP5.1的文件结构</font></h3><p><strong>目录结构</strong><br>初始的目录结构有些不一样如下：</p>
 <p><strong>1. thinphp5.0结构</strong></p>
-<pre class="line-numbers language-php"><code class="language-php">project  应用部署目录
-├─application           应用目录（可设置）
-│  ├─common             公共模块目录（可更改）
-│  ├─index              模块目录<span class="token punctuation">(</span>可更改<span class="token punctuation">)</span>
-│  │  ├─config<span class="token punctuation">.</span>php      模块配置文件
-│  │  ├─common<span class="token punctuation">.</span>php      模块函数文件
-│  │  ├─controller      控制器目录
-│  │  ├─model           模型目录
-│  │  ├─view            视图目录
-│  │  └─ <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>            更多类库目录
-│  ├─command<span class="token punctuation">.</span>php        命令行工具配置文件
-│  ├─common<span class="token punctuation">.</span>php         应用公共（函数）文件
-│  ├─config<span class="token punctuation">.</span>php         应用（公共）配置文件
-│  ├─database<span class="token punctuation">.</span>php       数据库配置文件
-│  ├─tags<span class="token punctuation">.</span>php           应用行为扩展定义文件
-│  └─route<span class="token punctuation">.</span>php          路由配置文件
-├─extend                扩展类库目录（可定义）
-├─<span class="token keyword">public</span>                <span class="token constant">WEB</span> 部署目录（对外访问目录）
-│  ├─<span class="token keyword">static</span>             静态资源存放目录<span class="token punctuation">(</span>css<span class="token punctuation">,</span>js<span class="token punctuation">,</span>image<span class="token punctuation">)</span>
-│  ├─index<span class="token punctuation">.</span>php          应用入口文件
-│  ├─router<span class="token punctuation">.</span>php         快速测试文件
-│  └─<span class="token punctuation">.</span>htaccess          用于 apache 的重写
-├─runtime               应用的运行时目录（可写，可设置）
-├─vendor                第三方类库目录（Composer）
-├─thinkphp              框架系统目录
-│  ├─lang               语言包目录
-│  ├─library            框架核心类库目录
-│  │  ├─think           Think 类库包目录
-│  │  └─traits          系统 Traits 目录
-│  ├─tpl                系统模板目录
-│  ├─<span class="token punctuation">.</span>htaccess          用于 apache 的重写
-│  ├─<span class="token punctuation">.</span>travis<span class="token punctuation">.</span>yml        <span class="token constant">CI</span> 定义文件
-│  ├─base<span class="token punctuation">.</span>php           基础定义文件
-│  ├─composer<span class="token punctuation">.</span>json      composer 定义文件
-│  ├─console<span class="token punctuation">.</span>php        控制台入口文件
-│  ├─convention<span class="token punctuation">.</span>php     惯例配置文件
-│  ├─helper<span class="token punctuation">.</span>php         助手函数文件（可选）
-│  ├─<span class="token constant">LICENSE</span><span class="token punctuation">.</span>txt        授权说明文件
-│  ├─phpunit<span class="token punctuation">.</span>xml        单元测试配置文件
-│  ├─<span class="token constant">README</span><span class="token punctuation">.</span>md          <span class="token constant">README</span> 文件
-│  └─start<span class="token punctuation">.</span>php          框架引导文件
-├─build<span class="token punctuation">.</span>php             自动生成定义文件（参考）
-├─composer<span class="token punctuation">.</span>json         composer 定义文件
-├─<span class="token constant">LICENSE</span><span class="token punctuation">.</span>txt           授权说明文件
-├─<span class="token constant">README</span><span class="token punctuation">.</span>md             <span class="token constant">README</span> 文件
-├─think                 命令行入口文件<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">project  应用部署目录</span><br><span class="line">├─application           应用目录（可设置）</span><br><span class="line">│  ├─common             公共模块目录（可更改）</span><br><span class="line">│  ├─index              模块目录(可更改)</span><br><span class="line">│  │  ├─config.php      模块配置文件</span><br><span class="line">│  │  ├─common.php      模块函数文件</span><br><span class="line">│  │  ├─controller      控制器目录</span><br><span class="line">│  │  ├─model           模型目录</span><br><span class="line">│  │  ├─view            视图目录</span><br><span class="line">│  │  └─ ...            更多类库目录</span><br><span class="line">│  ├─command.php        命令行工具配置文件</span><br><span class="line">│  ├─common.php         应用公共（函数）文件</span><br><span class="line">│  ├─config.php         应用（公共）配置文件</span><br><span class="line">│  ├─database.php       数据库配置文件</span><br><span class="line">│  ├─tags.php           应用行为扩展定义文件</span><br><span class="line">│  └─route.php          路由配置文件</span><br><span class="line">├─extend                扩展类库目录（可定义）</span><br><span class="line">├─<span class="keyword">public</span>                WEB 部署目录（对外访问目录）</span><br><span class="line">│  ├─<span class="built_in">static</span>             静态资源存放目录(css,js,image)</span><br><span class="line">│  ├─index.php          应用入口文件</span><br><span class="line">│  ├─router.php         快速测试文件</span><br><span class="line">│  └─.htaccess          用于 apache 的重写</span><br><span class="line">├─runtime               应用的运行时目录（可写，可设置）</span><br><span class="line">├─vendor                第三方类库目录（Composer）</span><br><span class="line">├─thinkphp              框架系统目录</span><br><span class="line">│  ├─lang               语言包目录</span><br><span class="line">│  ├─library            框架核心类库目录</span><br><span class="line">│  │  ├─think           Think 类库包目录</span><br><span class="line">│  │  └─traits          系统 Traits 目录</span><br><span class="line">│  ├─tpl                系统模板目录</span><br><span class="line">│  ├─.htaccess          用于 apache 的重写</span><br><span class="line">│  ├─.travis.yml        CI 定义文件</span><br><span class="line">│  ├─base.php           基础定义文件</span><br><span class="line">│  ├─composer.json      composer 定义文件</span><br><span class="line">│  ├─console.php        控制台入口文件</span><br><span class="line">│  ├─convention.php     惯例配置文件</span><br><span class="line">│  ├─helper.php         助手函数文件（可选）</span><br><span class="line">│  ├─LICENSE.txt        授权说明文件</span><br><span class="line">│  ├─phpunit.xml        单元测试配置文件</span><br><span class="line">│  ├─README.md          README 文件</span><br><span class="line">│  └─start.php          框架引导文件</span><br><span class="line">├─build.php             自动生成定义文件（参考）</span><br><span class="line">├─composer.json         composer 定义文件</span><br><span class="line">├─LICENSE.txt           授权说明文件</span><br><span class="line">├─README.md             README 文件</span><br><span class="line">├─think                 命令行入口文件</span><br></pre></td></tr></table></figure>
+
 <br />
 
 <p><strong>2. thinphp5.1结构</strong></p>
-<pre class="line-numbers language-php"><code class="language-php">├─application           应用目录
-│  ├─common             公共模块目录（可以更改）
-│  ├─module_name        模块目录
-│  │  ├─config<span class="token punctuation">.</span>php      模块配置文件
-│  │  ├─common<span class="token punctuation">.</span>php      模块函数文件
-│  │  ├─controller      控制器目录
-│  │  ├─model           模型目录
-│  │  ├─view            视图目录
-│  │  └─ <span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>            更多类库目录
-│  │
-│  ├─command<span class="token punctuation">.</span>php        命令行工具配置文件
-│  ├─common<span class="token punctuation">.</span>php         公共函数文件
-│  ├─config<span class="token punctuation">.</span>php         公共配置文件
-│  ├─route<span class="token punctuation">.</span>php          路由配置文件
-│  ├─tags<span class="token punctuation">.</span>php           应用行为扩展定义文件
-│  └─database<span class="token punctuation">.</span>php       数据库配置文件
-│
-├─<span class="token keyword">public</span>                <span class="token constant">WEB</span>目录（对外访问目录）
-│  ├─index<span class="token punctuation">.</span>php          入口文件
-│  ├─router<span class="token punctuation">.</span>php         快速测试文件
-│  └─<span class="token punctuation">.</span>htaccess          用于apache的重写
-│
-├─thinkphp              框架系统目录
-│  ├─lang               语言文件目录
-│  ├─library            框架类库目录
-│  │  ├─think           Think类库包目录
-│  │  └─traits          系统<span class="token keyword">Trait</span>目录
-│  │
-│  ├─tpl                系统模板目录
-│  ├─base<span class="token punctuation">.</span>php           基础定义文件
-│  ├─console<span class="token punctuation">.</span>php        控制台入口文件
-│  ├─convention<span class="token punctuation">.</span>php     框架惯例配置文件
-│  ├─helper<span class="token punctuation">.</span>php         助手函数文件
-│  ├─phpunit<span class="token punctuation">.</span>xml        phpunit配置文件
-│  └─start<span class="token punctuation">.</span>php          框架入口文件
-│
-├─extend                扩展类库目录
-├─runtime               应用的运行时目录（可写，可定制）
-├─vendor                第三方类库目录（Composer依赖库）
-├─build<span class="token punctuation">.</span>php             自动生成定义文件（参考）
-├─composer<span class="token punctuation">.</span>json         composer 定义文件
-├─<span class="token constant">LICENSE</span><span class="token punctuation">.</span>txt           授权说明文件
-├─<span class="token constant">README</span><span class="token punctuation">.</span>md             <span class="token constant">README</span> 文件
-├─think                 命令行入口文件<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">├─application           应用目录</span><br><span class="line">│  ├─common             公共模块目录（可以更改）</span><br><span class="line">│  ├─module_name        模块目录</span><br><span class="line">│  │  ├─config.php      模块配置文件</span><br><span class="line">│  │  ├─common.php      模块函数文件</span><br><span class="line">│  │  ├─controller      控制器目录</span><br><span class="line">│  │  ├─model           模型目录</span><br><span class="line">│  │  ├─view            视图目录</span><br><span class="line">│  │  └─ ...            更多类库目录</span><br><span class="line">│  │</span><br><span class="line">│  ├─command.php        命令行工具配置文件</span><br><span class="line">│  ├─common.php         公共函数文件</span><br><span class="line">│  ├─config.php         公共配置文件</span><br><span class="line">│  ├─route.php          路由配置文件</span><br><span class="line">│  ├─tags.php           应用行为扩展定义文件</span><br><span class="line">│  └─database.php       数据库配置文件</span><br><span class="line">│</span><br><span class="line">├─<span class="keyword">public</span>                WEB目录（对外访问目录）</span><br><span class="line">│  ├─index.php          入口文件</span><br><span class="line">│  ├─router.php         快速测试文件</span><br><span class="line">│  └─.htaccess          用于apache的重写</span><br><span class="line">│</span><br><span class="line">├─thinkphp              框架系统目录</span><br><span class="line">│  ├─lang               语言文件目录</span><br><span class="line">│  ├─library            框架类库目录</span><br><span class="line">│  │  ├─think           Think类库包目录</span><br><span class="line">│  │  └─traits          系统<span class="keyword">Trait</span>目录</span><br><span class="line">│  │</span><br><span class="line">│  ├─tpl                系统模板目录</span><br><span class="line">│  ├─base.php           基础定义文件</span><br><span class="line">│  ├─console.php        控制台入口文件</span><br><span class="line">│  ├─convention.php     框架惯例配置文件</span><br><span class="line">│  ├─helper.php         助手函数文件</span><br><span class="line">│  ├─phpunit.xml        phpunit配置文件</span><br><span class="line">│  └─start.php          框架入口文件</span><br><span class="line">│</span><br><span class="line">├─extend                扩展类库目录</span><br><span class="line">├─runtime               应用的运行时目录（可写，可定制）</span><br><span class="line">├─vendor                第三方类库目录（Composer依赖库）</span><br><span class="line">├─build.php             自动生成定义文件（参考）</span><br><span class="line">├─composer.json         composer 定义文件</span><br><span class="line">├─LICENSE.txt           授权说明文件</span><br><span class="line">├─README.md             README 文件</span><br><span class="line">├─think                 命令行入口文件</span><br></pre></td></tr></table></figure>
+
 <blockquote>
 <p>router.php用于php自带webserver支持，可用于快速测试 切换到public目录后，启动命令：php -S localhost:8888 router.php 上面的目录结构和名称是可以改变的，这取决于你的入口文件和配置参数。</p>
 </blockquote>

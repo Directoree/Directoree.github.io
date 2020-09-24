@@ -18,7 +18,7 @@
   localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
   translate: undefined,
   noticeOutdate: undefined,
-  highlight: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
   copy: {
     success: '复制成功',
     error: '复制错误',
@@ -148,11 +148,9 @@ if (autoChangeMode === '1') {
 <p>我们在对WEB安全检测的时候都会用到Cain和netfuke这两款工具，功能相信用过的朋友多多少少都知道，但这两款工具是在windows下运行的。<br>而ettercap是在linux下运行的 。其实功能都是差不多的，我称呼它为嗅探工具，ARP欺骗，DNS，劫持，中间人攻击等等。总之这是一款强大的安全测试工具。</p>
 </blockquote>
 </blockquote>
-<h4 id="一、ARP欺骗"><a href="#一、ARP欺骗" class="headerlink" title="一、ARP欺骗"></a>一、ARP欺骗</h4><pre class="line-numbers language-bash"><code class="language-bash"><span class="token keyword">echo</span> 1 <span class="token operator">></span>/proc/sys/net/ipv4/ip_forward
-<span class="token function">cat</span> /proc/sys/net/ipv4/ip_forward
-arpspoof -i eth0 -t 目标IP 目标主机网关<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h4 id="一、ARP欺骗"><a href="#一、ARP欺骗" class="headerlink" title="一、ARP欺骗"></a>一、ARP欺骗</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt;/proc/sys/net/ipv4/ip_forward</span><br><span class="line">cat /proc/sys/net/ipv4/ip_forward</span><br><span class="line">arpspoof -i eth0 -t 目标IP 目标主机网关</span><br></pre></td></tr></table></figure>
 <h4 id="二、使用ettercap获取HTTP账号和密码"><a href="#二、使用ettercap获取HTTP账号和密码" class="headerlink" title="二、使用ettercap获取HTTP账号和密码"></a>二、使用ettercap获取HTTP账号和密码</h4><p><font face="楷体">另开一个终端，输入ettercap -Tq -i eth0</font></p>
-<pre class="line-numbers language-bash"><code class="language-bash">ettercap -Tq -i eth0<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ettercap -Tq -i eth0</span><br></pre></td></tr></table></figure>
 <blockquote>
 <blockquote>
 <p>-T:文本模式<br>q:安静模式<br>i:指定网卡<br>成功后当靶机浏览HTTP网页试用账号和密码登陆时，这个终端窗口就会显示相应的url、账号、密码。<br>💛💙❤注意：当对方的用户名是使用中文登陆的，则终端窗口账号处显示的是编码，则需要使用到url解码，将这串编码解码成中文。</p>

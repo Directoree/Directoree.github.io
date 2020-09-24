@@ -18,7 +18,7 @@
   localSearch: {"path":"search.xml","languages":{"hits_empty":"找不到您查询的内容：${query}"}},
   translate: undefined,
   noticeOutdate: undefined,
-  highlight: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
   copy: {
     success: '复制成功',
     error: '复制错误',
@@ -179,19 +179,20 @@ if (autoChangeMode === '1') {
 <br>
 
 <p><font face="Comic sans MS"><strong>单个变量赋值：</strong>使用等号（=）运算符左边是一个变量名,等号（=）运算符右边是存储在变量中的值。例如：</font></p>
-<pre class="line-numbers language-python"><code class="language-python">message <span class="token operator">=</span> <span class="token string">"Hello Python world!"</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>message<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">message = <span class="string">&quot;Hello Python world!&quot;</span></span><br><span class="line">print(message)</span><br></pre></td></tr></table></figure>
+
 <blockquote>
 <p><font face="Comic sans MS">我们添加了一个名为message的<strong>变量</strong>。每个变量都存储了一个<strong>值</strong>——与变量相关联的信息。在这里，存储的值为文本“Hello Python world!”。</font></p>
 </blockquote>
 <br>
 
 <p><font face="Comic sans MS"><strong>多个变量赋值：</strong></font></p>
-<pre class="line-numbers language-python"><code class="language-python">a <span class="token operator">=</span> b <span class="token operator">=</span> c <span class="token operator">=</span> <span class="token number">1</span>
-<span class="token comment" spellcheck="true">#以上实例，创建一个整型对象，值为1，三个变量被分配到相同的内存空间上。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = b = c = <span class="number">1</span></span><br><span class="line"><span class="comment">#以上实例，创建一个整型对象，值为1，三个变量被分配到相同的内存空间上。</span></span><br></pre></td></tr></table></figure>
+
 <p><font face="Comic sans MS">或者</font></p>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token punctuation">,</span> b<span class="token punctuation">,</span> c <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">,</span> <span class="token number">2</span><span class="token punctuation">,</span> <span class="token string">"john"</span>
-<span class="token comment" spellcheck="true">#以上实例，两个整型对象 1 和 2 分别分配给变量 a 和 b，字符串对象 "john" 分配给变量 c。</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a, b, c = <span class="number">1</span>, <span class="number">2</span>, <span class="string">&quot;john&quot;</span></span><br><span class="line"><span class="comment">#以上实例，两个整型对象 1 和 2 分别分配给变量 a 和 b，字符串对象 &quot;john&quot; 分配给变量 c。</span></span><br></pre></td></tr></table></figure>
+
+
 <p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>三、变量的命名和使用</strong></font></p>
 <blockquote>
 <p><font color="#FF7F00"><strong>请务必牢记下述有关变量的规则：</strong></font></p>
@@ -205,28 +206,12 @@ if (autoChangeMode === '1') {
 <li><font face="Comic sans MS">注意：就目前而言，<font color="#FF7F00"><strong>应使用小写的Python变量名</strong></font>。在变量名中使用大写字母虽然不会导致错误，但避免使用大写字母是个不错的主意。</font></li>
 </ol>
 <p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>四、变量是一种动态语言</strong></font><br>&emsp;<br>代码示例：<br><font color="#00B2EE"></font></p>
-<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># -*- coding: utf-8 -*-</span>
-a <span class="token operator">=</span> <span class="token number">123</span> <span class="token comment" spellcheck="true"># a是整数</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
-a <span class="token operator">=</span> <span class="token string">'ABC'</span> <span class="token comment" spellcheck="true"># a变为字符串</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line">a = <span class="number">123</span> <span class="comment"># a是整数</span></span><br><span class="line">print(a)</span><br><span class="line">a = <span class="string">&#x27;ABC&#x27;</span> <span class="comment"># a变为字符串</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="number">123</span> </span><br><span class="line">ABC</span><br><span class="line">``` </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&amp;emsp;</span><br><span class="line">&lt;font face=&quot;Comic sans MS&quot;&gt;这种变量本身类型不固定的语言称之为&lt;font color=&quot;red&quot;&gt;**动态语言**&lt;/font&gt;，与之对应的是&lt;font color=&quot;red&quot;&gt;**静态语言**&lt;/font&gt;。和静态语言相比，**动态语言更灵活**，就是这个原因。静态语言在定义变量时必须指定变量类型，如果赋值的时候类型不匹配，就会报错。例如Java是静态语言，赋值语句如下（// 表示注释）：&lt;/font&gt;</span><br><span class="line"></span><br><span class="line">```java</span><br><span class="line">int a = <span class="number">123</span>; // a是整数类型变量</span><br><span class="line">a = <span class="string">&quot;ABC&quot;</span>; // 错误：不能把字符串赋给整型变量</span><br></pre></td></tr></table></figure>
 
-运行结果：
-<span class="token number">123</span> 
-ABC<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>&emsp;<br><font face="Comic sans MS">这种变量本身类型不固定的语言称之为<font color="red"><strong>动态语言</strong></font>，与之对应的是<font color="red"><strong>静态语言</strong></font>。和静态语言相比，<strong>动态语言更灵活</strong>，就是这个原因。静态语言在定义变量时必须指定变量类型，如果赋值的时候类型不匹配，就会报错。例如Java是静态语言，赋值语句如下（// 表示注释）：</font></p>
-<pre class="line-numbers language-java"><code class="language-java"><span class="token keyword">int</span> a <span class="token operator">=</span> <span class="token number">123</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// a是整数类型变量</span>
-a <span class="token operator">=</span> <span class="token string">"ABC"</span><span class="token punctuation">;</span> <span class="token comment" spellcheck="true">// 错误：不能把字符串赋给整型变量</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>五、Python的变量是Python的指针</strong></font> </p>
 <p>可参考：<font color="#00B2EE">[<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hzwsj/p/5777973.html">一切都是对象，一切都是指针，一切都是东西（python的编程哲学）</a>]</font><br>&emsp;<br>如下代码：</p>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span><span class="token number">5</span>
-a<span class="token operator">=</span><span class="token number">5</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>id<span class="token punctuation">(</span>a<span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>id<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">5</span></span><br><span class="line">a=<span class="number">5</span></span><br><span class="line">print(id(a))</span><br><span class="line">print(id(<span class="number">5</span>))</span><br><span class="line"></span><br><span class="line">运行输出：</span><br><span class="line"><span class="number">1769134320</span> </span><br><span class="line"><span class="number">1769134320</span> </span><br></pre></td></tr></table></figure>
 
-运行输出：
-<span class="token number">1769134320</span> 
-<span class="token number">1769134320</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>&emsp;<br><font face="Comic sans MS">我们分别查一下他们的内存地址，发现地址是一样的。</font></p>
 <blockquote>
 <p><font face="Comic sans MS"><strong>于是我们可以这样理解：</strong></font></p>
@@ -237,7 +222,9 @@ a<span class="token operator">=</span><span class="token number">5</span>
 <li><font face="Comic sans MS"><font color="#FF7F00"><strong>但是字符串，数字等类型的变量，字典的键就是传值使用，不是指针，而是不可再改变的值</strong></font>。</font></li>
 </ol>
 <p>&emsp;<br><strong>举例子</strong><br><font color="#00B2EE">例子1：</font>当我们写：<br><font color="#00B2EE"></font></p>
-<pre class="line-numbers language-python"><code class="language-python">a <span class="token operator">=</span> <span class="token string">'ABC'</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">&#x27;ABC&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
 <p><font face="Comic sans MS">时，Python解释器干了两件事情：</font></p>
 <blockquote>
 <ol>
@@ -246,14 +233,8 @@ a<span class="token operator">=</span><span class="token number">5</span>
 </ol>
 </blockquote>
 <p>&emsp;<br><font color="#00B2EE">例子2：</font></p>
-<pre class="line-numbers language-python"><code class="language-python"><span class="token comment" spellcheck="true"># -*- coding: utf-8 -*-</span>
-a <span class="token operator">=</span> <span class="token string">'ABC'</span>
-b <span class="token operator">=</span> a
-a <span class="token operator">=</span> <span class="token string">'XYZ'</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line">a = <span class="string">&#x27;ABC&#x27;</span></span><br><span class="line">b = a</span><br><span class="line">a = <span class="string">&#x27;XYZ&#x27;</span></span><br><span class="line">print(b)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">ABC </span><br></pre></td></tr></table></figure>
 
-运行结果：
-ABC <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <p><font face="Comic sans MS">最后一行打印出变量b的内容到底是**<code>&#39;ABC&#39;</code><strong>呢还是</strong><code>&#39;XYZ&#39;</code><strong>？如果从数学意义上理解，就会错误地得出</strong><code>b</code><strong>和</strong><code>a</code><strong>相同，也应该是</strong><code>&#39;XYZ&#39;</code><strong>，但实际上</strong><code>b</code><strong>的值是</strong><code>&#39;ABC&#39;</code>**，让我们一行一行地执行代码，就可以看到到底发生了什么事：</font></p>
@@ -274,7 +255,8 @@ ABC <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span
 &emsp;
 
 <h3 id="二-常量"><a href="#二-常量" class="headerlink" title="二. 常量"></a><font color="#FF6347" face="Comic sans MS">二. 常量</font></h3><p><font face="Comic sans MS">所谓常量就是不能变的变量，比如常用的数学常数π就是一个常量。在Python中，<strong>通常用全部大写的变量名表示常量</strong>：</font></p>
-<pre class="line-numbers language-python"><code class="language-python">PI <span class="token operator">=</span> <span class="token number">3.14159265359</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PI = <span class="number">3.14159265359</span></span><br></pre></td></tr></table></figure>
+
 <p><font face="Comic sans MS"><font color="#FF7F00"><strong>但事实上PI仍然是一个变量，Python根本没有任何机制保证PI不会被改变</strong></font>，所以，用全部大写的变量名表示常量只是一个习惯上的用法，如果你一定要改变变量PI的值，也没人能拦住你。</font></p>
 <p><font color="#FF7F00"></font></p>
 <h3 id="三-数据类型"><a href="#三-数据类型" class="headerlink" title="三. 数据类型"></a><font color="#FF6347" face="Comic sans MS">三. 数据类型</font></h3><p><font face="Comic sans MS"><strong>标准数据类型</strong></p>
@@ -316,17 +298,9 @@ ABC <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span
 </ol>
 </blockquote>
 <p>&emsp;<br>示例代码：</p>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span><span class="token number">10</span><span class="token operator">/</span><span class="token number">3</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
-a<span class="token operator">=</span><span class="token number">10</span><span class="token operator">//</span><span class="token number">3</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
-a<span class="token operator">=</span><span class="token number">10</span><span class="token operator">%</span><span class="token number">3</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="number">10</span>/<span class="number">3</span></span><br><span class="line">print(a)</span><br><span class="line">a=<span class="number">10</span>//<span class="number">3</span></span><br><span class="line">print(a)</span><br><span class="line">a=<span class="number">10</span>%<span class="number">3</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">运算结果：</span><br><span class="line"><span class="number">3.3333333333333335</span> </span><br><span class="line"><span class="number">3</span> </span><br><span class="line"><span class="number">1</span> </span><br></pre></td></tr></table></figure>
 
-运算结果：
-<span class="token number">3.3333333333333335</span> 
-<span class="token number">3</span> 
-<span class="token number">1</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <br>
 
 <p><font color="#00B2EE" face="Comic sans MS"><strong>三、Number 类型转换</strong></font> </p>
@@ -603,62 +577,36 @@ a<span class="token operator">=</span><span class="token number">10</span><span 
 <ol start="2">
 <li><font color="red" face="Comic sans MS"><strong>使用转义字符“<code>\</code>”</strong></font> ： <font face="Microsoft YaHei">如果字符串内部既包含**<code>&#39;</code><strong>又包含</strong><code>&quot;</code><strong>怎么办？可以用转义字符</strong><code>\</code>**来标识，比如：</font></li>
 </ol>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span><span class="token string">'I\'m \"OK\"!'</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">&#x27;I\&#x27;m \&quot;OK\&quot;!&#x27;</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">运行输出：</span><br><span class="line">I<span class="string">&#x27;m &quot;OK&quot;! </span></span><br></pre></td></tr></table></figure>
 
-运行输出：
-I'm <span class="token string">"OK"</span>! <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <p><font face="Microsoft YaHei">把双引号括在单引号里面，但是下面的单引号必须转义，如下也是正确的：</font></p>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span><span class="token string">'I\'m "OK"!'</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">&#x27;I\&#x27;m &quot;OK&quot;!&#x27;</span></span><br><span class="line">print(a)</span><br></pre></td></tr></table></figure>
+
 <br>
 
 <ol start="3">
 <li><font color="red" face="Comic sans MS"><strong>使用不转义字符“<code>r&#39;&#39;</code>”</strong></font>： <font face="Microsoft YaHei">如果字符串里面有很多字符都需要转义，就需要加很多**<code>\</code><strong>，为了简化，Python还允许用<code>r&#39;&#39;</code>表示，<font color="#FF7F00"></strong><code>&#39;&#39;</code>内部的字符串默认不转义**</font>，可以自己试试：</font></li>
 </ol>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span><span class="token string">'\\\t\\'</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">&#x27;\\\t\\&#x27;</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">a=<span class="string">r&#x27;\\\t\\&#x27;</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">输出结果：</span><br><span class="line">\	\ </span><br><span class="line">\\\t\\ </span><br></pre></td></tr></table></figure>
 
-a<span class="token operator">=</span>r<span class="token string">'\\\t\\'</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
 
-输出结果：
-\    \ 
-\\\t\\ <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <ol start="4">
 <li><font color="red" face="Comic sans MS"><strong>在字符串里面有换行，将字符串按照换行输出。使用</strong><code>&#39;&#39;&#39;  内容  &#39;&#39;&#39;</code><strong>：</strong></font><font face="Microsoft YaHei">如果字符串内部有很多换行，用**<code>\n</code><strong>写在一行里不好阅读，为了简化，Python允许用</strong><code>&#39;&#39;&#39; 这里写内容&#39;&#39;&#39;</code>**的格式表示多行内容，可以自己试试：</font></li>
 </ol>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span><span class="token triple-quoted-string string">'''hello
-world
-line1
-line2'''</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">&#x27;&#x27;&#x27;hello</span></span><br><span class="line"><span class="string">world</span></span><br><span class="line"><span class="string">line1</span></span><br><span class="line"><span class="string">line2&#x27;&#x27;&#x27;</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">运行输出：</span><br><span class="line">hello </span><br><span class="line">world </span><br><span class="line">line1 </span><br><span class="line">line2 </span><br></pre></td></tr></table></figure>
 
-运行输出：
-hello 
-world 
-line1 
-line2 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <ol start="5">
 <li><font color="red" face="Comic sans MS"><strong>在字符串里面有换行，将字符串按照换行输出，并且不转义输出字符。使用<code>r&#39;&#39;&#39;  &#39;&#39;&#39;</code>：</strong></font></li>
 </ol>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span>r<span class="token triple-quoted-string string">'''hello \n
-world
-line1
-line2'''</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="string">r&#x27;&#x27;&#x27;hello \n</span></span><br><span class="line"><span class="string">world</span></span><br><span class="line"><span class="string">line1</span></span><br><span class="line"><span class="string">line2&#x27;&#x27;&#x27;</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">运行输出：</span><br><span class="line">hello \n </span><br><span class="line">world </span><br><span class="line">line1 </span><br><span class="line">line2 </span><br></pre></td></tr></table></figure>
 
-运行输出：
-hello \n 
-world 
-line1 
-line2 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <br>
 
 <h5 id="2-使用字符串-取下标"><a href="#2-使用字符串-取下标" class="headerlink" title="2.使用字符串(取下标)"></a><font color="#00B2EE" face="Comic sans MS">2.使用字符串(取下标)</font></h5><blockquote>
@@ -678,13 +626,8 @@ line2 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></sp
 <br>
 
 <p>比如:</p>
-<pre class="line-numbers language-python"><code class="language-python">s <span class="token operator">=</span> <span class="token string">'abcdef'</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>s<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>s<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">:</span><span class="token number">5</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">s = <span class="string">&#x27;abcdef&#x27;</span></span><br><span class="line">print(s[<span class="number">2</span>])</span><br><span class="line">print(s[<span class="number">1</span>:<span class="number">5</span>])</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">c </span><br><span class="line">bcde </span><br></pre></td></tr></table></figure>
 
-运行结果：
-c 
-bcde <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <blockquote>
 <p><font face="Microsoft YaHei">当使用以冒号**<code>:</code>**分隔的字符串，python 返回一个新的对象，结果包含了以这对偏移标识的连续的内容，左边的开始是包含了下边界。<br>上面的结果包含了 s[1] 的值 b，而取到的最大范围不包括尾下标，就是 s[5] 的值 f。</font></p>
 </blockquote>
@@ -703,48 +646,23 @@ bcde <span aria-hidden="true" class="line-numbers-rows"><span></span><span></spa
 <ol>
 <li><font color="red"><strong>Python使用加号（ + ）来合并字符串</strong></font></li>
 </ol>
-<pre class="line-numbers language-python"><code class="language-python">first_name <span class="token operator">=</span> <span class="token string">"ada"</span>
-last_name <span class="token operator">=</span> <span class="token string">"lovelace"</span>
-full_name <span class="token operator">=</span> first_name <span class="token operator">+</span> <span class="token string">" "</span> <span class="token operator">+</span> last_name
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"Hello, "</span> <span class="token operator">+</span> full_name <span class="token operator">+</span> <span class="token string">"!"</span><span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">first_name = <span class="string">&quot;ada&quot;</span></span><br><span class="line">last_name = <span class="string">&quot;lovelace&quot;</span></span><br><span class="line">full_name = first_name + <span class="string">&quot; &quot;</span> + last_name</span><br><span class="line">print(<span class="string">&quot;Hello, &quot;</span> + full_name + <span class="string">&quot;!&quot;</span>)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">Hello, ada lovelace! </span><br></pre></td></tr></table></figure>
 
-运行结果：
-Hello<span class="token punctuation">,</span> ada lovelace! <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <ol start="2">
 <li><font color="red"><strong>Python使用星号（ * ）来重复字符串</strong></font></li>
 </ol>
-<pre class="line-numbers language-python"><code class="language-python">str <span class="token operator">=</span> <span class="token string">'Hello World!'</span>
-a<span class="token operator">=</span>str<span class="token operator">*</span><span class="token number">2</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">str = <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line">a=str*<span class="number">2</span></span><br><span class="line">print(a)</span><br><span class="line"></span><br><span class="line">运行输出：</span><br><span class="line">Hello World!Hello World! </span><br></pre></td></tr></table></figure>
 
-运行输出：
-Hello World!Hello World! <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <ol start="3">
 <li><font color="red"><strong>Python使用冒号（ ： ）来截取字符</strong></font></li>
 </ol>
-<pre class="line-numbers language-java"><code class="language-java">#<span class="token operator">!</span><span class="token operator">/</span>usr<span class="token operator">/</span>bin<span class="token operator">/</span>python
-# <span class="token operator">-</span><span class="token operator">*</span><span class="token operator">-</span> coding<span class="token operator">:</span> UTF<span class="token operator">-</span><span class="token number">8</span> <span class="token operator">-</span><span class="token operator">*</span><span class="token operator">-</span>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/python</span><br><span class="line"># -*- coding: UTF-8 -*-</span><br><span class="line"> </span><br><span class="line">str = <span class="string">&#x27;Hello World!&#x27;</span></span><br><span class="line"> </span><br><span class="line">print str           # 输出完整字符串</span><br><span class="line">print str[0]        # 输出字符串中的第一个字符</span><br><span class="line">print str[2:5]      # 输出字符串中第三个至第五个之间的字符串</span><br><span class="line">print str[2:]       # 输出从第三个字符开始的字符串</span><br><span class="line">print str * 2       # 输出字符串两次</span><br><span class="line">print str + &quot;TEST&quot;  # 输出连接的字符串</span><br><span class="line"></span><br><span class="line">以上实例输出结果：</span><br><span class="line">Hello World!</span><br><span class="line">H</span><br><span class="line">llo</span><br><span class="line">llo World!</span><br><span class="line">Hello World!Hello World!</span><br><span class="line">Hello World!TEST</span><br></pre></td></tr></table></figure>
 
-str <span class="token operator">=</span> <span class="token string">'Hello World!'</span>
 
-print str           # 输出完整字符串
-print str<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span>        # 输出字符串中的第一个字符
-print str<span class="token punctuation">[</span><span class="token number">2</span><span class="token operator">:</span><span class="token number">5</span><span class="token punctuation">]</span>      # 输出字符串中第三个至第五个之间的字符串
-print str<span class="token punctuation">[</span><span class="token number">2</span><span class="token operator">:</span><span class="token punctuation">]</span>       # 输出从第三个字符开始的字符串
-print str <span class="token operator">*</span> <span class="token number">2</span>       # 输出字符串两次
-print str <span class="token operator">+</span> <span class="token string">"TEST"</span>  # 输出连接的字符串
-
-以上实例输出结果：
-Hello World<span class="token operator">!</span>
-H
-llo
-llo World<span class="token operator">!</span>
-Hello World<span class="token operator">!</span>Hello World<span class="token operator">!</span>
-Hello World<span class="token operator">!</span>TEST<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <blockquote>
 <p><font face="Microsoft YaHei">Python 列表截取可以接收第三个参数，<font color="#FF7F00"><strong>参数作用是截取的步长，以下实例在索引 1 到索引 4 的位置并设置为步长为 2（间隔一个位置）来截取字符串：</strong></font></font></p>
 </blockquote>
@@ -762,15 +680,9 @@ Hello World<span class="token operator">!</span>TEST<span aria-hidden="true" cla
 <br>
 
 <p>示例代码：</p>
-<pre class="line-numbers language-python"><code class="language-python">name <span class="token operator">=</span> <span class="token string">"Hexo lovelace giTHub toMMrow n"</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>upper<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>lower<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>title<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;Hexo lovelace giTHub toMMrow n&quot;</span></span><br><span class="line">print(name.upper())</span><br><span class="line">print(name.lower())</span><br><span class="line">print(name.title())</span><br><span class="line"></span><br><span class="line">运行输出：</span><br><span class="line">HEXO LOVELACE GITHUB TOMMROW N </span><br><span class="line">hexo lovelace github tommrow n </span><br><span class="line">Hexo Lovelace Github Tommrow N </span><br></pre></td></tr></table></figure>
 
-运行输出：
-HEXO LOVELACE GITHUB TOMMROW N 
-hexo lovelace github tommrow n 
-Hexo Lovelace Github Tommrow N <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <p><font face="Microsoft YaHei">在**<code>name.title()</code>** 中，name 后面的句点（ <strong><code>.</code></strong> ）让Python对变量name 执行方法title() 指定的操作。每个方法后面都跟着一对括号，这是因为方法通常需要<font color="#FF7F00"><strong>额外的信息来完成其工作</strong></font>。这种信息是在括号内提供的。函数title() 不需要额外的信息，因此它后面的括号是空的。</font></p>
 <br>
 
@@ -794,46 +706,15 @@ Hexo Lovelace Github Tommrow N <span aria-hidden="true" class="line-numbers-rows
 <br>
 
 <p>示例代码：</p>
-<pre class="line-numbers language-python"><code class="language-python">name <span class="token operator">=</span> <span class="token string">"    HexoAndGithub  "</span>
-
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>rstrip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>lstrip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span>
-
-<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">'\n'</span><span class="token punctuation">)</span>
-name <span class="token operator">=</span> name<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>strip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>rstrip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">.</span>lstrip<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>name<span class="token punctuation">)</span>
-
-运行结果：
-    HexoAndGithub   
-HexoAndGithub 
-    HexoAndGithub 
-HexoAndGithub   
-    HexoAndGithub   
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">name = <span class="string">&quot;    HexoAndGithub  &quot;</span></span><br><span class="line"></span><br><span class="line">print(name)</span><br><span class="line">print(name.strip())</span><br><span class="line">print(name.rstrip())</span><br><span class="line">print(name.lstrip())</span><br><span class="line">print(name)</span><br><span class="line"></span><br><span class="line">print(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">name = name.strip()</span><br><span class="line">print(name)</span><br><span class="line">print(name.strip())</span><br><span class="line">print(name.rstrip())</span><br><span class="line">print(name.lstrip())</span><br><span class="line">print(name)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">    HexoAndGithub   </span><br><span class="line">HexoAndGithub </span><br><span class="line">    HexoAndGithub </span><br><span class="line">HexoAndGithub   </span><br><span class="line">    HexoAndGithub   </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">HexoAndGithub </span><br><span class="line">HexoAndGithub </span><br><span class="line">HexoAndGithub </span><br><span class="line">HexoAndGithub </span><br><span class="line">HexoAndGithub </span><br></pre></td></tr></table></figure>
 
 
-HexoAndGithub 
-HexoAndGithub 
-HexoAndGithub 
-HexoAndGithub 
-HexoAndGithub <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <h6 id="3-内置函数-len-返回字符串长度"><a href="#3-内置函数-len-返回字符串长度" class="headerlink" title="3. 内置函数 len()返回字符串长度"></a><font color="#20B2AA" face="Comic sans MS">3. 内置函数 len()返回字符串长度</font></h6><p><font face="Microsoft YaHei">内置函数 len() 返回字符串长度，注意，它<strong>并不是字符串的方法！！！</strong></font></p>
-<pre class="line-numbers language-python"><code class="language-python">a <span class="token operator">=</span> <span class="token string">'supercalifragilisticexpialidocious'</span>
-b <span class="token operator">=</span> len<span class="token punctuation">(</span>a<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">&#x27;supercalifragilisticexpialidocious&#x27;</span></span><br><span class="line">b = len(a)</span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">supercalifragilisticexpialidocious </span><br><span class="line"><span class="number">34</span> </span><br></pre></td></tr></table></figure>
 
-运行结果：
-supercalifragilisticexpialidocious 
-<span class="token number">34</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
 <br>
 
 <h4 id="3-4-布尔值"><a href="#3-4-布尔值" class="headerlink" title="3.4 布尔值"></a><font color="#3CB371" face="Comic sans MS">3.4 布尔值</font></h4><ol>
@@ -842,12 +723,8 @@ supercalifragilisticexpialidocious
 <li><p><font face="Microsoft YaHei">在Python中，True、False<font color="#FF7F00"><strong>首字母必须大写</strong></font>。可以直接用True、False表示布尔值，请注意大小写，也可以通过布尔运算计算出来：</font></p>
 </li>
 </ol>
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span><span class="token boolean">True</span>
-b<span class="token operator">=</span><span class="token number">3</span><span class="token operator">></span><span class="token number">2</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">,</span>b<span class="token punctuation">)</span>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="literal">True</span></span><br><span class="line">b=<span class="number">3</span>&gt;<span class="number">2</span></span><br><span class="line">print(a,b)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="literal">True</span> <span class="literal">True</span> </span><br></pre></td></tr></table></figure>
 
-运行结果：
-<span class="token boolean">True</span> <span class="token boolean">True</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <br>
 
 <ol start="3">
@@ -860,18 +737,7 @@ b<span class="token operator">=</span><span class="token number">3</span><span c
 </ol>
 <br>
 
-<pre class="line-numbers language-python"><code class="language-python">a<span class="token operator">=</span> <span class="token number">5</span> <span class="token operator">></span> <span class="token number">3</span> <span class="token operator">and</span> <span class="token number">3</span> <span class="token operator">&lt;</span> <span class="token number">1</span>
-b<span class="token operator">=</span> <span class="token number">5</span> <span class="token operator">></span> <span class="token number">3</span> <span class="token operator">or</span> <span class="token number">1</span> <span class="token operator">></span> <span class="token number">3</span>
-c<span class="token operator">=</span> <span class="token operator">not</span> <span class="token number">1</span> <span class="token operator">></span> <span class="token number">2</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>a<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>b<span class="token punctuation">)</span>
-<span class="token keyword">print</span><span class="token punctuation">(</span>c<span class="token punctuation">)</span>
-
-运行结果：
-<span class="token boolean">False</span> 
-<span class="token boolean">True</span> 
-<span class="token boolean">True</span> <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-</div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Directoree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://directoree.github.io/post/Python-Variables-DataTypes/">https://directoree.github.io/post/Python-Variables-DataTypes/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Directoree.github.io" target="_blank">Directoree</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python%E8%AF%AD%E8%A8%80/">Python语言</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/Python-Coding/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/comment_bg.png'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Python-字符编码&amp;字符串&amp;格式化</div></div></a></div><div class="next-post pull-right"><a href="/post/Python-Grammar/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/comment_bg.png'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Python-基础语法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/Python-Basics/" title="Python-基础"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-02-27</div><div class="title">Python-基础</div></div></a></div><div><a href="/post/Python-ConditionalStatements-loops/" title="Python-条件语句与循环"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-01</div><div class="title">Python-条件语句与循环</div></div></a></div><div><a href="/post/Python-Coding/" title="Python-字符编码&字符串&格式化"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-02-28</div><div class="title">Python-字符编码&字符串&格式化</div></div></a></div><div><a href="/post/Python-Function/" title="Python-函数"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-02</div><div class="title">Python-函数</div></div></a></div><div><a href="/post/Python-FunctionalProgramming/" title="Python-函数式编程"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-04</div><div class="title">Python-函数式编程</div></div></a></div><div><a href="/post/Python-Operators/" title="Python-运算符"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-01</div><div class="title">Python-运算符</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a= <span class="number">5</span> &gt; <span class="number">3</span> <span class="keyword">and</span> <span class="number">3</span> &lt; <span class="number">1</span></span><br><span class="line">b= <span class="number">5</span> &gt; <span class="number">3</span> <span class="keyword">or</span> <span class="number">1</span> &gt; <span class="number">3</span></span><br><span class="line">c= <span class="keyword">not</span> <span class="number">1</span> &gt; <span class="number">2</span></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br><span class="line">print(c)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="literal">False</span> </span><br><span class="line"><span class="literal">True</span> </span><br><span class="line"><span class="literal">True</span> </span><br></pre></td></tr></table></figure></div><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">Directoree</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://directoree.github.io/post/Python-Variables-DataTypes/">https://directoree.github.io/post/Python-Variables-DataTypes/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://Directoree.github.io" target="_blank">Directoree</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Python%E8%AF%AD%E8%A8%80/">Python语言</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><div class="post-reward"><div class="reward-button"><i class="fas fa-qrcode"></i> 打赏<div class="reward-main"><ul class="reward-all"><li class="reward-item"><a href="/img/wechat.jpg" target="_blank"><img class="post-qr-code-img" src="/img/wechat.jpg" alt="微信"/></a><div class="post-qr-code-desc">微信</div></li><li class="reward-item"><a href="/img/alipay.jpg" target="_blank"><img class="post-qr-code-img" src="/img/alipay.jpg" alt="支付宝"/></a><div class="post-qr-code-desc">支付宝</div></li></ul></div></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/post/Python-Coding/"><img class="prev-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/comment_bg.png'"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">Python-字符编码&amp;字符串&amp;格式化</div></div></a></div><div class="next-post pull-right"><a href="/post/Python-Grammar/"><img class="next-cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg" onerror="onerror=null;src='/img/comment_bg.png'"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">Python-基础语法</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/post/Python-Basics/" title="Python-基础"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-02-27</div><div class="title">Python-基础</div></div></a></div><div><a href="/post/Python-Coding/" title="Python-字符编码&字符串&格式化"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-02-28</div><div class="title">Python-字符编码&字符串&格式化</div></div></a></div><div><a href="/post/Python-ConditionalStatements-loops/" title="Python-条件语句与循环"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-01</div><div class="title">Python-条件语句与循环</div></div></a></div><div><a href="/post/Python-Function/" title="Python-函数"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-02</div><div class="title">Python-函数</div></div></a></div><div><a href="/post/Python-FunctionalProgramming/" title="Python-函数式编程"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-04</div><div class="title">Python-函数式编程</div></div></a></div><div><a href="/post/Python-Operators/" title="Python-运算符"><img class="cover" src="https://cdn.jsdelivr.net/gh/jerryc127/butterfly_cdn@2.1.0/top_img/archive.jpg"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2019-03-01</div><div class="title">Python-运算符</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></article></main><footer id="footer"><div id="footer-wrap"><div class="copyright">&copy;2018 - 2020 By Directoree</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div></div></footer></div><section id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></section><div class="search-dialog" id="local-search"><div class="search-dialog__title" id="local-search-title">本地搜索</div><div id="local-input-panel"><div id="local-search-input"><div class="local-search-box"><input class="local-search-box--input" placeholder="搜索文章" type="text"/></div></div></div><hr/><div id="local-search-results"><div id="local-hits"></div><div id="local-stats"><div class="local-search-stats__hr" id="hr"><span>由</span> <a target="_blank" rel="noopener" href="https://github.com/wzpan/hexo-generator-search" style="color:#49B1F5;">hexo-generator-search</a>
  <span>提供支持</span></div></div></div><span class="search-close-button"><i class="fas fa-times"></i></span></div><div id="search-mask"></div><div><script src="https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js"></script><script src="/js/utils.js"></script><script src="/js/main.js"></script><script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js"></script><script src="/js/search/local-search.js"></script><div class="js-pjax"><script>if (!window.MathJax) {
   window.MathJax = {
     loader: {
