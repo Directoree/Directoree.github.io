@@ -10106,7 +10106,7 @@ sqlmap.py -u”http://192.168.136.131/sqlmap/pgsql/get_int.php?id=1” \--os-cmd
   <entry>
     <title>CSS:APP 读书笔记</title>
     <url>/post/cssapp_notes/</url>
-    <content><![CDATA[<p>(๑°⌓︎°๑)  <a href="#jdatatype"><mark class="label primary">数据类型长度</mark></a><a href="#jregister"><mark class="label success">寄存器</mark></a></p>
+    <content><![CDATA[<p>(๑°⌓︎°๑)  <a href="#jdatatype"><mark class="label primary">数据类型长度</mark></a><a href="#jregister"><mark class="label success">寄存器</mark></a><a href="https://blog.imkasen.com/CSAPP-Answers-CH3.html"><mark class="label warning">第三章练习题1</mark></a><a href="https://conyli.cc/archives/2899"><mark class="label info">第三章练习题2</mark></a><a href="https://ifanze.cn/2018/06/26/%E3%80%8A%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E3%80%8B(3)/"><mark class="label default">第三章读书笔记</mark></a></p>
 <a id="more"></a>
 
 
@@ -10376,6 +10376,69 @@ sqlmap.py -u”http://192.168.136.131/sqlmap/pgsql/get_int.php?id=1” \--os-cmd
 <li>移位</li>
 </ul>
 <p><img data-src="https://i.loli.net/2020/10/05/GilfVdCzq7k6P9R.png" alt="11整数算术操作.png"></p>
+<p>事实上，给出的每个指令类都有对这四种不同大小数据的指令（只有<mark class="label primary">leaq</mark>没有其他大小的变种 ）。</p>
+<h4 id="3-5-1-加载有效地址"><a href="#3-5-1-加载有效地址" class="headerlink" title="3.5.1 加载有效地址"></a>3.5.1 加载有效地址</h4><div class="note success"><p>加载有效地址(load effective address)指令<mark class="label success">leaq</mark>实际上是<mark class="label success">movq</mark>指令的变形。它的指令形式是<mark class="label danger">从内存读数据到寄存器，但实际上它根本就没有引用内存</mark>。它的第一个操作数看上去是一个内存引用，但该指令并不是从指定的位置读人数据，而是将有效地址写人到目的操作数。</p>
+<p>例如，如果寄存器<code>%rdx</code>的值为<code>x</code>，那么指令<code>leaq 7(%rdx,%rdx,4) %rax</code>将设置寄存器<code>%rax</code>的值为<code>5x + 7</code>。编译器经常发现<code>leaq</code>的些灵活用法，<strong>根本就与有效地址计算无关，目的操作数必须 是一个寄存器</strong>。</p>
+</div>
+
+<h4 id="3-5-2-一元操作和二元操作"><a href="#3-5-2-一元操作和二元操作" class="headerlink" title="3.5.2 一元操作和二元操作"></a>3.5.2 一元操作和二元操作</h4><div class="note default"><ul>
+<li>一元操作，只有一个操作数，既是源又是目的。这个操作数可以是一个寄存器，也可以是一个内存位置。比如说，指令<code>incq(%rsp)</code>会使栈顶的8字节元素加1。</li>
+<li>二元操作，第二个操作数既是源又是目的。<ul>
+<li>第一个操作数可以是立即数、寄存器或是内存位置。</li>
+<li>第二个操作数可以是寄存器或是内存位置。（注意， <strong>当第二个操作数为内存地址时，处理器必须从内存读出值，执行操作，再把结果写回内存</strong>。）</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+
+<h4 id="3-5-3-移位操作"><a href="#3-5-3-移位操作" class="headerlink" title="3.5.3 移位操作"></a>3.5.3 移位操作</h4><ol>
+<li>移位操作，先给出移位量，然后第二项给出的是要移位的数。可以进行算术和逻辑右移。</li>
+<li>移位量可以是一个立即数，或者放在单字节寄存器<mark class="label primary">%cl</mark>中。<mark class="label warning">（这些指令很特别，因为只允许以这个特定的寄存器作为操作数）</mark></li>
+<li><code>%cl</code>的值为一个字节，1个字节的移位量使得移位量的编码范围可以达到 $2^8-1=255$ 位。</li>
+<li>x86-64中，对 $w$ 位长的数据值进行移位操作时，移位量是由寄存器<code>%cl</code>的低 $m$ 位决定的，这里$2^m=w$。高位会被忽略。即：对于 $w$ 位的数据进行移位, 并不是直接使用<code>%cl</code>的值, 而是使用<code>%cl</code>的低 $m$ 位的值，2的 $m$ 次幂等于当前操作位数的大小，大于 $m$ 的位会被忽略。</li>
+<li>当寄存器<code>%cl</code>的十六进制值为 0xFF 时：</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th align="center">命令</th>
+<th align="center">等式</th>
+<th align="center">有效位</th>
+<th align="center">移位量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">salb</td>
+<td align="center">$2^3=8$</td>
+<td align="center">11111<mark class="label success">111</mark></td>
+<td align="center">111=7</td>
+</tr>
+<tr>
+<td align="center">salw</td>
+<td align="center">$2^4=16$</td>
+<td align="center">1111 <mark class="label success">1111</mark></td>
+<td align="center">1111=15</td>
+</tr>
+<tr>
+<td align="center">sall</td>
+<td align="center">$2^5=32$</td>
+<td align="center">111<mark class="label success">11111</mark></td>
+<td align="center">11111=31</td>
+</tr>
+<tr>
+<td align="center">salq</td>
+<td align="center">$2^6=64$</td>
+<td align="center">11<mark class="label success">111111</mark></td>
+<td align="center">111111=63</td>
+</tr>
+</tbody></table>
+<ol start="6">
+<li>左移指令有两个名字：<code>SAL</code>和<code>SHL</code>。两者的效果是一样的，都是将右边填上0。右移指令不同，<code>SAR</code>执行算术移位(填上符号位)，而<code>SHR</code>执行逻辑移位(填上0)。<strong>移位操作的目的操作数可以是一个寄存器或是一个内存位置</strong>。</li>
+<li>图3-10所示的大多数指令，既可以用于无符号运算，也可以用于补码运算。<mark class="label danger">只有右移操作要求区分有符号和无符号数</mark>。这个特性使得补码运算成为实现有符号整数运算的一种比较好的方法的原因之一。</li>
+</ol>
+<p><img data-src="https://i.loli.net/2020/10/08/eKi1gypYuSIAxOs.png" alt="12算术运算与汇编.png"></p>
 ]]></content>
       <categories>
         <category>CS:APP</category>
@@ -12447,7 +12510,7 @@ PHP代码的最后一行可以加也可不加分号。由于很多学习者特�
 <p><strong>结论：</strong><br>1.如pattern 在匹配$string的时候，$string的字符串this后有一个回车。在没有加D匹配符的时候也能匹配成功<br>2.如pattern 在匹配$string的时候，加上了D。$string的字符串this后有空格，匹配不成功。</p>
 </blockquote>
 <p>&emsp;</p>
-<h3 id="7-写正则的诀窍和常用正则"><a href="#7-写正则的诀窍和常用正则" class="headerlink" title="7. 写正则的诀窍和常用正则"></a><font face="Comic sans MS"  color="#FF6347">7. 写正则的诀窍和常用正则</font></h3><p><font face="Comic sans MS">写正则的诀窍</font><br>女孩和男孩恋爱时的诀窍通常是：测试你是不是对我好一点，如果是的，咱们的关系就更好一点。<br>而正则的诀窍和恋爱的诀窍基本一致：<font color="red">写一点、测一点。</font><br>因为，<strong>我们需要不断的正则，用preg_match对比是不是能匹配成功。成功了，再写后面的一点。直到写完，全部匹配成功为止！</strong><br><font face="Comic sans MS">例如，我要写一个邮箱的正则。我先要做的事情，将常用的邮箱格式全部列出来。例如：<br><a href="mailto:&#x70;&#x68;&#x70;&#x63;&#110;&#64;&#112;&#104;&#112;&#x2e;&#99;&#110;">&#x70;&#x68;&#x70;&#x63;&#110;&#64;&#112;&#104;&#112;&#x2e;&#99;&#110;</a> &emsp; <a href="mailto:&#112;&#x68;&#112;&#x63;&#x6e;&#x40;&#99;&#x6f;&#114;&#x70;&#x2e;&#98;&#97;&#x69;&#100;&#117;&#46;&#99;&#x6d;">&#112;&#x68;&#112;&#x63;&#x6e;&#x40;&#99;&#x6f;&#114;&#x70;&#x2e;&#98;&#97;&#x69;&#100;&#117;&#46;&#99;&#x6d;</a> &emsp; <a href="mailto:&#112;&#x68;&#112;&#99;&#110;&#x40;&#49;&#50;&#x36;&#x2e;&#x63;&#x6f;&#x6d;">&#112;&#x68;&#112;&#99;&#110;&#x40;&#49;&#50;&#x36;&#x2e;&#x63;&#x6f;&#x6d;</a>  &emsp;<a href="mailto:&#112;&#104;&#112;&#x63;&#x6e;&#x40;&#x78;&#x78;&#x78;&#x2e;&#99;&#x6f;&#109;">&#112;&#104;&#112;&#x63;&#x6e;&#x40;&#x78;&#x78;&#x78;&#x2e;&#99;&#x6f;&#109;</a>  &emsp;<a href="mailto:&#x31;&#x32;&#x33;&#x34;&#x35;&#64;&#x71;&#113;&#x2e;&#x63;&#x6f;&#109;">&#x31;&#x32;&#x33;&#x34;&#x35;&#64;&#x71;&#113;&#x2e;&#x63;&#x6f;&#109;</a><br></font></p>
+<h3 id="7-写正则的诀窍和常用正则"><a href="#7-写正则的诀窍和常用正则" class="headerlink" title="7. 写正则的诀窍和常用正则"></a><font face="Comic sans MS"  color="#FF6347">7. 写正则的诀窍和常用正则</font></h3><p><font face="Comic sans MS">写正则的诀窍</font><br>女孩和男孩恋爱时的诀窍通常是：测试你是不是对我好一点，如果是的，咱们的关系就更好一点。<br>而正则的诀窍和恋爱的诀窍基本一致：<font color="red">写一点、测一点。</font><br>因为，<strong>我们需要不断的正则，用preg_match对比是不是能匹配成功。成功了，再写后面的一点。直到写完，全部匹配成功为止！</strong><br><font face="Comic sans MS">例如，我要写一个邮箱的正则。我先要做的事情，将常用的邮箱格式全部列出来。例如：<br><a href="mailto:&#x70;&#x68;&#x70;&#x63;&#x6e;&#x40;&#112;&#x68;&#x70;&#46;&#x63;&#x6e;">&#x70;&#x68;&#x70;&#x63;&#x6e;&#x40;&#112;&#x68;&#x70;&#46;&#x63;&#x6e;</a> &emsp; <a href="mailto:&#x70;&#104;&#112;&#99;&#110;&#64;&#x63;&#x6f;&#114;&#x70;&#46;&#x62;&#x61;&#105;&#100;&#x75;&#x2e;&#x63;&#109;">&#x70;&#104;&#112;&#99;&#110;&#64;&#x63;&#x6f;&#114;&#x70;&#46;&#x62;&#x61;&#105;&#100;&#x75;&#x2e;&#x63;&#109;</a> &emsp; <a href="mailto:&#112;&#x68;&#112;&#99;&#110;&#64;&#49;&#50;&#54;&#46;&#99;&#x6f;&#x6d;">&#112;&#x68;&#112;&#99;&#110;&#64;&#49;&#50;&#54;&#46;&#99;&#x6f;&#x6d;</a>  &emsp;<a href="mailto:&#112;&#x68;&#x70;&#x63;&#110;&#x40;&#x78;&#120;&#120;&#x2e;&#99;&#111;&#x6d;">&#112;&#x68;&#x70;&#x63;&#110;&#x40;&#x78;&#120;&#120;&#x2e;&#99;&#111;&#x6d;</a>  &emsp;<a href="mailto:&#x31;&#x32;&#51;&#x34;&#x35;&#64;&#113;&#x71;&#46;&#99;&#111;&#x6d;">&#x31;&#x32;&#51;&#x34;&#x35;&#64;&#113;&#x71;&#46;&#99;&#111;&#x6d;</a><br></font></p>
 <table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS">  常用的格式主要有这样一些。那我们就可以来分析：
     1.先匹配@之前的字符 \w+（因为是0-9A-Za-z_）
     2.第二个跟一个@符
@@ -14729,7 +14792,7 @@ Include文件只需要编译一次，因为每次包含include都会再执行一
 <td align="center"><strong>默认值说明</strong></td>
 <td align="left">自增</td>
 <td align="left">必填</td>
-<td align="left">选填字段，默认值为<a href="mailto:&#x31;&#x32;&#x33;&#x40;&#x70;&#104;&#x70;&#46;&#x63;&#x6e;">&#x31;&#x32;&#x33;&#x40;&#x70;&#104;&#x70;&#46;&#x63;&#x6e;</a></td>
+<td align="left">选填字段，默认值为<a href="mailto:&#x31;&#50;&#x33;&#x40;&#x70;&#x68;&#112;&#46;&#x63;&#110;">&#x31;&#50;&#x33;&#x40;&#x70;&#x68;&#112;&#46;&#x63;&#110;</a></td>
 <td align="left">选填字段</td>
 <td align="left">必填字段</td>
 </tr>
