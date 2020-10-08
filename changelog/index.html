@@ -31,7 +31,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://img.shields.io/badge/NexT_Mist-v8.0.0-1fd0f6.svg?colorA=ff69b4">
 <meta property="article:published_time" content="2020-09-29T11:33:21.000Z">
-<meta property="article:modified_time" content="2020-10-01T09:00:43.545Z">
+<meta property="article:modified_time" content="2020-10-08T12:06:19.553Z">
 <meta property="article:author" content="Directoree">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://img.shields.io/badge/NexT_Mist-v8.0.0-1fd0f6.svg?colorA=ff69b4">
@@ -378,6 +378,10 @@
 </li>
 <li><p>行内代码颜色及背景更换：在文件<mark class="label info">/themes/next/source/css/_common/scaffolding/highlight/highlight.styl</mark> 的 <mark class="label primary">code</mark> 里添加 <mark class="label warning">background: rgba(238,238,238,.8) ;</mark></p>
 </li>
+<li><p>选中文字颜色及其背景颜色更换：在文件<mark class="label info">/themes/next/source/css/_common/scaffolding/base.styl</mark> 下更改 <mark class="label warning">::selection</mark> 里面的背景和颜色。</p>
+</li>
+<li><p>侧边栏按钮颜色更换：在文件<mark class="label success">/themes/next/source/css/_variables/_mixin.styl</mark> 下更改 <mark class="label warning">sidebar-toggle()</mark> 里面的背景。</p>
+</li>
 </ul>
 
       </div>
@@ -516,6 +520,19 @@ document.querySelectorAll('.pdfobject-container').forEach(element => {
 </script>
 
 
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
 
 
 
