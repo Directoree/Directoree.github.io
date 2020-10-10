@@ -5740,6 +5740,581 @@ if-else语句中内嵌的语句1或语句2又是if-else语句的情况称为if-e
       </tags>
   </entry>
   <entry>
+    <title>PHP操作MySQL数据库</title>
+    <url>/post/PHP-MySQL/</url>
+    <content><![CDATA[<p>😁</p>
+<a id="more"></a>
+<p>&ensp;<br>&ensp;</p>
+<center><font color="#00B2EE" face="Comic sans MS" size=5>PHP操作MySQL数据库</font></center>
+
+
+
+<p>&emsp;<br>&emsp;</p>
+<h3 id="一-数据库连接步骤"><a href="#一-数据库连接步骤" class="headerlink" title="一. 数据库连接步骤"></a><font color="#FF6347" face="Comic sans MS">一. 数据库连接步骤</font></h3><p>将数据库连接整理成了最重要的<font color="#FF7F00"><strong>8个步骤</strong></font>，我戏称它为：“数据库连接天龙八步”。😊  (。・∀・)ノ</p>
+<p>&emsp;</p>
+<h4 id="第一步-连接数据库服务器"><a href="#第一步-连接数据库服务器" class="headerlink" title="第一步:  连接数据库服务器"></a><font color="#3CB371" face="Comic sans MS">第一步:  连接数据库服务器</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_connect.asp">PHP mysql_connect() 函数</a>]</font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_connect()</td>
+</tr>
+<tr>
+<td align="center">函数原型</td>
+<td align="left">mysql_connect(server,user,pwd,newlink,clientflag)</td>
+</tr>
+<tr>
+<td align="center">功能</td>
+<td align="left">连接到mysql数据库服务器</td>
+</tr>
+<tr>
+<td align="center">返回值</td>
+<td align="left">如果成功，则返回一个 MySQL 连接标识，失败则返回 FALSE。</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">主机</td>
+</tr>
+<tr>
+<td align="center">参数2</td>
+<td align="left">数据库服务器登陆名</td>
+</tr>
+<tr>
+<td align="center">参数3</td>
+<td align="left">密码</td>
+</tr>
+<tr>
+<td align="center">参数4</td>
+<td align="left">数据库的名称</td>
+</tr>
+<tr>
+<td align="center">参数5</td>
+<td align="left">数据库服务器端口不填默认3306</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><font color="#FF7F00"><strong>对于参数4，数据库名称在此步已填并择，不需要执行第三步。</strong></font></p>
+</blockquote>
+<p>&emsp;</p>
+<h4 id="第二步-判断错误"><a href="#第二步-判断错误" class="headerlink" title="第二步:  判断错误"></a><font color="#3CB371" face="Comic sans MS">第二步:  判断错误</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_errno.asp">PHP mysqli_errno() 函数</a>]</font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_errno(connection)</td>
+</tr>
+<tr>
+<td align="center">功能/返回值</td>
+<td align="left">返回连接错误号，无错误返回0</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect()返回的资源可选。规定 SQL 连接标识符。如果未规定，则使用上一个<br>打开的连接。</td>
+</tr>
+</tbody></table>
+<p>&emsp;<br><font color="#FF7F00"><strong>如果mysqli_errno()函数返回错误号，则用mysqli_error()显示文本错误信息。</strong></font>&emsp;<font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_error.asp">PHP mysql_error() 函数</a>]</font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_error(connection)</td>
+</tr>
+<tr>
+<td align="center">功能/返回值</td>
+<td align="left">返回连接错误字符串，如果没有出错则返回 ‘’（空字符串）</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect返回的资源</td>
+</tr>
+</tbody></table>
+<p>&emsp;</p>
+<h4 id="第三步-选择数据库"><a href="#第三步-选择数据库" class="headerlink" title="第三步:  选择数据库"></a><font color="#3CB371" face="Comic sans MS">第三步:  选择数据库</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_select_db.asp">PHP mysqli_select_db() 函数</a>]</font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysql_selecti_db(connection,database)</td>
+</tr>
+<tr>
+<td align="center">返回值</td>
+<td align="left">如果成功，则该函数返回 true。如果失败，则返回 false。</td>
+</tr>
+<tr>
+<td align="center">功能</td>
+<td align="left">选择本连接中的<strong>数据库</strong></td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect返回的资源</td>
+</tr>
+<tr>
+<td align="center">参数2</td>
+<td align="left">需要连接的数据库名</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><font color="#FF7F00"><strong>若在第一步已填数据库，不需要更换成其他数据库，则不需要执行第三步。</strong></font></p>
+</blockquote>
+<p>&emsp;</p>
+<h4 id="第四步-设置字符集"><a href="#第四步-设置字符集" class="headerlink" title="第四步:  设置字符集"></a><font color="#3CB371" face="Comic sans MS">第四步:  设置字符集</font></h4><p><font color="#00B2EE">[<a href="http://www.runoob.com/php/func-mysqli-set-charset.html">PHP mysqli_set_charset 函数</a>]</font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_set_charset(connection,charset)</td>
+</tr>
+<tr>
+<td align="center">功能</td>
+<td align="left">设置与mysql服力器连接，结果，校验字符集</td>
+</tr>
+<tr>
+<td align="center">返回值</td>
+<td align="left">无返回值</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect返回的资源</td>
+</tr>
+<tr>
+<td align="center">参数2</td>
+<td align="left">字符集类型</td>
+</tr>
+</tbody></table>
+<p>&emsp;</p>
+<h4 id="第五步-准备SQL语句"><a href="#第五步-准备SQL语句" class="headerlink" title="第五步:  准备SQL语句"></a><font color="#3CB371" face="Comic sans MS">第五步:  准备SQL语句</font></h4><p><font color="#FF7F00"><strong>其实就是一个SQL语句的字符串，用于对MySQL数据库的操作。这一步很重要！</strong></font> </p>
+<p>&emsp;<br>例如：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$sql = <span class="string">&quot;insert into user(username,password) values(&#x27;<span class="subst">$username</span>&#x27;,&#x27;<span class="subst">$password</span>&#x27;)&quot;</span>;</span><br><span class="line">$con = mysql_connect(<span class="string">&quot;localhost&quot;</span>,<span class="string">&quot;peter&quot;</span>,<span class="string">&quot;abc123&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (!$con)</span><br><span class="line"> &#123;</span><br><span class="line"> <span class="keyword">die</span>(<span class="string">&#x27;Could not connect: &#x27;</span> . mysql_error());</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// some code</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<ol>
+<li>我们通常要把变量赋值在SQL语句中使用。可是变量或者SQL语句出错了，非常不好排查。</li>
+<li>我们根据实际工作经验增加了这一步。</li>
+<li>如果在执行此步的时候报错了，我们可以把SQL语句打印出来，粘贴到phpMyAdmin或者相关工具中。</li>
+<li>排错时，如果执行成功就说明不是SQL语句的问题。如果执行失败，请仔细检查SQL语句。</li>
+</ol>
+</blockquote>
+<p>&emsp;</p>
+<h4 id="第六步-发送SQL语句"><a href="#第六步-发送SQL语句" class="headerlink" title="第六步:  发送SQL语句"></a><font color="#3CB371" face="Comic sans MS">第六步:  发送SQL语句</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_query.asp">PHP mysqli_query() 函数</a>]</font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">功能</td>
+<td align="left">发送SQL语句,执行一条 MySQL 查询。</td>
+</tr>
+<tr>
+<td align="center">返回值</td>
+<td align="left">mysqli_query() 仅对 SELECT，SHOW，EXPLAIN 或 DESCRIBE 语句<strong>返回一个资源标识符</strong>，<br>如果查询执行不正确则返回 FALSE。</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect返回的资源</td>
+</tr>
+<tr>
+<td align="center">参数2</td>
+<td align="left">传入发送的SQL语句。注意：查询字符串不应以分号结束。</td>
+</tr>
+</tbody></table>
+<blockquote>
+<ol>
+<li>SQL语句准备完成，需要通过mysqli_query将SQL语句发送给MySQL服务器。</li>
+<li>MySQL服务器会执行发送过来的SQL语句进行执行。</li>
+</ol>
+</blockquote>
+<p>&emsp;</p>
+<h4 id="第七步-判断是否执行正常或者遍历数据"><a href="#第七步-判断是否执行正常或者遍历数据" class="headerlink" title="第七步:  判断是否执行正常或者遍历数据"></a><font color="#3CB371" face="Comic sans MS">第七步:  判断是否执行正常或者遍历数据</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_fetch_array.asp">PHP mysqli_fetch_array() 函数</a>]</font><br>读取第6步中，发送的是select类别的语句，<font color="#FF7F00"><strong>通常需要将结果以数组形式输出显示出来</strong></font>。就需要用到遍历显示数据的函数。</p>
+<p><font color="red"></font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_fetch_array(data,array_type)</td>
+</tr>
+<tr>
+<td align="center">功能</td>
+<td align="left">得到result结果集中的数据，返回数组进行遍历</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">可选。规定要使用的数据指针。该数据指针是 mysqli_query() 函数产生的结果。</td>
+</tr>
+<tr>
+<td align="center">参数2</td>
+<td align="left">可选。规定返回哪种结果。可能的值：<br>MYSQL_ASSOC - 关联数组<br>MYSQL_NUM - 数字数组<br>MYSQL_BOTH - 默认。同时产生关联和数字数组</td>
+</tr>
+</tbody></table>
+<p>&emsp;<br>下面举例几个常用的<strong>将mysqli_query()查询得到的字符串处理成数组的函数</strong>…….</p>
+<p><font color="red"></font></p>
+<table>
+<thead>
+<tr>
+<th align="center">函数</th>
+<th align="left">功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">mysqli_fetch_assoc(data)</td>
+<td align="left">返回根据从结果集取得的行生成的<strong>关联数组</strong>，如果没有更多行，则返回 false</td>
+</tr>
+<tr>
+<td align="center">mysqli_fetch_row(data)</td>
+<td align="left">返回根据从结果集取得的行生成的<strong>索引数组</strong>，如果没有更多行，则返回 false</td>
+</tr>
+<tr>
+<td align="center">mysqli_fetch_object(data)</td>
+<td align="left">从结果集（记录集）中取得一行作为对象。<br>若成功的话，本函数从 mysql_query() 获得一行，并返回一个对象。如果失败<br>或没有更多的行，则返回 false。</td>
+</tr>
+<tr>
+<td align="center">mysqli_num_rows(data)</td>
+<td align="left">返回结果集中行的数目。此命令仅对 SELECT 语句有效。<br>要取得被 INSERT，UPDATE 或者 DELETE 查询所影响到的行的数目，<br>用 mysqli_affected_rows()。</td>
+</tr>
+<tr>
+<td align="center">mysqli_fetch_field</td>
+<td align="left">从结果集中取得列信息并作为对象返回。</td>
+</tr>
+</tbody></table>
+<p>&emsp;</p>
+<h4 id="第八步-关闭数据库"><a href="#第八步-关闭数据库" class="headerlink" title="第八步:  关闭数据库"></a><font color="#3CB371" face="Comic sans MS">第八步:  关闭数据库</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_close.asp">PHP mysql_close() 函数</a>]</font></p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_close(link_identifier)</td>
+</tr>
+<tr>
+<td align="center">功能</td>
+<td align="left">关闭数据库连接</td>
+</tr>
+<tr>
+<td align="center">返回值</td>
+<td align="left">如果成功则返回 true，失败则返回 false。</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect返回的资源</td>
+</tr>
+</tbody></table>
+<p>&emsp;<br><font color="red" face="Comic sans MS"><strong>其他：显示服务器信息函数</strong></font> </p>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_get_server_info</td>
+</tr>
+<tr>
+<td align="center">功能</td>
+<td align="left">返回服务器信息</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect返回的资源</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th align="center">类型</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">函数</td>
+<td align="left">mysqli_get_server_version</td>
+</tr>
+<tr>
+<td align="center">功能</td>
+<td align="left">返回服务器版本</td>
+</tr>
+<tr>
+<td align="center">参数1</td>
+<td align="left">传入mysqli_connect返回的资源</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><font color="#FF7F00"><strong>注意：</strong></font><br>mysqli只学过程化的方法即可。在面向对象阶段实际工作中完全抛弃了mysqli的对象用法，而是使用的是PDO对象连接数据库的方式。</p>
+</blockquote>
+<p>&emsp;<br>&emsp;</p>
+<h3 id="二-通过步骤做一个用户注册实例"><a href="#二-通过步骤做一个用户注册实例" class="headerlink" title="二. 通过步骤做一个用户注册实例"></a><font color="#FF6347" face="Comic sans MS">二. 通过步骤做一个用户注册实例</font></h3><blockquote>
+<p><font color="#FF7F00"><strong>我们做一个最简单的注册页面。注册页面中有三个参数：</strong></font></p>
+</blockquote>
+<ol>
+<li>用户名</li>
+<li>密码</li>
+<li>重复密码</li>
+</ol>
+<ul>
+<li>用户写好三个参数后，点击提交的时候向<code>connect.php</code>页面中传入POST记录。</li>
+<li>我们可以把<code>POST记录</code>处理后写入到MySQL数据库中，即完成了用户注。</li>
+</ul>
+<blockquote>
+<p><font color="#FF7F00"><strong>本例用到的两个文件：</strong></font></p>
+</blockquote>
+<ol>
+<li><code>index.php</code>：表单页面；</li>
+<li><code>connect.php</code>：处理表单的页面。</li>
+</ol>
+<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>一、 判断重复密码：</strong></font></p>
+<blockquote>
+<p>1.<strong>由于有重复密码，</strong><font color="#FF7F00"><strong>如果用户两次输入的密码不一致也就是有没有进行下一步的任何意义。</strong></font><br>2.<font color="#FF7F00"><strong>在网页中很多地方还是使用到了重复密码。</strong></font><strong>因为，害怕的是用户产生手误。将密码填写出错。</strong><br>3.<font color="#FF7F00"><strong>用户在输入密码的时候可能在左右两边多打两个空格。因此，我们会使用trim将密码和重复密码的两边去掉空格。</strong></font></p>
+</blockquote>
+<p>&emsp;<br>代码如下：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(trim($_POST[<span class="string">&#x27;password&#x27;</span>]) != trim($_POST[<span class="string">&#x27;repassword&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">&#x27;两次密码不一致,请返回上一页&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>二、 准备好写入的数据：</strong></font><br>我们需要把用户的<strong>输入数据</strong>和<strong>隐藏的数据</strong>都写入到数据库。</p>
+<p><font color="red"><strong>可见数据有：</strong></font></p>
+<table>
+<thead>
+<tr>
+<th align="center">变量</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">$_POST[‘username’]</td>
+<td align="left">用户名</td>
+</tr>
+<tr>
+<td align="center">$_POST[‘password’]</td>
+<td align="left">密码</td>
+</tr>
+</tbody></table>
+<blockquote>
+<ol>
+<li>我们需要把用户名去掉两边的空格，这样避免输入不必要的这些信息。</li>
+<li>在mysql这一章节我们讲过，用户的密码不要让包括公司内部人员可见。保证密码是不可逆向的。在初级阶段大家学习一下MD5即可。以后我们再教大家其他的加密方式。</li>
+</ol>
+</blockquote>
+<p><font color="red"><strong>不可见数据有：</strong></font></p>
+<table>
+<thead>
+<tr>
+<th align="center">变量</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">$time</td>
+<td align="left">用户的注册时间</td>
+</tr>
+<tr>
+<td align="center">$_SERVER[‘REMOTE_ADDR’]</td>
+<td align="left">用户的注册IP</td>
+</tr>
+</tbody></table>
+<blockquote>
+<ol>
+<li>time返回的unix时间戳</li>
+<li>REMOTE_ADDR返回的是IP地址，我们可以用ip2long将其转为整型存储。</li>
+</ol>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$username = trim($_POST[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">$password = md5(trim($_POST[<span class="string">&#x27;password&#x27;</span>]));</span><br><span class="line">$time = time();</span><br><span class="line">$ip = ip2long($_SERVER[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>]);</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>三、连接数据库、判断错误、选择库和字符集：</strong></font></p>
+<blockquote>
+<ol>
+<li>我们使用mysqli_connect连接到数据库服务器。</li>
+<li>如果有错误，使用mysqli_errno得到错误号</li>
+<li>如何时存在错误mysqli_error打印出所有的错误，并且退出程序执行</li>
+<li>选择数据库并且设置字符集为utf8.</li>
+</ol>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//连接数据库</span></span><br><span class="line">$conn = mysqli_connect(<span class="string">&#x27;localhost&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;liwenkaihaha&#x27;</span>);</span><br><span class="line"><span class="comment">//如果有错误，存在错误号</span></span><br><span class="line"><span class="keyword">if</span>(mysqli_errno($conn))&#123;</span><br><span class="line">    <span class="keyword">echo</span> mysqli_error($conn);</span><br><span class="line">    <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//选择数据库</span></span><br><span class="line">mysqli_select_db($conn,<span class="string">&#x27;user&#x27;</span>);</span><br><span class="line"><span class="comment">//选择字符集</span></span><br><span class="line">mysqli_set_charset($conn,<span class="string">&#x27;utf8&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>四、组合SQL语句：</strong></font><br>我们需要把得到的信息写入到数据库里面去，用户名、密码、创建时间、IP我们都得到了。</p>
+<p>将对应的变量插入到SQL语句中即可。组合出来的SQL语句如下：<br><font color="#00B2EE"></font></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$sql = <span class="string">&quot;insert into user(username,password,createtime,createip) values(&#x27;&quot;</span> . $username . <span class="string">&quot;&#x27;</span></span><br><span class="line"><span class="string">,&#x27;&quot;</span> . $password . <span class="string">&quot;&#x27;,&#x27;&quot;</span> . $time . <span class="string">&quot;&#x27;,&#x27;&quot;</span> . $ip . <span class="string">&quot;&#x27;)&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br>而我们的创建表的语句如下：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">CREATE TABLE <span class="keyword">IF</span> NOT EXISTS user (</span><br><span class="line">id <span class="keyword">int</span>(<span class="number">11</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">username varchar(<span class="number">30</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">password char(<span class="number">32</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">createtime <span class="keyword">int</span>(<span class="number">11</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">createip <span class="keyword">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span></span><br><span class="line">) ENGINE=InnoDB <span class="keyword">DEFAULT</span> CHARSET=utf8;</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br>表的格式（字段对应说明）：<br><font color="#00B2EE"></font></p>
+<table>
+<thead>
+<tr>
+<th align="center">id</th>
+<th align="center">username</th>
+<th align="center">password</th>
+<th align="center">createtime</th>
+<th align="center">createip</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">用户编号</td>
+<td align="center">用户名</td>
+<td align="center">密码</td>
+<td align="center">创建时间</td>
+<td align="center">创建IP</td>
+</tr>
+</tbody></table>
+<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>五、发送语句，判断状态：</strong></font></p>
+<blockquote>
+<p>mysqli_query我们在上面说过，需要传入两个参数：</p>
+</blockquote>
+<ol>
+<li>连接的资源，在这里对应的变量是$conn。</li>
+<li>发送的SQL语句。在上面已经准备好了$sql。</li>
+</ol>
+<blockquote>
+<p>SQL语句可以通过mysqli_query发送给MySQL服务器。发送成功$result则为true。否则为false。<br>成功的话，我们就可以提示用户注册成功啦。<br>有些情况下，可能还需要使用到**mysqli_insert_id()**。功能是获取上面通过insert插入数据的id并返回这个id。<br>mysqli_insert_id应用场景：新加的一个行的数据。我们需要得到自动增长的ID值，将这个ID值插入到另外一个表里面去时。就需要用到这个函数。</p>
+</blockquote>
+<p>&emsp;</p>
+<p><code>mysqli_insert_id()</code>使用举例：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$result = mysqli_query($conn,$sql);</span><br><span class="line"><span class="keyword">if</span>($result)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;注册成功&#x27;</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;注册失败&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;当前用户插入的ID为&#x27;</span>.mysqli_insert_id($conn);</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>六、关闭数据库连接：</strong></font></p>
+<p>将资源变量传到到mysqli_close这个函数里面即可。</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">mysqli_close($conn);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>&emsp;<br>&emsp;<br>&emsp;<br>先建立test数据库、user数据表。数据表建立语句：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">CREATE TABLE <span class="keyword">IF</span> NOT EXISTS user (id <span class="keyword">int</span>(<span class="number">11</span>) PRIMARY KEY AUTO_INCREMENT,username varchar(<span class="number">30</span>) NOT <span class="literal">NULL</span>,password char(<span class="number">32</span>) NOT <span class="literal">NULL</span>,createtime <span class="keyword">int</span>(<span class="number">11</span>) NOT <span class="literal">NULL</span>,createip varchar(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>) ENGINE=InnoDB <span class="keyword">DEFAULT</span> CHARSET=utf8;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>&emsp;<br><font color="red"><strong>1. <code>index.php</code>表单页面：</strong></font></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;form action=<span class="string">&quot;connect.php&quot;</span> method=<span class="string">&quot;post&quot;</span>&gt;</span><br><span class="line">    用户名：&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;username&quot;</span>&gt;&lt;br /&gt;</span><br><span class="line">    密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;password&quot;</span>&gt;&lt;br /&gt;</span><br><span class="line">    重复密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;repassword&quot;</span>&gt;&lt;br /&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;提交&quot;</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br>&emsp;<br><font color="red"><strong>2. <code>connect.php</code>页面完整代码：</strong></font></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (trim($_POST[<span class="string">&#x27;password&#x27;</span>]) != trim($_POST[<span class="string">&#x27;repassword&#x27;</span>])) &#123;</span><br><span class="line">   <span class="keyword">exit</span>(<span class="string">&#x27;两次密码不一致,请返回上一页&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$username = trim($_POST[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">$password = md5(trim($_POST[<span class="string">&#x27;password&#x27;</span>]));</span><br><span class="line">$time = time();</span><br><span class="line">$ip = $_SERVER[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>];</span><br><span class="line">$conn = mysqli_connect(<span class="string">&#x27;localhost&#x27;</span>, <span class="string">&#x27;root&#x27;</span>, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line"><span class="comment">//echo $username.&quot;/&quot;.$password.&quot;/&quot;.$time.&quot;/&quot;.$ip;</span></span><br><span class="line"><span class="comment">//如果有错误，存在错误号</span></span><br><span class="line"><span class="keyword">if</span> (mysqli_errno($conn)) &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">echo</span> mysqli_error($conn);</span><br><span class="line"></span><br><span class="line">   <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mysqli_select_db($conn, <span class="string">&#x27;test&#x27;</span>);</span><br><span class="line">mysqli_set_charset($conn, <span class="string">&#x27;utf8&#x27;</span>);</span><br><span class="line"></span><br><span class="line">$sql = <span class="string">&quot;insert into user(username,password,createtime,createip) values (&#x27;<span class="subst">$username</span>&#x27;,&#x27;<span class="subst">$password</span>&#x27;,&#x27;<span class="subst">$time</span>&#x27;,&#x27;<span class="subst">$ip</span>&#x27;)&quot;</span>;</span><br><span class="line"></span><br><span class="line">$result = mysqli_query($conn, $sql);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($result) &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;成功&#x27;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;失败&#x27;</span>;</span><br><span class="line">   var_dump(<span class="string">&quot;错误为：&quot;</span>.mysqli_error($conn));</span><br><span class="line">   var_dump(<span class="string">&quot;返回值：&quot;</span>.$result);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;当前用户插入的ID为&#x27;</span> . mysqli_insert_id($conn);</span><br><span class="line">mysqli_close($conn);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br>&emsp;</p>
+<h3 id="三-通过步骤做一个列表显示实例"><a href="#三-通过步骤做一个列表显示实例" class="headerlink" title="三. 通过步骤做一个列表显示实例"></a><font color="#FF6347" face="Comic sans MS">三. 通过步骤做一个列表显示实例</font></h3><p><font color="#00B2EE">[<a href="http://www.php.cn/code/1262.html">教程</a>]</font><br><font color="#00B2EE">[<a href="http://www.php.cn/code/4977.html">视频</a>]</font></p>
+<p>&emsp;<br>&emsp;</p>
+<h3 id="四-通过步骤操作之把用户做个分页"><a href="#四-通过步骤操作之把用户做个分页" class="headerlink" title="四. 通过步骤操作之把用户做个分页"></a><font color="#FF6347" face="Comic sans MS">四. 通过步骤操作之把用户做个分页</font></h3><p><font color="#00B2EE">[<a href="http://www.php.cn/code/1273.html">教程</a>]</font><br><font color="#00B2EE">[<a href="http://www.php.cn/code/4978.html">视频</a>]</font></p>
+<p>&emsp;<br>&emsp;</p>
+<h3 id="五-批量和指定删除用户"><a href="#五-批量和指定删除用户" class="headerlink" title="五.  批量和指定删除用户"></a><font color="#FF6347" face="Comic sans MS">五.  批量和指定删除用户</font></h3><p>上面已经学过了通过步骤做一个列表显示，在删除前，<font color="#FF7F00"><strong>有单行删除数据和删除多行数据</strong></font>。</p>
+<p>&emsp;</p>
+<h4 id="5-1-判断是单选还是多选删除"><a href="#5-1-判断是单选还是多选删除" class="headerlink" title="5.1 判断是单选还是多选删除"></a><font color="#3CB371" face="Comic sans MS">5.1 判断是单选还是多选删除</font></h4><blockquote>
+<ol>
+<li><font color="#FF7F00"><strong>单行是通过get传参的方式</strong></font>向delete.php文件中写上对应的ID。</li>
+<li>而<font color="#FF7F00"><strong>多个删除是通过POST的方式</strong></font>向delete.php页面中传递对应的ID。</li>
+<li>如果这两个都不符合的话，那我们可以视为数据不合法。</li>
+</ol>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (is_array($_POST[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line">    $id = join(<span class="string">&#x27;,&#x27;</span>, $_POST[<span class="string">&#x27;id&#x27;</span>]);</span><br><span class="line">&#125; <span class="keyword">elseif</span> (is_numeric($_GET[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line">    $id = (<span class="keyword">int</span>) $_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;数据不合法&#x27;</span>;</span><br><span class="line">    <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;</p>
+<h4 id="5-2-组合SQL语句"><a href="#5-2-组合SQL语句" class="headerlink" title="5.2 组合SQL语句"></a><font color="#3CB371" face="Comic sans MS">5.2 组合SQL语句</font></h4><blockquote>
+<ol>
+<li>MySQL这一章讲解过<font color="#FF7F00"><strong>删除时可以使用到in的子语句</strong></font>。</li>
+<li>同样在这里，我们就可以用in的子语句来达到效果。</li>
+<li><font color="#FF7F00"><strong>join函数将多选删除传过来的id变为了3,4,5的格式</strong></font>，最终多选删除的SQL语句执行出来的效果就是：</li>
+</ol>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">delete <span class="keyword">from</span> user where id in(<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">8</span>);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;<br>而单选删除的语句效果就是：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">delete <span class="keyword">from</span> user where id in(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;<br>这样我们就实现了单选和多选自适应效果：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$sql = <span class="string">&quot;delete from user where id in(<span class="subst">$id</span>)&quot;</span>;</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br>最终配套而成的整体代码演示如下：</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">&#x27;connection.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (is_array($_POST[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line"></span><br><span class="line">   $id = join(<span class="string">&#x27;,&#x27;</span>, $_POST[<span class="string">&#x27;id&#x27;</span>]);</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">elseif</span> (is_numeric($_GET[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line"></span><br><span class="line">   $id = (<span class="keyword">int</span>) $_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;数据不合法&#x27;</span>;</span><br><span class="line">   <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$sql = <span class="string">&quot;delete from user where id in(<span class="subst">$id</span>)&quot;</span>;</span><br><span class="line"></span><br><span class="line">$result = mysqli_query($conn, $sql);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($result) &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;删除成功&#x27;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;删除失败&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>&emsp;<br>&emsp;</p>
+<h3 id="六-通过步骤修改用户信息"><a href="#六-通过步骤修改用户信息" class="headerlink" title="六. 通过步骤修改用户信息"></a><font color="#FF6347" face="Comic sans MS">六. 通过步骤修改用户信息</font></h3><p>内容有点多，等哪天想起来了或者心情好了再写吧…..(✿◡‿◡)</p>
+<p><font color="#00B2EE">[<a href="http://www.php.cn/code/1277.html">教程</a>]</font><br><font color="#00B2EE">[<a href="http://www.php.cn/code/4980.html">视频</a>]</font></p>
+<p>&emsp;<br>&emsp;</p>
+<h3 id="七-数据显示乱码终极解决办法"><a href="#七-数据显示乱码终极解决办法" class="headerlink" title="七. 数据显示乱码终极解决办法"></a><font color="#FF6347" face="Comic sans MS">七. 数据显示乱码终极解决办法</font></h3><p>解决乱码问题的核心思想，就是：<font color="#FF7F00"><strong>一定要多个不同的文件系统中一定要统一编码</strong></font>。</p>
+<p>&emsp;<br>总结成了9个要点来彻底解决连接后乱码的问题。</p>
+<blockquote>
+<ol>
+<li><font color="#00B2EE"><strong>html编码与MySQL编码一致</strong></font></li>
+<li><font color="#00B2EE"><strong>PHP编码与MySQL编码一致</strong></font></li>
+<li><font color="#00B2EE"><strong>若有header头发送字符集，请与数据库一样</strong></font></li>
+<li><font color="#00B2EE"><strong>&lt;meta http-equiv=“Content-Type”content=“text/html; charset=utf-8” /&gt;要和页面的文字编码一致</strong></font></li>
+<li><font color="#00B2EE"><strong>数据库建库的字符集要统一</strong></font></li>
+<li><font color="#00B2EE"><strong>表的字符集要统一</strong></font></li>
+<li><font color="#00B2EE"><strong>列的字符集要统一(表设了,列就默认写表的)</strong></font></li>
+<li><font color="#00B2EE"><strong>连接,校验的字符集要统一</strong></font></li>
+<li><font color="#00B2EE"><strong>结果集的字符集要统一</strong></font></li>
+</ol>
+</blockquote>
+<p>&emsp;<br>&emsp;<br>&emsp;<br><font color="#FF7F00"><strong>一、 文件编码</strong></font><br>html和PHP文件的编码，示例中：拿notepad++来演示。将PHP和html都要设为这种字符集。<br>一定要设置为utf-8无BOM格式。</p>
+<p><img data-src="https://i.loli.net/2019/02/24/5c72764c43d27.png" alt="1"></p>
+<p>&emsp;<br><font color="#FF7F00"><strong>二、 header头编码</strong></font><br>如果php中有header头，一定要是<strong>utf-8</strong>的<br><font color="red"></font></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">header(<span class="string">&#x27;content-type:text/html;charset=utf-8&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>&emsp;<br><font color="#FF7F00"><strong>三、网页头文件编码</strong></font><br>如果html文件编码是utf-8的也要设置为一置<br><font color="red"></font></p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;meta http-equiv=“Content-Type”content=“text/html; charset=utf<span class="number">-8</span>” /&gt;</span><br></pre></td></tr></table></figure>
+
+
+<p>&emsp;<br><font color="#FF7F00"><strong>四、创建数据库的编码</strong></font></p>
+<p><img data-src="https://i.loli.net/2019/02/24/5c72789c325a2.png" alt="2"></p>
+<p>&emsp;<br><font color="#FF7F00"><strong>五、表和列创建的时候表为utf-8</strong></font></p>
+<p><img data-src="https://i.loli.net/2019/02/24/5c7278e24b5ad.png" alt="3.png"></p>
+<p>&emsp;<br><font color="#FF7F00"><strong>六、连接，结果、校验字符集设置</strong></font></p>
+<blockquote>
+<p><font color="#00B2EE"><strong>1.通过mysqli_set_charset(‘utf8’)来MySQL连接、结果和校验的字符集设置。<br>2.注：数据库的字符集声明和文件中的略有不同。</strong></font><font color="red"><strong>utf8为mysql数据库的，utf-8为文件中使用的。</strong></font></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>PHP</category>
+      </categories>
+      <tags>
+        <tag>PHP语言</tag>
+        <tag>MySQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PHP-文件系统</title>
     <url>/post/PHP-FileSystem/</url>
     <content><![CDATA[<p>学习文件处理本质上面就是学习<font color="#00B2EE"><strong>文件处理的函数。</strong></font> ヾ(๑╹◡╹)ﾉ”</p>
@@ -6394,581 +6969,6 @@ if-else语句中内嵌的语句1或语句2又是if-else语句的情况称为if-e
       </categories>
       <tags>
         <tag>PHP语言</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PHP操作MySQL数据库</title>
-    <url>/post/PHP-MySQL/</url>
-    <content><![CDATA[<p>😁</p>
-<a id="more"></a>
-<p>&ensp;<br>&ensp;</p>
-<center><font color="#00B2EE" face="Comic sans MS" size=5>PHP操作MySQL数据库</font></center>
-
-
-
-<p>&emsp;<br>&emsp;</p>
-<h3 id="一-数据库连接步骤"><a href="#一-数据库连接步骤" class="headerlink" title="一. 数据库连接步骤"></a><font color="#FF6347" face="Comic sans MS">一. 数据库连接步骤</font></h3><p>将数据库连接整理成了最重要的<font color="#FF7F00"><strong>8个步骤</strong></font>，我戏称它为：“数据库连接天龙八步”。😊  (。・∀・)ノ</p>
-<p>&emsp;</p>
-<h4 id="第一步-连接数据库服务器"><a href="#第一步-连接数据库服务器" class="headerlink" title="第一步:  连接数据库服务器"></a><font color="#3CB371" face="Comic sans MS">第一步:  连接数据库服务器</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_connect.asp">PHP mysql_connect() 函数</a>]</font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_connect()</td>
-</tr>
-<tr>
-<td align="center">函数原型</td>
-<td align="left">mysql_connect(server,user,pwd,newlink,clientflag)</td>
-</tr>
-<tr>
-<td align="center">功能</td>
-<td align="left">连接到mysql数据库服务器</td>
-</tr>
-<tr>
-<td align="center">返回值</td>
-<td align="left">如果成功，则返回一个 MySQL 连接标识，失败则返回 FALSE。</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">主机</td>
-</tr>
-<tr>
-<td align="center">参数2</td>
-<td align="left">数据库服务器登陆名</td>
-</tr>
-<tr>
-<td align="center">参数3</td>
-<td align="left">密码</td>
-</tr>
-<tr>
-<td align="center">参数4</td>
-<td align="left">数据库的名称</td>
-</tr>
-<tr>
-<td align="center">参数5</td>
-<td align="left">数据库服务器端口不填默认3306</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><font color="#FF7F00"><strong>对于参数4，数据库名称在此步已填并择，不需要执行第三步。</strong></font></p>
-</blockquote>
-<p>&emsp;</p>
-<h4 id="第二步-判断错误"><a href="#第二步-判断错误" class="headerlink" title="第二步:  判断错误"></a><font color="#3CB371" face="Comic sans MS">第二步:  判断错误</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_errno.asp">PHP mysqli_errno() 函数</a>]</font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_errno(connection)</td>
-</tr>
-<tr>
-<td align="center">功能/返回值</td>
-<td align="left">返回连接错误号，无错误返回0</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect()返回的资源可选。规定 SQL 连接标识符。如果未规定，则使用上一个<br>打开的连接。</td>
-</tr>
-</tbody></table>
-<p>&emsp;<br><font color="#FF7F00"><strong>如果mysqli_errno()函数返回错误号，则用mysqli_error()显示文本错误信息。</strong></font>&emsp;<font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_error.asp">PHP mysql_error() 函数</a>]</font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_error(connection)</td>
-</tr>
-<tr>
-<td align="center">功能/返回值</td>
-<td align="left">返回连接错误字符串，如果没有出错则返回 ‘’（空字符串）</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect返回的资源</td>
-</tr>
-</tbody></table>
-<p>&emsp;</p>
-<h4 id="第三步-选择数据库"><a href="#第三步-选择数据库" class="headerlink" title="第三步:  选择数据库"></a><font color="#3CB371" face="Comic sans MS">第三步:  选择数据库</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_select_db.asp">PHP mysqli_select_db() 函数</a>]</font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysql_selecti_db(connection,database)</td>
-</tr>
-<tr>
-<td align="center">返回值</td>
-<td align="left">如果成功，则该函数返回 true。如果失败，则返回 false。</td>
-</tr>
-<tr>
-<td align="center">功能</td>
-<td align="left">选择本连接中的<strong>数据库</strong></td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect返回的资源</td>
-</tr>
-<tr>
-<td align="center">参数2</td>
-<td align="left">需要连接的数据库名</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><font color="#FF7F00"><strong>若在第一步已填数据库，不需要更换成其他数据库，则不需要执行第三步。</strong></font></p>
-</blockquote>
-<p>&emsp;</p>
-<h4 id="第四步-设置字符集"><a href="#第四步-设置字符集" class="headerlink" title="第四步:  设置字符集"></a><font color="#3CB371" face="Comic sans MS">第四步:  设置字符集</font></h4><p><font color="#00B2EE">[<a href="http://www.runoob.com/php/func-mysqli-set-charset.html">PHP mysqli_set_charset 函数</a>]</font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_set_charset(connection,charset)</td>
-</tr>
-<tr>
-<td align="center">功能</td>
-<td align="left">设置与mysql服力器连接，结果，校验字符集</td>
-</tr>
-<tr>
-<td align="center">返回值</td>
-<td align="left">无返回值</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect返回的资源</td>
-</tr>
-<tr>
-<td align="center">参数2</td>
-<td align="left">字符集类型</td>
-</tr>
-</tbody></table>
-<p>&emsp;</p>
-<h4 id="第五步-准备SQL语句"><a href="#第五步-准备SQL语句" class="headerlink" title="第五步:  准备SQL语句"></a><font color="#3CB371" face="Comic sans MS">第五步:  准备SQL语句</font></h4><p><font color="#FF7F00"><strong>其实就是一个SQL语句的字符串，用于对MySQL数据库的操作。这一步很重要！</strong></font> </p>
-<p>&emsp;<br>例如：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$sql = <span class="string">&quot;insert into user(username,password) values(&#x27;<span class="subst">$username</span>&#x27;,&#x27;<span class="subst">$password</span>&#x27;)&quot;</span>;</span><br><span class="line">$con = mysql_connect(<span class="string">&quot;localhost&quot;</span>,<span class="string">&quot;peter&quot;</span>,<span class="string">&quot;abc123&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> (!$con)</span><br><span class="line"> &#123;</span><br><span class="line"> <span class="keyword">die</span>(<span class="string">&#x27;Could not connect: &#x27;</span> . mysql_error());</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// some code</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<ol>
-<li>我们通常要把变量赋值在SQL语句中使用。可是变量或者SQL语句出错了，非常不好排查。</li>
-<li>我们根据实际工作经验增加了这一步。</li>
-<li>如果在执行此步的时候报错了，我们可以把SQL语句打印出来，粘贴到phpMyAdmin或者相关工具中。</li>
-<li>排错时，如果执行成功就说明不是SQL语句的问题。如果执行失败，请仔细检查SQL语句。</li>
-</ol>
-</blockquote>
-<p>&emsp;</p>
-<h4 id="第六步-发送SQL语句"><a href="#第六步-发送SQL语句" class="headerlink" title="第六步:  发送SQL语句"></a><font color="#3CB371" face="Comic sans MS">第六步:  发送SQL语句</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_query.asp">PHP mysqli_query() 函数</a>]</font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">功能</td>
-<td align="left">发送SQL语句,执行一条 MySQL 查询。</td>
-</tr>
-<tr>
-<td align="center">返回值</td>
-<td align="left">mysqli_query() 仅对 SELECT，SHOW，EXPLAIN 或 DESCRIBE 语句<strong>返回一个资源标识符</strong>，<br>如果查询执行不正确则返回 FALSE。</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect返回的资源</td>
-</tr>
-<tr>
-<td align="center">参数2</td>
-<td align="left">传入发送的SQL语句。注意：查询字符串不应以分号结束。</td>
-</tr>
-</tbody></table>
-<blockquote>
-<ol>
-<li>SQL语句准备完成，需要通过mysqli_query将SQL语句发送给MySQL服务器。</li>
-<li>MySQL服务器会执行发送过来的SQL语句进行执行。</li>
-</ol>
-</blockquote>
-<p>&emsp;</p>
-<h4 id="第七步-判断是否执行正常或者遍历数据"><a href="#第七步-判断是否执行正常或者遍历数据" class="headerlink" title="第七步:  判断是否执行正常或者遍历数据"></a><font color="#3CB371" face="Comic sans MS">第七步:  判断是否执行正常或者遍历数据</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_fetch_array.asp">PHP mysqli_fetch_array() 函数</a>]</font><br>读取第6步中，发送的是select类别的语句，<font color="#FF7F00"><strong>通常需要将结果以数组形式输出显示出来</strong></font>。就需要用到遍历显示数据的函数。</p>
-<p><font color="red"></font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_fetch_array(data,array_type)</td>
-</tr>
-<tr>
-<td align="center">功能</td>
-<td align="left">得到result结果集中的数据，返回数组进行遍历</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">可选。规定要使用的数据指针。该数据指针是 mysqli_query() 函数产生的结果。</td>
-</tr>
-<tr>
-<td align="center">参数2</td>
-<td align="left">可选。规定返回哪种结果。可能的值：<br>MYSQL_ASSOC - 关联数组<br>MYSQL_NUM - 数字数组<br>MYSQL_BOTH - 默认。同时产生关联和数字数组</td>
-</tr>
-</tbody></table>
-<p>&emsp;<br>下面举例几个常用的<strong>将mysqli_query()查询得到的字符串处理成数组的函数</strong>…….</p>
-<p><font color="red"></font></p>
-<table>
-<thead>
-<tr>
-<th align="center">函数</th>
-<th align="left">功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">mysqli_fetch_assoc(data)</td>
-<td align="left">返回根据从结果集取得的行生成的<strong>关联数组</strong>，如果没有更多行，则返回 false</td>
-</tr>
-<tr>
-<td align="center">mysqli_fetch_row(data)</td>
-<td align="left">返回根据从结果集取得的行生成的<strong>索引数组</strong>，如果没有更多行，则返回 false</td>
-</tr>
-<tr>
-<td align="center">mysqli_fetch_object(data)</td>
-<td align="left">从结果集（记录集）中取得一行作为对象。<br>若成功的话，本函数从 mysql_query() 获得一行，并返回一个对象。如果失败<br>或没有更多的行，则返回 false。</td>
-</tr>
-<tr>
-<td align="center">mysqli_num_rows(data)</td>
-<td align="left">返回结果集中行的数目。此命令仅对 SELECT 语句有效。<br>要取得被 INSERT，UPDATE 或者 DELETE 查询所影响到的行的数目，<br>用 mysqli_affected_rows()。</td>
-</tr>
-<tr>
-<td align="center">mysqli_fetch_field</td>
-<td align="left">从结果集中取得列信息并作为对象返回。</td>
-</tr>
-</tbody></table>
-<p>&emsp;</p>
-<h4 id="第八步-关闭数据库"><a href="#第八步-关闭数据库" class="headerlink" title="第八步:  关闭数据库"></a><font color="#3CB371" face="Comic sans MS">第八步:  关闭数据库</font></h4><p><font color="#00B2EE">[<a href="http://www.w3school.com.cn/php/func_mysql_close.asp">PHP mysql_close() 函数</a>]</font></p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_close(link_identifier)</td>
-</tr>
-<tr>
-<td align="center">功能</td>
-<td align="left">关闭数据库连接</td>
-</tr>
-<tr>
-<td align="center">返回值</td>
-<td align="left">如果成功则返回 true，失败则返回 false。</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect返回的资源</td>
-</tr>
-</tbody></table>
-<p>&emsp;<br><font color="red" face="Comic sans MS"><strong>其他：显示服务器信息函数</strong></font> </p>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_get_server_info</td>
-</tr>
-<tr>
-<td align="center">功能</td>
-<td align="left">返回服务器信息</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect返回的资源</td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th align="center">类型</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">函数</td>
-<td align="left">mysqli_get_server_version</td>
-</tr>
-<tr>
-<td align="center">功能</td>
-<td align="left">返回服务器版本</td>
-</tr>
-<tr>
-<td align="center">参数1</td>
-<td align="left">传入mysqli_connect返回的资源</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p><font color="#FF7F00"><strong>注意：</strong></font><br>mysqli只学过程化的方法即可。在面向对象阶段实际工作中完全抛弃了mysqli的对象用法，而是使用的是PDO对象连接数据库的方式。</p>
-</blockquote>
-<p>&emsp;<br>&emsp;</p>
-<h3 id="二-通过步骤做一个用户注册实例"><a href="#二-通过步骤做一个用户注册实例" class="headerlink" title="二. 通过步骤做一个用户注册实例"></a><font color="#FF6347" face="Comic sans MS">二. 通过步骤做一个用户注册实例</font></h3><blockquote>
-<p><font color="#FF7F00"><strong>我们做一个最简单的注册页面。注册页面中有三个参数：</strong></font></p>
-</blockquote>
-<ol>
-<li>用户名</li>
-<li>密码</li>
-<li>重复密码</li>
-</ol>
-<ul>
-<li>用户写好三个参数后，点击提交的时候向<code>connect.php</code>页面中传入POST记录。</li>
-<li>我们可以把<code>POST记录</code>处理后写入到MySQL数据库中，即完成了用户注。</li>
-</ul>
-<blockquote>
-<p><font color="#FF7F00"><strong>本例用到的两个文件：</strong></font></p>
-</blockquote>
-<ol>
-<li><code>index.php</code>：表单页面；</li>
-<li><code>connect.php</code>：处理表单的页面。</li>
-</ol>
-<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>一、 判断重复密码：</strong></font></p>
-<blockquote>
-<p>1.<strong>由于有重复密码，</strong><font color="#FF7F00"><strong>如果用户两次输入的密码不一致也就是有没有进行下一步的任何意义。</strong></font><br>2.<font color="#FF7F00"><strong>在网页中很多地方还是使用到了重复密码。</strong></font><strong>因为，害怕的是用户产生手误。将密码填写出错。</strong><br>3.<font color="#FF7F00"><strong>用户在输入密码的时候可能在左右两边多打两个空格。因此，我们会使用trim将密码和重复密码的两边去掉空格。</strong></font></p>
-</blockquote>
-<p>&emsp;<br>代码如下：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span>(trim($_POST[<span class="string">&#x27;password&#x27;</span>]) != trim($_POST[<span class="string">&#x27;repassword&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">exit</span>(<span class="string">&#x27;两次密码不一致,请返回上一页&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>二、 准备好写入的数据：</strong></font><br>我们需要把用户的<strong>输入数据</strong>和<strong>隐藏的数据</strong>都写入到数据库。</p>
-<p><font color="red"><strong>可见数据有：</strong></font></p>
-<table>
-<thead>
-<tr>
-<th align="center">变量</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">$_POST[‘username’]</td>
-<td align="left">用户名</td>
-</tr>
-<tr>
-<td align="center">$_POST[‘password’]</td>
-<td align="left">密码</td>
-</tr>
-</tbody></table>
-<blockquote>
-<ol>
-<li>我们需要把用户名去掉两边的空格，这样避免输入不必要的这些信息。</li>
-<li>在mysql这一章节我们讲过，用户的密码不要让包括公司内部人员可见。保证密码是不可逆向的。在初级阶段大家学习一下MD5即可。以后我们再教大家其他的加密方式。</li>
-</ol>
-</blockquote>
-<p><font color="red"><strong>不可见数据有：</strong></font></p>
-<table>
-<thead>
-<tr>
-<th align="center">变量</th>
-<th align="left">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">$time</td>
-<td align="left">用户的注册时间</td>
-</tr>
-<tr>
-<td align="center">$_SERVER[‘REMOTE_ADDR’]</td>
-<td align="left">用户的注册IP</td>
-</tr>
-</tbody></table>
-<blockquote>
-<ol>
-<li>time返回的unix时间戳</li>
-<li>REMOTE_ADDR返回的是IP地址，我们可以用ip2long将其转为整型存储。</li>
-</ol>
-</blockquote>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$username = trim($_POST[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">$password = md5(trim($_POST[<span class="string">&#x27;password&#x27;</span>]));</span><br><span class="line">$time = time();</span><br><span class="line">$ip = ip2long($_SERVER[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>]);</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>三、连接数据库、判断错误、选择库和字符集：</strong></font></p>
-<blockquote>
-<ol>
-<li>我们使用mysqli_connect连接到数据库服务器。</li>
-<li>如果有错误，使用mysqli_errno得到错误号</li>
-<li>如何时存在错误mysqli_error打印出所有的错误，并且退出程序执行</li>
-<li>选择数据库并且设置字符集为utf8.</li>
-</ol>
-</blockquote>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="comment">//连接数据库</span></span><br><span class="line">$conn = mysqli_connect(<span class="string">&#x27;localhost&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;liwenkaihaha&#x27;</span>);</span><br><span class="line"><span class="comment">//如果有错误，存在错误号</span></span><br><span class="line"><span class="keyword">if</span>(mysqli_errno($conn))&#123;</span><br><span class="line">    <span class="keyword">echo</span> mysqli_error($conn);</span><br><span class="line">    <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//选择数据库</span></span><br><span class="line">mysqli_select_db($conn,<span class="string">&#x27;user&#x27;</span>);</span><br><span class="line"><span class="comment">//选择字符集</span></span><br><span class="line">mysqli_set_charset($conn,<span class="string">&#x27;utf8&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>四、组合SQL语句：</strong></font><br>我们需要把得到的信息写入到数据库里面去，用户名、密码、创建时间、IP我们都得到了。</p>
-<p>将对应的变量插入到SQL语句中即可。组合出来的SQL语句如下：<br><font color="#00B2EE"></font></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$sql = <span class="string">&quot;insert into user(username,password,createtime,createip) values(&#x27;&quot;</span> . $username . <span class="string">&quot;&#x27;</span></span><br><span class="line"><span class="string">,&#x27;&quot;</span> . $password . <span class="string">&quot;&#x27;,&#x27;&quot;</span> . $time . <span class="string">&quot;&#x27;,&#x27;&quot;</span> . $ip . <span class="string">&quot;&#x27;)&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br>而我们的创建表的语句如下：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">CREATE TABLE <span class="keyword">IF</span> NOT EXISTS user (</span><br><span class="line">id <span class="keyword">int</span>(<span class="number">11</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">username varchar(<span class="number">30</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">password char(<span class="number">32</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">createtime <span class="keyword">int</span>(<span class="number">11</span>) NOT <span class="literal">NULL</span>,</span><br><span class="line">createip <span class="keyword">int</span>(<span class="number">11</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span></span><br><span class="line">) ENGINE=InnoDB <span class="keyword">DEFAULT</span> CHARSET=utf8;</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br>表的格式（字段对应说明）：<br><font color="#00B2EE"></font></p>
-<table>
-<thead>
-<tr>
-<th align="center">id</th>
-<th align="center">username</th>
-<th align="center">password</th>
-<th align="center">createtime</th>
-<th align="center">createip</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">用户编号</td>
-<td align="center">用户名</td>
-<td align="center">密码</td>
-<td align="center">创建时间</td>
-<td align="center">创建IP</td>
-</tr>
-</tbody></table>
-<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>五、发送语句，判断状态：</strong></font></p>
-<blockquote>
-<p>mysqli_query我们在上面说过，需要传入两个参数：</p>
-</blockquote>
-<ol>
-<li>连接的资源，在这里对应的变量是$conn。</li>
-<li>发送的SQL语句。在上面已经准备好了$sql。</li>
-</ol>
-<blockquote>
-<p>SQL语句可以通过mysqli_query发送给MySQL服务器。发送成功$result则为true。否则为false。<br>成功的话，我们就可以提示用户注册成功啦。<br>有些情况下，可能还需要使用到**mysqli_insert_id()**。功能是获取上面通过insert插入数据的id并返回这个id。<br>mysqli_insert_id应用场景：新加的一个行的数据。我们需要得到自动增长的ID值，将这个ID值插入到另外一个表里面去时。就需要用到这个函数。</p>
-</blockquote>
-<p>&emsp;</p>
-<p><code>mysqli_insert_id()</code>使用举例：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$result = mysqli_query($conn,$sql);</span><br><span class="line"><span class="keyword">if</span>($result)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;注册成功&#x27;</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;注册失败&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;当前用户插入的ID为&#x27;</span>.mysqli_insert_id($conn);</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br><font color="#00B2EE" face="Comic sans MS"><strong>六、关闭数据库连接：</strong></font></p>
-<p>将资源变量传到到mysqli_close这个函数里面即可。</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">mysqli_close($conn);</span><br></pre></td></tr></table></figure>
-
-
-
-<p>&emsp;<br>&emsp;<br>&emsp;<br>先建立test数据库、user数据表。数据表建立语句：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">CREATE TABLE <span class="keyword">IF</span> NOT EXISTS user (id <span class="keyword">int</span>(<span class="number">11</span>) PRIMARY KEY AUTO_INCREMENT,username varchar(<span class="number">30</span>) NOT <span class="literal">NULL</span>,password char(<span class="number">32</span>) NOT <span class="literal">NULL</span>,createtime <span class="keyword">int</span>(<span class="number">11</span>) NOT <span class="literal">NULL</span>,createip varchar(<span class="number">20</span>) <span class="keyword">DEFAULT</span> <span class="literal">NULL</span>) ENGINE=InnoDB <span class="keyword">DEFAULT</span> CHARSET=utf8;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
-<p>&emsp;<br><font color="red"><strong>1. <code>index.php</code>表单页面：</strong></font></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;form action=<span class="string">&quot;connect.php&quot;</span> method=<span class="string">&quot;post&quot;</span>&gt;</span><br><span class="line">    用户名：&lt;input type=<span class="string">&quot;text&quot;</span> name=<span class="string">&quot;username&quot;</span>&gt;&lt;br /&gt;</span><br><span class="line">    密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;password&quot;</span>&gt;&lt;br /&gt;</span><br><span class="line">    重复密码：&lt;input type=<span class="string">&quot;password&quot;</span> name=<span class="string">&quot;repassword&quot;</span>&gt;&lt;br /&gt;</span><br><span class="line">    &lt;input type=<span class="string">&quot;submit&quot;</span> value=<span class="string">&quot;提交&quot;</span>&gt;</span><br><span class="line">&lt;/form&gt;</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br>&emsp;<br><font color="red"><strong>2. <code>connect.php</code>页面完整代码：</strong></font></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (trim($_POST[<span class="string">&#x27;password&#x27;</span>]) != trim($_POST[<span class="string">&#x27;repassword&#x27;</span>])) &#123;</span><br><span class="line">   <span class="keyword">exit</span>(<span class="string">&#x27;两次密码不一致,请返回上一页&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$username = trim($_POST[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line">$password = md5(trim($_POST[<span class="string">&#x27;password&#x27;</span>]));</span><br><span class="line">$time = time();</span><br><span class="line">$ip = $_SERVER[<span class="string">&#x27;REMOTE_ADDR&#x27;</span>];</span><br><span class="line">$conn = mysqli_connect(<span class="string">&#x27;localhost&#x27;</span>, <span class="string">&#x27;root&#x27;</span>, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line"><span class="comment">//echo $username.&quot;/&quot;.$password.&quot;/&quot;.$time.&quot;/&quot;.$ip;</span></span><br><span class="line"><span class="comment">//如果有错误，存在错误号</span></span><br><span class="line"><span class="keyword">if</span> (mysqli_errno($conn)) &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">echo</span> mysqli_error($conn);</span><br><span class="line"></span><br><span class="line">   <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mysqli_select_db($conn, <span class="string">&#x27;test&#x27;</span>);</span><br><span class="line">mysqli_set_charset($conn, <span class="string">&#x27;utf8&#x27;</span>);</span><br><span class="line"></span><br><span class="line">$sql = <span class="string">&quot;insert into user(username,password,createtime,createip) values (&#x27;<span class="subst">$username</span>&#x27;,&#x27;<span class="subst">$password</span>&#x27;,&#x27;<span class="subst">$time</span>&#x27;,&#x27;<span class="subst">$ip</span>&#x27;)&quot;</span>;</span><br><span class="line"></span><br><span class="line">$result = mysqli_query($conn, $sql);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($result) &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;成功&#x27;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;失败&#x27;</span>;</span><br><span class="line">   var_dump(<span class="string">&quot;错误为：&quot;</span>.mysqli_error($conn));</span><br><span class="line">   var_dump(<span class="string">&quot;返回值：&quot;</span>.$result);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&#x27;当前用户插入的ID为&#x27;</span> . mysqli_insert_id($conn);</span><br><span class="line">mysqli_close($conn);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br>&emsp;</p>
-<h3 id="三-通过步骤做一个列表显示实例"><a href="#三-通过步骤做一个列表显示实例" class="headerlink" title="三. 通过步骤做一个列表显示实例"></a><font color="#FF6347" face="Comic sans MS">三. 通过步骤做一个列表显示实例</font></h3><p><font color="#00B2EE">[<a href="http://www.php.cn/code/1262.html">教程</a>]</font><br><font color="#00B2EE">[<a href="http://www.php.cn/code/4977.html">视频</a>]</font></p>
-<p>&emsp;<br>&emsp;</p>
-<h3 id="四-通过步骤操作之把用户做个分页"><a href="#四-通过步骤操作之把用户做个分页" class="headerlink" title="四. 通过步骤操作之把用户做个分页"></a><font color="#FF6347" face="Comic sans MS">四. 通过步骤操作之把用户做个分页</font></h3><p><font color="#00B2EE">[<a href="http://www.php.cn/code/1273.html">教程</a>]</font><br><font color="#00B2EE">[<a href="http://www.php.cn/code/4978.html">视频</a>]</font></p>
-<p>&emsp;<br>&emsp;</p>
-<h3 id="五-批量和指定删除用户"><a href="#五-批量和指定删除用户" class="headerlink" title="五.  批量和指定删除用户"></a><font color="#FF6347" face="Comic sans MS">五.  批量和指定删除用户</font></h3><p>上面已经学过了通过步骤做一个列表显示，在删除前，<font color="#FF7F00"><strong>有单行删除数据和删除多行数据</strong></font>。</p>
-<p>&emsp;</p>
-<h4 id="5-1-判断是单选还是多选删除"><a href="#5-1-判断是单选还是多选删除" class="headerlink" title="5.1 判断是单选还是多选删除"></a><font color="#3CB371" face="Comic sans MS">5.1 判断是单选还是多选删除</font></h4><blockquote>
-<ol>
-<li><font color="#FF7F00"><strong>单行是通过get传参的方式</strong></font>向delete.php文件中写上对应的ID。</li>
-<li>而<font color="#FF7F00"><strong>多个删除是通过POST的方式</strong></font>向delete.php页面中传递对应的ID。</li>
-<li>如果这两个都不符合的话，那我们可以视为数据不合法。</li>
-</ol>
-</blockquote>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (is_array($_POST[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line">    $id = join(<span class="string">&#x27;,&#x27;</span>, $_POST[<span class="string">&#x27;id&#x27;</span>]);</span><br><span class="line">&#125; <span class="keyword">elseif</span> (is_numeric($_GET[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line">    $id = (<span class="keyword">int</span>) $_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;数据不合法&#x27;</span>;</span><br><span class="line">    <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;</p>
-<h4 id="5-2-组合SQL语句"><a href="#5-2-组合SQL语句" class="headerlink" title="5.2 组合SQL语句"></a><font color="#3CB371" face="Comic sans MS">5.2 组合SQL语句</font></h4><blockquote>
-<ol>
-<li>MySQL这一章讲解过<font color="#FF7F00"><strong>删除时可以使用到in的子语句</strong></font>。</li>
-<li>同样在这里，我们就可以用in的子语句来达到效果。</li>
-<li><font color="#FF7F00"><strong>join函数将多选删除传过来的id变为了3,4,5的格式</strong></font>，最终多选删除的SQL语句执行出来的效果就是：</li>
-</ol>
-</blockquote>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">delete <span class="keyword">from</span> user where id in(<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">6</span>,<span class="number">8</span>);</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;<br>而单选删除的语句效果就是：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">delete <span class="keyword">from</span> user where id in(<span class="number">3</span>)</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;<br>这样我们就实现了单选和多选自适应效果：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">$sql = <span class="string">&quot;delete from user where id in(<span class="subst">$id</span>)&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br>最终配套而成的整体代码演示如下：</p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">include</span> <span class="string">&#x27;connection.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (is_array($_POST[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line"></span><br><span class="line">   $id = join(<span class="string">&#x27;,&#x27;</span>, $_POST[<span class="string">&#x27;id&#x27;</span>]);</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">elseif</span> (is_numeric($_GET[<span class="string">&#x27;id&#x27;</span>])) &#123;</span><br><span class="line"></span><br><span class="line">   $id = (<span class="keyword">int</span>) $_GET[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"></span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;数据不合法&#x27;</span>;</span><br><span class="line">   <span class="keyword">exit</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">$sql = <span class="string">&quot;delete from user where id in(<span class="subst">$id</span>)&quot;</span>;</span><br><span class="line"></span><br><span class="line">$result = mysqli_query($conn, $sql);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> ($result) &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;删除成功&#x27;</span>;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">   <span class="keyword">echo</span> <span class="string">&#x27;删除失败&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>&emsp;<br>&emsp;</p>
-<h3 id="六-通过步骤修改用户信息"><a href="#六-通过步骤修改用户信息" class="headerlink" title="六. 通过步骤修改用户信息"></a><font color="#FF6347" face="Comic sans MS">六. 通过步骤修改用户信息</font></h3><p>内容有点多，等哪天想起来了或者心情好了再写吧…..(✿◡‿◡)</p>
-<p><font color="#00B2EE">[<a href="http://www.php.cn/code/1277.html">教程</a>]</font><br><font color="#00B2EE">[<a href="http://www.php.cn/code/4980.html">视频</a>]</font></p>
-<p>&emsp;<br>&emsp;</p>
-<h3 id="七-数据显示乱码终极解决办法"><a href="#七-数据显示乱码终极解决办法" class="headerlink" title="七. 数据显示乱码终极解决办法"></a><font color="#FF6347" face="Comic sans MS">七. 数据显示乱码终极解决办法</font></h3><p>解决乱码问题的核心思想，就是：<font color="#FF7F00"><strong>一定要多个不同的文件系统中一定要统一编码</strong></font>。</p>
-<p>&emsp;<br>总结成了9个要点来彻底解决连接后乱码的问题。</p>
-<blockquote>
-<ol>
-<li><font color="#00B2EE"><strong>html编码与MySQL编码一致</strong></font></li>
-<li><font color="#00B2EE"><strong>PHP编码与MySQL编码一致</strong></font></li>
-<li><font color="#00B2EE"><strong>若有header头发送字符集，请与数据库一样</strong></font></li>
-<li><font color="#00B2EE"><strong>&lt;meta http-equiv=“Content-Type”content=“text/html; charset=utf-8” /&gt;要和页面的文字编码一致</strong></font></li>
-<li><font color="#00B2EE"><strong>数据库建库的字符集要统一</strong></font></li>
-<li><font color="#00B2EE"><strong>表的字符集要统一</strong></font></li>
-<li><font color="#00B2EE"><strong>列的字符集要统一(表设了,列就默认写表的)</strong></font></li>
-<li><font color="#00B2EE"><strong>连接,校验的字符集要统一</strong></font></li>
-<li><font color="#00B2EE"><strong>结果集的字符集要统一</strong></font></li>
-</ol>
-</blockquote>
-<p>&emsp;<br>&emsp;<br>&emsp;<br><font color="#FF7F00"><strong>一、 文件编码</strong></font><br>html和PHP文件的编码，示例中：拿notepad++来演示。将PHP和html都要设为这种字符集。<br>一定要设置为utf-8无BOM格式。</p>
-<p><img data-src="https://i.loli.net/2019/02/24/5c72764c43d27.png" alt="1"></p>
-<p>&emsp;<br><font color="#FF7F00"><strong>二、 header头编码</strong></font><br>如果php中有header头，一定要是<strong>utf-8</strong>的<br><font color="red"></font></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">header(<span class="string">&#x27;content-type:text/html;charset=utf-8&#x27;</span>);</span><br></pre></td></tr></table></figure>
-
-<p>&emsp;<br><font color="#FF7F00"><strong>三、网页头文件编码</strong></font><br>如果html文件编码是utf-8的也要设置为一置<br><font color="red"></font></p>
-<figure class="highlight php"><table><tr><td class="code"><pre><span class="line">&lt;meta http-equiv=“Content-Type”content=“text/html; charset=utf<span class="number">-8</span>” /&gt;</span><br></pre></td></tr></table></figure>
-
-
-<p>&emsp;<br><font color="#FF7F00"><strong>四、创建数据库的编码</strong></font></p>
-<p><img data-src="https://i.loli.net/2019/02/24/5c72789c325a2.png" alt="2"></p>
-<p>&emsp;<br><font color="#FF7F00"><strong>五、表和列创建的时候表为utf-8</strong></font></p>
-<p><img data-src="https://i.loli.net/2019/02/24/5c7278e24b5ad.png" alt="3.png"></p>
-<p>&emsp;<br><font color="#FF7F00"><strong>六、连接，结果、校验字符集设置</strong></font></p>
-<blockquote>
-<p><font color="#00B2EE"><strong>1.通过mysqli_set_charset(‘utf8’)来MySQL连接、结果和校验的字符集设置。<br>2.注：数据库的字符集声明和文件中的略有不同。</strong></font><font color="red"><strong>utf8为mysql数据库的，utf-8为文件中使用的。</strong></font></p>
-</blockquote>
-]]></content>
-      <categories>
-        <category>PHP</category>
-      </categories>
-      <tags>
-        <tag>PHP语言</tag>
-        <tag>MySQL</tag>
       </tags>
   </entry>
   <entry>
@@ -12164,7 +12164,7 @@ PHP代码的最后一行可以加也可不加分号。由于很多学习者特�
 <p><strong>结论：</strong><br>1.如pattern 在匹配$string的时候，$string的字符串this后有一个回车。在没有加D匹配符的时候也能匹配成功<br>2.如pattern 在匹配$string的时候，加上了D。$string的字符串this后有空格，匹配不成功。</p>
 </blockquote>
 <p>&emsp;</p>
-<h3 id="7-写正则的诀窍和常用正则"><a href="#7-写正则的诀窍和常用正则" class="headerlink" title="7. 写正则的诀窍和常用正则"></a><font face="Comic sans MS"  color="#FF6347">7. 写正则的诀窍和常用正则</font></h3><p><font face="Comic sans MS">写正则的诀窍</font><br>女孩和男孩恋爱时的诀窍通常是：测试你是不是对我好一点，如果是的，咱们的关系就更好一点。<br>而正则的诀窍和恋爱的诀窍基本一致：<font color="red">写一点、测一点。</font><br>因为，<strong>我们需要不断的正则，用preg_match对比是不是能匹配成功。成功了，再写后面的一点。直到写完，全部匹配成功为止！</strong><br><font face="Comic sans MS">例如，我要写一个邮箱的正则。我先要做的事情，将常用的邮箱格式全部列出来。例如：<br><a href="mailto:&#112;&#104;&#x70;&#99;&#110;&#x40;&#x70;&#104;&#x70;&#46;&#x63;&#110;">&#112;&#104;&#x70;&#99;&#110;&#x40;&#x70;&#104;&#x70;&#46;&#x63;&#110;</a> &emsp; <a href="mailto:&#x70;&#104;&#x70;&#x63;&#110;&#64;&#x63;&#x6f;&#x72;&#x70;&#46;&#x62;&#x61;&#x69;&#100;&#117;&#46;&#x63;&#x6d;">&#x70;&#104;&#x70;&#x63;&#110;&#64;&#x63;&#x6f;&#x72;&#x70;&#46;&#x62;&#x61;&#x69;&#100;&#117;&#46;&#x63;&#x6d;</a> &emsp; <a href="mailto:&#x70;&#104;&#x70;&#99;&#x6e;&#64;&#x31;&#x32;&#54;&#x2e;&#x63;&#111;&#x6d;">&#x70;&#104;&#x70;&#99;&#x6e;&#64;&#x31;&#x32;&#54;&#x2e;&#x63;&#111;&#x6d;</a>  &emsp;<a href="mailto:&#x70;&#x68;&#x70;&#99;&#110;&#x40;&#x78;&#120;&#120;&#x2e;&#99;&#x6f;&#109;">&#x70;&#x68;&#x70;&#99;&#110;&#x40;&#x78;&#120;&#120;&#x2e;&#99;&#x6f;&#109;</a>  &emsp;<a href="mailto:&#x31;&#x32;&#x33;&#x34;&#53;&#x40;&#x71;&#113;&#46;&#99;&#x6f;&#x6d;">&#x31;&#x32;&#x33;&#x34;&#53;&#x40;&#x71;&#113;&#46;&#99;&#x6f;&#x6d;</a><br></font></p>
+<h3 id="7-写正则的诀窍和常用正则"><a href="#7-写正则的诀窍和常用正则" class="headerlink" title="7. 写正则的诀窍和常用正则"></a><font face="Comic sans MS"  color="#FF6347">7. 写正则的诀窍和常用正则</font></h3><p><font face="Comic sans MS">写正则的诀窍</font><br>女孩和男孩恋爱时的诀窍通常是：测试你是不是对我好一点，如果是的，咱们的关系就更好一点。<br>而正则的诀窍和恋爱的诀窍基本一致：<font color="red">写一点、测一点。</font><br>因为，<strong>我们需要不断的正则，用preg_match对比是不是能匹配成功。成功了，再写后面的一点。直到写完，全部匹配成功为止！</strong><br><font face="Comic sans MS">例如，我要写一个邮箱的正则。我先要做的事情，将常用的邮箱格式全部列出来。例如：<br><a href="mailto:&#112;&#x68;&#112;&#99;&#x6e;&#64;&#x70;&#104;&#112;&#46;&#x63;&#x6e;">&#112;&#x68;&#112;&#99;&#x6e;&#64;&#x70;&#104;&#112;&#46;&#x63;&#x6e;</a> &emsp; <a href="mailto:&#112;&#104;&#x70;&#99;&#110;&#x40;&#99;&#x6f;&#114;&#x70;&#46;&#98;&#97;&#x69;&#100;&#x75;&#x2e;&#x63;&#109;">&#112;&#104;&#x70;&#99;&#110;&#x40;&#99;&#x6f;&#114;&#x70;&#46;&#98;&#97;&#x69;&#100;&#x75;&#x2e;&#x63;&#109;</a> &emsp; <a href="mailto:&#x70;&#104;&#x70;&#x63;&#110;&#x40;&#x31;&#x32;&#54;&#46;&#x63;&#111;&#x6d;">&#x70;&#104;&#x70;&#x63;&#110;&#x40;&#x31;&#x32;&#54;&#46;&#x63;&#111;&#x6d;</a>  &emsp;<a href="mailto:&#x70;&#104;&#112;&#99;&#x6e;&#64;&#120;&#120;&#120;&#46;&#99;&#111;&#x6d;">&#x70;&#104;&#112;&#99;&#x6e;&#64;&#120;&#120;&#120;&#46;&#99;&#111;&#x6d;</a>  &emsp;<a href="mailto:&#x31;&#x32;&#x33;&#x34;&#53;&#64;&#x71;&#113;&#x2e;&#99;&#x6f;&#x6d;">&#x31;&#x32;&#x33;&#x34;&#53;&#64;&#x71;&#113;&#x2e;&#99;&#x6f;&#x6d;</a><br></font></p>
 <table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS">  常用的格式主要有这样一些。那我们就可以来分析：
     1.先匹配@之前的字符 \w+（因为是0-9A-Za-z_）
     2.第二个跟一个@符
@@ -13532,7 +13532,10 @@ Include文件只需要编译一次，因为每次包含include都会再执行一
 <li>图3-10所示的大多数指令，既可以用于无符号运算，也可以用于补码运算。<mark class="label danger">只有右移操作要求区分有符号和无符号数</mark>。这个特性使得补码运算成为实现有符号整数运算的一种比较好的方法的原因之一。</li>
 </ol>
 <p><img data-src="https://i.loli.net/2020/10/08/eKi1gypYuSIAxOs.png" alt="12算术运算与汇编.png"></p>
-<h4 id="3-5-4-乘法和除法"><a href="#3-5-4-乘法和除法" class="headerlink" title="3.5.4 乘法和除法"></a>3.5.4 乘法和除法</h4><p>两个 64 位有符号或无符号整数相乘得到的乘积需要 128 位来表示。x86-64 指令集对 128 位（16字节）数的操作提供有限的支持。 <mark class="label danger">故使用寄存器%rdx和%rax来组成一个128位的八字来保存乘法产生的128位积或者除法的被除数的高64位和低64位或者除法产生的商和余数</mark>  图 3-12 描述的是支持产生两个 64 位数字的全 128 位乘积以及整数除法的指令。</p>
+<h4 id="3-5-4-乘法和除法"><a href="#3-5-4-乘法和除法" class="headerlink" title="3.5.4 乘法和除法"></a>3.5.4 乘法和除法</h4><div class="note primary"><p><strong>注意，一个a位的操作数和一个b位的操作数，产生的乘积是a+b位的操作数</strong></p>
+</div>
+
+<p>两个 64 位有符号或无符号整数相乘得到的乘积需要 128 位来表示。x86-64 指令集对 128 位（16字节）数的操作提供有限的支持。 <mark class="label danger">故使用寄存器%rdx和%rax来组成一个128位的八字来保存乘法产生的128位积或者除法的被除数的高64位和低64位或者除法产生的商和余数</mark>  图 3-12 描述的是支持产生两个 64 位数字的全 128 位乘积以及整数除法的指令。</p>
 <p><img data-src="https://i.loli.net/2020/10/08/nTdwNpa7mgizOYU.png" alt="13特殊的算术操作.png"></p>
 <div class="note primary"><p><code>imulq</code>属于<code>IMUL</code>指令类，该指令有两种不同的形式。其中一种，如图3-10 所示，是<mark class="label warning">双操作数</mark>乘法指令。它从两个 64 位操作数产生一个 64 位乘积。而另一种属于<mark class="label warning">单操作数</mark>乘法指令的有符号乘法（补码乘法）。<code>x86-64</code>提供了两条单操作数乘法：</p>
 <ul>
@@ -13563,6 +13566,19 @@ Include文件只需要编译一次，因为每次包含include都会再执行一
 <li>ZF：零标志。最近的操作得出的结果为0。</li>
 <li>SF：负数符号标志。最近的操作得到的结果为负数。</li>
 <li>OF：溢出标志。最近的操作导致一个补码溢出--&gt;正溢出或负溢出。</li>
+</ul>
+</div>
+
+<div class="note danger"><p><strong>正溢出与负溢出</strong>：</p>
+<p>首先，一个正数与一个负数相加，不可能溢出，因为结果的绝对值一定小于两个加数的绝对值，既然两个加数能合理表示出来，结果一定也能合理表示出来。</p>
+<ul>
+<li><strong>正溢出是由于两个很大的正数相加，导致符号位变成1的情况</strong>。如 $0110+0011=1001$（假设最大只能运算4位）</li>
+<li><strong>负溢出则是两个很小的负数相加，导致符号位变成0的情况</strong>。如 1011(-5)+1011(-5)=10110-&gt;0110​ （溢出）；如 $1111(-1)+1111(-1)=11110-&gt;1110$ 则没溢出。</li>
+</ul>
+<p>　因此：</p>
+<ul>
+<li>正溢出的判断标准是符号位或最高位有进位</li>
+<li>负溢出的判断标准是符号位和最高位只有一个发生了进位。符号位和最高位同时发生进位则没溢出。（注意，这里的最高位指的是去掉符号位后的最高位，即符号位后面一位。）</li>
 </ul>
 </div>
 
@@ -13659,7 +13675,67 @@ Include文件只需要编译一次，因为每次包含include都会再执行一
 <div class="note warning"><p><code>CMP</code>指令会设置进位标志，因为无符号比较使用的是进位标志（CF）和零标志（ZF）的组合。</p>
 </div>
 
-<h4 id="3-6-3-跳转指令"><a href="#3-6-3-跳转指令" class="headerlink" title="3.6.3 跳转指令"></a>3.6.3 跳转指令</h4>]]></content>
+<h4 id="3-6-3-跳转指令"><a href="#3-6-3-跳转指令" class="headerlink" title="3.6.3 跳转指令"></a>3.6.3 跳转指令</h4><p>跳转指令（<code>jump</code>）会使正在执行的指令切换到程序中一个全新的位置。跳转的目的地通常用一个标号（label）指明。</p>
+<div class="note success"><p>在产生目标代码文件时，汇编器会确定所有带标号指令的地址，并将跳转目标（目的指令的地址）编码为跳转指令的一部分。</p>
+</div>
+
+<mark class="label danger">jmp指令是无条件跳转的</mark> 分为直接跳转和间接跳转
+
+<ul>
+<li>直接跳转：跳转目标是作为指令的一部分编码的</li>
+<li>间接跳转：跳转目标是从寄存器或内存位置中读出。简介跳转的写法是 <code>jmp *Operand</code> ，<code>*</code>后跟一个操作数指示符</li>
+</ul>
+<ul>
+<li><code>jmp .L1</code>：跳转到<code>L1</code>标号</li>
+<li><code>jmp *%rax</code>：用寄存器<code>%rax</code>中的值作为跳转目标</li>
+<li><code>jmp *(%rax)</code>：以<code>%rax</code>中的做为地址，从内存中读出跳转目标</li>
+</ul>
+<p><img data-src="https://i.loli.net/2020/10/10/wF6uXslOJ8EGhNC.png" alt="16jmp指令.png"></p>
+<h4 id="3-6-4-跳转指令的编码"><a href="#3-6-4-跳转指令的编码" class="headerlink" title="3.6.4 跳转指令的编码"></a>3.6.4 跳转指令的编码</h4><p>这里的编码指的是机器码，研究跳转指令的汇编代码如何编译为机器代码，然后与地址联系起来。</p>
+<div class="note success"><p><strong><code>jmp .L1</code>：<code>.L1</code>是跳转目标，它的机器编码称为目标编码。这整条指令的编码 = <code>jmp</code>的编码（eb）+<code>.L1</code>的编码</strong></p>
+</div>
+
+<p>跳转指令的编码分为： </p>
+<ul>
+<li><strong>PC相对的</strong>（PC-relative）。将目标指令的地址与紧跟在跳转指令后面那条指令的地址之间的差作为编码【跳转指令的目标编码（偏移量） = 目标指令的地址（要跳到的地址） $-$ 跳转指令后面那条指令的地址（程序计数器的值）】。这些地址偏移量可以编码为 1、2、4 个字节。程序计数器的值是跳转指令后面的那条指令的地址，而不是跳转指令本身的地址。 </li>
+<li><strong>绝对地址</strong>，用 4 个字节直接指定目标，汇编器和连接器会选择适当的跳转目的编码。</li>
+</ul>
+<p>PC相对编码例子：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">（汇编代码）</span><br><span class="line">movq    %rdi, %rax </span><br><span class="line">jmp     .L2 </span><br><span class="line">.L3: </span><br><span class="line">  sarq  %rax</span><br><span class="line">.L2: </span><br><span class="line">  testq %rax, %rax </span><br><span class="line">  jg    .L3 </span><br><span class="line">  rep;  ret</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">（机器代码的反汇编版本）</span><br><span class="line">    <span class="number">0</span>:   <span class="number">48</span> <span class="number">89</span> f8                       mov     %rdi, %rax </span><br><span class="line">    <span class="number">3</span>:   eb <span class="number">03</span>                          jmp     <span class="number">8</span> &lt;loop+<span class="number">0x8</span>&gt;</span><br><span class="line">    <span class="number">5</span>:   <span class="number">48</span> d1 f8                       sar     %rax </span><br><span class="line">    <span class="number">8</span>:   <span class="number">48</span> <span class="number">85</span> c0                       test    %rax, %rax </span><br><span class="line">    b:   <span class="number">7f</span> f8                          jg      <span class="number">5</span> &lt;loop+<span class="number">0x5</span>&gt; </span><br><span class="line">    d:   f3 с<span class="number">3</span>                          repz retq</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">（链接后的程序反汇编版本）</span><br><span class="line">    <span class="number">4004</span>d0:   <span class="number">48</span> <span class="number">89</span> f8                  mov     %rdi, %rax </span><br><span class="line">    <span class="number">4004</span>d3:   eb <span class="number">03</span>                     jmp     <span class="number">4004</span>d8 &lt;loop+<span class="number">0x8</span>&gt;</span><br><span class="line">    <span class="number">4004</span>d5:   <span class="number">48</span> d1 f8                  sar     %rax </span><br><span class="line">    <span class="number">4004</span>d8:   <span class="number">48</span> <span class="number">85</span> c0                  test    %rax, %rax </span><br><span class="line">    <span class="number">4004</span>db:   <span class="number">7f</span> f8                     jg      <span class="number">4004</span>d5 &lt;loop+<span class="number">0x5</span>&gt; </span><br><span class="line">    <span class="number">4004</span>dd:   f3 с<span class="number">3</span>                     repz retq</span><br></pre></td></tr></table></figure>
+
+
+
+<div class="note primary"><p>对于机器代码的反汇编版本：</p>
+<ul>
+<li><p><mark class="label success">反汇编器以十六进制格式给出所有的数字</mark> </p>
+</li>
+<li><p><code>jmp</code>指令后的大小数字、机器代码或地址全都是以<mark class="label success">补码</mark>的形式给出</p>
+</li>
+<li><p>右边反汇编器产生的注释中，第2行中跳转指令的跳转目标指明为<code>0x8</code>，第5行中跳转指令的跳转目标是<code>0x5</code>。</p>
+</li>
+</ul>
+<p>根据计算公式：</p>
+<ul>
+<li>第一条跳转指令的目标编码（在第二个字节中)为 <code>0x3</code> （偏移量或目标编码）是由 <code>0x8 - 0x5</code> 得到（<code>0x8</code>是要跳到的地址，<code>0x5</code>是跳转指令后面那条指令的地址或程序计数器的值）</li>
+<li>第二条跳转指令的目标编码 <code>0xf8</code> 是由 <code>0x5 - 0xd</code> 得到。由于是以补码的形式给出，则<code>0xf8</code>表示十进制的<code>-8</code>。</li>
+</ul>
+<p>对于第一条跳转指令机器代码的反汇编版本： <code>3:  eb 03       jmp  8 &lt;loop+0x8&gt;</code>  ：</p>
+<ul>
+<li><code>3:</code>：指令<code>jmp  8 &lt;loop+0x8&gt;</code>装载前的地址，值为 <code>0x3</code>，是补码形式</li>
+<li><code>eb 03</code>：即为指令<code>jmp  8 &lt;loop+0x8&gt;</code>的指令编码（只需要两个字节，<code>eb</code>是低字节、<code>03</code>是高字节）</li>
+<li><code>eb</code>：是<code>jmp</code>指令的（机器）编码，是补码形式</li>
+<li><code>03</code>：<code>jmp</code>指令跳转目标的编码，也叫做偏移量，是补码形式</li>
+</ul>
+<p>注意：AMD 建议用<code>rep</code>后面跟<code>ret</code>的组合来避免使<code>ret</code>成为条件跳转指令的目标。如果没有<code>rep</code>，当分支不跳转时，<code>jg</code>指令会继续到<code>ret</code>指令。（<code>rep</code>或<code>repz</code>是同义名，<code>retq</code>和<code>ret</code>是同义名。以后遇到<code>rep</code>或<code>repz</code>就直接无视掉。）</p>
+</div>
+
+
+
+<h4 id="3-6-5-用条件控制来实现条件分支"><a href="#3-6-5-用条件控制来实现条件分支" class="headerlink" title="3.6.5 用条件控制来实现条件分支"></a>3.6.5 用条件控制来实现条件分支</h4>]]></content>
       <categories>
         <category>CS:APP</category>
       </categories>
@@ -14919,7 +14995,7 @@ Include文件只需要编译一次，因为每次包含include都会再执行一
 <td align="center"><strong>默认值说明</strong></td>
 <td align="left">自增</td>
 <td align="left">必填</td>
-<td align="left">选填字段，默认值为<a href="mailto:&#49;&#x32;&#51;&#64;&#112;&#104;&#x70;&#x2e;&#99;&#110;">&#49;&#x32;&#51;&#64;&#112;&#104;&#x70;&#x2e;&#99;&#110;</a></td>
+<td align="left">选填字段，默认值为<a href="mailto:&#49;&#x32;&#51;&#x40;&#112;&#x68;&#112;&#x2e;&#x63;&#110;">&#49;&#x32;&#51;&#x40;&#112;&#x68;&#112;&#x2e;&#x63;&#110;</a></td>
 <td align="left">选填字段</td>
 <td align="left">必填字段</td>
 </tr>
