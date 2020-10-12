@@ -22,27 +22,18 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
+  <meta name="description" content="Welcome to my blog, enter password to read.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Hash函数和消息认证">
 <meta property="og:url" content="https://directoree.github.io/post/Hash-Message-Authentication/index.html">
 <meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;ensp;&amp;ensp; Hash函数  &amp; 消息认证  &amp;ensp;&amp;ensp; 一、 Hash函数结构、MD5、SHA-1 &amp;ensp;&amp;emsp; 二、 消息认证&amp;emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。 认证分为：实体认证、消息认证。 &amp;ensp;">
+<meta property="og:description" content="Welcome to my blog, enter password to read.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2018/12/27/5c24b73ee6580.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/28/5c25a1af1de45.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/28/5c25a009059a5.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/28/5c259da576af5.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/28/5c259e5101bfd.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/28/5c25c7ecb59d9.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/28/5c25cbf610d03.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/28/5c25c8fb7288b.png">
 <meta property="article:published_time" content="2018-12-26T12:59:42.000Z">
-<meta property="article:modified_time" content="2020-01-06T13:54:54.107Z">
+<meta property="article:modified_time" content="2020-10-12T10:15:38.723Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="Hash函数">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/27/5c24b73ee6580.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/Hash-Message-Authentication/">
@@ -222,7 +213,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -234,7 +225,6 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81-Hash%E5%87%BD%E6%95%B0%E7%BB%93%E6%9E%84%E3%80%81MD5%E3%80%81SHA-1"><span class="nav-text">一、 Hash函数结构、MD5、SHA-1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81-%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81"><span class="nav-text">二、 消息认证</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81%E7%A0%81"><span class="nav-text">1.1  消息认证码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-%E5%9F%BA%E4%BA%8EDES%E5%92%8CHash%E5%87%BD%E6%95%B0%E7%9A%84%E6%B6%88%E6%81%AF%E8%AE%A4%E8%AF%81%E7%A0%81"><span class="nav-text">1.2  基于DES和Hash函数的消息认证码</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -358,7 +348,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-01-06 21:54:54" itemprop="dateModified" datetime="2020-01-06T21:54:54+08:00">2020-01-06</time>
+        <time title="修改时间：2020-10-12 18:15:38" itemprop="dateModified" datetime="2020-10-12T18:15:38+08:00">2020-10-12</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -417,41 +407,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>&ensp;<br>&ensp;</p>
-<center><font color="#3CB371" face="Comic sans MS" size=5>Hash函数  & 消息认证</font></center>
-
-<p>&ensp;<br>&ensp;</p>
-<h3 id="一、-Hash函数结构、MD5、SHA-1"><a href="#一、-Hash函数结构、MD5、SHA-1" class="headerlink" title="一、 Hash函数结构、MD5、SHA-1"></a><font color="#FF6347" face="Comic sans MS">一、 Hash函数结构、MD5、SHA-1</font></h3><p><a target="_blank" rel="noopener" href="https://i.loli.net/2018/12/27/5c24b73ee6580.png"><img data-src="https://i.loli.net/2018/12/27/5c24b73ee6580.png" alt="Hash函数.png"></a></p>
-<p>&ensp;<br>&emsp;</p>
-<h3 id="二、-消息认证"><a href="#二、-消息认证" class="headerlink" title="二、 消息认证"></a><font color="#FF6347" face="Comic sans MS">二、 消息认证</font></h3><p><font face="Comic sans MS">&emsp;消息认证是一个过程，用以验证接收消息的真实性（的确是由它所声称的实体发来的）和完整性（未被篡改、插入、删除），同时还用于验证消息的顺序性和时间性（未被重排、重放、延迟等）。</p>
-<p><strong>认证分为：</strong>实体认证、消息认证。</font></p>
-<p>&ensp;</p>
-<h4 id="1-1-消息认证码"><a href="#1-1-消息认证码" class="headerlink" title="1.1  消息认证码"></a><font color="#20B2AA" face="Comic sans MS">1.1  消息认证码</font></h4><p><font face="Comic sans MS"><strong>消息认证码：(MAC，Message Authentication Code)或报文认证码</strong>，是用于提供数据源认证和数据完整性的密码校验值。<br><strong>MAC：</strong>是指消息被一密钥控制的公开函数作用后产生的、用作认证的、固定长度的数值，<strong>也称为密码校验和。</strong><br></font></p>
-<p><img data-src="https://i.loli.net/2018/12/28/5c25a1af1de45.png" alt="D3364.png"><br><img data-src="https://i.loli.net/2018/12/28/5c25a009059a5.png" alt="58D4.png"><br><img data-src="https://i.loli.net/2018/12/28/5c259da576af5.png" alt="图片21.png"><br><img data-src="https://i.loli.net/2018/12/28/5c259e5101bfd.png" alt="图片2.png"></p>
-<p>&emsp;<br>&emsp;</p>
-<h4 id="1-2-基于DES和Hash函数的消息认证码"><a href="#1-2-基于DES和Hash函数的消息认证码" class="headerlink" title="1.2  基于DES和Hash函数的消息认证码"></a><font color="#20B2AA" face="Comic sans MS">1.2  基于DES和Hash函数的消息认证码</font></h4><p><font face="Comic sans MS" color="red"><strong>消息认证码的构造主要有两种：</strong>基于分组密码、基于带密钥的Hash函数-HMAC。</font></p>
-<table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS"> **1. 基于DES的消息认证码：**将需要认证的消息和密钥K经过16轮迭代后生成该消息认证码。
-</font></td></tr></table>
-
-<p><img data-src="https://i.loli.net/2018/12/28/5c25c7ecb59d9.png" alt="图片3.png"></p>
-<table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS"> **2. 基于Hash函数的消息认证码HMAC：**HMAC生成的过程使用了2次Hash函数。
-</font></td></tr></table>
-
-<p><img data-src="https://i.loli.net/2018/12/28/5c25cbf610d03.png" alt="1R.png"><br><img data-src="https://i.loli.net/2018/12/28/5c25c8fb7288b.png" alt="图片4.png"></p>
-<table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS">描述：
-(1) K的左边填充0以产生一个b比特长的K<sup>+</sup> （例如Ki的长为160比特，b=512，则需填充44个零字节0x00）
-(2) K<sup>+</sup>与ipad 逐比特异或以产生b比特的分组Si 
-(3) 将M附于Si后
-(4) 将哈希函数H作用于步骤(3)产生的数据流
-(5) K<sup>+</sup>与opad逐比特异或,以产生b比特长的分组S<sub>0</sub>
-(6) 将步骤(4)得到的杂凑值链接在S<sub>0</sub>后
-(7) 将H作用于步骤(6)产生的数据流并输出最终结果HMAC
-</font></td></tr></table>
-
-<hr>
-<hr>
-<p>&emsp;<br>&emsp;<br>&emsp;<br>&emsp;</p>
-
+        <div id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <div class="hbe-input-container">
+  <input type="password" id="hbePass" placeholder="" />
+    <label for="hbePass">Welcome to my blog, enter password to read.</label>
+    <div class="bottom-line"></div>
+  </div>
+  <script id="hbeData" type="hbeData" data-hmacdigest="21582bc57520078ec50f35a23f99147a6145ff8b7cc4653afeb4ba972cf75446">c8a6ea5f1e651a923da793e6131165195edca5e224eb04f8de211bd01e36a458404a312c92f198af16b815cf746e31e418df468f332f57ad407065a720ab50332e0ded5d198e59f3dfae1048f687f80dfc9fce7607586bd280bcb5c9da09491d601fc9b4cbebb6e4d5428e597030eeb1e67330b4c9c0f39529a405164c28323195ac009dc4126e0b69c9dfca429c9032dd6083ea866b42be907f69da735a35534d0f7aaa7cad8b67c9bfc42d07de4e60e2c6aca64324d5934ca33dd1bdecda4b21d70c940fcc614866ecbf19f167b5ba07586b69cc1857ebf2d9647378b0189b4ca186a04bd99ec0774915e978ebbd820696fcaeb5505999ae71f178d1c1fa2201fffbc7e885bf112a1d70e42bd2d6febca983f17084b61f6a74407f63c9282c6950925dca5bfc9dc736c5fe55c3b241b953ac25b18c4d2e779cd009fea876624dd509cbaaf8ecd078fca4a11845e824e16861126500dcffba62e7f02b012a4eae3054d75800d5a0d297638ff852080b0a413954541034f0b0345a0b325802858553c9d10bca14ff31e856baae85f82fea36e9018b5fed564513b19e7295bcfa5f28b53613e1220f4c16601cf5798c881518d0b3f2fbde26f967d10762e5797db69032c7344f926e6322e3e35454f33cd81d97254e24edea44f7f311200b62abf41a3f4a227efe8c3c6d3b9d729c48162d6077a292dcbc633a4ea5323234e56d5d7a3af69d6f95a68c896859a6984dddc9328b265142569484ee763233b35d4c992f08820e7bebdd10663d899d542925ded0271a862c149d1268ca88f7e3c144bf0b3eb5b0af3ec3687f230fd626d22d68f5ed3008a71152ca6b1b0763226c172526034a7fb2ea730fde18d02aef53e22e6004ea3c90ca72f55edc3324891c7150f8e7bbf5a4c57eabf612eeb31b7604102bce4f23dbe766458ee05b9fef8127d369c2a7211cb73c0e1f1b768963cd2fe5f22f28b7c4256c51599343c3ae07787a28ca3f87a3ea76975b99465886bab5cc60091395b61f846f18548389db0001fb1571294cb7bdeb81afb299732251b69c887e2c5cdaef9e8fa883b00121f8c3aec2ef4fbf0e254ab5c1a96c16213aa2fef747e47ed582783eff5d740058f328611385dda401f3639b0dcc9e91ad6b103122d48badd00771e9ea2fd90fb84cba0cb240cc2284af4f084ee30cd456b8bf37028ef01f91c535cf79c21f6774b15b5ea5393d1545a215af1b4a83b572f6e5810cf8609141c004026c40e072aafd398d821a4bd0c084e29cf5eb55756744e7152a4ba4e69c32880727ce6df2b2f34204de7875d3d91211d26b48ff494f3e665247bf9a4e1b44e882d018ee1192069faf65f0396e78dc05aefebd53ff9dc3a00f32665cf475491b46fe806b13b53c70677c1e901144da8e8761f57b315d9ac963ac8526bed5df1ceaae0a3201712fb27572592b7fdfbd89e0b8d2f6a1faae3e6634f5c45bc77daf8b8c02e3b73c0a2f596ff71338b4cf871e3f70114cbf5d7a22d952f90b2999217353e1190c637513bc0cf0253a070a9e5de1e2d62d9b0f3b00ac55fcfa4faf294d1eed892809c53cb9385a305bb84c345169a65893276795b2423f18cd5496594126c41640c438d0054a4188b521b96ba63b0d3052e51a349eff9d579ed0a951faca0b77e99e73d5f65d2abd9fa391344e0034e2767e999bccd3650c75d6f3dca519c1879a4f446bb5d2cf4cb05d076c8bd124741e9bd9828e1762e740017ec59b2176a65e168b0e041ec3c80aea36c6a08c6036fce0e529dbe2388c4ab5f2585e8f9ce9a778fe81190b91ec633910e7560ee3220b8ae0096ad5635ae9e23a235f1f5fb7a133f7b900df31fefb2f34e8e81027c95b4e7a4dfa113d523d1440e5fdd4f4ade9308ec169426ac817a2f60908e487168b337a5b11010ce620f9838a7124ead32e7f58e51a7e2125414dcc6cbbdab51fb2531eee71a78cf746d119241f117a2371ad458dc4218760a1a596495dc0f5a57ebb9dbc94297cfda64180f7a2f84e549da81836a07038d5efd5c53ba072239e83f2471e602d49a3bc66977b29197aa74a6d9906883275f19de17e607760c17ee37c91e8b591187cce1a9e1cf2e10e1e0d4b32fa9d366d955366ca048730011dbf114dceedd44e05ec845d9ed0d04bb28f239083b8dad9b58e83aa9830693c45d7e33bbf9b01753ca35074b3060b9d9d4bc2a16c071d1ff3eddff1d254fb77b5167e190f82632b1c05a12440eb58eb96ec89cad3a9af32910d17577f50651203030abe94c738fad40c5d3cc76090f64de53f672dfebf58dd1339fae3f2b69843146374673b419febd0dbbca08784e6f9acef2f94ea70d8935f0c8b5ec247af5561492a90d4a68a98f3bd3f4c2b86efb8de8eb4a0b4546736dec7efbafbca4391aae2db46a6d1203e9ad63c106f847128458d5b812fda7442ec6c7c0c6b0d55d2db86239f9c81dce1b1bfb6991ccf904ac3bc1206f0a361276ff49c7fce5cf175f6d5c0db56e5fa5bdfc8d2cd6ba543612a82ccddfa76d1d761d89f4c4c6c6f4671dd16e19e01c420a6fc66cd1725d38c13e6959705c00a103ed526e483428372d44e8582aadb69ca7d3ce86af482121369667b6ed2eec8cac0dadd5d75f846e76e38647434fb6a28c9f918c3cc457dce8c1179b7853f64d630a6a40f05bc95cfd3708da8e788ae74d3e112ccb2e7673f90a883aa7fc67b676337b33bf7c9dbbbf5b6413c90238c97b01063950440241e38655652809aacf58dbb89e57bc25fb3dfe1697531d1b387b0f6d9bda294643595d89e478e3d22a2309aa8dcfbdbe3faf8846fb8a83a2dc8552923c669480a457789e4be7c0fe4b16864aed3d93e9c959d80240410e696fbeddc5780830cda9543319a5aa3ebb022a1c109d20278820c77b76bf41aa57ee8353fc4ea5dbd5c4912611bc7c1a7e9a3cfacf3484b79ccfd74c149dfbf9a227adb7ba9e8a93bf42ba144b92ed638d511f08643b9c653e43b0429daa335684b843347a34a09903d95f746a232a14b33fcf4a2a1e060abac7d508cc1219433d8aac37093b87d7b66118695724bda3f26274e15ffaed16d1aae0014e9a5316a15dfcf26fff268705c4ab16ac80d95db0eab58e96b165ba8d518f0685140e671a8cc9ed3f19eaf5dd9c22b8340967d9af5255e45ad1db53aa0a078a7f6eae6d6ee1c252ea0aed814ce6e8d6695e1420e5cfecec9e0f96c5d49c9491a1173941490658fb919522207bbcb4cb98c9d610dade8c822f12567631d15f8d3a047177e3cafdfe52af3726b2282aef7c94b52e1f188c00455455b42ce40038909b01fe51636abf7017a49fd03b43e491773e518f65f3d4b932f5f02f4e9f176ffe7b09e7b4aa93c1fa4757398f7d14f6b87a5144aa8140937ecfcce9aa3d6fb3c636bb01e369d4d2162e574c0bffb15e4cb79981fcbf6ccca9944522925af75f0c11d86558f6872957b16664a817306fe6f64c816b4e392c72e8ae2f95d0689c240a6f1005f63fc8226653cc3b3fa6130997f8b805a1e9fb4453f0a3ff57ad8ade2dbb03fbe703205e2524d4e144600078fd719e56c01908e17931a1f203d7bd41c6ce3dc04e9edd8cd68adba2b8fa4257fc394e5d1dd28f54ac83aa3e97431e7110b3359aeb32f4acf99cda161c3a781fda12cc4901630d9e24491c261ca92b52523ae0c3f1b06215a6a00791709bdc2d4f11ab159918d7d87b26165df002603e6089e8e64b18e3683ff0e72b2d46d0b49a00de2140aaecf04201b7205e260368463a5c8b53643c6eb0f4020ae896e443a1cc454e5fdd2051b1240b9c60b06f7d3cbb218b704f6dc5452da0ab87b8c7ab31ce0b8c8dd3b6178e97598c6984d0612df24e725a98f3b9b2229d20512e662920089276ce2a8228a9e826afef253b7527cae1e9486740f28f377f418dac3e6849ebb60fb5c041e644c87a9f8af376dd6254bcc076e1bcb33447efbb303a87f5501f00281c34c09d5f0da155e008f8eb21c5791b9a01fd9fecb8cfda71793034e6198f2dd7bd7650e28d8c6ea0a3aae1084b7e309059aa4ea8913a7b588247917e029c46e06ef36e5b2b18a55ad88dbc093c15228b06090f5fba0987f9476c2cfb78a56c2c1aab03d8640add3d14733447d9429fc94d99441b1f1f32c1ea402cc4f30622eb55724279e1395a4d4784f309aad107fe77cdf1bb0d47194f5d40a10f4981c252b1961b8a00f9f19056c2502e15b8b7a9d88287f3cd13126f72802d01cf66fbed18d0ee92ec329976876fef309e24cb60f08ce0b9c49be4a2b801c0c00468cfbb63115eede5af8646ad20290585a524374a930295204b1a91a35c1e0b82550847784350c047b1a4ded662bd3134793caeb9f014b38eb178e67066b54d197741d15f1aed5ef2d4f84106624d2cbd19ed59773bb562e347c9894cd7da1f55ecefb089886a07f2b2faa4c502599f82561ba881fbd6e0b76e0266240d424bcf4f49cf8dde58e732d3ca7b601b4033d250f7cf97e728d32a0d2fa28556a14693eab5c8ae67176b8d8a80c17ecd6ae27cb30a8f1845d1c95a3e556a4866bd6849376515b61f647eee6ab9f7bfc8778859d3595d99246bb75337ba975eee5ba74a0e1152c7b2cc2ebd9c863e8c32e0b806e2418908f00e94e12cf3dabbff4add1eb1a689d56902373dc95cae9f6c285fc74723693e91d2909ac499bc2a519668b6dc85bcf61a24ac863b65739dc4bca3ab2b578c1b27987c82d72436ae21a98aea20fb1f75a211586144496ca32c1d61416def881b126e632246ae2bfa550fe08b5dca6ba322179bc63faa6ac456d9816cba85346d0e60ac2132496ef6a18fa0912b141aef82a149331fc7d7acac3ad87917bb4b526132c20bddf60a62349285fe6bc552062b567476b41ec74a29e75958db0547f7ef56ce3e79974c12f08dc1dac1d2548a622b70bced98f947dcfd49e6544bf08f1906ae1759b65190bda316a717028a818929aa2392adc2fcaf024e7736403c6424bd83c8da76a4ab08152c0a30f6bccd54386f740482e9b2f0d089a6c7df5beaa537b11dfe040bccdae8e4c23ef2921c3f929625bdd37e5af8a44c75d1e83b0786ce2ce18265072651f78f4f8d4fb7015c72fd4dbc17c820a367294712c566b1fd16d784fae27d9ef29cd201764c5e3f6c2aa5f63dc790d094ee9df06b28feb0dda3258c46cdd15049cba9d2af936724c3f1f35797e35906779f1b150cd01b331cb5300dad944d3046f369905e78eea1d9ee5c1228a61b073b50db71eebd28214a7deaab180f302d1ce38f4ec1c9fa65b4ac6e88094083eabd232d4ebbb26363cd89b558a82c354c64a66f846b231610a6316b26621371dfaa1b763901fc31d7bb1e9bed97f14df8c36d483b1c3d2458f69232e17ce9e267b7bf3c24b51139059129b2630df7701a7ef6b0be545ef16607a71f127dc8264080c27</script>
+</div>
+<script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">
     </div>
 
     
@@ -570,14 +534,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">467k</span>
+    <span title="站点总字数">469k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">7:05</span>
+    <span title="站点阅读时长">7:07</span>
   </span>
 </div>
 <div class="busuanzi-count">

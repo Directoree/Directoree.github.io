@@ -22,25 +22,18 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="&amp;ensp;&amp;ensp; DES、AES、IDEA、SMS4 &amp;ensp; &amp;ensp;  一、 DES1.1  DES加密算法过程&amp;ensp;&amp;ensp; 1.2  DES子密钥生成过程 &amp;ensp;&amp;ensp; 二、 AES2.1  AES加密算法过程 &amp;ensp;&amp;ensp; 2.2  AES子密钥生成过程 &amp;ensp;&amp;ensp; 三、 IDEA3.1  IDEA加密算法与子密钥生成 &amp;e">
+  <meta name="description" content="Welcome to my blog, enter password to read.">
 <meta property="og:type" content="article">
 <meta property="og:title" content="对称密码-分组密码">
 <meta property="og:url" content="https://directoree.github.io/post/Block-Cipher/index.html">
 <meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;ensp;&amp;ensp; DES、AES、IDEA、SMS4 &amp;ensp; &amp;ensp;  一、 DES1.1  DES加密算法过程&amp;ensp;&amp;ensp; 1.2  DES子密钥生成过程 &amp;ensp;&amp;ensp; 二、 AES2.1  AES加密算法过程 &amp;ensp;&amp;ensp; 2.2  AES子密钥生成过程 &amp;ensp;&amp;ensp; 三、 IDEA3.1  IDEA加密算法与子密钥生成 &amp;e">
+<meta property="og:description" content="Welcome to my blog, enter password to read.">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c208a0084c6e.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c208a6e71ed4.png">
-<meta property="og:image" content="https://i.loli.net/2019/01/06/5c31d1a71cb07.png">
-<meta property="og:image" content="https://i.loli.net/2019/01/06/5c31d76899c9d.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c208baac9966.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c208bf5102ef.png">
 <meta property="article:published_time" content="2018-12-24T05:19:38.000Z">
-<meta property="article:modified_time" content="2020-01-06T13:52:16.294Z">
+<meta property="article:modified_time" content="2020-10-12T10:15:16.475Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="分组密码">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/24/5c208a0084c6e.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/Block-Cipher/">
@@ -220,7 +213,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -232,7 +225,6 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81-DES"><span class="nav-text">一、 DES</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-DES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E8%BF%87%E7%A8%8B"><span class="nav-text">1.1  DES加密算法过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-DES%E5%AD%90%E5%AF%86%E9%92%A5%E7%94%9F%E6%88%90%E8%BF%87%E7%A8%8B"><span class="nav-text">1.2  DES子密钥生成过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81-AES"><span class="nav-text">二、 AES</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-AES%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E8%BF%87%E7%A8%8B"><span class="nav-text">2.1  AES加密算法过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-AES%E5%AD%90%E5%AF%86%E9%92%A5%E7%94%9F%E6%88%90%E8%BF%87%E7%A8%8B"><span class="nav-text">2.2  AES子密钥生成过程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81-IDEA"><span class="nav-text">三、 IDEA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-IDEA%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E4%B8%8E%E5%AD%90%E5%AF%86%E9%92%A5%E7%94%9F%E6%88%90"><span class="nav-text">3.1  IDEA加密算法与子密钥生成</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81-SMS4"><span class="nav-text">四、 SMS4</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-1-SMS4%E5%8A%A0%E5%AF%86%E7%AE%97%E6%B3%95%E4%B8%8E%E5%AD%90%E5%AF%86%E9%92%A5%E7%94%9F%E6%88%90"><span class="nav-text">4.1  SMS4加密算法与子密钥生成</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -356,7 +348,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-01-06 21:52:16" itemprop="dateModified" datetime="2020-01-06T21:52:16+08:00">2020-01-06</time>
+        <time title="修改时间：2020-10-12 18:15:16" itemprop="dateModified" datetime="2020-10-12T18:15:16+08:00">2020-10-12</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -415,23 +407,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>&ensp;<br>&ensp;</p>
-<center><font color="#3CB371" face="Comic sans MS" size=5>DES、AES、IDEA、SMS4</font></center>
-&ensp;
-&ensp;
-
-<h3 id="一、-DES"><a href="#一、-DES" class="headerlink" title="一、 DES"></a><font color="#FF6347" face="Comic sans MS">一、 DES</font></h3><h4 id="1-1-DES加密算法过程"><a href="#1-1-DES加密算法过程" class="headerlink" title="1.1  DES加密算法过程"></a><font color="#3CB371" face="Comic sans MS">1.1  DES加密算法过程<font></h4><p><a target="_blank" rel="noopener" href="https://i.loli.net/2018/12/24/5c208a0084c6e.png"><img data-src="https://i.loli.net/2018/12/24/5c208a0084c6e.png" alt="DES1"></a><br>&ensp;<br>&ensp;</p>
-<h4 id="1-2-DES子密钥生成过程"><a href="#1-2-DES子密钥生成过程" class="headerlink" title="1.2  DES子密钥生成过程"></a><font color="#3CB371" face="Comic sans MS">1.2  DES子密钥生成过程<font></h4><p><a target="_blank" rel="noopener" href="https://i.loli.net/2018/12/24/5c208a6e71ed4.png"><img data-src="https://i.loli.net/2018/12/24/5c208a6e71ed4.png" alt="DES子密钥生成过程.png"></a></p>
-<p>&ensp;<br>&ensp;</p>
-<h3 id="二、-AES"><a href="#二、-AES" class="headerlink" title="二、 AES"></a><font color="#FF6347" face="Comic sans MS">二、 AES</font></h3><h4 id="2-1-AES加密算法过程"><a href="#2-1-AES加密算法过程" class="headerlink" title="2.1  AES加密算法过程"></a><font color="#3CB371" face="Comic sans MS">2.1  AES加密算法过程<font></h4><p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/06/5c31d1a71cb07.png"><img data-src="https://i.loli.net/2019/01/06/5c31d1a71cb07.png" alt="AES算法.png"></a></p>
-<p>&ensp;<br>&ensp;</p>
-<h4 id="2-2-AES子密钥生成过程"><a href="#2-2-AES子密钥生成过程" class="headerlink" title="2.2  AES子密钥生成过程"></a><font color="#3CB371" face="Comic sans MS">2.2  AES子密钥生成过程<font></h4><p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/01/06/5c31d76899c9d.png"><img data-src="https://i.loli.net/2019/01/06/5c31d76899c9d.png" alt="AES密钥.png"></a></p>
-<p>&ensp;<br>&ensp;</p>
-<h3 id="三、-IDEA"><a href="#三、-IDEA" class="headerlink" title="三、 IDEA"></a><font color="#FF6347" face="Comic sans MS">三、 IDEA</font></h3><h4 id="3-1-IDEA加密算法与子密钥生成"><a href="#3-1-IDEA加密算法与子密钥生成" class="headerlink" title="3.1  IDEA加密算法与子密钥生成"></a><font color="#3CB371" face="Comic sans MS">3.1  IDEA加密算法与子密钥生成<font></h4><p><a target="_blank" rel="noopener" href="https://i.loli.net/2018/12/24/5c208baac9966.png"><img data-src="https://i.loli.net/2018/12/24/5c208baac9966.png" alt="IDEA算法1.png"></a></p>
-<p>&ensp;<br>&ensp;</p>
-<h3 id="四、-SMS4"><a href="#四、-SMS4" class="headerlink" title="四、 SMS4"></a><font color="#FF6347" face="Comic sans MS">四、 SMS4</font></h3><h4 id="4-1-SMS4加密算法与子密钥生成"><a href="#4-1-SMS4加密算法与子密钥生成" class="headerlink" title="4.1  SMS4加密算法与子密钥生成"></a><font color="#3CB371" face="Comic sans MS">4.1  SMS4加密算法与子密钥生成<font></h4><p><a target="_blank" rel="noopener" href="https://i.loli.net/2018/12/24/5c208bf5102ef.png"><img data-src="https://i.loli.net/2018/12/24/5c208bf5102ef.png" alt="SMS4密码算法.png"></a></p>
-<p>&ensp;<br>&ensp;<br>&ensp;<br>&ensp;</p>
-
+        <div id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <div class="hbe-input-container">
+  <input type="password" id="hbePass" placeholder="" />
+    <label for="hbePass">Welcome to my blog, enter password to read.</label>
+    <div class="bottom-line"></div>
+  </div>
+  <script id="hbeData" type="hbeData" data-hmacdigest="fcb44d91feefdccd8f6876a5fbe6c27126981e73dc650853585b65273c6eac05">c8a6ea5f1e651a923da793e6131165195edca5e224eb04f8de211bd01e36a458404a312c92f198af16b815cf746e31e418df468f332f57ad407065a720ab50332e0ded5d198e59f3dfae1048f687f80d15ffd98b3eae445161f61a30ebed7cefe136f594001d8878421f2dbb05a289f0148d053e58caf530f6bafda2ae5a83894bd56771d334877bf231dcac2ed0838aac6e7f0b481e0c9c45bae491ee91195b357c889d774f9b25b60dee6f4622cd30bfcf4d988502020f0a0266cb96b8999da42dd0977ba685fdf9436e245399806ee33a136420fc7f0b51a6d5918b211256ce5643ef407f383bf2aca73a54cce1f7a9c640fb661a23582f0cfea0dd8bb5a981e0cbe9b0538e7515063b6bde21cd4a3c57c3b0ed633d8e1217332103d9cc33791325046012ada96d0dcbdbefa4d6734db014ed2ec38b841cec964f60d82b55219af9c77f086680c646882c22c1d0f95bcff70e2ef64bde6e25e0daec05a9a5824d20fe674e623cc02fd4b8041728536b176f58681c9dc305faee00fa6e9af6c7a602d6654d8aa29691e68fc3a9767463c43a1dab90f69cf7f1b1f685d2c1d3e80f8ca43ce62e85a4f6f66c5d586cf2813a953421c850348777b76f3769cd4d040be181dc77db4cc42625504158d290f6660af6377ab95058db7a76772d87755b3bbc2f0f64883000ce405d2dd3d19a6cb6695f53e61fe572d02e076aabf60576f11f018f612ee97f40ba149945199c8f755bae9ac254c7106ae680531cdc281a7f946cc51bfb69ce839f45e25a20fd4b564f93e0e3012c1d508029ae73d4ff2c9dff99004853176f292b00bb55f28098f02f12311bd4a3ed60766e8bbac784d29c932120a7808999e029a26c3cd5f2728161fc8026413fcddb9369329c7fb031b5af32a345918e2f4d0618e978478fa8b1ddfc4ec0708224d8d668533196aa8ec4dfd37a0b73fd285155aa9216f905b8b816e3edf4ba4db116d136c376915cc6baeb755ddc88db4adc6a0a2d81fbdd7bf5199783c304efb4b6dade937d4494f7688483a3af6f12fa3db7302780b1b7895031caa7b32d48ff0c399763a212f5a16e8b527d98886ed4085e65efed20e003259593074eac7bfc96aeab993acc73f86d68b32b3701304ae77c51c9e2d3189d4948a0cf108ba31ff58af738e31b98e5d0e867f34e163c90397b392bedebfe4899068cf3bb6aadc5d3ed5b518bc53ae919b43d8cb1872e5211934917cf1411d4c763f6b4558d99b14a669814e015892814f9723d09e3a594a2fc989ba1e3fb721642672c59bf73b6d1ab2df9584f697cf2455890b87aef39c7645d9114f169329995be825b4b0e9cbe67db54d60e5551326993df3a4014ef61174cd1246d8248222c99c6f17ac0021e993704aee83dfd04e0eb7bcdda71b35799d6ad6a4dcb5e21cd7e19751971c58b706e986cdcc33465c86ae998d8757288085fbe024ea3f958b46e2a201c0d38d9df5e4a3767a4282b53bba009f11e8b1ac7c1cbacce42551bd9c37f42644c9985b8934468e03f3f77582b2d8163a184deae7853b4d61cd823081ff135239b4c1f0a814260bf977fc5d707e4768c1fb8152f207d7618666f15dac083eb835fa1c8a05dc9185a116c0cac788990e76e57ba2bc9f0f73b031be699de968d1c00325ba1335b71e27b077a4c9d119e1817a13480eef6dbe09cfcc090490c7c6d7e8a7e77e174d28cb59fa0976ff04ac6cb5b7fc7587e940bb36109fa2122d9be835f000635feba24ff03ec4198f528cb2a5ec2a811aa1ac48cb6573316159494a1569deb0ebbee41583802b511fa81f3e73c1026dc5123d4e24fe38dde0b774ba6994bb2d5f1839b6ba173471be07e111b97b454b71aa972d4ccc6f0cb4558dcd443cb179f50f305d3e9be0dcfd4edd70d3a7496d5da07d9f11c6157700d785a5385a1db58c86a1e6cae5e75691ab00e0009f76d72aa0837eb13165efaf5325eeea0537ff4c6939b98c09d94ec4b3d952b89b035ae78a402f296075e60ef94306b9ca142ab4960e6493575322d9eacd22eaa85bc7c2483820dbee654907540bb8f621b9cb26d519864a43ee634dcfe611ac3952171f6d375d7939a76d60fce07b7976ddfad7a1973b517e710e5ffa1ef65ab2fda72bdffa43b66c16f0bb0c7a4aa811b352562f023af2c487494dc434d911b9ad3d2456dcdf5fc84d60489cb979a914219505a611c258ede92ec13d7b2cf9caaf8c739b99473f02670c65c41f0961a50502cd4d5b7425c99dc1fdeff58abb984fbd0000d8696f1892865887d637ce39e4719f5bf3c6ddf8274999fba2bfc4462848eb2aac444f4bdddd8de58afaf0125e8816f44b25ea29b3eae09a5e99845ee1886aa2b8b4fcfea0ea9ee8b3b29f805350773fc92da1a4b8d4277c553c06c3739ef7130041bdd5d6543a69c96118daf0b4b2f544e07ac12653c26675e0d8dd861051a0e6d448206912e9f473ce44f074e08b72d9192f2a2f769e258db3e08aada1253751942df786a565bd3973658b71ccbb0036ebcc5973a55311d002864f401a7c2eb21427f03579d5b7714d7d7eaaaa82b426515a4ba6f2b189997714e5e9031ade2df4bbcef2242aeb9077e2cdb8cb6025d4aca0f5fe9b4f62549dd930b64e6064ca7c8c9a45528729e834e3a75c4fb039cd9b5f3d16dd7157edfc099463f29f934398006fd0a82367d1662d56bfdd4dc7e593062d73247819f4e958e091d0f60d926d72c063daf69772ffbf20441752a4ec3c12537bce423463192fcbac2a16571f94f7c11b123d8694b5fc04137c9be970cb5773a67046aa1aa70d919f9ee2ca4004581ab08659930325b9ba0780236b42cdf182281bcdbaf2a6cde5408c3a85dcf5ad00be6577c945852c4714358d95ee9a7332c06a5d56d906b4456a79780136b42319f1c7e271f29663399054a9ff2fd038eb01a379cd3d2f6955a60e62e46b67af28444ae7321c70b0b7428dc64f72e401d87baa5f5823711dba898894bee56602b6ba260dcdc3c2a3f12ce7ac1289112ff6a8a45365ace384b91cef58c1dd51c552f44c32621e89138989b77a87238829db753e5434fc2e9d82a7367485919dcae8e65f44d25783ad519b6710a05a4f479bb8f51a716d67aad46cff2e737e309e28b372636a6d657a7ae0604e8b812254105f6b760c64c5855107a51085b320033dfc78a22e2d17f051a3f05b3f890ff9d804b083ae9a4528de26cd59ffa9113bc9064afa33905e97a430f1659f48b77390a54c835bd3ce679811ff1e9ce2657d7c03fafa2fbef4862b57ff0f6598c5b2b34c9a9407bc4f3282986f9fc07a90f525d924d10c7f3e8e13007613701ed14f355aff8a4a0f6202bfadf570f8735f3de9122b9fbf4a41c47cd0190495bd9bf4c18f8818ef2757096a285c22b3d194cdc2f093d8c777917cd1a1f14c51596ca79067802d4e8a67d9ccf173bb5a210a10182f66327c9fff780f5a76487eb44c186af813f20ff3b8cb74e13f0b5eebbea624283e79cf4e76d03afda2eb58c382589beb9e502ca8b9cdb5ad4ecc00d218d2a6c5f3cb86db43dfb025d3307f7c35762c9167f719dbd85c529d6fb45a08ca84b372e90340bdcde2091a0095d2e234918321ec31a6a2dea23722fd04269f7a61e0c5e7be136ac61d75e67dc86021f27d5257c00581b46127f3b4f2ae96f52f0b51e65a4475684e44d25c5c5cbe243b358f9e025395bfd99ffb563cfd66905a5ef03a0755e3bc42271b699c9484106b29c14993eaf9e544a876a46dc1451be4e5070e0dd3cf469ca89f4f1deaa06d7378443da2dec4fa1ebb73213a06aef0cc66bf851e52b1b1b89c0c6429970ff0d2034ad244042c81f6b5e43f33b682cc218ac651dc7b5f4aa3e7bac18de8be25ac310528586fb7fd3bd6b6c561f6b21561160dd87cbcc2dfa4c67cc24a297e7332f1244ee0f954813cbdff4c37d13319278520ceefbda85fb5339b142be3ba26fee468f6715567d536474d7ecfd285f6bae959c4b96a6e05651d04b2474eec80bfd1978f873a40f5ddfb185fb0264bc299d5c9df547c9a71f69931005a20d4559cf90bf3a58c38384fa1a581d5b4170f598fdd5eb281793f53ea395cc9bcdcc456d41076ef426ba57d9d69d5b9a1b8d52db9294b4e6cac3d6b4245fa6ce39008feb7e27fba29a3f34c7237694766cb8550c3f6c66925bc8dd44a72fe3570aa51f24a0858e234e03200f9d7e0c75fad7717c1f21dd9bb3270ba2880ee099cae6dcb1787c54cc994cfd32805d66ec71b4cf7a9ca0371700dfbca29b95fd6566809fd7d4bf255e6d59b62ff19bec1a4e35bd30a4c56a08a65615c7afe3d2106861d602d9ac4796296170984ded3b3cb31bf36be676f0328169b43a2b7f1cdae987f1b2cecffc6fba7de6a47eab0fdaecc457894b8b798f4a02678f6b7a3b809e917d8be1dd9b60582befb2db17f795988220bcf95e8ddf38e2200990b73ec11965fea5f3fba2fa33588a5e51c42f2cefa779cc2bdac621941031d85f33365e128b2391a2f6d2b94f154c1e31f7de18a3c37a29e96cd405b284ddd1ea3095ba2cae12d3</script>
+</div>
+<script src="/lib/blog-encrypt.js"></script><link href="/css/blog-encrypt.css" rel="stylesheet" type="text/css">
     </div>
 
     
@@ -550,14 +534,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">467k</span>
+    <span title="站点总字数">469k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">7:05</span>
+    <span title="站点阅读时长">7:07</span>
   </span>
 </div>
 <div class="busuanzi-count">
