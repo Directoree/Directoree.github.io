@@ -59,8 +59,8 @@
 <meta property="og:image" content="https://i.loli.net/2020/10/14/PgaqOCiuAE5tvkU.png">
 <meta property="og:image" content="https://i.loli.net/2020/10/14/fHsP8iOnmoM2lER.png">
 <meta property="og:image" content="https://i.loli.net/2020/10/14/i74tmVCuxkSMwNe.png">
-<meta property="og:image" content="https://img2018.cnblogs.com/blog/1539443/201901/1539443-20190125164129760-1200704868.png">
-<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/1134295-ce2aa08820b11888.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/14/RXLWwuvzb7r13qH.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/14/qipebN8aKR54jTt.png">
 <meta property="og:image" content="https://i.loli.net/2020/10/15/HSqYd5RhKpCJwsG.png">
 <meta property="og:image" content="https://i.loli.net/2020/10/16/EnIblaOtvz5ASgY.png">
 <meta property="og:image" content="https://i.loli.net/2020/10/16/HJgPhWyIp8CviS9.png">
@@ -74,7 +74,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/10/21/NltT6gHExjVRdC4.png">
 <meta property="og:image" content="https://i.loli.net/2020/10/22/XmovMiT7ILBkwHW.png">
 <meta property="article:published_time" content="2020-09-14T07:11:13.000Z">
-<meta property="article:modified_time" content="2020-10-23T02:18:52.816Z">
+<meta property="article:modified_time" content="2020-12-14T05:49:37.420Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="CS:APP">
 <meta property="article:tag" content="逆向">
@@ -396,7 +396,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-10-23 10:18:52" itemprop="dateModified" datetime="2020-10-23T10:18:52+08:00">2020-10-23</time>
+        <time title="修改时间：2020-12-14 13:49:37" itemprop="dateModified" datetime="2020-12-14T13:49:37+08:00">2020-12-14</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -713,7 +713,7 @@
 <li>栈指针<mark class="label success">%rsp</mark>保存着栈顶元素的地址</li>
 <li><code>push</code>和<code>pop</code>指令都会自动修改<code>%rsp</code>的值，有两种方式调整<code>%rsp</code>的值，一种是直接进行加减运算，另一种是<code>push</code>和<code>pop</code>指令</li>
 </ul>
-<p>将一个四字值压人栈中，首先要将<mark class="label info">%栈指针减8，然后将值写到新的栈顶地址</mark></p>
+<p>将一个四字值压人栈中，首先要将<mark class="label info">%rsp栈指针减8，然后将值写到新的栈顶地址</mark></p>
 <p><img data-src="https://i.loli.net/2020/10/05/GwYot94ihDRcXCI.png" alt="F入栈和出栈指令.png"></p>
 <mark class="label success">pushq %rsp</mark>指令等价于如下指令：
 
@@ -810,13 +810,13 @@
 
 <p>两个 64 位有符号或无符号整数相乘得到的乘积需要 128 位来表示。x86-64 指令集对 128 位（16字节）数的操作提供有限的支持。 <mark class="label danger">故使用寄存器%rdx和%rax来组成一个128位的八字来保存乘法产生的128位积或者除法的被除数的高64位和低64位或者除法产生的商和余数</mark>  图 3-12 描述的是支持产生两个 64 位数字的全 128 位乘积以及整数除法的指令。</p>
 <p><img data-src="https://i.loli.net/2020/10/08/nTdwNpa7mgizOYU.png" alt="13特殊的算术操作.png"></p>
-<div class="note primary"><p><code>imulq</code>属于<code>IMUL</code>指令类，该指令有两种不同的形式。其中一种，如图3-10 所示，是<mark class="label warning">双操作数</mark>乘法指令。它从两个 64 位操作数产生一个 64 位乘积。而另一种属于<mark class="label warning">单操作数</mark>乘法指令的有符号乘法（补码乘法）。<code>x86-64</code>提供了两条单操作数乘法：</p>
+<div class="note primary"><p><code>imulq</code>属于<code>IMUL</code>指令类，该指令有两种不同的形式。其中一种，如图3-10 所示，是<mark class="label warning">双操作数</mark>乘法指令。它从两个 64 位操作数产生一个 128 位乘积。而另一种属于<mark class="label warning">单操作数</mark>乘法指令的有符号乘法（补码乘法）。<code>x86-64</code>提供了两条单操作数乘法：</p>
 <ul>
 <li><mark class="label primary">imulq</mark>：补码乘法</li>
 <li><mark class="label primary">mulq</mark>：无符号乘法</li>
 </ul>
 <p>这两条指令都要求<mark class="label success">一个参数必须在寄存器 %rax 中</mark>，而另一个作为指令的源操作数给出。 </p>
-<p><strong>乘法中</strong>：乘积存放在寄存器<mark class="label default">%rdx</mark>（高64位）和  <mark class="label default">%rax</mark>（低64位）中。虽然<code>imulq</code> 这个名字可以用于两 个不同的乘法操作，但是汇编器能够通过计算操作数的数目，分辨出想用哪条指令。</p>
+<p><strong>乘法中</strong>：乘积存放在寄存器<mark class="label default">%rdx</mark>（高64位）和  <mark class="label default">%rax</mark>（低64位）中。虽然<code>imulq</code> 这个名字可以用于两个不同的乘法操作，但是汇编器能够通过计算操作数的数目，分辨出想用哪条指令。</p>
 <p><strong>除法中</strong>：</p>
 <ul>
 <li>有符号除法指令<code>idivl</code> 将寄存器<mark class="label default">%rdx</mark>（高64位)）和<mark class="label default">%rax</mark>（低64位）中的128 位数作为被除数，而除数作为指令的操作数给出。</li>
@@ -1151,7 +1151,7 @@
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/27339191">x86-64 下函数调用及栈帧原理</a></li>
 </ul>
 <p>下图是通用的栈帧结构：</p>
-<p><img data-src="https://img2018.cnblogs.com/blog/1539443/201901/1539443-20190125164129760-1200704868.png" alt="1F栈帧结构.png"></p>
+<p><img data-src="https://i.loli.net/2020/12/14/RXLWwuvzb7r13qH.png" alt="1F栈帧.png"></p>
 <h4 id="3-7-2-转移控制与函数返回"><a href="#3-7-2-转移控制与函数返回" class="headerlink" title="3.7.2 转移控制与函数返回"></a>3.7.2 转移控制与函数返回</h4><p>本节主要研究：</p>
 <ul>
 <li>转移控制指令<code>call</code>和<code>ret</code></li>
@@ -1186,7 +1186,7 @@
 <mark class="label warning">函数的返回</mark>
 
 <p>函数的调用和返回都涉及栈帧的变化，为了使函数返回到调用函数时能够继续执行返回地址的指令，要使栈指针<code>%rbp</code>和<code>%rsp</code>恢复到函数调用前的状态。</p>
-<p><img data-src="https://upload-images.jianshu.io/upload_images/1134295-ce2aa08820b11888.png" alt="栈帧"></p>
+<p><img data-src="https://i.loli.net/2020/12/14/qipebN8aKR54jTt.png" alt="栈帧"></p>
 <div class="note success"><p>函数调用前栈帧调整：    </p>
 <ol>
 <li>保存当前栈帧状态值，以备后面恢复本栈帧时使用（<code>%rbp</code>入栈）</li>
