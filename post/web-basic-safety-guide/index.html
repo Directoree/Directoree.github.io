@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web 安全防护指南基础篇">
+<meta property="og:url" content="https://directoree.github.io/post/web-basic-safety-guide/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/12/17/vQnrx7zPtM9gsVi.png">
+<meta property="article:published_time" content="2020-12-17T01:53:54.000Z">
+<meta property="article:modified_time" content="2020-12-18T08:40:46.700Z">
+<meta property="article:author" content="Directoree">
+<meta property="article:tag" content="知识笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/12/17/vQnrx7zPtM9gsVi.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/web-basic-safety-guide/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Web 安全防护指南基础篇 | Directoree</title><meta name="robots" content="noindex">
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Directoree</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-text">1 文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-text">1.1 上传攻击原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E6%9D%A1%E4%BB%B6"><span class="nav-text">1.2 上传攻击条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%B8%8A%E4%BC%A0%E6%A3%80%E6%B5%8B%E7%BB%95%E8%BF%87%E6%8A%80%E6%9C%AF"><span class="nav-text">1.3 上传检测绕过技术</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-%E5%AE%A2%E6%88%B7%E7%AB%AF-Javascript-%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.1 客户端 Javascript 检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF-MIME-%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.2 服务器端 MIME 检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%96%87%E4%BB%B6%E6%89%A9%E5%B1%95%E5%90%8D%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.3 服务器端文件扩展名检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.4 服务器端文件内容检测及绕过</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Directoree"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Directoree</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/web-basic-safety-guide/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Directoree">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Directoree">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Web 安全防护指南基础篇
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-17 09:53:54" itemprop="dateCreated datePublished" datetime="2020-12-17T09:53:54+08:00">2020-12-17</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-18 16:40:46" itemprop="dateModified" datetime="2020-12-18T16:40:46+08:00">2020-12-18</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/web-basic-safety-guide/" class="post-meta-item leancloud_visitors" data-flag-title="Web 安全防护指南基础篇" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/web-basic-safety-guide/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/web-basic-safety-guide/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭ </p>
+<a id="more"></a>
+
+
+
+<h2 id="1-文件上传"><a href="#1-文件上传" class="headerlink" title="1 文件上传"></a>1 文件上传</h2><h3 id="1-1-上传攻击原理"><a href="#1-1-上传攻击原理" class="headerlink" title="1.1 上传攻击原理"></a>1.1 上传攻击原理</h3><p>上传功能是用户与服务器进行文件交互的重要手段，攻击者的<strong>目标</strong>是取得当前 Web 服务器的<strong>权限</strong>。若通过 Web 层面开展攻击，必须将攻击者的木马插入 Web 系统中，并在服务器端执行。这就是文件注入攻击。</p>
+<ol>
+<li><strong>攻击原理</strong>：<mark class="label danger">文件上传攻击</mark>攻击者利用 Web 应用对文件上传过滤不严的漏洞，将应用程序定义范围之外的文件上传到 Web 服务器，并且此类文件通常是木马，在上传成功后攻击者即可获得当前的 webshell。</li>
+<li><strong>上传原理</strong>：<mark class="label success">文件上传原理</mark>攻击者想要获取webshell，最直接的方法就是将 Web 木马插入到服务器进行成功解析。那么如何理解成功解析？假设目标服务器为用<code>PHP</code>语言构建的 Web 系统，那么针对上传点就需要利用<code>PHP</code>木马，并且要求木马在服务器以后缀名为<code>.php</code>进行保存。因此，<strong>上传木马的过程就是在 Web 系统中新增一个页面</strong>。 当木马上传成功后，攻击者就可远程访问这个木马文件，也就相当于浏览一个页面，只不过这个页面就是木马，具备读取、修改文件内容、连接数据库等功能。</li>
+<li><strong>漏洞原因</strong>：<mark class="label warning">上传漏洞存在前提</mark>存在上传点且在上传点用户可独立控制上传内容，同时上传文件可被顺利解析。</li>
+</ol>
+<p>攻击端上传木马（<code>.php</code>）--&gt; 服务器，攻击端访问木马所在目录 --&gt; 服务器（成功解析并执行）</p>
+<p><img data-src="https://i.loli.net/2020/12/17/vQnrx7zPtM9gsVi.png" alt="上传攻击防护思路"></p>
+<h3 id="1-2-上传攻击条件"><a href="#1-2-上传攻击条件" class="headerlink" title="1.2 上传攻击条件"></a>1.2 上传攻击条件</h3><div class="note primary"><ol>
+<li>目标网站具有<strong>上传功能</strong></li>
+<li>上传的目标文件（木马）能够被 Web 服务器<strong>解析执行</strong></li>
+<li>知道文件上传到服务器后的<strong>存放路径和文件名称</strong></li>
+<li>目标文件可被用户访问</li>
+</ol>
+</div>
+
+<p>以上四个条件为文件上传攻击的必要条件，对于攻击者来说缺一不可，对于防护这来说必须至少解决其中一条。</p>
+<h3 id="1-3-上传检测绕过技术"><a href="#1-3-上传检测绕过技术" class="headerlink" title="1.3 上传检测绕过技术"></a>1.3 上传检测绕过技术</h3><p>基于客户端参数的检测手段：JS 防护、MIME 防护。 </p>
+<h4 id="1-3-1-客户端-Javascript-检测及绕过"><a href="#1-3-1-客户端-Javascript-检测及绕过" class="headerlink" title="1.3.1 客户端 Javascript 检测及绕过"></a>1.3.1 客户端 Javascript 检测及绕过</h4><span id="Javascript">
+
+<p><strong>防护方法</strong>：客户端 Javascript 检测是在表单上传到服务器前进行的检测， 检测<mark class="label success">文件名后缀</mark>，允许的后缀名放行通过，使用<mark class="label primary">白名单</mark>方式。</p>
+</span>
+
+<p><strong>绕过方法</strong>：</p>
+<div class="note danger"><ul>
+<li>浏览器禁用 JS 运行</li>
+<li>抓包软件抓包更改后缀名（JS 防护手段的 JS 脚本是在 HTTP 数据包发出之前执行完毕的）</li>
+</ul>
+</div>
+
+<h4 id="1-3-2-服务器端-MIME-检测及绕过"><a href="#1-3-2-服务器端-MIME-检测及绕过" class="headerlink" title="1.3.2 服务器端 MIME 检测及绕过"></a>1.3.2 服务器端 MIME 检测及绕过</h4><p>在 HTTP 协议中，会利用<code>Content-Type</code>标识本次上传的内容类型。这个类型由<strong>客户端的浏览器</strong>根据本次上传文件的<strong>后缀名</strong>自动生成，这里检测到的<code>Content-Type</code>是在<code>body</code>里。</p>
+<p>客户端上传文件时会自动检测上传的文件类型，检测的依据是<mark class="label warning">文件后缀</mark>，检测的方法是通过检查 HTTP 包的<code>Content-Type</code>字段中的值来实现的。将<code>php</code>文件的后缀改成<code>png</code>，MIME 检测类型判断后缀为<code>imae/png</code>。</p>
+<p>常见的类型如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">Content-Type</th>
+<th align="center">含义</th>
+<th align="center">Content-Type</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Image/jpg</td>
+<td align="center">JPG 图像</td>
+<td align="center">Text/html</td>
+<td align="center">HTML 文档</td>
+</tr>
+<tr>
+<td align="center">Image/gif</td>
+<td align="center">GIF 图像</td>
+<td align="center">application/XML</td>
+<td align="center">XML 文档</td>
+</tr>
+<tr>
+<td align="center">Image/png</td>
+<td align="center">PNG 图像</td>
+<td align="center">application/PDF</td>
+<td align="center">PDF 文档</td>
+</tr>
+</tbody></table>
+<p><strong>防护方法</strong>：通过在客户端浏览器检测<code>Content-Type</code>，使用白名单的方式放行通过。类似于<a href="#Javascript">客户端 Javascript 检测</a>防护方法。</p>
+<p><strong>绕过方式</strong>：由于<code>Content-Type</code>类型是由客户端浏览器自动生成的，那么在这个过程中<code>Content-Type</code>的值是可控的（因为在客户端生成），只需要 HTTP 抓包后修改<code>Content-Type</code>即可绕过。</p>
+<h4 id="1-3-3-服务器端文件扩展名检测及绕过"><a href="#1-3-3-服务器端文件扩展名检测及绕过" class="headerlink" title="1.3.3 服务器端文件扩展名检测及绕过"></a>1.3.3 服务器端文件扩展名检测及绕过</h4><p><strong>防护思路</strong>：</p>
+<ol>
+<li>基于客户端参数的检测手段可以在文件上传到服务器前对 HTTP 报文拦截进行修改，当服务器就收到上传的信息后，校验文件名是否合法，采用黑/白名单方式。</li>
+<li>完全不信赖用户所上传文件的后缀名，在用户上传文件到服务器之后，<strong>重新给上传文件添加后缀名</strong>。</li>
+</ol>
+<p><strong>防护方法</strong>：</p>
+<ul>
+<li><mark class="label info">文件后缀重命名</mark></li>
+<li><mark class="label warning">白名单过滤</mark></li>
+<li><mark class="label primary">黑名单过滤</mark>
+
+</li>
+</ul>
+<p>对于文件上传在服务器端文件重命名（重命名<strong>文件名和文件后缀</strong>）时，能够针对后缀名的各种绕过。通常会使用一个随机数生成函数来生成文件名，可以防止<code>%00</code>截断和解析漏洞。由于该方法适用场景单一，目前基本上无有效手段进行绕过。</p>
+<p>文件重命名防护代码示例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$filerename =<span class="string">&#x27;jpg&#x27;</span>;</span><br><span class="line">$newfile = md5 (uniqid (microtime(<span class="number">7</span>)).<span class="string">&#x27;_&#x27;</span>.$flerename;</span><br><span class="line"><span class="keyword">if</span>(move_uploaded_fle($_ FILES[<span class="string">&#x27;upfile&#x27;</span>]l<span class="string">&#x27;tmp_name&#x27;</span>], $distination.<span class="string">&#x27;/&#x27;</span>.$newfile))</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>绕过思路</strong>：黑白名单机制归根结底为限制用户的上传文件后缀名，避免可解析成 Web 的后缀名出现。可尝试使用未被过滤的文件后缀、解析漏洞等构造非限制条件进行绕过。</p>
+<p><strong>绕过方法</strong>：</p>
+<div class="note info"><p>针对黑名单：</p>
+<ol>
+<li><p>多重测试过过滤文件名</p>
+<p>如针对<code>.php</code>的文件禁止上传，但没有对其他格式做出限制，可构造<code>php4</code>、<code>php5</code>、<code>cer</code>等后缀，同时中间件仍旧按照<code>.php</code>等进行解析。</p>
+</li>
+<li><p>后缀名大小写绕过</p>
+</li>
+<li><p>后缀名包含绕过</p>
+<p>假如禁用<code>.php</code>后缀名，可构造<code>.pphphp</code>进行绕过。</p>
+</li>
+<li><p>特殊文件名构造（Windows 下）</p>
+<p>由于黑名单方式是先对文件后缀进行校验，然后再将临时文件转存到真实路径下。该绕过方式是在文件后缀名验证通过后，在临时文件转存之前进行绕过。</p>
+<p>代理抓上传的包将文件后缀名构造为<code>.php.</code>或<code>.php_</code>，文件上传到服务器后首先进行黑名单后缀名验证，验证通过后进行文件转存时，由于 Windows不识别这些后缀名，回自动去掉<code>.</code>和<code>_</code>等特殊符号，从而绕过黑名单防护。</p>
+</li>
+<li><p><code>%00</code>截断</p>
+<p>此绕过方式利用的是 C 语言的<mark class="label warning">终止符</mark>特性，当 C 语言在执行过程中遇到<code>%00</code>，<code>%00</code>会被当成终止符，<strong>因此程序会自动截断后续信息</strong>，仅保留<code>%00</code>之前的内容。此漏洞仅存在于<code>PHP 5.3.7</code>之前的版本，如<code>shell.php .jp</code>g （注意，<code>jpg</code> 前有一个空格）。在上传页面进行转存时，之前文件名中的空格会被当成终止符，导致空格之后的内容被忽略。因此，最终文件名会变为<code>shell.php</code>，从而绕过了文件后缀名检查。</p>
+</li>
+</ol>
+</div>
+
+<div class="note success"><p>针对白名单：</p>
+<p>相对于黑名单防护手段，白名单限制更为严格，非允许的后缀名一律拒绝上传，所以在黑名单中常用的修改大小写绕过手段、多类型后缀名绕过手段等，由于都无法满足白名单的过滤规则，因此都会被过滤。只有如下两种方式可以绕过防护机制：</p>
+<ul>
+<li>特殊文件名构造（参考黑名单防护）</li>
+<li><code>0x00</code>截断（参考黑名单防护）</li>
+</ul>
+</div>
+
+<h4 id="1-3-4-服务器端文件内容检测及绕过"><a href="#1-3-4-服务器端文件内容检测及绕过" class="headerlink" title="1.3.4 服务器端文件内容检测及绕过"></a>1.3.4 服务器端文件内容检测及绕过</h4><p><strong>防护思路</strong>：</p>
+<div class="note primary"><p>针对图像文件，对文件内容的检测主要有以下三种方法。</p>
+<ol>
+<li>通过检测上传文件的<strong>文件头</strong>来判断当前文件格式。</li>
+<li>调用 API 或函数对文件进行加载测试，常见的是图像二次渲染。</li>
+<li>检测上传文件是否为图像文件内容。</li>
+</ol>
+</div>
+
+<p>在上传漏洞的防护过程中，在文件上传时检测内容是一项非常有效的防护措施。防护手段可包含检测文件的文件头及内容图像格式是否合法（参考第一、三种防护方法），或者在显示过程中调用函数进行二次渲染，<mark class="label danger">导致木马等非图像代码由于无法渲染成像素而被丢弃</mark>，从而达到防护的效果（参考第二种防护方法）。但需注意的是，针对图像二次渲染会给服务器带来额外的性能开销。因此需要根据业务防护需求来寻找性能开销与安全要求之间的平衡点。</p>
+<p><strong>防护代码</strong>：</p>
+<p>（1）文件头判断</p>
+<p>读取文件<strong>开头部分的数个字节</strong>，判断文件头与文件类型是否匹配。通常情况下，通过判断前<mark class="label success">10个字节</mark>基本上就能判断出一个文件的真实类型。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getTypeList</span>(<span class="params"> </span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  	<span class="keyword">return</span> <span class="keyword">array</span>(</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;FFD8FFE0&quot;</span>, <span class="string">&quot;jpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;89504E47&quot;</span>, <span class="string">&quot;png&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;47494638&quot;</span>，<span class="string">&quot;gif&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;49492A00&quot;</span>，<span class="string">&quot;tif&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;424D&quot;</span>, <span class="string">&quot;bmp&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;41433130&quot;</span>，<span class="string">&quot;dwg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;38425053&quot;</span>, <span class="string">&quot;psd&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;7B5C727466&quot;</span>, <span class="string">&quot;rtf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;3C3F786D6C&quot;</span>, <span class="string">&quot;xml&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;68746D6C3E&quot;</span>, <span class="string">&quot;html&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;44656C69766572792D646174&quot;</span>, <span class="string">&quot;eml&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span> (<span class="string">&quot;CFAD12FEC5FD746F&quot;</span>, <span class="string">&quot;dbx&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2142444E&quot;</span>, <span class="string">&quot;pst&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;DOCF11E0&quot;</span>, <span class="string">&quot;xls/doc&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;5374616E64617264204A&quot;</span>, <span class="string">&quot;mdb&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;FF575043&quot;</span>, <span class="string">&quot;wpd&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;252150532041646F6265&quot;</span>, <span class="string">&quot;eps/ps&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;255044462D312E&quot;</span>, <span class="string">&quot;pdf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;B3828596&quot;</span>, <span class="string">&quot;pwl&quot;</span>)</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;504B0304&quot;</span>, <span class="string">&quot;zip&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;52617221&quot;</span>, <span class="string">&quot;rar&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;57415645&quot;</span>, <span class="string">&quot;wav&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;41564920&quot;</span>, <span class="string">&quot;avi&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2E7261FD&quot;</span>, <span class="string">&quot;ram&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2B524D46&quot;</span>, <span class="string">&quot;rm&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;000001BA&quot;</span>, <span class="string">&quot;mpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;000001B3&quot;</span>, <span class="string">&quot;mpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;6D6F6F76&quot;</span>, <span class="string">&quot;mov&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;3026B2758E66CF11&quot;</span>, <span class="string">&quot;asf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;4D546864&quot;</span>, <span class="string">&quot;mid&quot;</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkFileType</span>(<span class="params">$fleName</span>)</span>&#123;</span><br><span class="line">$file = @fopen( $fleName, <span class="string">&quot;rb&quot;</span>);</span><br><span class="line">$bin = fread($fle, <span class="number">5</span>);  <span class="comment">//只读5个字节</span></span><br><span class="line">fclose($file);</span><br><span class="line">$typelist=getTypeList();</span><br><span class="line"><span class="keyword">foreach</span> ($typelist <span class="keyword">as</span> $v)</span><br><span class="line">	&#123;</span><br><span class="line">  	$blen=strlen(pack(<span class="string">&quot;H*&quot;</span>,$v[<span class="number">0</span>])); <span class="comment">// 得到文件头标记字节数</span></span><br><span class="line">  	$tbin=substr($bin,<span class="number">0</span>,intval($blen));<span class="comment">//需要比较文件头长度</span></span><br><span class="line">		<span class="keyword">if</span>(strtolower($v[<span class="number">0</span>])==strtolower(array_shift(unpack(<span class="string">&quot;H*&quot;</span>,$tbin))))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">return</span> $v[<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;error&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">$upfile=$_FILES[<span class="string">&quot;upfile&quot;</span>];</span><br><span class="line">$name=$upfile[<span class="string">&quot;name&quot;</span>];</span><br><span class="line">$type=$upfile[<span class="string">&quot;type&quot;</span>];</span><br><span class="line">$size=$upfile[<span class="string">&quot;size&quot;</span>];</span><br><span class="line">$tmp_name=$upfile[<span class="string">&quot;tmp_ name&quot;</span>];</span><br><span class="line">	$distination = <span class="string">&#x27;/var/www/html/up1oad_04/fle/&#x27;</span>.$name;</span><br><span class="line">	<span class="keyword">echo</span> checkFileType($upfile[<span class="string">&#x27;tmp_name&#x27;</span>]);</span><br><span class="line">move_uploaded_file($upfile[<span class="string">&#x27;tmp_name&#x27;</span>],$distination);</span><br></pre></td></tr></table></figure>
+
+<p>（2）文件加载检测中的图像二次渲染</p>
+<p>（3）图像内容检测</p>
+<!-- flag of hidden posts -->
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Directoree 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Directoree 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Directoree
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/web-basic-safety-guide/" title="Web 安全防护指南基础篇">https://directoree.github.io/post/web-basic-safety-guide/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/" rel="tag"># 知识笔记</a>
+          </div>
+
+        
+
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Directoree</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">453k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">6:52</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/web-basic-safety-guide/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
