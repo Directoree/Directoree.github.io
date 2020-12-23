@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Web 安全防护指南基础篇-SQL注入">
+<meta property="og:url" content="https://directoree.github.io/post/web-basic-safety-guide-sqlinject/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/12/22/Q2MZpR7gwm3TFc5.png">
+<meta property="article:published_time" content="2020-12-21T08:23:28.000Z">
+<meta property="article:modified_time" content="2020-12-23T11:04:50.510Z">
+<meta property="article:author" content="Directoree">
+<meta property="article:tag" content="知识笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/12/22/Q2MZpR7gwm3TFc5.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/web-basic-safety-guide-sqlinject/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Web 安全防护指南基础篇-SQL注入 | Directoree</title><meta name="robots" content="noindex">
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Directoree</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-SQL-%E6%B3%A8%E5%85%A5"><span class="nav-text">1 SQL 注入</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-SQL%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-text">1.1 SQL注入攻击原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-SQL%E6%B3%A8%E5%85%A5%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-text">1.2 SQL注入的分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%9B%9E%E6%98%BE%E6%B3%A8%E5%85%A5"><span class="nav-text">1.3 回显注入</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-%E5%AF%BB%E6%89%BE%E6%B3%A8%E5%85%A5%E7%82%B9"><span class="nav-text">1.3.1 寻找注入点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-%E9%80%9A%E8%BF%87%E5%9B%9E%E6%98%BE%E4%BD%8D%E7%A1%AE%E5%AE%9A%E5%AD%97%E6%AE%B5%E6%95%B0"><span class="nav-text">1.3.2 通过回显位确定字段数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-%E6%B3%A8%E5%85%A5%E5%B9%B6%E8%8E%B7%E5%8F%96%E6%95%B0%E6%8D%AE"><span class="nav-text">1.3.3 注入并获取数据</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E7%9B%B2%E6%B3%A8"><span class="nav-text">1.4 盲注</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E5%B8%B8%E8%A7%81%E9%98%B2%E6%8A%A4%E6%89%8B%E6%AE%B5%E5%8F%8A%E7%BB%95%E8%BF%87%E6%96%B9%E6%B3%95"><span class="nav-text">1.5 常见防护手段及绕过方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-5-1-%E5%8F%82%E6%95%B0%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.5.1 参数类型检测及绕过</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Directoree"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Directoree</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/web-basic-safety-guide-sqlinject/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Directoree">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Directoree">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Web 安全防护指南基础篇-SQL注入
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-12-21 16:23:28" itemprop="dateCreated datePublished" datetime="2020-12-21T16:23:28+08:00">2020-12-21</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-12-23 19:04:50" itemprop="dateModified" datetime="2020-12-23T19:04:50+08:00">2020-12-23</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/web-basic-safety-guide-sqlinject/" class="post-meta-item leancloud_visitors" data-flag-title="Web 安全防护指南基础篇-SQL注入" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/web-basic-safety-guide-sqlinject/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/web-basic-safety-guide-sqlinject/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭ </p>
+<a id="more"></a>
+
+
+
+<h2 id="1-SQL-注入"><a href="#1-SQL-注入" class="headerlink" title="1 SQL 注入"></a>1 SQL 注入</h2><p>SQL 注人是指攻击者通过把恶意 SQL 命令插人到 Web 表单的输人域或页面请求的查询字符串中，并且插人的恶意 SQL 命令会导致原有 SQL 语句作用发生改变，从而达到欺骗服务器执行恶意的 SQL 命令的一种攻击方式。</p>
+<p>如果数据库开启了<mark class="label warning">写权限</mark>，攻击者可利用数据库的写功能及特定函数，实现木马自动部署、系统提权等后续攻击。</p>
+<h3 id="1-1-SQL注入攻击原理"><a href="#1-1-SQL注入攻击原理" class="headerlink" title="1.1 SQL注入攻击原理"></a>1.1 SQL注入攻击原理</h3><p>SQL 注入产生的原因是用户提交参数的合法性。</p>
+<p>SQL 注入的本质是恶意攻击者将 SQL 代码插入或添加到程序的参数中，而程序并没有对传入的参数进行正确处理，导致参数中的数据被当作代码执行，并最终将执行结果返回给攻击者。</p>
+<div class="note warning"><p>SQL注人的产生原因通常有以下几点：</p>
+<p>（1）参数处理问题：</p>
+<ul>
+<li>对用户参数进行了错误的类型处理。</li>
+<li>转义字符处理环节产生遗漏或可被绕过。</li>
+</ul>
+<p>（2）服务配置问题：</p>
+<ul>
+<li>不安全的数据库配置。</li>
+<li>Web应用对错误的处理方式不当。<ul>
+<li>不当的类型处理。</li>
+<li>不安全的数据库配置。</li>
+<li>不合理的查询集处理。</li>
+<li>不当的错误处理。</li>
+<li>转义字符处理不当。</li>
+<li>多个提交处理不当。</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<h3 id="1-2-SQL注入的分类"><a href="#1-2-SQL注入的分类" class="headerlink" title="1.2 SQL注入的分类"></a>1.2 SQL注入的分类</h3><p>主要分为两类：</p>
+<ul>
+<li><mark class="label danger">回显注入</mark></li>
+<li><mark class="label success">盲注</mark>
+
+</li>
+</ul>
+<p>在了解 SQL 注人的流程之前需要知道的是：在实际使用中，Web 服务器的配置情况会直接决定 SQL 注人的成功与否。在服务器配置及防护方面，能影响 SQL 注人过程的主要有以下几个方面：</p>
+<div class="note primary"><p>1 ）数据库是否开启报错请求。</p>
+<p>2）服务器端是否允许数据库报错展示。</p>
+<p>3）有过滤代码机制。</p>
+<p>4）服务器开启了参数化查询或对查询过程<mark class="label danger">预编译</mark>。</p>
+<p>5）服务器对查询进行了限速。</p>
+</div>
+
+<h3 id="1-3-回显注入"><a href="#1-3-回显注入" class="headerlink" title="1.3 回显注入"></a>1.3 回显注入</h3><p>SQL 注入漏洞的产生原因千差万别，主要与所用的数据库架构、版本有关系。</p>
+<p>数据库可分为：</p>
+<ul>
+<li>关系型数据库：Oracle、MySQL、SQL Server、Access等。</li>
+<li>非关系型数据库：MongoDB等。</li>
+</ul>
+<p>典型的攻击流程如下：</p>
+<ol>
+<li>判断 Web 系统使用的<mark class="label info">脚本语言</mark>，<mark class="label warning">发现注人点</mark>，并确定<mark class="label success">是否存在 SQL 注人漏洞</mark>。</li>
+<li>判断 Web 系统的<mark class="label primary">数据库类型</mark>。</li>
+<li>判断数据库中<mark class="label danger">表及相应字段的结构</mark>。</li>
+<li>构造注入语句，得到<mark class="label success">表及相应字段的结构</mark>表中数据内容。</li>
+<li>查找网站<mark class="label info">后台管理员</mark>，用得到的管理员账号和密码登录。</li>
+<li>结合其他漏洞，上传<mark class="label default">Webshell</mark>并持续连接（留后门）。</li>
+<li>进一步提权，得到<mark class="label warning">服务器的系统权限</mark>。</li>
+</ol>
+<p>以上为标准的 SQL 注人流程，最终的效果是<strong>获取目标站点的系统控制权限</strong>。在实际安全防护中，由于应用系统的业务特点各不相同，导致在每个阶段可获取的内容并不相同。并且5、6、7步其实与 SQL 注入没有直接关系，但可归类为 SQL 注人后的延伸攻击手段。</p>
+<p>SQL 注入攻击中常见的攻击工具有</p>
+<ul>
+<li>啊 D 注人工具</li>
+<li>havji</li>
+<li>SQLmap</li>
+<li>pangolin</li>
+</ul>
+<p>等，这些工具用法简单，能提供清晰的UI界面，并自带扫描功能，可自动寻找注人点、自动查表名、列名、字段名，并可直接注人，可查到数据库数据信息。其标准流程如下：</p>
+<p>查找注人点 → 查库名 → 查表名 → 查字段名 → 查重点数据</p>
+<h4 id="1-3-1-寻找注入点"><a href="#1-3-1-寻找注入点" class="headerlink" title="1.3.1 寻找注入点"></a>1.3.1 寻找注入点</h4><p>寻找注入点可以利用<strong>有回显</strong>的方法来确定页面是否有漏洞，如果没有回显，则可以进一步利用<strong>盲注</strong>的方法进行注入点探测。</p>
+<div class="note danger"><p>盲注与回显注入基本相同，<mark class="label success">都是构造错误语句触发 Web 系统异常并观察</mark>。</p>
+</div>
+
+<p>如果页面对查询内容有回显，则可以利用基于数字或布尔的方法来探测是否存在漏洞，加入构造如下三个链接：</p>
+<p>下三个链接，并观察页面的特点。</p>
+<ol>
+<li><code>http://www.test.com/showdetail.php?id=49</code></li>
+<li><code> http://www.test.com/showdetail.php?id=49&#39; and &#39;1&#39;=&#39;1</code></li>
+<li><code> http://www.test.com/showdetail.php?id=49&#39; and &#39;1&#39;=&#39;2</code></li>
+</ol>
+<p>访问以上三个链接时，产生的情况可能有如下几种：</p>
+<ul>
+<li><strong>页面没有变化</strong>：访问三个链接，显示的页面没有任何不同。这种情况说明后台针对此查询点的过滤比较严格，是否存在 SQL 注人漏洞还需进行后续测试。</li>
+<li><strong>页面中少了部分内容</strong>：如访问前两个链接正常，第三个页面里有明显的内容缺失，则基本可以确定有漏洞存在。接下来就需要检测是否有<mark class="label warning">union显示位</mark>，如果没有，也可尝试进行<code>bool</code>注人（详情参见后续关于盲注的介绍）。</li>
+<li><strong>错误回显</strong>：如果访问第三个链接后出现数据库报错信息，那么可以判定当前查询点存在注人，用标准的回显注人法即可实现 SQL 注人攻击。</li>
+<li><strong>跳转到默认界面</strong>：如果第一个链接显示正常，第二、第三个链接直接跳转到首页或其他默认页面，那么这可能是后台有验证逻辑，或者是有在线防护系统或防护软件提供实时保护。之后可尝试绕过防护工具的思路（大小写混用、编码等）。</li>
+<li><strong>直接关闭连接</strong>：如果在访问上述第二、三个链接时出现访问失败，那么这种情况下可尝试利用 Burpsuite 抓取服务器响应包，观察包头 server 字段内容。根据经验，这种情况通常为防护类工具直接开启在线阻断导致，后续可利用编码、换行等方式尝试绕过（极难成功）。</li>
+</ul>
+<h4 id="1-3-2-通过回显位确定字段数"><a href="#1-3-2-通过回显位确定字段数" class="headerlink" title="1.3.2 通过回显位确定字段数"></a>1.3.2 通过回显位确定字段数</h4><p>回显位指的是数据库查询结果在前端界面中显示出来的位置，也就是查询结果返回的是数据库中的<mark class="label info">哪列</mark>。在 SQL 注人中，一般利用<mark class="label success">order by</mark>、<mark class="label danger">union select</mark>等命令获取回显位的信息来猜测表内容，前者用来判断数据表的列数（字段数），后者用来判断回显位（字段）。具体使用方法如下:</p>
+<p><code>XX.php?id =1&#39; order by 4#</code></p>
+<p>使用<code>order by</code>的主要目的是判断当前数据表的列数。在测试过程中可修改对应的数值。如果输人的数值大于当前数据表的列数，则查询语句执行失败，由于页面有报错信息，则可以由此判断该数据表的列数</p>
+<p><code>XX.php?id =1&#39; and &#39;1&#39;=&#39;2&#39; union select 1,2,3#</code></p>
+<p>使用<code>union select</code>来判断回显位，当得到回显位确定是哪一列或哪些列之后，则可以构造语句来获取数据表的内容。</p>
+<div class="note info"><p><code>union select</code>中经常会用到<code>NULL</code>起到占位的作用，从而避免显示结果干扰判断。</p>
+</div>
+
+<h4 id="1-3-3-注入并获取数据"><a href="#1-3-3-注入并获取数据" class="headerlink" title="1.3.3 注入并获取数据"></a>1.3.3 注入并获取数据</h4><p>尝试获取表、字段、数据的信息。</p>
+<p>在 MySQL 5.0 之后的版本中，数据库内置了一个库<mark class="label warning">information_ schema</mark>，用于存储当前数据库中的所有库名、表名等信息。因此，可利用 SQL 注人方式，通过远程注入查询语句方式实现直接读取 MySQL 数据库中的<code>information_ schema</code>库的信息，从而获取感兴趣的信息。SQL 注入在<code>information_ schema</code>库中主要涉及内容可参考下图。</p>
+<p><img data-src="https://i.loli.net/2020/12/22/Q2MZpR7gwm3TFc5.png" alt="information_ schema"></p>
+<p>在 SQL 注入过程中，可直接查询<code>information_ schema</code>库来获得目标信息。这里要注意的是，如果需要对表名进行爆破，那么<mark class="label danger">表名需为十六进制格式</mark>。</p>
+<p>基本注入语句可参考以下格式（回显位是4）：</p>
+<ul>
+<li><code>union select 1,2,3,table_name,from(select * from information_schema.tables where table_schema=hex(数据库名) order by 1 limit 0,1)</code></li>
+<li><code>union select 1,2,column_name,from(select* from information_schema.columns where table_name=hex(表名) and table_schema=hex(数据库) limit 0,1)</code></li>
+<li><code>union select 1,2,字段 from 表名 limit 0,1</code></li>
+</ul>
+<h3 id="1-4-盲注"><a href="#1-4-盲注" class="headerlink" title="1.4 盲注"></a>1.4 盲注</h3><p>相对于普通注人来说，盲注的难点在于<strong>前台没有回显位</strong>，导致无法直接获取到有效信息。只能对注人语句执行的正确与否进行判断，也就是只有<mark class="label success">true 和 false</mark>的区别，因此盲注攻击的难度较大。在实施盲注时，关键在于合理地实现对目标数据的猜测，并利用<mark class="label warning">时间延迟</mark>等手段实现猜测正确与否的证明。</p>
+<p>常使用的函数有：</p>
+<ul>
+<li>leng()：获取数据库、表、字段长度等。</li>
+<li>information_schema()：获取数据库信息。</li>
+<li>定向获取字符<ul>
+<li>mid()：获取字符串的值。</li>
+<li>substring()：获取字符串的值。</li>
+</ul>
+</li>
+<li>时间延迟<ul>
+<li>benchmark(count,expr)：重复计算<code>expr</code>表达式<code>count</code>次来达到延时作用，但是内存消耗很大，会导致系统无响应。</li>
+<li>sleep(n)：暂停数据库 n 秒</li>
+</ul>
+</li>
+</ul>
+<div class="note default"><p><code>mid()</code>和<code>substr()</code>都是<code>substring</code>的同义词。语法是：<code>mid(str,pos,len)</code>，<code>str </code>是字符串，<code>pos</code>是起始子字符串的位置（第一个字母为<code>1</code>），<code>len</code>是一个可选参数，它决定从起始位置返回的字符个数。例：</p>
+<p><code>SELECT MID(&#39;I drink coffee&#39;, 3, 5) Result;</code>    结果为：<code>drink</code></p>
+</div>
+
+<p>【<a target="_blank" rel="noopener" href="https://www.php.cn/mysql-tutorials-416587.html#:~:text=%E5%9C%A8MySQL%E4%B8%AD%EF%BC%8CMID%28%29%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E4%BB%8E%E6%8C%87%E5%AE%9A%E4%BD%8D%E7%BD%AE%E5%BC%80%E5%A7%8B%E7%9A%84%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E3%80%82MID%28%29%E5%92%8CSUBSTR%28%29%E9%83%BD%E6%98%AFSUBSTRING%28%29%E7%9A%84%E5%90%8C%E4%B9%89%E8%AF%8D%E3%80%82%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%E6%98%AF%E8%BF%99%E6%A0%B7%E7%9A%84%3A,MID%28str%2Cpos%2Clen%29%20%E8%BF%99%E9%87%8C%EF%BC%8Cstr%E6%98%AF%E5%AD%97%E7%AC%A6%E4%B8%B2%EF%BC%8Cpos%E6%98%AF%E8%B5%B7%E5%A7%8B%E5%AD%90%E5%AD%97%E7%AC%A6%E4%B8%B2%E7%9A%84%E4%BD%8D%E7%BD%AE%EF%BC%8Clen%E6%98%AF%E4%B8%80%E4%B8%AA%E5%8F%AF%E9%80%89%E5%8F%82%E6%95%B0%EF%BC%8C%E5%AE%83%E5%86%B3%E5%AE%9A%E4%BB%8E%E8%B5%B7%E5%A7%8B%E4%BD%8D%E7%BD%AE%E8%BF%94%E5%9B%9E%E7%9A%84%E5%AD%97%E7%AC%A6%E6%95%B0%E3%80%82">MySQL MID()函数的用法详解（代码示例）</a>】</p>
+<p>【<a target="_blank" rel="noopener" href="https://www.yiibai.com/mysql/substring.html">MySQL substring()函数</a>】</p>
+<p>【<a target="_blank" rel="noopener" href="https://www.cnblogs.com/duanxz/p/3936759.html">MYSQL BENCHMARK()函数</a>】</p>
+<p>【<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/news/371274">Myql SLEEP函数和SQL注入</a>】</p>
+<h3 id="1-5-常见防护手段及绕过方法"><a href="#1-5-常见防护手段及绕过方法" class="headerlink" title="1.5 常见防护手段及绕过方法"></a>1.5 常见防护手段及绕过方法</h3><div class="note danger"><p>SQL 注人的防护方法包括：</p>
+<ul>
+<li><mark class="label success">参数过滤</mark> </li>
+<li><mark class="label danger">预编译处理</mark></li>
+</ul>
+</div>
+
+<p><strong>参数过滤分为</strong>：</p>
+<ul>
+<li>数据类型限制（类型和长度）</li>
+<li>危险字符处理</li>
+</ul>
+<p>通俗地说就是：要么严防死守，细致检查；要么严格限定参数的有效范围（<strong>参数化查询</strong>）。总之就是要尽可能限制用户可提交参数的类型。</p>
+<p>针对 SQL 注入设计防护体系时，一定要与真实的业务场景进行配合，很多时候用简单的方式可获得非常好的防护效果。首先需尽可能详细地限制允许用户输人的参数类型及长度；其次，需考虑用户输人内容的特点及目的，开展有针对性的关键字、词过滤;如果是新建系统，推荐利用参数化查询手段，以实现更好的防护效果。当然，在这期间，应尽可能保证中间件版本的更新频率，可有效防护各类型攻击。以下将针对每种防护场景进行探讨。再次强调，防护力较弱的方法并不一定不适用，必须与实际环境相结合来选择。</p>
+<h4 id="1-5-1-参数类型检测及绕过"><a href="#1-5-1-参数类型检测及绕过" class="headerlink" title="1.5.1 参数类型检测及绕过"></a>1.5.1 参数类型检测及绕过</h4><p>如链接：<code>xxxx.php?type_id=4&amp;new_id=690</code>，其中<code>type_id=4</code>和<code>new_id=690</code>为数字类型且长度均为一定值，均为用户可控，避免参数中出现非数字类型字符，并且对长度进行限制。或使用<strong>正则表达式</strong>可有效避免 SQL 注入。</p>
+<div class="note success"><p><strong>防护方法</strong>：</p>
+<ul>
+<li><mark class="label info">使用函数对参数类型进行过滤</mark></li>
+<li><mark class="label warning">正则表达式</mark></li>
+</ul>
+</div>
+
+<p>参数类型检测主要<strong>面向字符型</strong>的参数查询功能，可以用以下函数实现：</p>
+<ul>
+<li><code>int intval ( mixed $var [, int $base = 10 ] )</code> ：通过使用指定的进制 base 转换（默认是十进制），返回变量<code>var</code>的<code>integer</code> 数值。</li>
+<li><code>bool is_numeric ( mixed $var ) </code>：检测变量是否为数字或数字字符串，<strong>但此函数允许输人为负数和小数</strong>。</li>
+<li><code>ctype_digit</code>： 检测字符串中的字符是否都是数字，<strong>负数和小数无法通过检测</strong>。</li>
+</ul>
+<p>在特定情况下，使用这三个函数可限制用户输人数字型参数，这在一些仅允许用户参数为数字的情况下非常适用，如查询 ID 号、学号、电话号码等业务场景。</p>
+<p><strong>绕过方法</strong>：</p>
+<!-- flag of hidden posts -->
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Directoree 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Directoree 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Directoree
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/web-basic-safety-guide-sqlinject/" title="Web 安全防护指南基础篇-SQL注入">https://directoree.github.io/post/web-basic-safety-guide-sqlinject/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/" rel="tag"># 知识笔记</a>
+          </div>
+
+        
+
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Directoree</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">453k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">6:52</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/web-basic-safety-guide-sqlinject/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

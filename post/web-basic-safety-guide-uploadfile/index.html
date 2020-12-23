@@ -24,21 +24,22 @@
 
   <meta name="description" content="ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Web 安全防护指南基础篇">
-<meta property="og:url" content="https://directoree.github.io/post/web-basic-safety-guide/index.html">
+<meta property="og:title" content="Web 安全防护指南基础篇-文件上传">
+<meta property="og:url" content="https://directoree.github.io/post/web-basic-safety-guide-uploadfile/index.html">
 <meta property="og:site_name" content="Directoree">
 <meta property="og:description" content="ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://i.loli.net/2020/12/17/vQnrx7zPtM9gsVi.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/21/2aWJsHwnoZUCrhT.png">
 <meta property="article:published_time" content="2020-12-17T01:53:54.000Z">
-<meta property="article:modified_time" content="2020-12-18T08:40:46.700Z">
+<meta property="article:modified_time" content="2020-12-21T08:12:01.246Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="知识笔记">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.loli.net/2020/12/17/vQnrx7zPtM9gsVi.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/web-basic-safety-guide/">
+<link rel="canonical" href="https://directoree.github.io/post/web-basic-safety-guide-uploadfile/">
 
 
 <script class="page-configurations">
@@ -51,7 +52,7 @@
   };
 </script>
 
-  <title>Web 安全防护指南基础篇 | Directoree</title><meta name="robots" content="noindex">
+  <title>Web 安全防护指南基础篇-文件上传 | Directoree</title><meta name="robots" content="noindex">
   
 
 
@@ -227,7 +228,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-text">1 文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-text">1.1 上传攻击原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E6%9D%A1%E4%BB%B6"><span class="nav-text">1.2 上传攻击条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%B8%8A%E4%BC%A0%E6%A3%80%E6%B5%8B%E7%BB%95%E8%BF%87%E6%8A%80%E6%9C%AF"><span class="nav-text">1.3 上传检测绕过技术</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-%E5%AE%A2%E6%88%B7%E7%AB%AF-Javascript-%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.1 客户端 Javascript 检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF-MIME-%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.2 服务器端 MIME 检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%96%87%E4%BB%B6%E6%89%A9%E5%B1%95%E5%90%8D%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.3 服务器端文件扩展名检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.4 服务器端文件内容检测及绕过</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-text">1 文件上传</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E5%8E%9F%E7%90%86"><span class="nav-text">1.1 上传攻击原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%B8%8A%E4%BC%A0%E6%94%BB%E5%87%BB%E6%9D%A1%E4%BB%B6"><span class="nav-text">1.2 上传攻击条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%B8%8A%E4%BC%A0%E6%A3%80%E6%B5%8B%E7%BB%95%E8%BF%87%E6%8A%80%E6%9C%AF"><span class="nav-text">1.3 上传检测绕过技术</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-%E5%AE%A2%E6%88%B7%E7%AB%AF-Javascript-%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.1 客户端 Javascript 检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF-MIME-%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.2 服务器端 MIME 检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%96%87%E4%BB%B6%E6%89%A9%E5%B1%95%E5%90%8D%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.3 服务器端文件扩展名检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-4-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AB%AF%E6%96%87%E4%BB%B6%E5%86%85%E5%AE%B9%E6%A3%80%E6%B5%8B%E5%8F%8A%E7%BB%95%E8%BF%87"><span class="nav-text">1.3.4 服务器端文件内容检测及绕过</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-5-%E4%B8%8A%E4%BC%A0%E6%B5%81%E7%A8%8B%E5%AE%89%E5%85%A8%E9%98%B2%E6%8A%A4%E6%80%BB%E7%BB%93"><span class="nav-text">1.3.5 上传流程安全防护总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E6%96%87%E4%BB%B6%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E"><span class="nav-text">1.4 文件解析漏洞</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-1-htaccess-%E6%94%BB%E5%87%BB"><span class="nav-text">1.4.1 .htaccess 攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-2-Apache-%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB"><span class="nav-text">1.4.2 Apache 解析漏洞攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-3-IIS-%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB"><span class="nav-text">1.4.3 IIS 解析漏洞攻击</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-4-4-Nginx-%E8%A7%A3%E6%9E%90%E6%BC%8F%E6%B4%9E%E6%94%BB%E5%87%BB"><span class="nav-text">1.4.4 Nginx 解析漏洞攻击</span></a></li></ol></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -320,7 +321,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/web-basic-safety-guide/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/web-basic-safety-guide-uploadfile/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -333,7 +334,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Web 安全防护指南基础篇
+          Web 安全防护指南基础篇-文件上传
         </h1>
 
         <div class="post-meta-container">
@@ -351,7 +352,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-12-18 16:40:46" itemprop="dateModified" datetime="2020-12-18T16:40:46+08:00">2020-12-18</time>
+        <time title="修改时间：2020-12-21 16:12:01" itemprop="dateModified" datetime="2020-12-21T16:12:01+08:00">2020-12-21</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -368,7 +369,7 @@
     </span>
 
   
-    <span id="/post/web-basic-safety-guide/" class="post-meta-item leancloud_visitors" data-flag-title="Web 安全防护指南基础篇" title="阅读次数">
+    <span id="/post/web-basic-safety-guide-uploadfile/" class="post-meta-item leancloud_visitors" data-flag-title="Web 安全防护指南基础篇-文件上传" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -383,8 +384,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/web-basic-safety-guide/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/web-basic-safety-guide/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/web-basic-safety-guide-uploadfile/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/web-basic-safety-guide-uploadfile/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -396,14 +397,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.3k</span>
+      <span>9.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -548,6 +549,94 @@
 
 <p>（2）文件加载检测中的图像二次渲染</p>
 <p>（3）图像内容检测</p>
+<p><strong>绕过方法</strong>：</p>
+<div class="note warning"><ol>
+<li><p>文件头检测</p>
+<p>修改文件头，对前<code>20</code>字节进行替换，后面再插人一句话木马，即可实现对文件内容检测的绕过。使用时先在要上传的文件的所有内容前添加<code>GIF89a</code>，Web 系统可判断当前文件为gif类型。需要注意的是，在实际中仅使用这种方法很多时候不能成功，因为上传功能还检测了后缀名<code>MIME</code>等。因此若仅仅是针对文件内容检测，可采用这种方法进行尝试。</p>
+</li>
+<li><p>文件二次渲染（极难）</p>
+<p>1）基于数据二义性，即让数据既是图像数据也包含一句话木马。</p>
+<p>2）对文件加载器进行溢出攻击。</p>
+</li>
+</ol>
+<p>这里需要注意的是，如果仅仅对<code>.php</code>文件添加上述文件头，并不一定会控制<code>MIME</code>的生成值。因为在不同浏览器下，针对文件生成<code>MIME</code>时会有不同的情况。<code>IE</code>浏览器默认会根据文件头确定<code>MIME</code>值。但是<code>Chrome</code>、<code>Firefox </code>则仍以后缀名方式进行判断。</p>
+</div>
+
+<h4 id="1-3-5-上传流程安全防护总结"><a href="#1-3-5-上传流程安全防护总结" class="headerlink" title="1.3.5 上传流程安全防护总结"></a>1.3.5 上传流程安全防护总结</h4><p>攻击者利用上传功能实现的主要目标是：</p>
+<ul>
+<li>上传木马</li>
+<li>让木马按照Web格式进行解析</li>
+</ul>
+<p>因此，在防护手段上，系统设计者在设计之初，考虑到系统性能问题，无法对每个上传的内容进行检查。这是因为多数上传的文件内容过于庞大，如果贸然对文件内容进行完全检查，则要消耗大量的系统资源，同时对系统速度造成极大影响，导致用户体验下降。因此有效的防护手段就是避免木马按照既定格式进行上传。可用的思路有：</p>
+<p>（1）限制高危扩展名上传</p>
+<ul>
+<li>利用黑白名单确定后缀名是否合法。</li>
+<li>根据应用特点重新对上传文件进行后缀重命名。</li>
+</ul>
+<p>（2）限制高危文件内容出现</p>
+<ul>
+<li>利用内容检索来检测是否存在非正常内容。</li>
+<li>确认图片格式与上传文件内容是否对应。</li>
+<li>在图像加载时重新渲染，避免非图像内容出现。</li>
+</ul>
+<p>不同于<code>XSS</code>攻击与<code>SQL</code>注入攻击，在上传过程中，在每个步骤上均可开展防护，根本目标是避免木马在服务器端执行，这也就是上传攻击的防护初衷。</p>
+<h3 id="1-4-文件解析漏洞"><a href="#1-4-文件解析漏洞" class="headerlink" title="1.4 文件解析漏洞"></a>1.4 文件解析漏洞</h3><p>解析漏洞可以说是 Web 安全中比较“古老”的漏洞类型，绝大多数解析漏洞都是由于中间件的版本过低造成的。由于中间件在判断文件类型时，存在判断机制的问题，导致在实际解析过程中并不会按照既定的后缀名进行解析。攻击者针对这种情况，在文件名构造上进行特殊设计，导致中间件在判断此类特殊文件名时触发解析漏洞，实际解析后的文件 与文件名并不相同（<code>.jpg</code>文件会被当作<code>.php</code>文件执行）。解析漏洞的危害在于 Web 应用防护方面防护看似非常到位，但仍存在安全隐患。目前主流中间件在老版本中均在解析漏洞。以下为常见的存在解析漏洞的中间件及对应特性。</p>
+<p>低版本的中间件存在解析漏洞。 下图是上传安全防护流程图。　</p>
+<p><img data-src="https://i.loli.net/2020/12/21/2aWJsHwnoZUCrhT.png" alt="上传安全防护流程图"></p>
+<h4 id="1-4-1-htaccess-攻击"><a href="#1-4-1-htaccess-攻击" class="headerlink" title="1.4.1 .htaccess 攻击"></a>1.4.1 .htaccess 攻击</h4><p>Apache 中允许多站点同时解析，关于Apache 的虚拟主机、虚拟目录、多站点：</p>
+<p><strong>多站点</strong>：访问主机服务的本质访问 Web 服务，本质上看（从协议上）是访问某个 IP 的主机上的某个端口（默认是80），通常需要通过访问不同的域名或者端口，实现对不同网站的访问(具体到服务器里就是不同目录)，这个时候就需要设置网站空间。通常分为3种：<strong>基于域名、基于端口、基于IP以及它们的混合</strong>。</p>
+<p>Apache 的虚拟主机就是在一台服务器上运行多个网站，每个虚拟主机都可以绑定独立的域名，为这些域名可以指定单独的目录，访问这些域名的时候，Apache 会打开对应目录里面的东西。实际是<mark class="label warning">依靠域名访问不同的目录文件</mark>。</p>
+<p><strong>目录别名（虚拟目录</strong>）： 某个站点<code>www.abc.com</code>所对应文件夹下有一个目录为<code>d1</code>，则可以这样访问该目录： <code>www.abc.com/d1</code> 这个<code>d1</code>就称为“<strong>真实目录</strong>”； 虚拟目录就是： 该站点下不存在某目录名，但却可以使用同样的语法形式，去访问，比如：<code> www.abc.com/d2</code>  ，假设该站点目录下根本就没有<code>d2</code>这个目录，此时却可以访问实现这种技术，就是所谓“目录别名”（<strong>虚拟目录</strong>）</p>
+<p><a target="_blank" rel="noopener" href="http://httpd.apache.org/docs/2.4/zh-cn/vhosts/">Apache 虚拟主机文档</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/the_victory/article/details/51006167?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control">Apache2.4虚拟主机和多站点配置</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37730771/article/details/79729931">单站点和多站点和虚拟目录</a>、<a target="_blank" rel="noopener" href="https://www.cnblogs.com/hzk001/p/11748204.html">Apache的虚拟主机功能</a></p>
+<div class="note danger"><p><strong>虚拟主机</strong>：Apache的虚拟主机功能 (Virtual Host) 是可以让一台服务器基于IP、主机名或端口号实现提供多个网站服务的技术。简单来说，Apache 虚拟主机就是在一个 Apache 服务器上配置多个虚拟空间，实现一个服务器提供多站点服务，其实就是访问同一个服务器上的不同目录。每个目录对应一个站点。</p>
+</div>
+
+<p><code>.htaccess</code>文件是 Apache 服务器中最常用的一个配置文件，它负责相关目录下的网页配置。通过 <code>.htaccess</code>文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置索引入口等功能。</p>
+<p>在早期以黑白名单为主流防护技术的时期，攻击者经常在获得当前系统的 Webshell 之后，会修改<code>.htaccess</code>文件内容，添加未知后缀以<code>.php</code>的方式执行（任意后缀的文件都会被当作 php 文件执行）。这样就算当前的 Webshell 丢失，也可在下次攻击时直接利用未知文件名重新快速获得 Webshell，这也算另一种“后门”的效果。</p>
+<p>虽然用户端做了大量的防护功能，但是可利用虚拟目录功能，实现中间件层的解析欺骗，导致木马可以非正常后缀名进行执行。不过，实际过程中可利用的场景非常少，主要是由于<mark class="label info">.htaccess 文件需放在当前 Web 目录下面</mark>。攻击者如果能在当前Web目录下插人任意的文件，其实攻击者已经获得当前系统的webshell，也就没有必要利用这种方式进行攻击。</p>
+<p>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/jamin25521/article/details/7883019">htaccess功能</a>】</p>
+<h4 id="1-4-2-Apache-解析漏洞攻击"><a href="#1-4-2-Apache-解析漏洞攻击" class="headerlink" title="1.4.2 Apache 解析漏洞攻击"></a>1.4.2 Apache 解析漏洞攻击</h4><p>Apache中间件早期版本在后缀解析<code>test.php.x1.x2.x3</code>时，Apache 将<mark class="label primary">从右至左</mark>开始判断后缀，若<code>x3</code>为非可识别后缀，再判断<code>x2</code>，直到找到可识别后缀为止，然后将该可识别后缀进解析。例如，<code>test.php.x1.x2.x3</code>会被解析为<code>php</code>。</p>
+<p>解析漏洞的危害在于对以上的文件上传防护机制都可以进行绕过。当然，存在解析漏洞的中间件的版本都比较老，新版本不存在上述问题。因此要解决解析漏洞的问题，简单有效的方法就是升级中间件版本。</p>
+<p>另外有一点需要注意， 很多人会使用集成环境来部署 Web 服务器。集成环境部署简易、使用方便，因此应用广泛。但需要注意的是，集成环境的软件版本并不是中间件的版本。因此从安全角度考虑，需要严格检查集成环境中的 Apache及 PHP 版本，避免出现解析漏洞或截断漏洞等。下面是些存在解析漏洞的集成环境版本及中间件对应版本信息，用以核对当前服务器安全状态或进行漏洞测试：</p>
+<ul>
+<li>WampServer2.0 All Version (WampServer2.0i / Apache 2.2.11)</li>
+<li>WampServer2. 1 All Version (WampServer2. le-x32 / Apache 2.2.17)</li>
+<li>Wamp5 All Version (Wamp5_ 1.7.4 / Apache 2.2.6)</li>
+<li>AppServ 2.4 All Version (AppServ - 2.4.9 / Apache 2.0.59)</li>
+<li>AppServ 2.5 All Version (AppServ - 2.5.10 / Apache 2.2.8)</li>
+<li>AppServ 2.6 AlI Version (AppServ - 2.6.0 / Apache 2.2.8)</li>
+</ul>
+<h4 id="1-4-3-IIS-解析漏洞攻击"><a href="#1-4-3-IIS-解析漏洞攻击" class="headerlink" title="1.4.3 IIS 解析漏洞攻击"></a>1.4.3 IIS 解析漏洞攻击</h4><div class="note default"><p><strong>（1） IIS 6.0</strong></p>
+<p>随着 Windows Server 2003 的停止维护，IIS 6.0 的利用范围也在大幅度缩小。目前，新版的 IIS 中已不存在解析漏洞。这里仅以6.0环境作为漏洞利用场景来分析解析漏洞的综合利用方式。在解析<code>asp</code>格式的时候有两个解析漏洞：</p>
+<p>1）如果<mark class="label danger">目录</mark>名包含<code>.asp</code>字符串，那么这个目录下所有的文件都会按照<code>asp</code>格式解析。例如，对于<code>/xx.asp/xx.jpg</code> （ <code>xx.jpg</code>可替换为任意文本文件），IIS 6.0 会将<code>xx.jpg</code>解析为<code>asp</code>文件。</p>
+<p>2）只要文件名中含有<code> .asp;</code>，就会优先按<code>asp</code>来解析。例如，对于<code>/xx.asp;jpg</code> （此处需抓包修改文件名），IIS 6.0 都会把此类后缀文件成功解析为<code>asp</code>文件。（<code>/xx.asp:.jpg</code>这 类文件在Windows下不允许存在，<code>:.jpg </code>被自动除去，剩下<code>/xx.asp</code>。）    </p>
+<p>HIS 6.0 默认的可执行文件除了<code>asp</code>还包含如下三种：<code> /xx.asa</code>、<code> /xx.cer</code>、<code>/xx.cdx</code>。（在 IIS默认配置中，这几个后缀默认由<code>asp.dll</code>来解析，所以执行权限和<code>.asp</code>一模一样，可在配置中自行删除该后缀，以免出现安全隐患。）</p>
+</div>
+
+<div class="note primary"><p><strong>（2）IIS 7.0/IIS 7.5</strong></p>
+<p>IIS 7.0/7.5 存在的解析漏洞利用场景比 IIS 6.0要苛刻，主要是在对<code>php</code>解析时存在类似于 Nginx 的解析漏洞，并且需要处于<code>Fast-CGI</code>开启状态。在漏洞利用方式上，只要在任意文件名的 URL 后追加字符串<code>/任意文件名.php</code>，那么当前文件就会按照<code>php</code>的方式解析。</p>
+<p>利用方法如下：将一张图和一个写人后门代码的文本文件合并， 将恶意文本写人图片的二进制代码之后，避免破坏图片文件头和尾。Windows 下可利用 CMD 命令实现文件拼接:：<code>copy xx.jpg/b + yy.txt/a xy.jpg</code></p>
+<p>其中，参数的意义为：</p>
+<ul>
+<li><code>/b</code>  二进制（binary）模式。</li>
+<li><code>/a</code>   ASCII 模式<code>xx.jpg</code>正常图片文件。</li>
+<li><code>yy.txt</code>的内容如下：</li>
+</ul>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?PHP</span> fputs(fopen(<span class="string">&#x27;shell.php&#x27;</span>,<span class="string">&#x27;w&#x27;</span>),<span class="string">&#x27;&lt;?php eval($_POST[cmd])?&gt;&#x27;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这段代码的作用是写人一个内容为<code>&lt;?php eval($_POST[cmd])?&gt; </code>、名称为<code>shell.php</code>的文件。利用图片合成工具，也可达到上述效果。</p>
+<p>执行成功后的效果就是在上传文件的真实目录下生成一句话木马文件<code>shel.php</code>，再利用各类连接工具连接即可完成整体漏洞利用。需要注意的是，<strong>IIS7.0/7.5 下的解析漏洞是由于<code>php-cgi</code>本身的问题导致，与 IIS 自身并没有直接关系</strong>。</p>
+</div>
+
+<h4 id="1-4-4-Nginx-解析漏洞攻击"><a href="#1-4-4-Nginx-解析漏洞攻击" class="headerlink" title="1.4.4 Nginx 解析漏洞攻击"></a>1.4.4 Nginx 解析漏洞攻击</h4><p>目前 Nginx 的解析漏洞利用方式与 Apache、IIS基本一致。一个是对于任意文件名，在后面添加<code>/任意文件名.php</code>的解析漏洞，比如原本文件名是<code>test.jpg</code>，可以添加为<code>test.jpg/x.php</code>进行解析攻击。还有一种是针对低版本的 Nginx，可以在任意文件名后面添加<code>%00.php</code>进行解析攻击。</p>
+<p>下面几个版本都存在此问题：</p>
+<ul>
+<li>Nginx 0.5.*</li>
+<li>Nginx 0.6.*</li>
+<li>Nginx 0.7 &lt;= 0.7.65</li>
+<li>Nginx 0.8 &lt;= 0.8.37</li>
+</ul>
+<p><code>任意文件名/任意文件名.php</code>这个漏洞其实是出现自<code>php-cgi</code>的漏洞，与 Nginx 自身无关，这点与 IIS 7.0/7.5 与 PHP 配合使用时解析漏洞产生原理一样。</p>
 <!-- flag of hidden posts -->
     </div>
 
@@ -583,7 +672,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/web-basic-safety-guide/" title="Web 安全防护指南基础篇">https://directoree.github.io/post/web-basic-safety-guide/</a>
+      <a href="https://directoree.github.io/post/web-basic-safety-guide-uploadfile/" title="Web 安全防护指南基础篇-文件上传">https://directoree.github.io/post/web-basic-safety-guide-uploadfile/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -813,7 +902,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/web-basic-safety-guide/",
+      path: "/post/web-basic-safety-guide-uploadfile/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
