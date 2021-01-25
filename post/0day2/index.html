@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:type" content="article">
+<meta property="og:title" content="0day安全：软件漏洞分析技术（第二版）读书笔记">
+<meta property="og:url" content="https://directoree.github.io/post/0day2/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/25/sq2oM4.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/25/sL9t5q.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/25/sLeTcn.jpg">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/25/sLlfrd.png">
+<meta property="article:published_time" content="2021-01-25T01:23:04.000Z">
+<meta property="article:modified_time" content="2021-01-25T07:15:18.504Z">
+<meta property="article:author" content="Directoree">
+<meta property="article:tag" content="知识笔记">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/01/25/sq2oM4.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/0day2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>0day安全：软件漏洞分析技术（第二版）读书笔记 | Directoree</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Directoree</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">第一章 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-text">1.1 漏洞挖掘、漏洞分析、漏洞利用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98"><span class="nav-text">1.1.1 漏洞挖掘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">1.1.2 漏洞分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-text">1.1.3 漏洞利用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E6%A6%82%E8%BF%B0"><span class="nav-text">1.2 二进制文件概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-text">1.2.1 PE文件格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-text">1.2.2 虚拟内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-PE%E6%96%87%E4%BB%B6%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B9%8B%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84"><span class="nav-text">1.2.3 PE文件与虚拟内存之间的映射</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Directoree"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Directoree</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">90</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">48</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/0day2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Directoree">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Directoree">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          0day安全：软件漏洞分析技术（第二版）读书笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-01-25 09:23:04 / 修改时间：15:15:18" itemprop="dateCreated datePublished" datetime="2021-01-25T09:23:04+08:00">2021-01-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/0day2/" class="post-meta-item leancloud_visitors" data-flag-title="0day安全：软件漏洞分析技术（第二版）读书笔记" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/0day2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/0day2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭ </p>
+<a id="more"></a>
+
+<h2 id="第一章-基础知识"><a href="#第一章-基础知识" class="headerlink" title="第一章 基础知识"></a>第一章 基础知识</h2><p>我们通常把能够引起软件做一些“超出设计范围的事情”的bug 称为漏洞（vulnerability）。</p>
+<p> （1）<mark class="label success">功能性逻辑缺陷（bug）</mark>：影响软件的正常功能，例如，执行结果错误、图标显示错误等。</p>
+<p>（2）<mark class="label warning">安全性逻辑缺陷（漏洞）</mark>：通常情况下不影响软件的正常功能，但被攻击者成功利用后，有可能引起软件去执行额外的恶意代码。常见的漏洞包括软件中的缓冲区溢出漏洞、网站中的跨站脚本漏洞（XSS）、 SQL注入漏洞等。</p>
+<h3 id="1-1-漏洞挖掘、漏洞分析、漏洞利用"><a href="#1-1-漏洞挖掘、漏洞分析、漏洞利用" class="headerlink" title="1.1 漏洞挖掘、漏洞分析、漏洞利用"></a>1.1 漏洞挖掘、漏洞分析、漏洞利用</h3><p>利用漏洞进行攻击可以大致分为漏洞挖掘、漏洞分析、漏洞利用三个步骤。这三部分所用的技术有相同之处，比如都需要精通系统底层知识逆向工程等：同时也有一定的差异。</p>
+<h4 id="1-1-1-漏洞挖掘"><a href="#1-1-1-漏洞挖掘" class="headerlink" title="1.1.1 漏洞挖掘"></a>1.1.1 漏洞挖掘</h4><p>由于安全性漏洞往往有极高的利用价值，例如，导致计算机被非法远程控制，数据库数据泄漏等，所以总是有无数技术精湛、精力旺盛的家伙在夜以继日地寻找软件中的这类<strong>逻辑瑕疵</strong>。他们精通二进制、汇编语言、操作系统底层的知识;他们往往也是杰出的程序员，因此能够敏锐地捕捉到程序员所犯的细小错误。</p>
+<p>寻找漏洞的人并非全是攻击者。大型的软件企业也会雇用一些安全专家来测试自己产品中的漏洞，这种测试工作被称做 Penetrationtest（攻击测试），这些测试团队则被称做 Tigerteam 或者 Ethic hacker。</p>
+<p><strong>从技术角度讲</strong>，漏洞挖掘实际上是一种高级的测试 （QA）。 <strong>学术界</strong>一直热衷于使用静态分析的方法寻找源代码中的漏洞；而<strong>在工程界</strong>，不管是安全专家还是攻击者，普遍采用的漏洞挖掘方法是<code>Fuzz</code>，这实际是一种<mark class="label default">“灰”盒测试</mark>。</p>
+<h4 id="1-1-2-漏洞分析"><a href="#1-1-2-漏洞分析" class="headerlink" title="1.1.2 漏洞分析"></a>1.1.2 漏洞分析</h4><p> ①在分析漏洞时，<strong>如果能够搜索到POC (proof of concept）代码，就能重现漏洞被触发的现场</strong>。这时可以使用调试器观察漏洞的细节，或者利用一此工具(如Paimei)更方便地找到漏洞的触发点。</p>
+<p>当无法获得 POC 时，就只有厂商提供的对漏洞的简单描述了。</p>
+<p>②一个比较通用的办法是使用<mark class="label danger">补丁比较器</mark>，首先比较<code>patch</code>前后可执行文件都有哪些地方被修改，之后可以利用反汇编T 具（如IDA Pro）重点逆向分析这些地方。</p>
+<p>漏洞分析需要扎实的逆向基础和调试技术，除此以外还要精通各种场景下的漏洞利用方法。这种技术更多依靠的是经验，很难总结出通用的条款。</p>
+<h4 id="1-1-3-漏洞利用"><a href="#1-1-3-漏洞利用" class="headerlink" title="1.1.3 漏洞利用"></a>1.1.3 漏洞利用</h4><p>手机安全及 Web 应用中的脚本注入攻击所使用的技术与 Windows 平台下缓冲区溢出相差较大，且自成体系。</p>
+<h3 id="1-2-二进制文件概述"><a href="#1-2-二进制文件概述" class="headerlink" title="1.2 二进制文件概述"></a>1.2 二进制文件概述</h3><h4 id="1-2-1-PE文件格式"><a href="#1-2-1-PE文件格式" class="headerlink" title="1.2.1 PE文件格式"></a>1.2.1 PE文件格式</h4><p>PE (Portable Exec utable）是 Win32 平台下可执行文件遵守的数据格式。常见的可执行文 件（如<code>*.exe</code>文件和<code>*.II</code> 文件）都是典型的 PE 文件。</p>
+<p>一个可执行文件不光包含了二进制的机器代码，还会自带许多其他信息，如字符串、菜单、图标、位图、字体等。<mark class="label default">PE 文件格式规定了所有的这些信息在可执行文件中如何组织。</mark><mark class="label danger">PE 在程序被执行时，操作系统会按照 PE 文件格式的约定去相应的地方准确地定位各种类型的资源，并分别装入内存的不同区域。</mark></p>
+<p><img data-src="https://s3.ax1x.com/2021/01/25/sq2oM4.png" alt="sq2oM4.png"></p>
+<h4 id="1-2-2-虚拟内存"><a href="#1-2-2-虚拟内存" class="headerlink" title="1.2.2 虚拟内存"></a>1.2.2 虚拟内存</h4><p><img data-src="https://s3.ax1x.com/2021/01/25/sL9t5q.png" alt="sL9t5q.png"></p>
+<p>进程所拥有的 4GB 虚拟内存中包含了程序运行时所必需的资源，比如代码、栈空间、堆空间、资源区、动态链接库等。在后面的章节中，我们将不停地辗转于虚拟内存中的这些区域。</p>
+<div class="note success"><p><mark class="label danger">注意</mark>：操作系统原理中也有“虚拟内存”的概念，那是指当实际的物理内存不够时，有时操作系统会把“部分硬盘空间”当做内存使用从而使程序得到装载运行的现象。请不要将用硬盘充当内存的“虚拟内存”与这里介绍的“虚拟内存”相混淆。此外，本书除第4篇内核安全外，其余所述之“内存”均指 Windows 用户态内存映射机制下的虚拟内存。</p>
+</div>
+
+<div class="note warning"><p><mark class="label warning">关于用户态模式下的虚拟内存</mark></p>
+<p>由下图可以看出，进程的虚拟地址空间，<mark class="label default">由多个虚拟内存区域构成</mark>。虚拟内存区域是进程的虚拟地址空间中的一个同质区间，即具有同样特性的连续地址范围。上图中所示的text数据段（代码段）、初始数据段、BSS数据段、堆、栈和内存映射，都是一个独立的虚拟内存区域。而为内存映射服务的地址空间处在堆栈之间的空余部分。</p>
+</div>
+
+<p><img data-src="https://s3.ax1x.com/2021/01/25/sLeTcn.jpg" alt="sLeTcn.jpg"></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_22418329/article/details/108861642">用户态进程的虚拟地址如何转换成物理地址</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42462202/article/details/102490633">Linux内存管理（四）用户态内存映射</a></p>
+<h4 id="1-2-3-PE文件与虚拟内存之间的映射"><a href="#1-2-3-PE文件与虚拟内存之间的映射" class="headerlink" title="1.2.3 PE文件与虚拟内存之间的映射"></a>1.2.3 PE文件与虚拟内存之间的映射</h4><p>在调试漏洞时，可能经常需要做这样两种操作。</p>
+<ol>
+<li><strong>静态反汇编工具</strong>看到的 PE 文件中某条指令的位置是相对于磁盘文件而言的，即所谓的<mark class="label primary">文件偏移</mark>。我们可能还需要知道这条指令在内存中所处的位置，即<mark class="label info">虚拟内存地址</mark>（VA）。</li>
+<li>反之，在<strong>动态调试</strong>时看到的某条指令的地址是虚拟内存地址，我们也经常需要回到 PE 文件中找到这条指令对应的机器码。</li>
+</ol>
+<div class="note danger"><ol>
+<li><p>文件偏移地址（File Offset）</p>
+<p>数据在 PE 文件中的地址叫文件偏移地址（文件地址）。这是文件在磁盘上存放时相<strong>对于文件开头</strong>的偏移。</p>
+</li>
+<li><p>装载基址(Image Base ） </p>
+<p>PE 装入内存时的基地址。默认情况下，EXE 文件在内存中的基地址是<mark class="label default">0x00400000</mark>，DL L文件是<mark class="label warning">0x10000000</mark>，这些位置可以通过修改编译选项更改。</p>
+</li>
+<li><p>虚拟内存地址（Virtual Address, VA）</p>
+<p>PE 文件中的指令被装入内存后的地址。</p>
+</li>
+<li><p>相对虚拟地址（Relative Virtual Address, RVA）</p>
+</li>
+<li><p>相对虚拟地址是内存地址相对于映射基址的偏移量。</p>
+</li>
+</ol>
+<p>虚拟内存地址、映射基址、相对虚拟内存地址三者之间有如下关系。</p>
+<p>$$VA=Image Base + RVA$$</p>
+<p>文件偏移是相对于文件开始处<mark class="label success">0字节</mark>的偏移，RVA（想对虚拟地址）则是相对于<mark class="label success">装载基址</mark><code>0x00400000</code>处的偏移。</p>
+</div>
+
+<p><img data-src="https://s3.ax1x.com/2021/01/25/sLlfrd.png" alt="sLlfrd.png"></p>
+<p>由于操作系统在进行装载时“基本”上保持 PE 中的各种数据结构，所以文件偏移地址和RVA有很大的一致性。之所以说“基本”上一致是因为还有一些细微的差异。这些差异是由于文件数据的存放单位与内存数据存放单位不同而造成的。</p>
+<div class="note default"><ol>
+<li>PE 文件中的数据按照磁盘数据标准存放，以<code>0x200</code>字节为基本单位进行组织。当一个数据节（section） 不足<code>0x200</code>字节时，<mark class="label danger">不足的地方将被 0x00 填充</mark>；当一个数据节超过<code>0x200</code>字节时，下一个<code>0x200</code>块将分配给这个节使用。因此 PE 数据节的大小永远是<code>0x200</code>的整数倍。</li>
+<li>当代码装入内存后，将按照内存数据标准存放，并以<code>0x1000</code>字节为基本单位进行组织。类似的，不足将被补全，若超出将分配下一个<code>0x1000</code>为其所用。因此，内存中的节总是<code>0x1000</code>的整数倍。</li>
+</ol>
+</div>
+
+<p>这种由存储单位差异引起的节基址差称为<mark class="label danger">不足的地方将被 0x00 填充</mark>节偏移。</p>
+<p>$.text节偏移=0x 1000-0x400=0xC00$</p>
+<p>$.rdata节偏移=0x7000-0x6200=0xE00$</p>
+<p>$.data节偏移=0x9000-0x7400=0x1C00$</p>
+<p>$.rsrc节偏移=0x2D000-0x7800=0x25800$</p>
+<p>$$文件偏移地址 = 虚拟内存地址(VA) - 装载基址(Image Base) -节偏移 = RVA - 节偏移$$</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Directoree 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Directoree 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Directoree
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/0day2/" title="0day安全：软件漏洞分析技术（第二版）读书笔记">https://directoree.github.io/post/0day2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%9F%A5%E8%AF%86%E7%AC%94%E8%AE%B0/" rel="tag"># 知识笔记</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/web-basic-safety-guide-xss/" rel="prev" title="Web 安全防护指南基础篇-XSS攻击">
+                  <i class="fa fa-chevron-left"></i> Web 安全防护指南基础篇-XSS攻击
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Directoree</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">531k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">8:03</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/0day2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
