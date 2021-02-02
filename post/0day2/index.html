@@ -24,7 +24,7 @@
 
   <meta name="description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
 <meta property="og:type" content="article">
-<meta property="og:title" content="0day安全：软件漏洞分析技术（第二版）读书笔记">
+<meta property="og:title" content="0day安全：软件漏洞分析技术（第二版）读书笔记（1-2）">
 <meta property="og:url" content="https://directoree.github.io/post/0day2/index.html">
 <meta property="og:site_name" content="Directoree">
 <meta property="og:description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
@@ -51,8 +51,12 @@
 <meta property="og:image" content="https://i.loli.net/2021/02/01/kRziayTYu2ASvFU.png">
 <meta property="og:image" content="https://i.loli.net/2021/02/01/HtGmEO5ZWAahxTP.png">
 <meta property="og:image" content="https://i.loli.net/2021/02/01/osg3aCjOVD6TASu.png">
+<meta property="og:image" content="https://i.loli.net/2021/02/02/kuF4xLgPpJWilGy.png">
+<meta property="og:image" content="https://i.loli.net/2021/02/02/YmFIlPAjuh2Wef4.png">
+<meta property="og:image" content="https://i.loli.net/2021/02/02/jqLI5Wsz4Q7eKJc.png">
+<meta property="og:image" content="https://i.loli.net/2021/02/02/l4OkxICNd3ozUnL.png">
 <meta property="article:published_time" content="2021-01-25T01:23:04.000Z">
-<meta property="article:modified_time" content="2021-02-01T10:37:21.796Z">
+<meta property="article:modified_time" content="2021-02-02T11:44:29.697Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="知识笔记">
 <meta name="twitter:card" content="summary">
@@ -72,7 +76,7 @@
   };
 </script>
 
-  <title>0day安全：软件漏洞分析技术（第二版）读书笔记 | Directoree</title>
+  <title>0day安全：软件漏洞分析技术（第二版）读书笔记（1-2） | Directoree</title>
   
 
 
@@ -248,7 +252,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">第一章 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-text">1.1 漏洞挖掘、漏洞分析、漏洞利用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98"><span class="nav-text">1.1.1 漏洞挖掘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">1.1.2 漏洞分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-text">1.1.3 漏洞利用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E6%A6%82%E8%BF%B0"><span class="nav-text">1.2 二进制文件概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-text">1.2.1 PE文件格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-text">1.2.2 虚拟内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-PE%E6%96%87%E4%BB%B6%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B9%8B%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84"><span class="nav-text">1.2.3 PE文件与虚拟内存之间的映射</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E6%A0%88%E6%BA%A2%E5%87%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5"><span class="nav-text">第二章 栈溢出原理与实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E6%A0%88%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-text">2.1 系统栈的工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A%E4%B8%8E%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E"><span class="nav-text">2.2 函数调用约定与函数返回</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="nav-text">2.2.1 函数调用约定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E"><span class="nav-text">2.2.2 函数返回</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E7%88%86%E7%A0%B4%EF%BC%88%E4%BF%AE%E6%94%B9%E8%B7%B3%E8%BD%AC%E9%80%BB%E8%BE%91%EF%BC%89"><span class="nav-text">2.3 爆破（修改跳转逻辑）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E4%BF%AE%E6%94%B9%E9%A2%86%E6%8E%A5%E5%8F%98%E9%87%8F%EF%BC%88%E8%BF%94%E5%9B%9E%E5%80%BC%EF%BC%89"><span class="nav-text">2.4 修改领接变量（返回值）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E4%BF%AE%E6%94%B9%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80"><span class="nav-text">2.5 修改函数返回地址</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0-%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-text">第一章 基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90%E3%80%81%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-text">1.1 漏洞挖掘、漏洞分析、漏洞利用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-1-%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98"><span class="nav-text">1.1.1 漏洞挖掘</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-2-%E6%BC%8F%E6%B4%9E%E5%88%86%E6%9E%90"><span class="nav-text">1.1.2 漏洞分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-1-3-%E6%BC%8F%E6%B4%9E%E5%88%A9%E7%94%A8"><span class="nav-text">1.1.3 漏洞利用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%87%E4%BB%B6%E6%A6%82%E8%BF%B0"><span class="nav-text">1.2 二进制文件概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-PE%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F"><span class="nav-text">1.2.1 PE文件格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-text">1.2.2 虚拟内存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-3-PE%E6%96%87%E4%BB%B6%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B9%8B%E9%97%B4%E7%9A%84%E6%98%A0%E5%B0%84"><span class="nav-text">1.2.3 PE文件与虚拟内存之间的映射</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0-%E6%A0%88%E6%BA%A2%E5%87%BA%E5%8E%9F%E7%90%86%E4%B8%8E%E5%AE%9E%E8%B7%B5"><span class="nav-text">第二章 栈溢出原理与实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E6%A0%88%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-text">2.1 系统栈的工作原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A%E4%B8%8E%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E"><span class="nav-text">2.2 函数调用约定与函数返回</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-1-%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="nav-text">2.2.1 函数调用约定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-2-%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E"><span class="nav-text">2.2.2 函数返回</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E7%88%86%E7%A0%B4%EF%BC%88%E4%BF%AE%E6%94%B9%E8%B7%B3%E8%BD%AC%E9%80%BB%E8%BE%91%EF%BC%89"><span class="nav-text">2.3 爆破（修改跳转逻辑）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E4%BF%AE%E6%94%B9%E9%A2%86%E6%8E%A5%E5%8F%98%E9%87%8F%EF%BC%88%E8%BF%94%E5%9B%9E%E5%80%BC%EF%BC%89"><span class="nav-text">2.4 修改领接变量（返回值）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E4%BF%AE%E6%94%B9%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80"><span class="nav-text">2.5 修改函数返回地址</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-1-%E6%8E%A7%E5%88%B6%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%EF%BC%88%E4%BF%AE%E6%94%B9%E8%BF%94%E5%9B%9E%E5%9C%B0%E5%9D%80%EF%BC%89"><span class="nav-text">2.5.1 控制程序执行流程（修改返回地址）</span></a></li></ol></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -271,7 +275,7 @@
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-count">34</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -354,7 +358,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          0day安全：软件漏洞分析技术（第二版）读书笔记
+          0day安全：软件漏洞分析技术（第二版）读书笔记（1-2）
         </h1>
 
         <div class="post-meta-container">
@@ -372,7 +376,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-02-01 18:37:21" itemprop="dateModified" datetime="2021-02-01T18:37:21+08:00">2021-02-01</time>
+        <time title="修改时间：2021-02-02 19:44:29" itemprop="dateModified" datetime="2021-02-02T19:44:29+08:00">2021-02-02</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -384,12 +388,12 @@
         </span>
           ，
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AC%94%E8%AE%B0/Web%E5%AE%89%E5%85%A8/" itemprop="url" rel="index"><span itemprop="name">Web安全</span></a>
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E9%80%86%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">逆向</span></a>
         </span>
     </span>
 
   
-    <span id="/post/0day2/" class="post-meta-item leancloud_visitors" data-flag-title="0day安全：软件漏洞分析技术（第二版）读书笔记" title="阅读次数">
+    <span id="/post/0day2/" class="post-meta-item leancloud_visitors" data-flag-title="0day安全：软件漏洞分析技术（第二版）读书笔记（1-2）" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -417,14 +421,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.2k</span>
+      <span>10k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -680,7 +684,36 @@
 
 
 
-<h3 id="2-5-修改函数返回地址"><a href="#2-5-修改函数返回地址" class="headerlink" title="2.5 修改函数返回地址"></a>2.5 修改函数返回地址</h3>
+<h3 id="2-5-修改函数返回地址"><a href="#2-5-修改函数返回地址" class="headerlink" title="2.5 修改函数返回地址"></a>2.5 修改函数返回地址</h3><p>上节实验改写邻接变量的方法是很有用的，但这种漏洞利用对代码环境的要求相对比较苛刻。更通用、更强大的攻击通过缓冲区溢出改写的目标往往不是某一个变量，而是瞄准栈帧最下方的 <mark class="label default">EBP</mark> 和  <mark class="label warning">函数返回地址</mark>等栈帧状态值。</p>
+<p>回顾上节实验中输入7个<code>q</code>程序正常运行时的栈状态，如表2-3-1 所示。</p>
+<p><img data-src="https://i.loli.net/2021/02/02/kuF4xLgPpJWilGy.png" alt="屏幕快照 2021-02-02 下午6.25.04.png"></p>
+<div class="note info"><p>如果继续增加输入的字符，那么超出<code>buffer[8]</code>边界的字符将依次淹没<code>authenticated</code>、 前栈帧EBP、返回地址。也就是说，控制好字符串的长度就可以让字符串中相应位置字符的 ASCII 码覆盖掉这些栈帧状态值。</p>
+</div>
+
+<ol>
+<li><p>输入19个<code>q</code>，第 9~12 个字符将 authenticated 冲刷为<code>0x71717171</code>；第 13~16 个字将前栈帧 EBP 冲刷为<code>0x71717171</code>；第 17~19 个字符连同 NULL 结束符将返回地址冲刷为<code>0x00717171</code>。</p>
+<p>这里用 19 个字符作为输入，看看淹没返回地址会对程序产生什么影响。出于双字对齐的目的，我们输入的字符串按照<code>4321</code>为一个单元进行组织，最后输入的字符串为<code>4321432143214321432</code>，Ollydbg 运行状态如图2.3.2，栈的情况如表2-3-1所示。</p>
+</li>
+</ol>
+<p><img data-src="https://i.loli.net/2021/02/02/YmFIlPAjuh2Wef4.png" alt="屏幕快照 2021-02-02 下午6.57.31.png"></p>
+<p><img data-src="https://i.loli.net/2021/02/02/jqLI5Wsz4Q7eKJc.png" alt="17.png"></p>
+<ol start="2">
+<li><p>返回地址被字符 ASCII 码覆盖成了<code>0x00323334</code>，函数返回时的状态如图2.3.4所示。</p>
+<p>我们可以从调试器中的显示看出计算机中发生的事件：</p>
+<ol>
+<li>函数返回时将返回地址装入EIP寄存器。</li>
+<li>处理器按照EIP寄存器的地址<code>0x00323334</code>取指。</li>
+<li>内存<code>0x00323334</code>处并没有合法的指令，处理器不知道该如何处理，报错。</li>
+</ol>
+</li>
+</ol>
+<p><img data-src="https://i.loli.net/2021/02/02/l4OkxICNd3ozUnL.png" alt="18.png"></p>
+<div class="note warning"><p>由于<code>0x00323334</code>是一个无效的指令地址，所以处理器在取指的时候发生了错误使程序崩溃。但如果这里我们给出一个有效的指令地址，就可以让处理器跳转到任意指令区去执行（比如直接跳转到程序验证通过的部分），也就是说，我们可以 <mark class="label danger">通过淹没返回地址而控制程序的执行流程</mark> 。</p>
+</div>
+
+
+
+<h4 id="2-5-1-控制程序执行流程（修改返回地址）"><a href="#2-5-1-控制程序执行流程（修改返回地址）" class="headerlink" title="2.5.1 控制程序执行流程（修改返回地址）"></a>2.5.1 控制程序执行流程（修改返回地址）</h4>
     </div>
 
     
@@ -715,7 +748,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/0day2/" title="0day安全：软件漏洞分析技术（第二版）读书笔记">https://directoree.github.io/post/0day2/</a>
+      <a href="https://directoree.github.io/post/0day2/" title="0day安全：软件漏洞分析技术（第二版）读书笔记（1-2）">https://directoree.github.io/post/0day2/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -803,7 +836,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">8:08</span>
+    <span title="站点阅读时长">8:09</span>
   </span>
 </div>
 <div class="busuanzi-count">
