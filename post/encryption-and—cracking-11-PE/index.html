@@ -22,23 +22,25 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="记得冒号和换行的缩进呀…(｡◕︎‿◕︎)ﾉﾟ･ﾟ･">
+  <meta name="description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Python-条件语句与循环">
-<meta property="og:url" content="https://directoree.github.io/post/Python-ConditionalStatements-loops/index.html">
+<meta property="og:title" content="Directoree">
+<meta property="og:url" content="https://directoree.github.io/post/encryption-and%E2%80%94cracking-11-PE/index.html">
 <meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="记得冒号和换行的缩进呀…(｡◕︎‿◕︎)ﾉﾟ･ﾟ･">
+<meta property="og:description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2019/03/01/5c789f82d8f65.gif">
-<meta property="article:published_time" content="2019-03-01T03:29:20.000Z">
-<meta property="article:modified_time" content="2019-07-16T16:55:08.000Z">
+<meta property="og:image" content="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/06/yx76vb8uKQsDJAz.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/06/a7YSPuRwJN2mCXb.jpg">
+<meta property="article:published_time" content="2021-04-06T01:38:19.000Z">
+<meta property="article:modified_time" content="2021-04-06T13:23:39.411Z">
 <meta property="article:author" content="Directoree">
-<meta property="article:tag" content="Python语言">
+<meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2019/03/01/5c789f82d8f65.gif">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/Python-ConditionalStatements-loops/">
+<link rel="canonical" href="https://directoree.github.io/post/encryption-and%E2%80%94cracking-11-PE/">
 
 
 <script class="page-configurations">
@@ -51,7 +53,7 @@
   };
 </script>
 
-  <title>Python-条件语句与循环 | Directoree</title>
+  <title> | Directoree</title><meta name="robots" content="noindex">
   
 
 
@@ -227,7 +229,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80-%E6%9D%A1%E4%BB%B6%E8%AF%AD%E5%8F%A5"><span class="nav-text">一. 条件语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5"><span class="nav-text">二. 循环语句</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-While-%E5%BE%AA%E7%8E%AF%E8%AF%AD%E5%8F%A5"><span class="nav-text">2.1 While 循环语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-for-in-%E8%AF%AD%E5%8F%A5"><span class="nav-text">2.2 for..in 语句</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-2-break%E3%80%81continue%E3%80%81pass-%E8%AF%AD%E5%8F%A5"><span class="nav-text">2.2 break、continue、pass 语句</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E5%9F%BA%E5%9C%B0%E5%9D%80"><span class="nav-text">1.1  基地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-MS-DOS%E5%A4%B4%E9%83%A8"><span class="nav-text">1.2 MS-DOS头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-PE%E6%96%87%E4%BB%B6%E5%A4%B4"><span class="nav-text">1.3 PE文件头</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -320,7 +322,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Python-ConditionalStatements-loops/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/encryption-and%E2%80%94cracking-11-PE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -333,7 +335,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Python-条件语句与循环
+          
         </h1>
 
         <div class="post-meta-container">
@@ -343,28 +345,26 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2019-03-01 11:29:20" itemprop="dateCreated datePublished" datetime="2019-03-01T11:29:20+08:00">2019-03-01</time>
+      <time title="创建时间：2021-04-06 09:38:19 / 修改时间：21:23:39" itemprop="dateCreated datePublished" datetime="2021-04-06T09:38:19+08:00">2021-04-06</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-07-17 00:55:08" itemprop="dateModified" datetime="2019-07-17T00:55:08+08:00">2019-07-17</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Python/" itemprop="url" rel="index"><span itemprop="name">Python</span></a>
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E9%80%86%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">逆向</span></a>
         </span>
     </span>
 
   
-    <span id="/post/Python-ConditionalStatements-loops/" class="post-meta-item leancloud_visitors" data-flag-title="Python-条件语句与循环" title="阅读次数">
+    <span id="/post/encryption-and%E2%80%94cracking-11-PE/" class="post-meta-item leancloud_visitors" data-flag-title="" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -379,8 +379,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/Python-ConditionalStatements-loops/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/Python-ConditionalStatements-loops/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/encryption-and%E2%80%94cracking-11-PE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/encryption-and%E2%80%94cracking-11-PE/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -392,14 +392,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.3k</span>
+      <span>3.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -410,141 +410,68 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>记得冒号和换行的缩进呀…(｡◕︎‿◕︎)ﾉﾟ･ﾟ･</p>
+        <p>漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭ </p>
 <a id="more"></a>
 
-<br>
-
-<br>
-
-<center><font color="#00B2EE" face="Comic sans MS" size=5>条件语句与循环</font> </center>
-
-<br>
-
-<br>
-
-<h3 id="一-条件语句"><a href="#一-条件语句" class="headerlink" title="一. 条件语句"></a><font color="#FF6347" face="Comic sans MS">一. 条件语句</font></h3><br>
-
-<ol>
-<li><p>if-else-elif是条件语句，判断bool类型，判断为True就继续执行后面的缩进语句，判断为Flase则不执行缩进语句。</p>
-</li>
-<li><p>Python程序语言指定任何非0和非空（Null）值为True，0 或者 null为False。</p>
-</li>
-<li><p>Python<font color="#FF7F00"><strong>只执行if-elif-else 结构中的一个代码块</strong></font>，它依次检查每个条件测试，直到遇到通过了的条件测试。测试通过后，Python将执行紧跟在它后面的代码，并跳过余下的测试。</p>
-</li>
-<li><p>python 并<font color="#FF7F00"><strong>不支持 switch 语句</strong></font>，所以多个条件判断，只能用 elif 来实现，如果判断需要多个条件需同时判断时，可以使用 or （或），表示两个条件有一个成立时判断条件成功；使用 and （与）时，表示只有两个条件同时成立的情况下，判断条件才成功。</p>
-</li>
-<li><p>设置if 语句的格式。在条件测试的格式设置方面，PEP 8提供的唯一建议是，在诸如== 、&gt;= 和&lt;= 等比较运算符两边各添加一个空格，例如，<code>if age &lt; 4:</code> 要比<code>if age&lt;4:</code> 好。这样的空格不会影响Python对代码的解读，而只是让代码阅读起来更容易。</p>
-</li>
-<li><p>注意条件语句如果有多条缩进语句时<font color="#FF7F00"><strong>不能忘了冒号（ <code>:</code> ）</strong></font>，不像C语言或其它语言一样，if后面没有括号。</p>
-</li>
-</ol>
-<br>
-
-<p>书写格式如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> &lt;条件判断<span class="number">1</span>&gt;:</span><br><span class="line">    &lt;执行<span class="number">1</span>&gt;</span><br><span class="line"><span class="keyword">elif</span> &lt;条件判断<span class="number">2</span>&gt;:</span><br><span class="line">    &lt;执行<span class="number">2</span>&gt;</span><br><span class="line"><span class="keyword">elif</span> &lt;条件判断<span class="number">3</span>&gt;:</span><br><span class="line">    &lt;执行<span class="number">3</span>&gt;</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    &lt;执行<span class="number">4</span>&gt;</span><br></pre></td></tr></table></figure>
 
 
-<br>
+<p>在Win16平台上（例如Windows 3.x），可执行文件格式是NE。在Win32平台上（包括Windows 9x/NT/2000/XP/Server 2003/Vista/CE/7/10），可执行文件格式是PE。“PE” 是“Portable Executable File Format” （可移植的执行体）的缩写。PE格式是目前Windows平台上的主流可执行文件格式。</p>
+<p>EXE文件和DLL文件的区别完全是语义上的。它们使用完全相同的PE格式，<mark class="label warning">唯一的区别就是用一个字段标识出这个文件是EXE还是DLL</mark>。还有许多DLL的扩展。例如，OCX控件和控制面板程序（<code>.CPL</code>文件）等都是DLL，它们拥有一样的实体。</p>
+<p>PE文件中的数据结构一般都有32位和64位之分，例如<code>IMAGE NT_HEADERS32</code>、<code>IMAGE NT_HEADER64</code>等。除了在64位版本中的一些扩展域以外，这些结构几乎是一样的，在<code>winnt.h</code>中都有<code>#defines</code>，它可以选择适当的32位或64位结构，并给它们起一个与大小无关的别名。结构的选择依赖于用户正在编译的模式（尤其是<code>_WIN64</code>是否被定义）。</p>
+<p><img data-src="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png" alt="1.png"></p>
+<h2 id="1-1-基地址"><a href="#1-1-基地址" class="headerlink" title="1.1  基地址"></a>1.1  基地址</h2><p>PE文件使用的是一个平面地址空间， 所有代码和数据都合并在一起，组成了个很大的结构。文件的内容被分割为不同的<strong>区块</strong>（Section又称<strong>区段</strong>、<strong>节</strong>等，在本章中不区分“区块”与“块”）区块中包含代码或数据，各个区块按页边界对齐。<mark class="label success">区块没有大小限制，是个连续结构</mark>。 每个块都有它自己在内存中的一套属性，例如这个块是否包含代码、是否只读或可读/写等。</p>
+<p>认识到PE文件不是作为单一内存映射文件被载入内存是很重要的。Windows 加载器（又称PE 装载器）遍历PE文件并决定文件的哪一部分被映射， 这种映射方式是将文件较高的偏移位置映射到较高的内存地址中。<mark class="label default">磁盘文件一旦被载入内存，磁盘上的数据结构布局和内存中的数据结构布局就是一致的</mark>。这样，如果在磁盘的数据结构中寻找一些内容，那么几乎都能在被载入的内存映射文件中找到相同的信息，但数据之间的相对位置可能会改变，某项的偏移地址可能区别于原始的偏移位置。不管怎样，对所有表现出来的信息，都允许进行从磁盘文件偏移到内存偏移的转换，如图11.2所示。</p>
+<p><img data-src="https://i.loli.net/2021/04/06/yx76vb8uKQsDJAz.png" alt="2.png"></p>
+<p>当PE文件通过Windows加载器载入内存后，内存中的版本称为<mark class="label danger">模块</mark>（Module）。内存中映射文件的起始地址称为<mark class="label danger">模块句柄</mark>（hModule ），可以通过模块句柄访问内存中的其他数据结构。这个初始内存地址也称为基地址（ImageBase）。准确地说，对于Windows CE（精简的Windows 95），这是不成立的，一个模块句柄在WindowsCE下并不等同于安装的起始地址。</p>
+<p>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/u012861978/article/details/53048077?utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-1.control&dist_request_id=1328767.69973.16176901373279367&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-1.control">虚拟内存与物理内存的区别</a>】【<a target="_blank" rel="noopener" href="https://www.codenong.com/cs106179422">面试网易游戏面试题目整理及答案（1）</a>】</p>
+<p><img data-src="https://i.loli.net/2021/04/06/a7YSPuRwJN2mCXb.jpg" alt="20161105222328096.jpeg"></p>
+<p>内存中的模块代表进程将这个可执行文件所需要的代码、数据、资源、输入表、输出表及其他有用的数据结构所使用的内存都放在一个连续的内存块中， 程序员只要知道装载程序文件映像到内存后的<strong>基地址</strong>即可。PE文件的剩余部分可以被读入，但可能无法被映射。例如，在将调试信息放到文件尾部时，PE的一个字段会告诉系统把文件映射到内存时需要使用多少内存，不能被映射的数据将被放置在文件尾部。</p>
+<div class="note info"><p>在32位Windows系统中可以直接调用GetModuleHandle以取得指向DLL的指针，通过指针访问该DLL Module的内容，示例如下。</p>
+<p><code>HMODULE GetModuleHandle (LPCTSTR lpModuleName);</code></p>
+<p>调用该函数时会传递一个可执行文件或DLL文件名字符串（参数），如果系统找到文件，则返回该可执行文件或DLL文件映像所<mark class="label success">加载的基地址</mark>。也可以调用GetModuleHandle来传递NULL参数，此时将返回调用的可执行文件的基地址。</p>
+<p><mark class="label warning">基地址的值是由PE文件本身设定的。</mark>按照默认设置，用Visual C++建立的EXE文件的基地址是<mark class="label danger">400000h</mark>、DLL文件的基地址是<mark class="label danger">1000000h</mark>，可以在创建应用程序的EXE文件时改变这个地址，方法是在链接应用时使用链接程序的/BASE选项，或者在链接后通过REBASE应用程序进行设置。</p>
+</div>
 
-<br>
+<h2 id="1-2-MS-DOS头部"><a href="#1-2-MS-DOS头部" class="headerlink" title="1.2 MS-DOS头部"></a>1.2 MS-DOS头部</h2><p>每个PE文件都是以一个DOS程序开始的，有了它，一且程序在DOS下执行，DOS就能识别出这是一个有效的执行体，然后运行紧随MZ header的DOS stub（DOS块）。DOS stub实际上是一个有效的EXE，在不支持PE文件格式的操作系统中它将简单地显示一个错误提示， 类似于字符串”This program cannot be run in MS-DOS mode”。程序员也可以根据自己的意图实现完整的DOS代码。用户通常对DOS stub不太感兴趣，因为在大多数情况下它是由汇编器/编译器自动生成的。我们通常把 DOS MZ头与DOS stub合称为DOS文件头。</p>
+<mark class="label primary">MS-DOS</mark>头部，又称作<mark class="label primary">IMAGE _DOS_HEADER</mark>，其结构如下（<mark class="label info">左边的数字是到文件头的偏移量</mark>）。
 
-<h3 id="二-循环语句"><a href="#二-循环语句" class="headerlink" title="二. 循环语句"></a><font color="#FF6347" face="Comic sans MS">二. 循环语句</font></h3><br>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">IMAGE_DOS_HEADER_STRUCT&#123; </span><br><span class="line">  +<span class="number">0</span>h     e_magic       WORD ?        ;DOS可执行文件标记<span class="string">&quot;MZ&quot;</span></span><br><span class="line">  +<span class="number">2</span>h     e_cblp        WORD ?</span><br><span class="line">  +<span class="number">4</span>h     e_cp          WORD ?</span><br><span class="line">  +<span class="number">6</span>h     e_crlc        WORD ? </span><br><span class="line">  +<span class="number">8</span>h     e_cparhdr     WORD ?</span><br><span class="line">  +<span class="number">0</span>ah    e_minalloc    WORD ? </span><br><span class="line">  +<span class="number">0</span>ch    e maxalloc    WORD ?</span><br><span class="line">  +<span class="number">0</span>eh    e_ss          WORD ? </span><br><span class="line">  +<span class="number">10</span>h    e_sp          WORD ?</span><br><span class="line">  +<span class="number">12</span>h    e_csum        WORD ?</span><br><span class="line">  +<span class="number">14</span>h    e_ip          WORD ?        ;DOS代码入口IP</span><br><span class="line">  +<span class="number">16</span>h    e_cs          WORD ?        ;DOS代码入口CS</span><br><span class="line">  +<span class="number">18</span>h    e_lfarlc      WORD ?</span><br><span class="line">  +<span class="number">1</span>ah    e_ovno        WORD ? </span><br><span class="line">  +<span class="number">1</span>ch    e_res         WORD <span class="number">4</span> dup(?) </span><br><span class="line">  +<span class="number">24</span>h    e_oemid       WORD ?</span><br><span class="line">  +<span class="number">26</span>h    e_oeminfo     WORD ?</span><br><span class="line">  +<span class="number">28</span>h    e_res2        WORD <span class="number">10</span> dup (?) </span><br><span class="line">  +<span class="number">3</span>ch    e_lfanew      DWORD ?       ;指向PE文件头<span class="string">&quot;PE&quot;</span>,<span class="number">0</span>,<span class="number">0</span> </span><br><span class="line">&#125;IMAGE_DOS_HEADER_ENDS    </span><br></pre></td></tr></table></figure>
 
-<p>Python提供了for循环和while循环（在Python中<strong>没有do..while循环</strong>）:</p>
-<table>
-<thead>
-<tr>
-<th align="center">循环类型</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><font color="#00B2EE"><a target="_blank" rel="noopener" href="http://www.runoob.com/python/python-while-loop.html">while 循环</a></font></td>
-<td align="left">在给定的判断条件为 true 时执行循环体，否则退出循环体。</td>
-</tr>
-<tr>
-<td align="center"><font color="#00B2EE"><a target="_blank" rel="noopener" href="http://www.runoob.com/python/python-for-loop.html">for 循环</a></font></td>
-<td align="left">重复执行语句</td>
-</tr>
-<tr>
-<td align="center"><font color="#00B2EE"><a target="_blank" rel="noopener" href="http://www.runoob.com/python/python-nested-loops.html">嵌套循环</a></font></td>
-<td align="left">你可以在while循环体中嵌套for循环</td>
-</tr>
-</tbody></table>
-<br>
+<div class="note info"><p>其中有两个字段比较重要，分别是<code>e_magic</code>和<code>e_lfanew</code>。</p>
+<ul>
+<li><code>e_magic</code>字段（2个字节大小）的值被设置为<mark class="label success">5A4Dh</mark>，这个值有一个<code>#define</code>名为<mark class="label success">IMAGE_DOS_SIGNATURE</mark>，在ASCI表示法里它的ASCII值为“MZ”，是MS-DOS的创建者之一Mark Zbikowski 名字的缩写。</li>
+<li><code>e_lfanew</code>字段（4个字节大小）是真正的PE文件头的相对偏移（RVA），指出真正的PE头的文件偏移位置，位于从文件开始偏移<mark class="label success">3Ch</mark>字节处。</li>
+</ul>
+</div>
 
-<p><strong>循环控制语句</strong><br>循环控制语句可以更改语句执行的顺序。Python支持以下循环控制语句：</p>
-<table>
-<thead>
-<tr>
-<th align="center">循环类型</th>
-<th align="left">描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><font color="#00B2EE"><a target="_blank" rel="noopener" href="http://www.runoob.com/python/python-break-statement.html">break 语句</a></font></td>
-<td align="left">在语句块执行过程中终止循环，并且跳出整个循环</td>
-</tr>
-<tr>
-<td align="center"><font color="#00B2EE"><a target="_blank" rel="noopener" href="http://www.runoob.com/python/python-continue-statement.html">continue 语句</a></font></td>
-<td align="left">在语句块执行过程中终止当前循环，跳出该次循环，执行下一次循环。</td>
-</tr>
-<tr>
-<td align="center"><font color="#00B2EE"><a target="_blank" rel="noopener" href="http://www.runoob.com/python/python-pass-statement.html">pass 语句</a></font></td>
-<td align="left">pass是空语句，是为了保持程序结构的完整性。</td>
-</tr>
-</tbody></table>
-<br>
+<h2 id="1-3-PE文件头"><a href="#1-3-PE文件头" class="headerlink" title="1.3 PE文件头"></a>1.3 PE文件头</h2><div class="note warning"><p>PE头是PE相关结构NT映像头的简称，即<mark class="label primary">IMAGE_NT_HEADER</mark>，其中包含许多PE装载器能用到的重要字段。</p>
+<p>当执行体在支持PE文件结构的操作系统中执行时，PE装载器将从IMAGE_DOS_HEADER结构的<code>e_lfanew</code>字段里找到PE Header的起始偏移量，用其加上基址，得到PE文件头的指针。</p>
+<p>$$PNTHeader = ImageBase + dosHeader -&gt;e\_lfanew $$</p>
+<p>实际上有两个版本的IMAGE_NT_HEADER结构，一个是为PE32 （32位版本）可执行文件准备的，另一个是PE32+（64位版本）。因为它们几乎没有区别，所以在以后的讨论中将不作区分。</p>
+</div>
 
-<h4 id="2-1-While-循环语句"><a href="#2-1-While-循环语句" class="headerlink" title="2.1 While 循环语句"></a><font color="#3CB371" face="Comic sans MS">2.1 While 循环语句</font></h4><p>执行语句可以是单个语句或语句块。判断条件可以是任何表达式，任何非零、或非空（Null）的值均为True。当判断条件假False时，循环结束。其基本形式为（<strong>注意并没有括号</strong>）：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> 判断条件：</span><br><span class="line">    执行语句……</span><br></pre></td></tr></table></figure>
+<p> IMAGE_NT_HEADER是由3个字段（左边的数字是到PE文件头的偏移量）组成的，示例如下。</p>
+<p>PE32 （32位版本）:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IMAGE_NT_HEADERS STRUCT&#123;</span><br><span class="line">  +Oh       Signature         DWORD                    ?      ;PE文件标识</span><br><span class="line">  +<span class="number">4</span>h       FileHeader        IMAGE_FILE_HEADER        &lt;&gt; </span><br><span class="line">  +<span class="number">18</span>h      OptionalHeader    IMAGE OPTIONAL_HEADER32  &lt;&gt;</span><br><span class="line">&#125;IMAGE NT_HEADERS ENDS   </span><br></pre></td></tr></table></figure>
 
-<br>
+<p>PE32+（64位版本）:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IMAGE_NT_HEADERS STRUCT&#123;</span><br><span class="line">  +Oh       Signature         DWORD                    ?      ;PE文件标识</span><br><span class="line">  +<span class="number">4</span>h       FileHeader        IMAGE_FILE_HEADER        &lt;&gt; </span><br><span class="line">  +<span class="number">18</span>h      OptionalHeader    IMAGE OPTIONAL_HEADER32  &lt;&gt;</span><br><span class="line">&#125;IMAGE NT_HEADERS64 ENDS   </span><br></pre></td></tr></table></figure>
 
-<p>Gif 演示 Python while 语句执行过程：</p>
-<p><img data-src="https://i.loli.net/2019/03/01/5c789f82d8f65.gif" alt="loop-over-python-list-animation.gif"></p>
-<br>
 
-<p><font color="#00B2EE" face="Comic sans MS"><strong>循环使用 else 语句：</strong></font></p>
-<p>在 python 中，while … else 在循环条件为 False 时执行 else 语句块：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line">count = <span class="number">0</span></span><br><span class="line"><span class="keyword">while</span> count &lt; <span class="number">5</span>:</span><br><span class="line">   <span class="keyword">print</span> (count, <span class="string">&quot; is  less than 5&quot;</span>)</span><br><span class="line">   count = count + <span class="number">1</span></span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">   <span class="keyword">print</span> (count, <span class="string">&quot; is not less than 5&quot;</span>)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="number">0</span>  <span class="keyword">is</span>  less than <span class="number">5</span> </span><br><span class="line"><span class="number">1</span>  <span class="keyword">is</span>  less than <span class="number">5</span> </span><br><span class="line"><span class="number">2</span>  <span class="keyword">is</span>  less than <span class="number">5</span> </span><br><span class="line"><span class="number">3</span>  <span class="keyword">is</span>  less than <span class="number">5</span> </span><br><span class="line"><span class="number">4</span>  <span class="keyword">is</span>  less than <span class="number">5</span> </span><br><span class="line"><span class="number">5</span>  <span class="keyword">is</span> <span class="keyword">not</span> less than <span class="number">5</span> </span><br></pre></td></tr></table></figure>
 
-<br>
 
-<br>
 
-<h4 id="2-2-for-in-语句"><a href="#2-2-for-in-语句" class="headerlink" title="2.2 for..in 语句"></a><font color="#3CB371" face="Comic sans MS">2.2 for..in 语句</font></h4><ol>
-<li><p>Python for循环可以遍历任何序列的项目，如一个<font color="#FF7F00"><strong>列表</strong></font>或者一个<font color="#FF7F00"><strong>字符串</strong></font>。</p>
-</li>
-<li><p>Python 中的 for 语句和 C 或 Pascal 中的略有不同。通常的循环可能会依据一个等差数值步进过程（如 Pascal），或由用户来定义迭代步骤和中止条件（如 C ），Python 的 for 语句依据任意序列（列表或字符串）中的子项，按它们在序列中的顺序来进行迭代。</p>
-</li>
-<li><p>在迭代过程中修改迭代序列不安全（只有在使用列表这样的可变序列时才会有这样的情况）。如果你想要修改你迭代的序列（例如，复制选择项），你可以迭代它的复本。使用切割标识就可以很方便的做到这一点</p>
-</li>
-</ol>
-<br>
 
-<blockquote>
-<p><font color="#00B2EE" face="Comic sans MS"><strong>for…in语句处理字符串和列表不同：</strong></font></p>
-</blockquote>
-<ol>
-<li><strong>处理列表：</strong><font color="#FF7F00"><strong>每次取列表的一个元素赋给 in 前面的变量</strong></font>；</li>
-<li><strong>处理字符串：</strong><font color="#FF7F00"><strong>每次取字符串的一个字符赋给 in 前面的变量</strong></font>；</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>]:</span><br><span class="line">    print(x)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> x <span class="keyword">in</span> <span class="string">&#x27;beauty&#x27;</span>:</span><br><span class="line">     print(x)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="number">1</span> </span><br><span class="line"><span class="number">2</span> </span><br><span class="line"><span class="number">3</span> </span><br><span class="line"><span class="number">4</span> </span><br><span class="line"><span class="number">5</span> </span><br><span class="line"><span class="number">6</span> </span><br><span class="line">b </span><br><span class="line">e </span><br><span class="line">a </span><br><span class="line">u </span><br><span class="line">t </span><br><span class="line">y </span><br></pre></td></tr></table></figure>
 
-<br>
 
-<blockquote>
-<p><font color="#FF7F00"><strong>上例列表 for x in …循环就是把每个元素代入变量x，然后执行缩进块的语句。这就像把序列中的每一个数(或对象)分配给x，一次一个,然后为每个x值执行语句块。</strong></font></p>
-</blockquote>
-<br>
 
-<h4 id="2-2-break、continue、pass-语句"><a href="#2-2-break、continue、pass-语句" class="headerlink" title="2.2 break、continue、pass 语句"></a><font color="#3CB371" face="Comic sans MS">2.2 break、continue、pass 语句</font></h4><p><font color="#FF7F00"><strong>break语句：</strong></font> 在循环中，可以提前退出循环。<br><font color="#FF7F00"><strong>break语句：</strong></font> 在循环过程中，跳过当前的这次循环，直接开始下一次循环。<br><font color="#FF7F00"><strong>pass语句：</strong></font> pass 是空语句，是为了保持程序结构的完整性。pass 不做任何事情，一般用做占位语句。</p>
-<br>    
 
-<p>Python 语言 pass 语句语法格式如下：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># 输出 Python 的每个字母</span></span><br><span class="line"><span class="keyword">for</span> letter <span class="keyword">in</span> <span class="string">&#x27;Python&#x27;</span>:</span><br><span class="line">   <span class="keyword">if</span> letter == <span class="string">&#x27;h&#x27;</span>:</span><br><span class="line">      <span class="keyword">pass</span></span><br><span class="line">      print(<span class="string">&#x27;这是 pass 块&#x27;</span>)</span><br><span class="line">   print(<span class="string">&#x27;当前字母 :&#x27;</span>, letter)</span><br><span class="line"> </span><br><span class="line">print(<span class="string">&#x27;Good bye!&#x27;</span>)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">当前字母 : P </span><br><span class="line">当前字母 : y </span><br><span class="line">当前字母 : t </span><br><span class="line">这是 <span class="keyword">pass</span> 块 </span><br><span class="line">当前字母 : h </span><br><span class="line">当前字母 : o </span><br><span class="line">当前字母 : n </span><br><span class="line">Good bye! </span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<!-- flag of hidden posts -->
     </div>
 
     
@@ -579,7 +506,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/Python-ConditionalStatements-loops/" title="Python-条件语句与循环">https://directoree.github.io/post/Python-ConditionalStatements-loops/</a>
+      <a href="https://directoree.github.io/post/encryption-and%E2%80%94cracking-11-PE/" title="">https://directoree.github.io/post/encryption-and—cracking-11-PE/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -588,23 +515,11 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/Python%E8%AF%AD%E8%A8%80/" rel="tag"># Python语言</a>
+              <a href="/tags/%E9%80%86%E5%90%91/" rel="tag"># 逆向</a>
           </div>
 
         
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/post/Python-list-tuple-dict-set/" rel="prev" title="Python-列表、元组、字典、集合">
-                  <i class="fa fa-chevron-left"></i> Python-列表、元组、字典、集合
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/post/Python-Operators/" rel="next" title="Python-运算符">
-                  Python-运算符 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
     </footer>
   </article>
 </div>
@@ -821,7 +736,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/Python-ConditionalStatements-loops/",
+      path: "/post/encryption-and%E2%80%94cracking-11-PE/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
