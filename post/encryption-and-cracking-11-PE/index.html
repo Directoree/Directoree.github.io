@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Directoree">
+<meta property="og:url" content="https://directoree.github.io/post/encryption-and-cracking-11-PE/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/06/yx76vb8uKQsDJAz.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/06/a7YSPuRwJN2mCXb.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/04/12/foc72VEZpnivKHF.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/12/XG9BlAzqIMJDpod.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/12/6OhAoRtgVeG9FsC.png">
+<meta property="article:published_time" content="2021-04-06T01:38:19.000Z">
+<meta property="article:modified_time" content="2021-04-12T12:20:57.572Z">
+<meta property="article:author" content="Directoree">
+<meta property="article:tag" content="逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/encryption-and-cracking-11-PE/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title> | Directoree</title><meta name="robots" content="noindex">
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Directoree</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9F%BA%E5%9C%B0%E5%9D%80"><span class="nav-text">1  基地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MS-DOS%E5%A4%B4%E9%83%A8"><span class="nav-text">2 MS-DOS头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-PE%E6%96%87%E4%BB%B6%E5%A4%B4"><span class="nav-text">3 PE文件头</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Signature-%E5%AD%97%E6%AE%B5"><span class="nav-text">3.1 Signature 字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-IMAGE-FILE-HEADER-%E7%BB%93%E6%9E%84"><span class="nav-text">3.2 IMAGE_FILE_HEADER 结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-IMAGE-OPTIONAL-HEADER-%E7%BB%93%E6%9E%84"><span class="nav-text">3.3 IMAGE_OPTIONAL_HEADER 结构</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Directoree"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Directoree</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/encryption-and-cracking-11-PE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Directoree">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Directoree">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-04-06 09:38:19" itemprop="dateCreated datePublished" datetime="2021-04-06T09:38:19+08:00">2021-04-06</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-04-12 20:20:57" itemprop="dateModified" datetime="2021-04-12T20:20:57+08:00">2021-04-12</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E9%80%86%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">逆向</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/encryption-and-cracking-11-PE/" class="post-meta-item leancloud_visitors" data-flag-title="" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/encryption-and-cracking-11-PE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/encryption-and-cracking-11-PE/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭ </p>
+<a id="more"></a>
+
+
+
+<p>在Win16平台上（例如Windows 3.x），可执行文件格式是NE。在Win32平台上（包括Windows 9x/NT/2000/XP/Server 2003/Vista/CE/7/10），可执行文件格式是PE。“PE” 是“Portable Executable File Format” （可移植的执行体）的缩写。PE格式是目前Windows平台上的主流可执行文件格式。</p>
+<div class="note warning"><p><mark class="label success">Win32平台</mark><mark class="label danger">32/64位系统</mark></p>
+<p>不管是32位的Windows还是64位的，都是运行在NT内核之上的Win32子系统。<strong>Win32既包括32位的Windows又包括64位的Windows。</strong></p>
+<ul>
+<li>32位的Windows，叫Win32-i386。i386架构也可叫做i686或者x86或者IA-32。</li>
+<li>64位的Windows，叫Win32-x86_64，x86_64架构也可叫做AMD64或者x64。虽然名字里有AMD，但是Intel的64位CPU也是这个指令集。</li>
+</ul>
+<p>此外，还有一些基本上宣告失败的64位架构，比如Intel的IA-64。Windows 2000的64位版就是运行在IA-64架构而不是AMD64架构之上的。</p>
+<ul>
+<li>32指令集的Windows操作系统：Win9x，NT，Win2K，WinXP，2003，Vista，2008，Win7；</li>
+<li>64指令集的Windows操作系统：Win7，Win10。</li>
+</ul>
+</div>
+
+
+
+<p>EXE文件和DLL文件的区别完全是语义上的。它们使用完全相同的PE格式，<mark class="label warning">唯一的区别就是用一个字段标识出这个文件是EXE还是DLL</mark>。还有许多DLL的扩展。例如，OCX控件和控制面板程序（<code>.CPL</code>文件）等都是DLL，它们拥有一样的实体。</p>
+<p>PE文件中的数据结构一般都有32位和64位之分，例如<code>IMAGE NT_HEADERS32</code>、<code>IMAGE NT_HEADER64</code>等。除了在64位版本中的一些扩展域以外，这些结构几乎是一样的，在<code>winnt.h</code>中都有<code>#defines</code>，它可以选择适当的32位或64位结构，并给它们起一个与大小无关的别名。结构的选择依赖于用户正在编译的模式（尤其是<code>_WIN64</code>是否被定义）。</p>
+<p><img data-src="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png" alt="1.png"></p>
+<h2 id="1-基地址"><a href="#1-基地址" class="headerlink" title="1  基地址"></a>1  基地址</h2><p>PE文件使用的是一个平面地址空间， 所有代码和数据都合并在一起，组成了个很大的结构。文件的内容被分割为不同的<strong>区块</strong>（Section又称<strong>区段</strong>、<strong>节</strong>等，在本章中不区分“区块”与“块”）区块中包含代码或数据，各个区块按页边界对齐。<mark class="label success">区块没有大小限制，是个连续结构</mark>。 每个块都有它自己在内存中的一套属性，例如这个块是否包含代码、是否只读或可读/写等。</p>
+<p>认识到PE文件不是作为单一内存映射文件被载入内存是很重要的。Windows 加载器（又称PE 装载器）遍历PE文件并决定文件的哪一部分被映射， 这种映射方式是将文件较高的偏移位置映射到较高的内存地址中。<mark class="label default">磁盘文件一旦被载入内存，磁盘上的数据结构布局和内存中的数据结构布局就是一致的</mark>。这样，如果在磁盘的数据结构中寻找一些内容，那么几乎都能在被载入的内存映射文件中找到相同的信息，但数据之间的相对位置可能会改变，某项的偏移地址可能区别于原始的偏移位置。不管怎样，对所有表现出来的信息，都允许进行从磁盘文件偏移到内存偏移的转换，如图11.2所示。</p>
+<p><img data-src="https://i.loli.net/2021/04/06/yx76vb8uKQsDJAz.png" alt="2.png"></p>
+<p>当PE文件通过Windows加载器载入内存后，内存中的版本称为<mark class="label danger">模块</mark>（Module）。内存中映射文件的起始地址称为<mark class="label danger">模块句柄</mark>（hModule ），可以通过模块句柄访问内存中的其他数据结构。这个初始内存地址也称为基地址（ImageBase）。准确地说，对于Windows CE（精简的Windows 95），这是不成立的，一个模块句柄在WindowsCE下并不等同于安装的起始地址。</p>
+<p>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/u012861978/article/details/53048077?utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-1.control&dist_request_id=1328767.69973.16176901373279367&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-1.control">虚拟内存与物理内存的区别</a>】【<a target="_blank" rel="noopener" href="https://www.codenong.com/cs106179422">面试网易游戏面试题目整理及答案（1）</a>】</p>
+<p><img data-src="https://i.loli.net/2021/04/06/a7YSPuRwJN2mCXb.jpg" alt="20161105222328096.jpeg"></p>
+<p>内存中的模块代表进程将这个可执行文件所需要的代码、数据、资源、输入表、输出表及其他有用的数据结构所使用的内存都放在一个连续的内存块中， 程序员只要知道装载程序文件映像到内存后的<strong>基地址</strong>即可。PE文件的剩余部分可以被读入，但可能无法被映射。例如，在将调试信息放到文件尾部时，PE的一个字段会告诉系统把文件映射到内存时需要使用多少内存，不能被映射的数据将被放置在文件尾部。</p>
+<div class="note info"><p>在32位Windows系统中可以直接调用GetModuleHandle以取得指向DLL的指针，通过指针访问该DLL Module的内容，示例如下。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HMODULE <span class="title">GetModuleHandle</span> <span class="params">(LPCTSTR lpModuleName)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>调用该函数时会传递一个可执行文件或DLL文件名字符串（参数），如果系统找到文件，则返回该可执行文件或DLL文件映像所<mark class="label success">加载的基地址</mark>。也可以调用GetModuleHandle来传递NULL参数，此时将返回调用的可执行文件的基地址。</p>
+<p><mark class="label warning">基地址的值是由PE文件本身设定的。</mark>按照默认设置，用Visual C++建立的EXE文件的基地址是<mark class="label danger">400000h</mark>、DLL文件的基地址是<mark class="label danger">1000000h</mark>，可以在创建应用程序的EXE文件时改变这个地址，方法是在链接应用时使用链接程序的/BASE选项，或者在链接后通过REBASE应用程序进行设置。</p>
+</div>
+
+<h2 id="2-MS-DOS头部"><a href="#2-MS-DOS头部" class="headerlink" title="2 MS-DOS头部"></a>2 MS-DOS头部</h2><p>每个PE文件都是以一个DOS程序开始的，有了它，一且程序在DOS下执行，DOS就能识别出这是一个有效的执行体，然后运行紧随MZ header的DOS stub（DOS块）。DOS stub实际上是一个有效的EXE，在不支持PE文件格式的操作系统中它将简单地显示一个错误提示， 类似于字符串”This program cannot be run in MS-DOS mode”。程序员也可以根据自己的意图实现完整的DOS代码。用户通常对DOS stub不太感兴趣，因为在大多数情况下它是由汇编器/编译器自动生成的。我们通常把 DOS MZ头与DOS stub合称为DOS文件头。</p>
+<mark class="label default">MS-DOS</mark>头部，又称作<mark class="label default">IMAGE_DOS_HEADER</mark>，其结构如下（<mark class="label info">左边的数字是到文件头的偏移量</mark>）。
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">IMAGE_DOS_HEADER_STRUCT&#123; </span><br><span class="line">  +<span class="number">0</span>h     e_magic       WORD ?        <span class="comment">//DOS可执行文件标记&quot;MZ&quot;，IMAGE_DOS_SIGNATURE</span></span><br><span class="line">  +<span class="number">2</span>h     e_cblp        WORD ?</span><br><span class="line">  +<span class="number">4</span>h     e_cp          WORD ?</span><br><span class="line">  +<span class="number">6</span>h     e_crlc        WORD ? </span><br><span class="line">  +<span class="number">8</span>h     e_cparhdr     WORD ?</span><br><span class="line">  +<span class="number">0</span>ah    e_minalloc    WORD ? </span><br><span class="line">  +<span class="number">0</span>ch    e maxalloc    WORD ?</span><br><span class="line">  +<span class="number">0</span>eh    e_ss          WORD ? </span><br><span class="line">  +<span class="number">10</span>h    e_sp          WORD ?</span><br><span class="line">  +<span class="number">12</span>h    e_csum        WORD ?</span><br><span class="line">  +<span class="number">14</span>h    e_ip          WORD ?        <span class="comment">//DOS代码入口IP</span></span><br><span class="line">  +<span class="number">16</span>h    e_cs          WORD ?        <span class="comment">//DOS代码入口CS</span></span><br><span class="line">  +<span class="number">18</span>h    e_lfarlc      WORD ?</span><br><span class="line">  +<span class="number">1</span>ah    e_ovno        WORD ? </span><br><span class="line">  +<span class="number">1</span>ch    e_res         WORD <span class="number">4</span> dup(?) </span><br><span class="line">  +<span class="number">24</span>h    e_oemid       WORD ?</span><br><span class="line">  +<span class="number">26</span>h    e_oeminfo     WORD ?</span><br><span class="line">  +<span class="number">28</span>h    e_res2        WORD <span class="number">10</span> dup (?) </span><br><span class="line">  +<span class="number">3</span>ch    e_lfanew      DWORD ?       <span class="comment">//指向PE文件头&quot;PE&quot;,0,0 </span></span><br><span class="line">&#125;IMAGE_DOS_HEADER_ENDS    </span><br></pre></td></tr></table></figure>
+
+<div class="note info"><p>其中有两个字段比较重要，分别是<code>e_magic</code>和<code>e_lfanew</code>。</p>
+<ul>
+<li><code>e_magic</code>字段（2个字节大小）的值被设置为<mark class="label success">5A4Dh</mark>，这个值有一个<code>#define</code>名为<mark class="label success">IMAGE_DOS_SIGNATURE</mark>，在ASCI表示法里它的ASCII值为“MZ”，是MS-DOS的创建者之一Mark Zbikowski 名字的缩写。</li>
+<li><code>e_lfanew</code>字段（4个字节大小）是真正的PE文件头的相对偏移（RVA），指出真正的PE头的文件偏移位置，位于从文件开始偏移<mark class="label success">3Ch</mark>字节处。</li>
+</ul>
+</div>
+
+<h2 id="3-PE文件头"><a href="#3-PE文件头" class="headerlink" title="3 PE文件头"></a>3 PE文件头</h2><div class="note warning"><p>PE头是PE相关结构NT映像头的简称，即<mark class="label primary">IMAGE_NT_HEADER</mark>，其中包含许多PE装载器能用到的重要字段。</p>
+<p>当执行体在支持PE文件结构的操作系统中执行时，PE装载器将从IMAGE_DOS_HEADER结构的<code>e_lfanew</code>字段里找到PE Header的起始偏移量，用其加上基址，得到PE文件头的指针。</p>
+<p>$$PNTHeader = ImageBase + dosHeader -&gt;e\_lfanew $$</p>
+<p>实际上有两个版本的IMAGE_NT_HEADER结构，一个是为PE32 （32位版本）可执行文件准备的，另一个是PE32+（64位版本）。因为它们几乎没有区别，所以在以后的讨论中将不作区分。</p>
+</div>
+
+<p> IMAGE_NT_HEADER是由3个字段（左边的数字是到PE文件头的偏移量）组成的，示例如下。</p>
+<p>PE32 （32位版本）:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IMAGE_NT_HEADERS STRUCT&#123;</span><br><span class="line">  +Oh       Signature         DWORD                    ?      <span class="comment">//PE文件标识，IMAGE_NT_SIGNATURE</span></span><br><span class="line">  +<span class="number">4</span>h       FileHeader        IMAGE_FILE_HEADER        &lt;&gt; </span><br><span class="line">  +<span class="number">18</span>h      OptionalHeader    IMAGE OPTIONAL_HEADER32  &lt;&gt;</span><br><span class="line">&#125;IMAGE NT_HEADERS ENDS   </span><br></pre></td></tr></table></figure>
+
+<p>PE32+（64位版本）:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">IMAGE_NT_HEADERS STRUCT&#123;</span><br><span class="line">  +Oh       Signature         DWORD                    ?      <span class="comment">//PE文件标识，IMAGE_NT_SIGNATURE</span></span><br><span class="line">  +<span class="number">4</span>h       FileHeader        IMAGE_FILE_HEADER        &lt;&gt; </span><br><span class="line">  +<span class="number">18</span>h      OptionalHeader    IMAGE OPTIONAL_HEADER32  &lt;&gt;</span><br><span class="line">&#125;IMAGE NT_HEADERS64 ENDS   </span><br></pre></td></tr></table></figure>
+
+<h3 id="3-1-Signature-字段"><a href="#3-1-Signature-字段" class="headerlink" title="3.1 Signature 字段"></a>3.1 Signature 字段</h3><p>在一个有效的PE文件里，Signature字段被设置为<code>0x00004550</code>， ASCII 码字符是<mark class="label danger">PE00</mark>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_NT_SIGNATURE 0x00004550</span></span><br></pre></td></tr></table></figure>
+
+<p>Signature字段的值<mark class="label danger">PE00</mark>是PE文件头的开始，MS-DOS头部的<code>e-lfanew</code>字段正是指向<mark class="label danger">PE00</mark>的。</p>
+<h3 id="3-2-IMAGE-FILE-HEADER-结构"><a href="#3-2-IMAGE-FILE-HEADER-结构" class="headerlink" title="3.2 IMAGE_FILE_HEADER 结构"></a>3.2 IMAGE_FILE_HEADER 结构</h3><div class="note default"><ul>
+<li><code>IMAGE_FILE_HEADER</code>（映像文件头）结构包含PE文件的一些基本信息，最重要的是，其中<mark class="label info">SizeOfOptionalHeader</mark>域指出<code>IMAGE_OPTIONAL_HEADER</code>的大小。</li>
+<li><code>IMAGE_FILE_HEADER</code>这个结构也能在COFF格式的OBJ文件的开始处找到，因此也称其为“COFF File Header”。注释中的偏移量是基于PE文件头（<code>IMAGE_NT_HEADERS</code>）的。</li>
+</ul>
+</div>
+
+<p>其结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_FILE_HEADER</span> &#123;</span></span><br><span class="line">  +<span class="number">04</span>h   WORD    Machine;               <span class="comment">// 运行平台</span></span><br><span class="line">  +<span class="number">06</span>h   WORD    NumberOfSections;      <span class="comment">// 文件的区块数目</span></span><br><span class="line">  +<span class="number">08</span>h   DWORD   TimeDateStamp;         <span class="comment">// 文件创建日期和时间</span></span><br><span class="line">  +<span class="number">0</span>Ch   DWORD   PointerToSymbolTable;  <span class="comment">// 指向符号表(主要用于调试)</span></span><br><span class="line">  +<span class="number">10</span>h   DWORD   NumberOfSymbols;       <span class="comment">// 符号表中符号个数(用于调试)</span></span><br><span class="line">  +<span class="number">14</span>h   WORD    SizeOfOptionalHeader;  <span class="comment">// IMAGE_OPTIONAL_HEADER32 结构大小</span></span><br><span class="line">  +<span class="number">16</span>h   WORD    Characteristics;       <span class="comment">// 文件属性</span></span><br><span class="line">&#125; IMAGE_FILE_HEADER, *PIMAGE_FILE_HEADER;</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://i.loli.net/2021/04/12/foc72VEZpnivKHF.png" alt="屏幕快照 2021-04-12 下午6.44.40.png"></p>
+<div class="note success"><ol>
+<li><p><strong>Machine</strong>：是可执行文件的目标CPU类型，其中典型的机器类标志如下</p>
+<table>
+<thead>
+<tr>
+<th align="center">机器类型</th>
+<th align="center">标志</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Intel i386</td>
+<td align="center">14Ch</td>
+</tr>
+<tr>
+<td align="center">MIPS R3000</td>
+<td align="center">162H</td>
+</tr>
+<tr>
+<td align="center">MIPS R4000</td>
+<td align="center">166H</td>
+</tr>
+<tr>
+<td align="center">Alpha AXP</td>
+<td align="center">184H</td>
+</tr>
+<tr>
+<td align="center">Power PC</td>
+<td align="center">1F0H</td>
+</tr>
+<tr>
+<td align="center">MIPS R10000</td>
+<td align="center">0x0168</td>
+</tr>
+<tr>
+<td align="center">AMD64</td>
+<td align="center">0x8664</td>
+</tr>
+<tr>
+<td align="center">ALPHA64</td>
+<td align="center">0x0284</td>
+</tr>
+<tr>
+<td align="center">IA64</td>
+<td align="center">0x0200</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>NumberOfSections</strong>：是文件的区块数目；</p>
+</li>
+<li><p><strong>TimeDateStamp</strong>：文件创建的时间，这个值是从1970年1月1日以来用格林尼治时间计算的秒数；</p>
+</li>
+<li><p><strong>PointerToSymbolTable</strong>：COFF符号表的偏移地址，主要用于调试，若不存在，这一项可设置为0；</p>
+</li>
+<li><p><strong>NumberOfSymbols</strong>：符号表的符号个数。</p>
+</li>
+<li><p><strong>SizeOfOptionalHeader</strong>：表示<code>IMAGE_OPTIONAL_HEADER32</code>数据结构大小，其最小值对于PE32结构是<code>00E0H</code>，对于PE32+是<code>00F0H</code>。</p>
+</li>
+<li><p><strong>Characteristics</strong>：文件属性，通过几个值运算得到。这些值定义与<code>winnt.h</code>的<code>IMAGE_FILE_XXX</code>中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_RELOCS_STRIPPED           0x0001  <span class="comment">// 重定位信息被移除，文件必须加载先前的基地址</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_EXECUTABLE_IMAGE          0x0002  <span class="comment">// 文件可执行</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_LINE_NUMS_STRIPPED        0x0004  <span class="comment">// 行号被移除</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_LOCAL_SYMS_STRIPPED       0x0008  <span class="comment">// 符号被移除</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_AGGRESIVE_WS_TRIM         0x0010  <span class="comment">// Agressively trim working set</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_LARGE_ADDRESS_AWARE       0x0020  <span class="comment">// 程序能处理大于2G的地址</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_BYTES_REVERSED_LO         0x0080  <span class="comment">// Bytes of machine word are reversed.</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_32BIT_MACHINE             0x0100  <span class="comment">// 32位机器</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_DEBUG_STRIPPED            0x0200  <span class="comment">// .dbg文件的调试信息被移除</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_REMOVABLE_RUN_FROM_SWAP   0x0400  <span class="comment">// 如果在移动介质中,拷到交换文件中运行</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_NET_RUN_FROM_SWAP         0x0800  <span class="comment">// 如果在网络中,拷到交换文件中运行</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_SYSTEM                    0x1000  <span class="comment">// 系统文件</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_DLL                       0x2000  <span class="comment">// 文件是一个dll</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_UP_SYSTEM_ONLY            0x4000  <span class="comment">// 文件只能运行在单处理器上</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_FILE_BYTES_REVERSED_HI         0x8000  <span class="comment">// 处理机的高位字节是相反的</span></span></span><br></pre></td></tr></table></figure>
+
+<p><mark class="label success">其值是通过上述的值或运算得到，上述定义的值都是2^n，所以运算后对于二进制就是不同的位的一。</mark></p>
+</li>
+</ol>
+</div>
+
+<p><img data-src="https://i.loli.net/2021/04/12/XG9BlAzqIMJDpod.png" alt="5.png"></p>
+<h3 id="3-3-IMAGE-OPTIONAL-HEADER-结构"><a href="#3-3-IMAGE-OPTIONAL-HEADER-结构" class="headerlink" title="3.3 IMAGE_OPTIONAL_HEADER 结构"></a>3.3 IMAGE_OPTIONAL_HEADER 结构</h3><p>尽管<code>IMAGE_OPTIONAL_HEADER</code>是一个可选结构，但是<code>IMAGE_FILE_HEADER</code>不足以包含所有的属性，完全不考虑两个结构的区别，将两者连起来就是一个完整的“PE文件头结构”，其结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_OPTIONAL_HEADER</span> </span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">      <span class="comment">// Standard fields.  </span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">  +<span class="number">18</span>h    WORD    Magic;                        <span class="comment">// 标志字, ROM 映像（0107h）,普通可执行文件（010Bh）</span></span><br><span class="line">  +<span class="number">1</span>Ah    BYTE    MajorLinkerVersion;           <span class="comment">// 链接程序的主版本号</span></span><br><span class="line">  +<span class="number">1B</span>h    BYTE    MinorLinkerVersion;           <span class="comment">// 链接程序的次版本号</span></span><br><span class="line">  +<span class="number">1</span>Ch    DWORD   SizeOfCode;                   <span class="comment">// 所有含代码的节的总大小</span></span><br><span class="line">  +<span class="number">20</span>h    DWORD   SizeOfInitializedData;        <span class="comment">// 所有含已初始化数据的节的总大小</span></span><br><span class="line">  +<span class="number">24</span>h    DWORD   SizeOfUninitializedData;      <span class="comment">// 所有含未初始化数据的节的大小</span></span><br><span class="line">  +<span class="number">28</span>h    DWORD   AddressOfEntryPoint;          <span class="comment">// 程序执行入口RVA</span></span><br><span class="line">  +<span class="number">2</span>Ch    DWORD   BaseOfCode;                   <span class="comment">// 代码的区块的起始RVA</span></span><br><span class="line">  +<span class="number">30</span>h    DWORD   BaseOfData;                   <span class="comment">// 数据的区块的起始RVA</span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">      <span class="comment">// NT additional fields.    以下是属于NT结构增加的领域。</span></span><br><span class="line">      <span class="comment">//</span></span><br><span class="line">  +<span class="number">34</span>h    DWORD   ImageBase;                    <span class="comment">// 程序默认的装载基址</span></span><br><span class="line">  +<span class="number">38</span>h    DWORD   SectionAlignment;             <span class="comment">// 内存中的区块的对齐大小</span></span><br><span class="line">  +<span class="number">3</span>Ch    DWORD   FileAlignment;                <span class="comment">// 文件中的区块的对齐大小</span></span><br><span class="line">  +<span class="number">40</span>h    WORD    MajorOperatingSystemVersion;  <span class="comment">// 要求操作系统最低版本号的主版本号</span></span><br><span class="line">  +<span class="number">42</span>h    WORD    MinorOperatingSystemVersion;  <span class="comment">// 要求操作系统最低版本号的副版本号</span></span><br><span class="line">  +<span class="number">44</span>h    WORD    MajorImageVersion;            <span class="comment">// 可运行于操作系统的主版本号</span></span><br><span class="line">  +<span class="number">46</span>h    WORD    MinorImageVersion;            <span class="comment">// 可运行于操作系统的次版本号</span></span><br><span class="line">  +<span class="number">48</span>h    WORD    MajorSubsystemVersion;        <span class="comment">// 要求最低子系统版本的主版本号</span></span><br><span class="line">  +<span class="number">4</span>Ah    WORD    MinorSubsystemVersion;        <span class="comment">// 要求最低子系统版本的次版本号</span></span><br><span class="line">  +<span class="number">4</span>Ch    DWORD   Win32VersionValue;            <span class="comment">// 莫须有字段，不被病毒利用的话一般为0</span></span><br><span class="line">  +<span class="number">50</span>h    DWORD   SizeOfImage;                  <span class="comment">// 映像装入内存后的总尺寸</span></span><br><span class="line">  +<span class="number">54</span>h    DWORD   SizeOfHeaders;                <span class="comment">// 所有头 + 区块表的尺寸大小</span></span><br><span class="line">  +<span class="number">58</span>h    DWORD   CheckSum;                     <span class="comment">// 映像的校检和</span></span><br><span class="line">  +<span class="number">5</span>Ch    WORD    Subsystem;                    <span class="comment">// 可执行文件期望的子系统</span></span><br><span class="line">  +<span class="number">5</span>Eh    WORD    DllCharacteristics;           <span class="comment">// DllMain()函数何时被调用，默认为 0</span></span><br><span class="line">  +<span class="number">60</span>h    DWORD   SizeOfStackReserve;           <span class="comment">// 初始化时的栈大小</span></span><br><span class="line">  +<span class="number">64</span>h    DWORD   SizeOfStackCommit;            <span class="comment">// 初始化时实际提交的栈大小</span></span><br><span class="line">  +<span class="number">68</span>h    DWORD   SizeOfHeapReserve;            <span class="comment">// 初始化时保留的堆大小</span></span><br><span class="line">  +<span class="number">6</span>Ch    DWORD   SizeOfHeapCommit;             <span class="comment">// 初始化时实际提交的堆大小</span></span><br><span class="line">  +<span class="number">70</span>h    DWORD   LoaderFlags;                  <span class="comment">// 与调试有关，默认为 0 </span></span><br><span class="line">  +<span class="number">74</span>h    DWORD   NumberOfRvaAndSizes;          <span class="comment">// 下边数据目录的项数，这个字段自Windows NT 发布以来一直是16</span></span><br><span class="line">  +<span class="number">78</span>h    DataDirectory IMAGE_DATA_DIRECTORY <span class="number">16</span> DUP (&lt;<span class="number">0</span>&gt;);   <span class="comment">// 数据目录表</span></span><br><span class="line">&#125; IMAGE_OPTIONAL_HEADER32, *PIMAGE_OPTIONAL_HEADER32;</span><br></pre></td></tr></table></figure>
+
+<p>PE32与PE32+的可选文件头的主要区别为：<strong>BaseData域不存在于PE32+中</strong>，PE32+中的Magic值为<strong>020Bh</strong>，PE32中的Magic值为<strong>010Bh</strong>。</p>
+<p><img data-src="https://i.loli.net/2021/04/12/6OhAoRtgVeG9FsC.png" alt="6.png"></p>
+<div class="note danger"><ol>
+<li><p><strong>Magic</strong>：是一个标记字，用于标记文件是ROM映像（<code>0107h</code>）还是可执行文件的映像（<code>010Bh</code>），一般是<code>010Bh</code>，如果是PE32+，则是<code>020Bh</code>。</p>
+</li>
+<li><p><strong>MajorLinkerVersion</strong>：连接程序的主版本号 如vc6.0的为06h。</p>
+</li>
+<li><p><strong>MinorLinkerVersion</strong>：连接程序的次版本号 如vc6.0的为00h。</p>
+</li>
+<li><p><strong>SizeOfCode</strong>：是<code>IMAGE_SCN_CNT_CODE</code>属性区块的总大小，即<strong>代码段的大小</strong>。多数文件只有一个Code块，所以这个字段和<code>.text</code>块的大小相匹配。<mark class="label danger">一般对齐的是一个磁盘区字节数（200h）的整数倍</mark>。</p>
+</li>
+<li><p><strong>SizeOfInitializedData</strong>：所有含<strong>已初始化数据的块的大小</strong>，即在编译时所构成块的大小（不包含代码段），一般在<code>.data</code>段中，但这个数据不太准确。</p>
+</li>
+<li><p><strong>SizeOfUninitializedData</strong>：所有含<strong>未初始化数据的块的大小</strong>，装载程序要在虚拟地址控件中给这些数据约定空间，这些块在磁盘中并不占地方，在程序开始时并没有指定值，一般在<code>.bss</code>段中。</p>
+</li>
+<li><p><strong>AddressOfEntryPoint</strong>：指出文件被执行时的入口地址（OEP），这是一个RVA地址。</p>
+<ul>
+<li><p>对于dll，这个入口点在进程初始化和关闭时及线程创建和毁灭时调用。在多数可执行文件中，这个值并不指向Main、WinMain或DllMain函数，而是指向运行需要的库代码并由其调用上述函数；对于dll文件，这里是libMain()的地址。</p>
+</li>
+<li><p>对于exe文件,这里是启动代码。</p>
+<p><mark class="label danger">如果在一个可执行文件上附加了一段代码并想让这段代码首先被执行，那么只需要将这个入口地址指向附加的代码就可以了。</mark></p>
+</li>
+</ul>
+</li>
+<li><p><strong>BaseOfCode</strong>：代码段基地址，代码段通常在PE头和数据段之间，<mark class="label success">微软的连接程序生成的程序一般把这个值置为<code>1000h</code></mark>。</p>
+</li>
+<li><p><strong>BaseOfData</strong>：数据段基地址，<strong>数据段一般出现在内存的末尾，这个字段在PE32+结构是没有的</strong>。</p>
+</li>
+<li><p><strong>ImageBase</strong>：PE文件默认的装入地址，这是一个理想地址，如果有可能的话（即地址当前没有被占用且是一个合法地址），加载器会试图在这个地址载入PE文件。当文件被装载进这个地址中时，将不进行重定位操作，否则会进行过重定位，速度会慢一点。</p>
+<ul>
+<li>对于EXE文件来说，由于每个文件总是使用独立的虚拟地址空间，<strong>优先装入地址不可能被其他模块占据</strong>，所以EXE总是能够按照这个地址装入，<strong>这也意味着EXE文件不再需要重定位信息</strong>。</li>
+<li>对于DLL文件来说，由于多个DLL文件全部使用宿主EXE文件的地址空间，不能保证优先装入地址没有被其他的DLL使用，所以DLL文件中必须包含重定位信息以防万一，因此，在前面介绍的<code>IMAGE_FILE_HEADER</code>结构的<code>Characteristics</code>字段中，DLL 文件对应的<code>IMAGE_FILE_RELOCS_STRIPPED</code>位总是为0，而EXE文件的这个标志位总是为1。</li>
+<li>Windows9x中EXE文件默认为<code>400000h</code>，DLL文件为<code>10000000h</code>。</li>
+</ul>
+</li>
+<li><p><strong>SectionAlignment</strong>：区块被装入内存后的对齐大小（单位）。也就是说，每个区块被装入的地址必定是本字段指定数值的整数倍。对运行在Windows 9x、Me下的用户模式可执行文件，最小的对其尺寸是每页1000h（4kb），在IA-64上，这个字段按8kb排列。</p>
+</li>
+<li><p><strong>FileAlignment</strong>：区块存储在磁盘文件中时的对齐单位，<strong>对于x86可执行文件，这个值通常是200h或1000h，这是为了保证块总是从磁盘的扇区开始，使用不同版本的Microsoft连接器，这个值会被改变，但必须是2的幂，最小为200h。而且如果SectionAlignment小于CPU的页尺寸，这个值就必须与SectionAlignment匹配。</strong><mark class="label default">由于在磁盘中的页大小和在内存中的页大小不同，所以文件在被装载进内存中与在磁盘中不是完全一样的，中间的差距用0填充。</mark></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+<p>块表事实上就是相同属性数据的组合，当块表载入到（虚拟）内存中的时候，相同一个块表对应的内存页都将被赋予相同的页属性，事实上Windows 系统对内存属性的设置是以页为单位的进行的，块表在内存的对齐的单位必须是一个页的大小或者是一个页的正整数倍。</p>
+<p>在磁盘中没有这个限制，因为磁盘中排放的是以空间为主导，在磁盘只是存放，不是使用，所以不用设置那么详细的属性。</p>
+<p><strong>块表的尺寸</strong></p>
+<p>主要有2个方面：</p>
+<ul>
+<li>磁盘映像和内存映像中块表对齐存储单位的不同而导致了长度不同</li>
+<li>对于包含为初始化数据的块表处理问题，既然是没有初始化，那么没有必要为其在磁盘中浪费空间资源，但是在内存中不同，程序一旦运行，之前没有初始化的数据便有可能要被赋值初始化，那么就必须为他们留下空间。</li>
+</ul>
+<p>不进行映射的块表</p>
+<p>有些块表并不需要映射到内存中，例如 .reloc 块表，重定位数据对于文件的执行代码是透明的，它只是提供Windows装载器使用执行代码根本不会去访问他们，所以没有必要将他们映射到物理内存中。</p>
+<p>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/lj94093/article/details/50504061">PE文件详解（二）–节表和节</a>】</p>
+<!-- flag of hidden posts -->
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Directoree 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Directoree 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Directoree
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/encryption-and-cracking-11-PE/" title="">https://directoree.github.io/post/encryption-and-cracking-11-PE/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E9%80%86%E5%90%91/" rel="tag"># 逆向</a>
+          </div>
+
+        
+
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Directoree</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">452k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">6:50</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/encryption-and-cracking-11-PE/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
