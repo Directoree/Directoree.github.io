@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/04/12/XG9BlAzqIMJDpod.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/12/6OhAoRtgVeG9FsC.png">
 <meta property="article:published_time" content="2021-04-06T01:38:19.000Z">
-<meta property="article:modified_time" content="2021-04-12T12:20:57.572Z">
+<meta property="article:modified_time" content="2021-04-13T02:29:13.010Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
@@ -356,7 +356,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-12 20:20:57" itemprop="dateModified" datetime="2021-04-12T20:20:57+08:00">2021-04-12</time>
+        <time title="修改时间：2021-04-13 10:29:13" itemprop="dateModified" datetime="2021-04-13T10:29:13+08:00">2021-04-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -401,14 +401,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.7k</span>
+      <span>13k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>9 分钟</span>
+      <span>12 分钟</span>
     </span>
 </div>
 
@@ -603,6 +603,193 @@
 <li><p><strong>SectionAlignment</strong>：区块被装入内存后的对齐大小（单位）。也就是说，每个区块被装入的地址必定是本字段指定数值的整数倍。对运行在Windows 9x、Me下的用户模式可执行文件，最小的对其尺寸是每页1000h（4kb），在IA-64上，这个字段按8kb排列。</p>
 </li>
 <li><p><strong>FileAlignment</strong>：区块存储在磁盘文件中时的对齐单位，<strong>对于x86可执行文件，这个值通常是200h或1000h，这是为了保证块总是从磁盘的扇区开始，使用不同版本的Microsoft连接器，这个值会被改变，但必须是2的幂，最小为200h。而且如果SectionAlignment小于CPU的页尺寸，这个值就必须与SectionAlignment匹配。</strong><mark class="label default">由于在磁盘中的页大小和在内存中的页大小不同，所以文件在被装载进内存中与在磁盘中不是完全一样的，中间的差距用0填充。</mark></p>
+</li>
+<li><p><strong>MajorOperatingSystemVersion：</strong>指运行这个PE文件所需的操作系统的最低主版本号。</p>
+</li>
+<li><p><strong>MinorOperatingSystemVersion</strong>：指运行这个PE文件所需的操作系统的最低次版本号。</p>
+</li>
+<li><p><strong>MajorImageVersion：</strong>指用户自定义的PE文件的主版本号，可以通过连接程序来设置。</p>
+</li>
+<li><p><strong>MinorImageVersion</strong>：指用户自定义的PE文件的次版本号，可以通过连接程序来设置。</p>
+</li>
+<li><p><strong>MajorSubsystemVersion：</strong>要求最低子系统版本的主版本号，通常被设置为04h。</p>
+</li>
+<li><p><strong>MinorSubsystemVersion</strong>要求最低子系统版本的次版本号。</p>
+</li>
+<li><p><strong>Win32VersionValue</strong> ：从来不用的字段，总是设置为0。</p>
+</li>
+<li><p><strong>SizeOfImage</strong>：PE文件装入内存后映像的总大小，从<code>ImageBase</code>到最后一个块的总大小，最后一块向上取整到文件对齐值的倍数。如果<code>SectionAlignment</code>域和<code>FileAlignment</code>域相等，那么这个值也是PE文件在硬盘上的大小。</p>
+</li>
+<li><p><strong>SizeOfHeader</strong>：是MS-DOS头、PE头和区块表的总尺寸，在PE文件代码块或数据块之前，四舍五入到文件对齐值的倍数。</p>
+</li>
+<li><p><strong>CheckSum</strong>：PE文件的CRC校验和，<code>IMAGEHLP.DLL</code>中的<code>CheckSumMappedFile</code>函数可以计算该值，一般的EXE文件该值可以为<code>0h</code>，但一些内核模式的驱动程序和系统DLL必须有一个校验和。</p>
+</li>
+<li><p><strong>Subsystem</strong>：PE文件的用户界面使用的子系统（UI）类型，这个值只对EXE重要。如果将子系统指定为Windows CUI，那么系统会自动为程序建立一个控制台窗口，而指定为Windows GUI的话，窗口必须由程序自己建立。</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>子系统</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>未知</td>
+</tr>
+<tr>
+<td>1</td>
+<td>不需要子系统（例如驱动程序）</td>
+</tr>
+<tr>
+<td>2</td>
+<td>图形接口子系统（GUI）</td>
+</tr>
+<tr>
+<td>3</td>
+<td>字符子系统（CUI）</td>
+</tr>
+<tr>
+<td>5</td>
+<td>OS/2字符子系统</td>
+</tr>
+<tr>
+<td>7</td>
+<td>POSIX字符子系统</td>
+</tr>
+<tr>
+<td>8</td>
+<td>保留</td>
+</tr>
+<tr>
+<td>9</td>
+<td>WinCE图形界面</td>
+</tr>
+</tbody></table>
+</li>
+<li><p><strong>DllCharacteristics</strong>：Dll文件特性（表示DllMain()函数何时被调用，通常设置为0），与Characteristics相类似，采用相同的计算方式，其定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//      IMAGE_LIBRARY_PROCESS_INIT            0x0001     // 保留</span></span><br><span class="line"><span class="comment">//      IMAGE_LIBRARY_PROCESS_TERM            0x0002     // 保留</span></span><br><span class="line"><span class="comment">//      IMAGE_LIBRARY_THREAD_INIT             0x0004     // 保留</span></span><br><span class="line"><span class="comment">//      IMAGE_LIBRARY_THREAD_TERM             0x0008     // 保留</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_HIGH_ENTROPY_VA 0x0020 <span class="comment">//Image can handle a high entropy 64-bit virtual address space.</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE     0x0040           <span class="comment">// DLL 可重定位。</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_FORCE_INTEGRITY  0x0080           <span class="comment">// Code Integrity Image</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_NX_COMPAT        0x0100           <span class="comment">// 该映像与 NX 兼容。</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_NO_ISOLATION     0x0200           <span class="comment">// 该映像理解隔离，但不需要隔离。</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_NO_SEH           0x0400           <span class="comment">// 该映像不使用 SEH。 该映像中不能有任何 SE 处理程序。</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_NO_BIND          0x0800           <span class="comment">// 请勿绑定此映像。</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_APPCONTAINER     0x1000           <span class="comment">// 映像必须在 AppContainer 中运行。</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_WDM_DRIVER       0x2000           <span class="comment">// 驱动程序使用 WDM 模型。</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_GUARD_CF         0x4000           <span class="comment">// Image supports Control Flow Guard.</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DLLCHARACTERISTICS_TERMINAL_SERVER_AWARE     0x8000    <span class="comment">//该映像支持终端服务器感知。</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>SizeOfStackReserve</strong>：为线程的栈初始保留的虚拟内存的大小，默认为1MB，即<code>00100000h</code>。如果在调用<code>CreateThread</code>函数时指定堆栈的大小为0，被创建的线程的堆栈的初始大小就与这个值相同。</p>
+</li>
+<li><p><strong>SizeOfStackCommit</strong>：<mark class="label info">在EXE文件里，一开始默认给栈分配的虚拟内存大小，微软的连接程序把这个值置为4KB，即<code>1000h</code>。</mark></p>
+</li>
+<li><p><strong>SizeOfHeapReserve</strong>：在EXE文件里，为进程的堆保留的虚拟内存的大小，默认值为默认为1MB，即<code>00100000h</code>。</p>
+</li>
+<li><p><strong>SizeOfHeapCommit</strong>：在EXE文件里，一开始默认给程序的进程分配的堆的大小，微软的连接程序把这个值置为4KB，即<code>1000h</code>。</p>
+</li>
+<li><p><strong>LoadFlags</strong>：与调试有关，默认为0。</p>
+</li>
+<li><p><strong>NumberOfRvaAndSizes</strong>：数据目录结构数组的项数，即下面数据目录的项数，自Windows NT发布以来该值总为<code>00000010h</code>。</p>
+</li>
+<li><p><strong>DataDirectory</strong>[16]：数据目录表，是一个数组，由16个相同的<code>IMAGE_DATA_DIRECTORY</code>结构组成，每一个<code>IMAGE_DATA_DIRECTORY</code>的结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_DATA_DIRECTORY</span> &#123;</span></span><br><span class="line">    DWORD   VirtualAddress;  <span class="comment">//数据起始RVA</span></span><br><span class="line">    DWORD   Size;            <span class="comment">//数据块长度</span></span><br><span class="line">&#125; IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">序号</th>
+<th>成员</th>
+<th>结构</th>
+<th>偏移量（PE/PE32+）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0</td>
+<td>Export Table（导出表）</td>
+<td>IMAGE_DIRECTORY_ENTRY_EXPORT</td>
+<td>78h/88h</td>
+</tr>
+<tr>
+<td align="center">1</td>
+<td>Import Table（导入表）</td>
+<td>IMAGE_DIRECTORY_ENTRY_IMPORT</td>
+<td>90h/90h</td>
+</tr>
+<tr>
+<td align="center">2</td>
+<td>Resources Table（资源）</td>
+<td>IMAGE_DIRECTORY_ENTRY_RESOURCE</td>
+<td>88h/98h</td>
+</tr>
+<tr>
+<td align="center">3</td>
+<td>Exception Table（异常）</td>
+<td>IMAGE_DIRECTORY_ENTRY_EXCEPTION</td>
+<td>90h/A0h</td>
+</tr>
+<tr>
+<td align="center">4</td>
+<td>Security Table（安全）</td>
+<td>IMAGE_DIRECTORY_ENTRY_SECURITY</td>
+<td>98h/A8h</td>
+</tr>
+<tr>
+<td align="center">5</td>
+<td>Base relocation Table（重定位表）</td>
+<td>IMAGE_DIRECTORY_ENTRY_BASERELOC</td>
+<td>A0h/B0h</td>
+</tr>
+<tr>
+<td align="center">6</td>
+<td>Debug（调试信息）</td>
+<td>IMAGE_DIRECTORY_ENTRY_DEBUG</td>
+<td>A8h/B8h</td>
+</tr>
+<tr>
+<td align="center">7</td>
+<td>Copyright（版权信息）</td>
+<td>IMAGE_DIRECTORY_ENTRY_ARCHITECTURE</td>
+<td>B0h/C0h</td>
+</tr>
+<tr>
+<td align="center">8</td>
+<td>Global Ptr（RVA of GP）</td>
+<td>IMAGE_DIRECTORY_ENTRY_GLOBALPTR</td>
+<td>B8h/C8h</td>
+</tr>
+<tr>
+<td align="center">9</td>
+<td>Thread local storage（TLS）</td>
+<td>IMAGE_DIRECTORY_ENTRY_TLS</td>
+<td>C0h/D0h</td>
+</tr>
+<tr>
+<td align="center">10</td>
+<td>Load Configuration</td>
+<td>IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG</td>
+<td>C8h/D8h</td>
+</tr>
+<tr>
+<td align="center">11</td>
+<td>Bound Import Directory in headers</td>
+<td>IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT</td>
+<td>D0h/E0h</td>
+</tr>
+<tr>
+<td align="center">12</td>
+<td>Import Address Table（IAT导入函数地址表）</td>
+<td>IMAGE_DIRECTORY_ENTRY_IAT</td>
+<td>D8h/E8h</td>
+</tr>
+<tr>
+<td align="center">13</td>
+<td>Delay Import（Delay Load Import Descriptors）</td>
+<td>IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT</td>
+<td>E0h/F0h</td>
+</tr>
+<tr>
+<td align="center">14</td>
+<td>COM descriptor（COM Runtime descriptor）</td>
+<td>IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR</td>
+<td>E8h/F8h</td>
+</tr>
+<tr>
+<td align="center">15</td>
+<td>保留，必须为0</td>
+<td></td>
+<td>F0h/100h</td>
+</tr>
+</tbody></table>
 </li>
 </ol>
 </div>
