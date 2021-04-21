@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/04/20/64KCR3xsa7EQqmw.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/20/jPIEsbFz2WhD4ky.png">
 <meta property="article:published_time" content="2021-04-06T01:38:19.000Z">
-<meta property="article:modified_time" content="2021-04-20T11:13:28.583Z">
+<meta property="article:modified_time" content="2021-04-21T10:59:40.856Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
@@ -364,7 +364,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-20 19:13:28" itemprop="dateModified" datetime="2021-04-20T19:13:28+08:00">2021-04-20</time>
+        <time title="修改时间：2021-04-21 18:59:40" itemprop="dateModified" datetime="2021-04-21T18:59:40+08:00">2021-04-21</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -409,14 +409,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>23k</span>
+      <span>24k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>21 分钟</span>
+      <span>22 分钟</span>
     </span>
 </div>
 
@@ -690,7 +690,7 @@
 <li><p><strong>NumberOfRvaAndSizes</strong>：数据目录结构数组的项数，即下面数据目录的项数，自Windows NT发布以来该值总为<code>00000010h</code>。</p>
 </li>
 <li><p><strong>DataDirectory</strong>[16]：数据目录表，是一个数组，由16个相同的<code>IMAGE_DATA_DIRECTORY</code>结构组成，每一个<code>IMAGE_DATA_DIRECTORY</code>的结构如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_DATA_DIRECTORY</span> &#123;</span></span><br><span class="line">    DWORD   VirtualAddress;  <span class="comment">//数据起始RVA</span></span><br><span class="line">    DWORD   Size;            <span class="comment">//数据块长度</span></span><br><span class="line">&#125; IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_DATA_DIRECTORY</span> &#123;</span></span><br><span class="line">    DWORD   VirtualAddress;  <span class="comment">//数据起始RVA，是所指向的数据块RVA。</span></span><br><span class="line">    DWORD   Size;            <span class="comment">//数据块长度，所指向的数据块的大小。</span></span><br><span class="line">&#125; IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;</span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
@@ -1089,7 +1089,31 @@
 <p><strong>IID的FirstThunk指向IAT数组，FirstThunk的值（是个RVA）–&gt; IAT（IMAGE_THUNK_DATA）数组，IAT数组每个元素存的值对应一个函数入口地址（是个VA）。</strong></p>
 </div>
 
-<h3 id="5-3-绑定输入"><a href="#5-3-绑定输入" class="headerlink" title="5.3 绑定输入"></a>5.3 绑定输入</h3><!-- flag of hidden posts -->
+<h3 id="5-3-绑定输入"><a href="#5-3-绑定输入" class="headerlink" title="5.3 绑定输入"></a>5.3 绑定输入</h3><p>双桥结构的导入表中，桥2是指向IAT的，Windows 加载程序负责IAT中地址的修正工作。 </p>
+<p>如果一个PE中导入的函数比较多，那么这部分工作就会占用一些时间，PE加载速度就会变慢。绑定导入的目的就是把由Windows加载程序负责的<strong>IAT地址修正工作提前到加载前进行</strong>，要么由用户手工完成，要么由专门的程序来完成；然后，通过在PE文件中声明绑定导入数据，以便告诉操作系统加载器说这部分工作不需要你做了。</p>
+<p>在磁盘中可执行文件的IAT里（文件载入内存前），有的文件IAT存放的是与DLL输出函数相关的实际内存地址（不是RVA），这样做可以使应用程序更快递进行初始化，并且使用较少的存储器。<mark class="label success">但是由Borland（TLINK）生成的文件是不能被绑定的。</mark></p>
+<div class="note success"><p>那么为什么说它只是辅助性的工作呢？不同的操作系统中，动态链接库的函数地址通常是不一样的。比如<code>kernel32.dll</code>在Windows 2000中其加载到进程空间的基地址为<code>0x77e60000</code>，而在Windws XP SP3中其加载地址则是<code>0x7c800000</code>，同动态链接库加载后处于不同的基地址，直接导致了同一个导入的函数在不同操作系统中其导入地址VA是不一样的。 所以，经过绑定导人的个PE程序可能在Windows 2000里运行得很好，但到了Windows XP中却因地址出现错误而造成无法运行。</p>
+</div>
+
+<p>在为PE加入绑定导入机制的时候，微软就已经考虑到了这个问题，所以假定PE加载前对IAT的修正都是正确的。那么PE的加载速度是加快的，即使绑定以后的EXE程序在其他的兼容系统中运行时，其地址出现错误，PE加载也有检测错误的机制。<mark class="label warning">如果地址检测出错误，PE加载器会重新接管这项工作，加载时对IAT进行修正。</mark></p>
+<p>微软提供了一个绑定工具<mark class="label primary">bind.exe</mark>程序，该程序可以把导入表中IAT表项<code>IMAGE_THUNK_DATA32</code>的内容都静态替换成虚拟内存地址，<mark class="label warning">然后在数据目录表的第12项指定的位置声明这些更改</mark>。Windows在加载目标PE相关的动态链接库时，会首先检查这些地址是否正确合法，这些检查包括当前系统的DLL版本是否符合绑定导入结构中描述的版本号，如果不符合或者DLL需要被重新定位，加载器就会去遍历<code>OriginalFirstThunk</code>指向的数组（也就是INT）计算新的地址。如果导入表是单桥结构，此时的遍历会失效，所以说单桥结构无法实施静态绑定操作。</p>
+<div class="note info"><ol>
+<li>若可执行文件无绑定输入，PE文件在装载入内存前的IAT无输入函数的实际内存地址（VA）。</li>
+<li>若可执行文件有绑定输入，PE文件在装载入内存前，在磁盘中的IAT表里面就已经写入了输入函数在内存的实际地址（VA），并且会将输入表结构<code>IMAGE_IMPORT_DESCRIPTOR.TimeDateStamp</code>字段设置为<mark class="label success">-1</mark>。尽管有绑定输入，当IAT表中的函数地址发生错误或平台不兼容时，Windows加载器仍然会先通过INT表得到函数名然后找到函数地址，最后改的IAT表。</li>
+</ol>
+</div>
+
+<div class="note danger"><p><strong>如何判断和定位一个可执行文件的绑定输入？</strong></p>
+<ol>
+<li>通过看输入表结构的TimeDataStamp字段，即若<code>IMAGE_IMPORT_DESCRIPTOR.TimeDateStamp</code>字段为<mark class="label success">0</mark>，则该DLL没有绑定输入，若为<mark class="label success">-1</mark>，则表示该DLL有绑定输入。</li>
+<li>通过看数据目录表的第12个元素结构（<code>IMAGE_OPTIONAL_HEADER.DataDirectory[11] </code>即 <code>IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT</code>），该元素指向绑定输入。</li>
+<li>由于数据目录表的每一个元素都包含两个属性，第一个属性是所指向数据块的RVA，第二个属性是所指向的数据块的大小。即<code>IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT</code>指向绑定输入表结构。</li>
+<li>绑定输入表结构为<code>IMAGE_BOUND_IMPORT_DESCRIPTOR</code>，<mark class="label info">每一个这样的结构对应一个输入的动态链接库</mark>，它用来描述输入的DLL的版本信息以及依赖的DLL个数。</li>
+</ol>
+</div>
+
+<p>参考【<a target="_blank" rel="noopener" href="https://www.cnblogs.com/iBinary/p/9745417.html">PE知识复习之PE的绑定导入表</a>】、【《Windows PE 权威指南》】</p>
+<!-- flag of hidden posts -->
     </div>
 
     
