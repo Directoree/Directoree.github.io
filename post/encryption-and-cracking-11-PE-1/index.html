@@ -49,7 +49,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/04/23/TXbimPz963nxUrZ.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/23/2TvYDpwzFX8ch1W.png">
 <meta property="article:published_time" content="2021-04-06T01:38:19.000Z">
-<meta property="article:modified_time" content="2021-04-26T02:30:19.687Z">
+<meta property="article:modified_time" content="2021-04-26T10:13:01.417Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
@@ -369,7 +369,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-26 10:30:19" itemprop="dateModified" datetime="2021-04-26T10:30:19+08:00">2021-04-26</time>
+        <time title="修改时间：2021-04-26 18:13:01" itemprop="dateModified" datetime="2021-04-26T18:13:01+08:00">2021-04-26</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1178,7 +1178,7 @@
 </li>
 <li><p><strong>NumberOfNames</strong>：以函数名输出的函数的个数，即输出函数名称表（ENT）里条目的数量。</p>
 </li>
-<li><p><strong>AddressOfFunctions</strong>：EAT的RVA，该指针指向全部到处函数的起始入口地址。EAT数组中每一个非0的RVA值指针都对应于一个被输出的函数。</p>
+<li><p><strong>AddressOfFunctions</strong>：EAT的RVA，该指针指向全部导出函数的起始入口地址。EAT数组中每一个非0的RVA值指针都对应于一个被输出的函数。</p>
 </li>
 <li><p><strong>AddressOfNames</strong>：ENT的RVA，ENT是一个指向输出函数名ASCII字符串的RVA的数组。每一个ASCII字符串对应于一个通过函数名输出的函数。这个表需要对ASCII字符串进行排序，这允许加载器可以通过二进制查找方式查找输出函数名。</p>
 </li>
@@ -1214,7 +1214,7 @@
 <li>从导出表的<code>NumberOfNames</code>字段得到已命名函数的总数，并以这个数字作为循环的次数来构造一个循环。</li>
 <li>从<code>AddressOfNames</code>字段指向得到的函数名称地址表的第一项开始，在循环中将每一项定义的函数名与要查找的函数名相比较，如果没有任何一个函数名是符合的，表示文件中没有指定名称的函数，否则执行下一步骤。</li>
 <li>如果某一项定义的函数名与要查找的函数名符合，那么记下这个函数名在字符串地址表中的索引值（数组下标），然后通过索引号再去检索<code>AddressOfNamesOrdinals</code>指向的数组，从同样索引的位置找到函数的地址索引。我们这里假设这个值是x。</li>
-<li>最后，以 x 值作为索引值，在<code>AddressOfFunctions</code>字段指向的函数入口地址表中获取的 RVA 就是函数的入口地址。</li>
+<li>最后，以 x 值作为索引值，在<code>AddressOfFunctions</code>字段指向的函数入口地址表中获取的 RVA ，这个RVA 值加上模块实际装入的基地址，就得到了函数真正的入口地址。</li>
 </ol>
 <p><strong>二、按函数索引导出</strong></p>
 <ol>
