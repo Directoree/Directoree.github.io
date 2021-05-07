@@ -22,12 +22,12 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"right","width":300,"display":"hide","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:type" content="article">
-<meta property="og:title" content="加密与解密（第四版）PE文件格式（1）">
-<meta property="og:url" content="https://directoree.github.io/post/encryption-and-cracking-11-PE-1/index.html">
+<meta property="og:title" content="加密与解密（第四版）PE文件格式">
+<meta property="og:url" content="https://directoree.github.io/post/encryption-and-cracking-11-PE/index.html">
 <meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/06/yx76vb8uKQsDJAz.png">
@@ -48,15 +48,21 @@
 <meta property="og:image" content="https://i.loli.net/2021/04/23/kpdzR81nqivoBxP.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/23/TXbimPz963nxUrZ.png">
 <meta property="og:image" content="https://i.loli.net/2021/04/23/2TvYDpwzFX8ch1W.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/26/NlXRc4OMIexfVKs.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/26/OFsglcfM93YnLuP.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/27/Wsy4h6O1jFCKxJG.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/27/l2ftZeTVI5PJCnx.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/27/pRuyg5NXlJKFfwI.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/27/kcjFHzt3IlnLwY5.png">
 <meta property="article:published_time" content="2021-04-06T01:38:19.000Z">
-<meta property="article:modified_time" content="2021-04-26T10:13:01.417Z">
+<meta property="article:modified_time" content="2021-05-07T07:11:21.337Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/encryption-and-cracking-11-PE-1/">
+<link rel="canonical" href="https://directoree.github.io/post/encryption-and-cracking-11-PE/">
 
 
 <script class="page-configurations">
@@ -69,7 +75,7 @@
   };
 </script>
 
-  <title>加密与解密（第四版）PE文件格式（1） | Directoree</title><meta name="robots" content="noindex">
+  <title>加密与解密（第四版）PE文件格式 | Directoree</title><meta name="robots" content="noindex">
   
 
 
@@ -245,7 +251,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9F%BA%E5%9C%B0%E5%9D%80"><span class="nav-text">1  基地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MS-DOS%E5%A4%B4%E9%83%A8"><span class="nav-text">2 MS-DOS头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-PE%E6%96%87%E4%BB%B6%E5%A4%B4"><span class="nav-text">3 PE文件头</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Signature-%E5%AD%97%E6%AE%B5"><span class="nav-text">3.1 Signature 字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-IMAGE-FILE-HEADER-%E7%BB%93%E6%9E%84"><span class="nav-text">3.2 IMAGE_FILE_HEADER 结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-IMAGE-OPTIONAL-HEADER-%E7%BB%93%E6%9E%84"><span class="nav-text">3.3 IMAGE_OPTIONAL_HEADER 结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%8C%BA%E5%9D%97"><span class="nav-text">4 区块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%8C%BA%E5%9D%97%E8%A1%A8"><span class="nav-text">4.1 区块表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%8C%BA%E5%9D%97%E5%90%88%E5%B9%B6"><span class="nav-text">4.2 区块合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%8C%BA%E5%9D%97%E7%9A%84%E5%AF%B9%E9%BD%90"><span class="nav-text">4.3 区块的对齐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-text">4.4 文件偏移与虚拟地址的转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E8%BE%93%E5%85%A5%E8%A1%A8"><span class="nav-text">5 输入表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E8%BE%93%E5%85%A5%E5%87%BD%E6%95%B0%E7%9A%84%E8%B0%83%E7%94%A8"><span class="nav-text">5.1 输入函数的调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E8%BE%93%E5%85%A5%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">5.2 输入表的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E7%BB%91%E5%AE%9A%E8%BE%93%E5%85%A5"><span class="nav-text">5.3 绑定输入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E8%BE%93%E5%87%BA%E8%A1%A8"><span class="nav-text">6 输出表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E8%BE%93%E5%87%BA%E8%A1%A8%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">6.1 输出表的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E8%BE%93%E5%87%BA%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">6.2 输出表的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E6%9F%A5%E6%89%BE%E8%BE%93%E5%87%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%85%A5%E5%8F%A3%E5%9C%B0%E5%9D%80"><span class="nav-text">6.3 查找输出函数的入口地址</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9F%BA%E5%9C%B0%E5%9D%80"><span class="nav-text">1  基地址</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MS-DOS%E5%A4%B4%E9%83%A8"><span class="nav-text">2 MS-DOS头部</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-PE%E6%96%87%E4%BB%B6%E5%A4%B4"><span class="nav-text">3 PE文件头</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Signature-%E5%AD%97%E6%AE%B5"><span class="nav-text">3.1 Signature 字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-IMAGE-FILE-HEADER-%E7%BB%93%E6%9E%84"><span class="nav-text">3.2 IMAGE_FILE_HEADER 结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-IMAGE-OPTIONAL-HEADER-%E7%BB%93%E6%9E%84"><span class="nav-text">3.3 IMAGE_OPTIONAL_HEADER 结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%8C%BA%E5%9D%97"><span class="nav-text">4 区块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%8C%BA%E5%9D%97%E8%A1%A8"><span class="nav-text">4.1 区块表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%8C%BA%E5%9D%97%E5%90%88%E5%B9%B6"><span class="nav-text">4.2 区块合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%8C%BA%E5%9D%97%E7%9A%84%E5%AF%B9%E9%BD%90"><span class="nav-text">4.3 区块的对齐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%96%87%E4%BB%B6%E5%81%8F%E7%A7%BB%E4%B8%8E%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-text">4.4 文件偏移与虚拟地址的转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E8%BE%93%E5%85%A5%E8%A1%A8"><span class="nav-text">5 输入表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E8%BE%93%E5%85%A5%E5%87%BD%E6%95%B0%E7%9A%84%E8%B0%83%E7%94%A8"><span class="nav-text">5.1 输入函数的调用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E8%BE%93%E5%85%A5%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">5.2 输入表的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E7%BB%91%E5%AE%9A%E8%BE%93%E5%85%A5"><span class="nav-text">5.3 绑定输入</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E8%BE%93%E5%87%BA%E8%A1%A8"><span class="nav-text">6 输出表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E8%BE%93%E5%87%BA%E8%A1%A8%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="nav-text">6.1 输出表的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E8%BE%93%E5%87%BA%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">6.2 输出表的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E6%9F%A5%E6%89%BE%E8%BE%93%E5%87%BA%E5%87%BD%E6%95%B0%E7%9A%84%E5%85%A5%E5%8F%A3%E5%9C%B0%E5%9D%80"><span class="nav-text">6.3 查找输出函数的入口地址</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D"><span class="nav-text">7 基址重定位</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">7.1 基址重定位的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">7.2 基址重定位表的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E5%9F%BA%E5%9D%80%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8%E7%9A%84%E5%AE%9E%E4%BE%8B%E5%88%86%E6%9E%90"><span class="nav-text">7.3 基址重定位表的实例分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text"></span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -338,7 +344,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/encryption-and-cracking-11-PE-1/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/encryption-and-cracking-11-PE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -351,7 +357,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          加密与解密（第四版）PE文件格式（1）
+          加密与解密（第四版）PE文件格式
         </h1>
 
         <div class="post-meta-container">
@@ -369,7 +375,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-04-26 18:13:01" itemprop="dateModified" datetime="2021-04-26T18:13:01+08:00">2021-04-26</time>
+        <time title="修改时间：2021-05-07 15:11:21" itemprop="dateModified" datetime="2021-05-07T15:11:21+08:00">2021-05-07</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -386,7 +392,7 @@
     </span>
 
   
-    <span id="/post/encryption-and-cracking-11-PE-1/" class="post-meta-item leancloud_visitors" data-flag-title="加密与解密（第四版）PE文件格式（1）" title="阅读次数">
+    <span id="/post/encryption-and-cracking-11-PE/" class="post-meta-item leancloud_visitors" data-flag-title="加密与解密（第四版）PE文件格式" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -401,8 +407,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/encryption-and-cracking-11-PE-1/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/encryption-and-cracking-11-PE-1/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/encryption-and-cracking-11-PE/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/encryption-and-cracking-11-PE/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -414,14 +420,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>31k</span>
+      <span>34k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>28 分钟</span>
+      <span>31 分钟</span>
     </span>
 </div>
 
@@ -432,7 +438,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭ </p>
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
 <a id="more"></a>
 
 
@@ -1238,19 +1244,63 @@
 </ul>
 </div>
 
+<h2 id="7-基址重定位"><a href="#7-基址重定位" class="headerlink" title="7 基址重定位"></a>7 基址重定位</h2><p>程序被装入内存时，其基址是由字段<code>IMAGE_OPTIONAL_HEADER32.ImageBase</code>决定的。当链器生成一个PE文件时， 会假设这个文件在执行时被装载到默认的基地址处（ImageBase在编译链接时写入PE文件），并把code和data的相关地址都写入PE文件。如果载入时将默认的值作为基地址载人，则不需要重定位。但是，如果当装载时该位置已经被别的程序使用，链接器登记的那个地址就是错误的，那么操作系统就有权重新选择一个基地址。这时候就需要对所有的重定位信息进行修正，而修正的依据就是PE中的重定位表。在PE文件中，重定位表往往单独作为一块，用<code>.reloc</code>表示。</p>
+<div class="note primary"><p><mark class="label danger">系统的DLL</mark>实际不会发生重定位，因为同一系统的kernel32.dll、user32.dll等会被加载到自身固有的ImageBase。</p>
+</div>
 
+<h3 id="7-1-基址重定位的概念"><a href="#7-1-基址重定位的概念" class="headerlink" title="7.1 基址重定位的概念"></a>7.1 基址重定位的概念</h3><p>PE格式不参考外部DLL或模块中的其他区块，<mark class="label default">而是把文件中所有可能需要修改的地址放在一一个数组里</mark>。如果PE文件不在首选的地址载入，那么文件中的每一个定位（如全局变量地址）都需要被修正。对加载器来说，它不需要知道关于地址使用的任何细节，只要知道有一系列的数据需要以某种致的方式来修正就可以了。</p>
+<div class="note warning"><ul>
+<li>对EXE文件来说，每个文件总是使用独立的虚拟地址空间，所以EXE总是能够按照这个地址载入，这意味着EXE文件不再需要重定位信息。</li>
+<li>对DLL来说，因为多个DLL文件使用宿主EXE文件的地址空间，不能保证载入地址没有被其他DLL使用，所以DLL文件中必须包含重定位信息， 除非用一个<code>/FIXED</code>开关来忽略它们。</li>
+<li>在Visual Studio .NET中，链接器会为Debug和Release模式的EXE文件省路基址重定位，因此，在不同系统中跟踪同一个DLL文件时，其虚拟地址是不同的。</li>
+</ul>
+</div>
 
+<blockquote>
+<p>假设test.exe可执行程序需要三个动态链接库dll（a.dll，b.dll，c.dll），由于一个dll中的需要修正的地址不止一两个，可能有很多，所以用一张表记录那些“写死”的地址，将来加载进内存时，可能需要一一修正，这张表称作为重定位表，一般每一个PE文件都有一个重定位表。当加载器加载程序时，如果加载器为某PE（.exe、.dll）分配的基址与其自身默认记录的ImageBase不相同，那么该程序文件加载完毕后就需要修正重定位表中的所有需要修正的地址。如果加载器分配的基址和该程序文件中记录默认的ImageBase相同，则不需要修正，重定位表对于该dll也是没有效用的。比如test.exe和a.dll的重定位表都是不起作用的（由于一般情况.exe运行时被第一个加载，所以exe文件一般没有重定位表，但是不代表所有exe都没有重定位表）。同理如果先加载b.dll后加载a.dll、c.dll，那么b.dll的重定位表就不起作用了。</p>
+</blockquote>
+<h3 id="7-2-基址重定位表的结构"><a href="#7-2-基址重定位表的结构" class="headerlink" title="7.2 基址重定位表的结构"></a>7.2 基址重定位表的结构</h3><p>基址重定位表的结构用一个<code>IMAGE_BASE_RELOCATION</code>数组来描述，基址重定位表位于数据目录表的的第<mark class="label primary">6</mark>个数据目录项中，即<code>Directore[5].IMAGE_BASE_RELOCATION</code>。基址重定位数据组织方法采用类似按页分割的方法，其许多重定位块串接在成的，每个块存放4KB（1000h）大小的重定位信息，每个重定位数据块的大小必须以DWORD（4字节）对齐，他们以<code>IMAGE_BASE_RELOCATION</code>结构开始，格式如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_BASE_RELOCATION</span> &#123;</span></span><br><span class="line">    DWORD   VirtualAddress;   <span class="comment">//重定位数据开始RVA地址</span></span><br><span class="line">    DWORD   SizeOfBlock;      <span class="comment">//重定位块的长度</span></span><br><span class="line">    WORD    TypeOffset;       <span class="comment">//重定项位数组</span></span><br><span class="line">&#125; IMAGE_BASE_RELOCATION;</span><br></pre></td></tr></table></figure>
 
+<div class="note info"><ol>
+<li><p><strong>VirtualAddress</strong>：这是一组重定位数据的开始RVA地址，各重定位项的地址加上这个值才是重定位项完整的RVA地址。</p>
+</li>
+<li><p><strong>SizeOfBlock</strong>：是当前重定位结构的大小，因为<code>VirtualAddress</code>和<code>SizeOfBlock</code>大小都是固定的4个字节，因此这个项减去8字节，则是<code>TypeOffset</code>大小。</p>
+</li>
+<li><p><strong>TypeOffset</strong>：是一个数组。数组每项大小为<mark class="label success">2</mark>个字节，共16位，它又分为高4位与低12位，<mark class="label warning">高4位代表重定位类型</mark>，<mark class="label warning">低12位是重定位的地址</mark>，低12位与<code>VirtualAddress</code>相加即是指向PE映像中需要修改地址数据的指针RVA。</p>
+<p><mark class="label danger">高4位的和的值</mark>代表所指定的Type：</p>
+<ul>
+<li>PE文件中常见的值为<mark class="label success">3h</mark> --&gt; <code>IMAGE_REL_BASED_HIGHLOW</code>。</li>
+<li>64位的PE文件中常见值为<mark class="label success">Ah</mark> --&gt; <code>IMAGE_REL_BASED_DIR64</code>。</li>
+</ul>
+</li>
+</ol>
+</div>
 
+<p>常见的重定位类型如下图所示。虽然有多种重定位类型，但对x86可执行文件来说，所有的基址重定位类型都是<code>IMAGE_REL_BASED HIGHLOW</code>。在一组重定位结束的地方会出现一个类型是<code>IMAGE_REL_BASED_ABSOLUTE</code>的重定位，这些重定位什么都不做，只用于填充，以便下一一个<code>IMAGE_BASE_RELOCATION</code>按4字节分界线对齐。所有重定位块以一个<code>VirtualAddress</code>字段为<mark class="label success">0</mark> 的<code>IMAGE_BASE_RELOCATION</code>结构结束。</p>
+<p><img data-src="https://i.loli.net/2021/04/26/NlXRc4OMIexfVKs.png" alt="19.png"></p>
+<p>重定位表的结构如图11.23所示，它由数个<code>IMACE_BASE_RELOCATION</code>结构组成，每个结构由VirtualAddress、SizeOfBlock和TypeOffset 3部分组成。</p>
+<p><img data-src="https://i.loli.net/2021/04/26/OFsglcfM93YnLuP.png" alt="20.png"></p>
+<div class="note danger"><p>对于IA-64可执行文件，重定位类型似乎总是<code>IMAGE_REL_BASED_DIR64</code>。就像x86重定位， 也用<code>IMAGE_REL_BASED_ ABSOLUTE</code>重定位类型进行填充。有趣的是，<mark class="label info">尽管IA-64的EXE页大小是8KB，但基址重定位仍是4KB的块</mark>。</p>
+</div>
 
-
-
-
-
-
-
-
-<!-- flag of hidden posts -->
+<h3 id="7-3-基址重定位表的实例分析"><a href="#7-3-基址重定位表的实例分析" class="headerlink" title="7.3 基址重定位表的实例分析"></a>7.3 基址重定位表的实例分析</h3><p>以DllDemo.dll为例，数据目录表中的第6个元素指向的重定位表指针为<code>0x00005000h</code>，转换为文件偏移为<code>0x00000E00h</code>，在PE文件中取到的<code>IMAGE_BASE_RELOCATION</code>结构内容如图11.24。</p>
+<p><img data-src="https://i.loli.net/2021/04/27/Wsy4h6O1jFCKxJG.png" alt="21.png"></p>
+<p><img data-src="https://i.loli.net/2021/04/27/l2ftZeTVI5PJCnx.png" alt="22.png"></p>
+<p>如此，得到需要修改的地址RVA后，加上PE文件装载内存的基地址，即可得到需要被重定位的地址。有两种方式查看该地址载入内存后被重定位后的地址：</p>
+<ol>
+<li>根据上述的图计算得到发生被重定位的地址的RVA，然后加上PE文件载入内存基址，即可得到发生被重定位的VA，最后可以使用OD去查看该地址处对应的内容，可能是全局变量发生地址重定位。</li>
+<li>使用工具PEView：<ul>
+<li>根据上述的图计算得到$RVA$。</li>
+<li>$RVA+ImageBase=VA_1$。（文件发生重定位前的地址，因为ImageBase是在编译器生成可执行文件时写死的，不是PE文件载入内存后的才写入的）。使用PE工具查看$VA_1$地址内的内容，如下图图1中$VA_1$的值为<code>0x01001420</code>，地址里面的数据为<code>0x010010C4</code>。</li>
+<li>$0x010010C4-ImageBase(0x01000000)=VA_2(0x000010C4)$。</li>
+<li>加上装载基地址：$0x000010C4+0x00270000=0x002710C4$，该地址（$VA_2$）即为重定位后的地址，如下图2。</li>
+</ul>
+</li>
+</ol>
+<p><img data-src="https://i.loli.net/2021/04/27/pRuyg5NXlJKFfwI.png" alt="23.png"></p>
+<p><img data-src="https://i.loli.net/2021/04/27/kcjFHzt3IlnLwY5.png" alt="24.png"></p>
+<h2 id=""><a href="#" class="headerlink" title=""></a></h2><!-- flag of hidden posts -->
     </div>
 
     
@@ -1285,7 +1335,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/encryption-and-cracking-11-PE-1/" title="加密与解密（第四版）PE文件格式（1）">https://directoree.github.io/post/encryption-and-cracking-11-PE-1/</a>
+      <a href="https://directoree.github.io/post/encryption-and-cracking-11-PE/" title="加密与解密（第四版）PE文件格式">https://directoree.github.io/post/encryption-and-cracking-11-PE/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -1515,7 +1565,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/encryption-and-cracking-11-PE-1/",
+      path: "/post/encryption-and-cracking-11-PE/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
