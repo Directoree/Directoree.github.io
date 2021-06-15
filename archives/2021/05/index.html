@@ -22,25 +22,16 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="&amp;ensp;&amp;ensp; 一、 Java中类的定义、类访问权限1.1  类的定义格式：[修饰符] class 类名 [extends父类名] [implements接口名列表]&amp;emsp;&amp;emsp; &amp;emsp; 1.2  类修饰符的访问权限：   类修饰符 访问权限    缺省(默认方式) 这种类只能被同一个包中的类访问；   public(公共) 它修饰的类能被所有的类访问；   abstr">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Java类、成员变量、static访问权限(4.1-4.4)">
-<meta property="og:url" content="https://directoree.github.io/post/Java-Access-Permissions-3/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Directoree">
+<meta property="og:url" content="https://directoree.github.io/archives/2021/05/index.html">
 <meta property="og:site_name" content="Directoree">
-<meta property="og:description" content="&amp;ensp;&amp;ensp; 一、 Java中类的定义、类访问权限1.1  类的定义格式：[修饰符] class 类名 [extends父类名] [implements接口名列表]&amp;emsp;&amp;emsp; &amp;emsp; 1.2  类修饰符的访问权限：   类修饰符 访问权限    缺省(默认方式) 这种类只能被同一个包中的类访问；   public(公共) 它修饰的类能被所有的类访问；   abstr">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c1fb67d13ec7.png">
-<meta property="og:image" content="https://i.loli.net/2018/12/24/5c1fbf2618e79.png">
-<meta property="article:published_time" content="2018-12-23T15:46:18.000Z">
-<meta property="article:modified_time" content="2018-12-26T08:40:37.000Z">
 <meta property="article:author" content="Directoree">
-<meta property="article:tag" content="Java学习">
-<meta property="article:tag" content="Java访问权限">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2018/12/24/5c1fb67d13ec7.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/Java-Access-Permissions-3/">
+<link rel="canonical" href="https://directoree.github.io/archives/2021/05/">
 
 
 <script class="page-configurations">
@@ -48,12 +39,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : true,
+    isPost : false,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Java类、成员变量、static访问权限(4.1-4.4) | Directoree</title>
+  <title>归档 | Directoree</title>
   
 
 
@@ -222,7 +213,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -234,7 +225,6 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E3%80%81-Java%E4%B8%AD%E7%B1%BB%E7%9A%84%E5%AE%9A%E4%B9%89%E3%80%81%E7%B1%BB%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="nav-text">一、 Java中类的定义、类访问权限</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-%E7%B1%BB%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A0%BC%E5%BC%8F%EF%BC%9A"><span class="nav-text">1.1  类的定义格式：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-%E7%B1%BB%E4%BF%AE%E9%A5%B0%E7%AC%A6%E7%9A%84%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90%EF%BC%9A"><span class="nav-text">1.2  类修饰符的访问权限：</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-%E5%85%B3%E4%BA%8E%E7%B1%BB%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90%E7%9A%84%E6%80%BB%E7%BB%93%EF%BC%9A"><span class="nav-text">1.3  关于类访问权限的总结：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E3%80%81-%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="nav-text">二、 成员变量访问权限</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-%E6%88%90%E5%91%98%E5%8F%98%E9%87%8F%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90%E6%80%BB%E7%BB%93%E4%B8%BA%EF%BC%9A"><span class="nav-text">2.1  成员变量访问权限总结为：</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%89%E3%80%81-static-%E9%9D%99%E6%80%81-%E2%80%94%E2%80%94%E9%9D%99%E6%80%81%E5%8F%98%E9%87%8F%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="nav-text">三、 static(静态)——静态变量访问权限</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -314,254 +304,58 @@
 </noscript>
 
 
-    <div class="main-inner post posts-expand">
+    <div class="main-inner archive posts-collapse">
       
 
       
 
   
-
-
-<div class="post-block">
   
   
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Java-Access-Permissions-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Directoree">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Directoree">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Java类、成员变量、static访问权限(4.1-4.4)
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-12-23 23:46:18" itemprop="dateCreated datePublished" datetime="2018-12-23T23:46:18+08:00">2018-12-23</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-12-26 16:40:37" itemprop="dateModified" datetime="2018-12-26T16:40:37+08:00">2018-12-26</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/post/Java-Access-Permissions-3/" class="post-meta-item leancloud_visitors" data-flag-title="Java类、成员变量、static访问权限(4.1-4.4)" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/Java-Access-Permissions-3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/Java-Access-Permissions-3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
+  <div class="post-block">
+    <div class="post-content">
+      <div class="collection-title">
+        
+        <span class="collection-header">很好! 目前共计 83 篇日志。 继续努力。</span>
       </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.4k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
 
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-        <p>&ensp;<br>&ensp;</p>
-<h4 id="一、-Java中类的定义、类访问权限"><a href="#一、-Java中类的定义、类访问权限" class="headerlink" title="一、 Java中类的定义、类访问权限"></a><font color="#FF6347" face="Comic sans MS">一、 Java中类的定义、类访问权限</font></h4><h5 id="1-1-类的定义格式："><a href="#1-1-类的定义格式：" class="headerlink" title="1.1  类的定义格式："></a><font color="#3CB371" face="Comic sans MS">1.1  类的定义格式：<font></h5><p><font color="red"><strong>[修饰符] class 类名 [extends父类名] [implements接口名列表]</strong></font><br>&emsp;<br>&emsp;<br><img data-src="https://i.loli.net/2018/12/24/5c1fb67d13ec7.png" alt="1"></p>
-<p>&emsp;</p>
-<h5 id="1-2-类修饰符的访问权限："><a href="#1-2-类修饰符的访问权限：" class="headerlink" title="1.2  类修饰符的访问权限："></a><font color="#3CB371" face="Comic sans MS">1.2  类修饰符的访问权限：<font></h5><table>
-<thead>
-<tr>
-<th>类修饰符</th>
-<th>访问权限</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><font color="#EE3A8C" face="Arial">缺省(默认方式)</font></td>
-<td><font face="Comic sans MS" color="#EE3A8C">这种类只能被同一个包中的类访问；</font></td>
-</tr>
-<tr>
-<td><font color="#EE3A8C" face="Arial">public(公共)</td>
-<td><font face="Comic sans MS" color="#EE3A8C">它修饰的类能被所有的类访问；</font></td>
-</tr>
-<tr>
-<td><font color="#EE3A8C" face="Arial">abstract(抽象)</td>
-<td><font face="Comic sans MS" color="#EE3A8C"> 它修饰的类不能被实例化，它可能包含有未实现的方法。</td>
-</tr>
-<tr>
-<td><font color="#EE3A8C" face="Arial">extends(继承)</td>
-<td><font face="Comic sans MS" color="#EE3A8C">该保留字用来表明新创建的类继承哪个类, 被继承的类称为此类的父类。extends后面只能跟一个父类名称, 因为Java中一个类最多能继承一个类(单继承)。</font></td>
-</tr>
-<tr>
-<td><font color="#EE3A8C" face="Arial">final(最终)</td>
-<td><font face="Comic sans MS" color="#EE3A8C"> 它修饰的类不能被继承，即不能有子类。</font></td>
-</tr>
-<tr>
-<td><font color="#EE3A8C" face="Arial">implements (实现)</td>
-<td><font face="Comic sans MS" color="#EE3A8C">该保留字用来表明这个类实现了哪些接口，接口名可以有多个。</td>
-</tr>
-</tbody></table>
-<p>&emsp;</p>
-<h5 id="1-3-关于类访问权限的总结："><a href="#1-3-关于类访问权限的总结：" class="headerlink" title="1.3  关于类访问权限的总结："></a><font color="#3CB371" face="Comic sans MS">1.3  关于类访问权限的总结：<font></h5><table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS">1.    具有继承关系的子类可以继承父类的一些成员变量，即可以不创建对象就可以直接访问，如果是
-      同一个包的子类可以继承到public、缺省和protected修饰的变量，如果是不同的包的子类就只能继承
-      到public 和protected的；
-2.    如果是其他类，不管是一个包还是不在一个包，都要创建该类的对象才能引用
-3.    如果是main方法，不管是本类还是非本类，要访问实例变量都要创建对象，可以引申到其他所有
-       的类方法中
-4.    私有成员只能在本类中访问，如果在main方法中访问私有成员 必须创建对象</font></td></tr></table>
-
-<p>&ensp;<br>&ensp;</p>
-<h4 id="二、-成员变量访问权限"><a href="#二、-成员变量访问权限" class="headerlink" title="二、 成员变量访问权限"></a><font color="#FF6347" face="Comic sans MS">二、 成员变量访问权限</font></h4><p>&ensp;<br><img data-src="https://i.loli.net/2018/12/24/5c1fbf2618e79.png" alt="2"></p>
-<p>&ensp;<br>&emsp;</p>
-<h5 id="2-1-成员变量访问权限总结为："><a href="#2-1-成员变量访问权限总结为：" class="headerlink" title="2.1  成员变量访问权限总结为："></a><font color="#3CB371" face="Comic sans MS">2.1  成员变量访问权限总结为：<font></h5><table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS">**(1) 访问修饰符缺省**
-访问修饰符缺省时，成员变量只能被同一包(package) 中的所有类访问，所以也称为包(package)变量。
-(缺省访问修饰符实际是friendly修饰符，但因为friendly不是Java语言的关键字，所以friendly修饰符
-不能显式说明。）
-**(2) public(公共)**
-public修饰的成员变量可以被程序中的任何类所访问。由于public成员变量不受限制, 这易使类的对象引起
-不希望的修改，建议成员变量尽量不要使用public修饰符。
-**(3) protected (受保护)**
-protected修饰的成员变量可以被本包及有继承关系的类自由访问。
-**(4) private (私有)**
-private修饰的成员变量只能在同一个类中使用。这种方式通常是最为安全的。
-</font></td></tr></table>
-
-<p>&ensp;<br>&ensp;</p>
-<h4 id="三、-static-静态-——静态变量访问权限"><a href="#三、-static-静态-——静态变量访问权限" class="headerlink" title="三、 static(静态)——静态变量访问权限"></a><font color="#FF6347" face="Comic sans MS">三、 static(静态)——静态变量访问权限</font></h4><table><tr><td bgcolor=#ADD8E6>(1)<font color="green">**static修饰的成员变量称为**</font><font color="#1874CD">**类变量(静态变量)**</font>；<font color="green">**不用static修饰的成员变量又叫**</font><font color="#1874CD">**对象变量(实例变量)。**</font>
-(2)<font color="red">**区别：</font>**对象变量依附于具体的对象实例，它的值因具体对象实例的不同而不同，而类变量为该类的所有
-对象所共享，它的值不因类的对象不同而不同。
-(3)可以通过类来访问静态成员变量，也可以通过该类的对象访问静态成员变量。
-&ensp;&ensp;<font color="red">**形式：类名.成员变量/对象名.成员变量**</font>
-(4)<font color="red">**反过来，非staic的对象方法可以直接使用static的类变量**</font>
-(5)类方法不能直接调用类中的对象方法（非static方法）。
-(6)定义变量时必须当即赋值。
-</td></tr></table>
-
-<p>&emsp;<br>&emsp;<br>&emsp;<br>&emsp;</p>
-
+      
+    <div class="collection-year">
+      <span class="collection-header">2021</span>
     </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-          <div class="reward-container">
-  <div>Buy me a coffee</div>
-  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
-    赞赏
-  </button>
-  <div class="post-reward">
-      <div>
-        <img src="/images/wechat.jpg" alt="Directoree 微信">
-        <span>微信</span>
-      </div>
-      <div>
-        <img src="/images/alipay.jpg" alt="Directoree 支付宝">
-        <span>支付宝</span>
+  <article itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+      <div class="post-meta-container">
+        <time itemprop="dateCreated"
+              datetime="2021-05-14T10:19:27+08:00"
+              content="2021-05-14">
+          05-14
+        </time>
       </div>
 
-  </div>
-</div>
+      <div class="post-title">
+          <a class="post-title-link" href="/post/Windows-Kernel-Base/" itemprop="url">
+            <span itemprop="name">未命名</span>
+          </a>
+      </div>
 
-          
-
-<div class="post-copyright">
-<ul>
-  <li class="post-copyright-author">
-      <strong>本文作者： </strong>Directoree
-  </li>
-  <li class="post-copyright-link">
-      <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/Java-Access-Permissions-3/" title="Java类、成员变量、static访问权限(4.1-4.4)">https://directoree.github.io/post/Java-Access-Permissions-3/</a>
-  </li>
-  <li class="post-copyright-license">
-    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
-  </li>
-</ul>
-</div>
-
-          <div class="post-tags">
-              <a href="/tags/Java%E5%AD%A6%E4%B9%A0/" rel="tag"># Java学习</a>
-              <a href="/tags/Java%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90/" rel="tag"># Java访问权限</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/post/Java-Language-2-1/" rel="prev" title="Java语言基础的字符常变量等(3.1-3.3)">
-                  <i class="fa fa-chevron-left"></i> Java语言基础的字符常变量等(3.1-3.3)
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/post/Block-Cipher/" rel="next" title="对称密码-分组密码">
-                  对称密码-分组密码 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
-    </footer>
+      
+    </header>
   </article>
-</div>
 
 
+    </div>
+  </div>
+  
+  
+  
 
+  
 
 
 
       
-    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -767,7 +561,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/Java-Access-Permissions-3/",
+      path: "/archives/2021/05/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
