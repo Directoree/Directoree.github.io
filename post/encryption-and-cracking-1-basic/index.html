@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《加密与解密》_1_基础知识">
+<meta property="og:url" content="https://directoree.github.io/post/encryption-and-cracking-1-basic/index.html">
+<meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/06/28/u2OMC7nApEyTFrZ.png">
+<meta property="og:image" content="https://i.loli.net/2021/06/28/XEBnQq5kjosMexL.png">
+<meta property="og:image" content="https://i.loli.net/2021/06/28/PhAswXb1RzBaYHy.png">
+<meta property="og:image" content="https://i.loli.net/2021/06/28/HaiO8yfXGVoBZpw.png">
+<meta property="article:published_time" content="2021-06-28T01:21:06.000Z">
+<meta property="article:modified_time" content="2021-06-30T02:28:58.832Z">
+<meta property="article:author" content="Directoree">
+<meta property="article:tag" content="逆向">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/06/28/u2OMC7nApEyTFrZ.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/encryption-and-cracking-1-basic/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>《加密与解密》_1_基础知识 | Directoree</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Directoree</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E6%9C%AC%E5%AD%97%E7%AC%A6"><span class="nav-text">1 文本字符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-ASCII%E5%92%8CUnicode%E5%AD%97%E7%AC%A6%E9%9B%86"><span class="nav-text">1.1 ASCII和Unicode字符集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%AD%97%E8%8A%82%E5%AD%98%E5%82%A8%E9%A1%BA%E5%BA%8F"><span class="nav-text">1.2 字节存储顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Windows%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F"><span class="nav-text">2 Windows操作系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Win32-API%E5%87%BD%E6%95%B0"><span class="nav-text">2.1 Win32 API函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-WOW64"><span class="nav-text">2.2 WOW64</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98"><span class="nav-text">2.3 虚拟内存</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Directoree"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Directoree</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">29</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/encryption-and-cracking-1-basic/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Directoree">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Directoree">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《加密与解密》_1_基础知识
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-06-28 09:21:06" itemprop="dateCreated datePublished" datetime="2021-06-28T09:21:06+08:00">2021-06-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-06-30 10:28:58" itemprop="dateModified" datetime="2021-06-30T10:28:58+08:00">2021-06-30</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E9%80%86%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">逆向</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/encryption-and-cracking-1-basic/" class="post-meta-item leancloud_visitors" data-flag-title="《加密与解密》_1_基础知识" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/encryption-and-cracking-1-basic/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/encryption-and-cracking-1-basic/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="1-文本字符"><a href="#1-文本字符" class="headerlink" title="1 文本字符"></a>1 文本字符</h2><h3 id="1-1-ASCII和Unicode字符集"><a href="#1-1-ASCII和Unicode字符集" class="headerlink" title="1.1 ASCII和Unicode字符集"></a>1.1 ASCII和Unicode字符集</h3><ul>
+<li><strong>ASCII</strong>：<mark class="label success">单字节</mark>编码（最高位没有使用，实际上是7位编码标准），编码取值范围为<mark class="label info">00h~7Fh</mark>，包含26个小写字母、26个大写字母、10个数字、33个控制代码及空格，共128个字符。 （不同的计算机厂商对ASCII进行了扩充使其变为8位，取值范围为<code>00h~FFh</code>）</li>
+<li><strong>Unicode</strong>：<mark class="label success">双字节</mark>编码，编码取值范围为<mark class="label info">0000h~FFFFh</mark>，使用<code>0~65535</code>无符号（正整数）的整数对每个字符进行编码。</li>
+</ul>
+<p><img data-src="https://i.loli.net/2021/06/28/u2OMC7nApEyTFrZ.png" alt="1.png"></p>
+<h3 id="1-2-字节存储顺序"><a href="#1-2-字节存储顺序" class="headerlink" title="1.2 字节存储顺序"></a>1.2 字节存储顺序</h3><div class="note warning"><p><strong>大端序</strong>：Big-endian，字符高字节存入存储器低地址，低字节存入高地址。</p>
+<p><strong>小端序</strong>：Little-endian，字符高字节存入存储器高地址，低字节存入低地址。</p>
+</div>
+
+<p>Intel处理器使用<strong>小端序</strong>在内存中将一个字存入相邻的2字节存储器空间中去。</p>
+<p>如将<code>pediy</code>存入到内存中，Unicode为：<code>0070 0065 0064 0069 0079</code>：</p>
+<p><img data-src="https://i.loli.net/2021/06/28/XEBnQq5kjosMexL.png" alt="2.png"></p>
+<p><img data-src="https://i.loli.net/2021/06/28/PhAswXb1RzBaYHy.png" alt="3.png"></p>
+<p><img data-src="https://i.loli.net/2021/06/28/HaiO8yfXGVoBZpw.png" alt="4.png"></p>
+<div class="note primary"><ul>
+<li>一般来说，x86系列CPU都是Little-endian 字节序；</li>
+<li>PowerPC 通常是Big-endian字节序。</li>
+<li>因为网络协议也都是采用Big-endian方式传输数据的，所以有时也把 Big-endian方式称为网络字节序。</li>
+</ul>
+</div>
+
+
+
+<h2 id="2-Windows操作系统"><a href="#2-Windows操作系统" class="headerlink" title="2 Windows操作系统"></a>2 Windows操作系统</h2><h3 id="2-1-Win32-API函数"><a href="#2-1-Win32-API函数" class="headerlink" title="2.1 Win32 API函数"></a>2.1 Win32 API函数</h3><div class="note info"><ul>
+<li>用于16位Windows的API（Windows 1.0~Windows3.1）称作“Win16”；</li>
+<li>用于32位Windows的 API（Windows 9x/NT/2000/XP/7/10）称作“Win32” ；</li>
+<li>64位Windows API的名称和功能基本没有变化，还是使用Win32的函数名，只不过是用64位代码实现的。</li>
+</ul>
+</div>
+
+<p>API 函数调用在从Win16到Win32的转变中保持兼容，并在数量和功能上不断增强。W indows 1.0只支持不到450个函数调用，现在已有几千个函数了。</p>
+<div class="note danger"><p><strong>所有32位Windows都支持Win16 API（以确保与旧的应用程序兼容）和Win32 API（以运行新的应用程序）</strong>。</p>
+</div>
+
+<p>非常有趣的是，Windows NT/2000/XP/7与Windows 9x 的工作方式不同。在Windows NT/2000/XP/7中，Win16 函数调用通过一个转换层转换为Win32函数调用，然后被操作系统处理。 在Windows 9x中，该操作正好相反，Win32 函数调用通过转换层转换为Win16函数调用，再由操作系统进行处理。</p>
+<p>Windows运转的核心是动态链接。Windows 提供了丰富的应用程序可利用的函数调用，这些函数采用动态链接库（DLL）实现。在Windows 9x中，DLL 通常位于<code>\WINDOWS\SYSTEM</code>子目录中。 在Windows NT/2000/XP/7中，DLL通常位于系统安装目录的<code>\SYSTEM</code>和<code>\SYSTEM32</code>子目录中。</p>
+<div class="note warning"><p> 在早期， Windows的主要部分只需要在3个动态链接库中实现，它们分别代表Windows的3个主要子系统，叫作Kernel、User和GDI。</p>
+<ol>
+<li><strong>Kernel</strong>（由KERNEL32.DLL实现）：操作系统核心功能服务，包括进程与线程控制、内存管理、文件访问等。</li>
+<li><strong>User</strong>（由USER32.DLL实现）：负责处理用户接口，包括键盘和鼠标输入、窗口和菜单管理等。</li>
+<li><strong>GDI</strong> （由GDI32.DLL实现）：图形设备接口，允许程序在屏幕和打印机上显示文本和图形。</li>
+</ol>
+</div>
+
+
+
+<mark class="label primary">MessageBoxA</mark><mark class="label warning">MessageBoxW</mark>
+
+<p>在Win32 API 函数字符集中，<mark class="label primary">A</mark>表示ANSI（ASCII的扩展，8bit编码）， <mark class="label warning">W</mark>表示Widechars（即Unicode）。前者就是通常使用的单字节方式，后者是宽字节方式，以便处理双字节字符。每个以字符串为参数的Win32函数在操作系统中都有这两种方式的版本。</p>
+<p>例如，在编程时使用MessageBox函数，而在USER32.DLL 中却没有32位MessageBox函数的入口。实际上有两个入口，一个名为<code>MessageBoxA</code>（ANSI版）， 另一个名为<code>MessageBoxW</code>（宽字符版）。幸运的是，程序员通常不必关心这个问题，只需要在编程时使用MessageBox 函数，开发工具的编译模块就会根据设置来决定是采用MessageBoxA 还是 MessageBoxW了。<strong>但是在使用OD调试的时候得区分开。</strong></p>
+<div class="note info"><p>NT系统是使用 Unicode 标准字符集重新开发的，其系统核心完全是用Unieode函数工作的。如果希望调用一个 Windows函数并向它传递一个 ANSI字符串，系统会先将ANSI字符串转换成Unicode字符串，再将Unicode字符串传递给操作系统。相反，如果希望函数返回ANSI字符串，系统会先将Unicode字符串转换成ANSI 字符串，然后将结果返回应用程序。也就是说，在NT架构下，Win32 API能接受Unicode和ASCII两种字符集，而其<mark class="label info">内核只能使用Unicode字符集</mark>。尽管这些操作对用户来说都是透明的，但字符串的转换需要占用系统资源。</p>
+</div>
+
+<h3 id="2-2-WOW64"><a href="#2-2-WOW64" class="headerlink" title="2.2 WOW64"></a>2.2 WOW64</h3><p>WOW64（Windows-on-Windows 64 -bit）是64位Windows操作系统的子系统，可以使大多数32位应用程序在不进行修改的情况下运行在64位操作系统上。</p>
+<p><strong>64位的Windows，除了带有64位操作系统应有的系统文件，还带有32位操作系统应有的系统文件。</strong></p>
+<ul>
+<li><p>Windows的64位系统文件都放在一个叫作<code>System32</code>的文件夹中，<code>\Windows\System32</code>文件夹中包含原生的64位映像文件。为了兼容32位操作系统，还增加了<code>\Windows\SysWOW64</code>文件夹，其中存储了32位的系统文件。</p>
+</li>
+<li><p>64位应用程序会加载<code>System32</code>目录下64位的<code>kernel32.dll</code>、<code>user32.dll</code>和<code>ntdll.dll</code>。</p>
+</li>
+<li><p>当32位应用程序加载时，<mark class="label success">WOW64</mark><mark class="label danger">建立32位ntdll.dll所要求的启动环境，将CPU模式切换至32位，并开始执行32位加载器</mark>，就如同该进程运行在原生的32位系统上一样。 </p>
+</li>
+<li><p>WOW64会对32位<code>ntdll.dll</code>的调用重定向<code>ntdll.dll</code>（64位），而不是发出原生的32位系统调用指令。WOW64转换到原生的64位模式，捕获与系统调用有关的参数，发出对应的原生64位系统调用。当原生的系统调用返回时，WOW64在返回32位模式之前将所有输出参数从64位转换成32位。</p>
+</li>
+<li><p>WOW64既不支持16位应用程序的执行（32位Windows支持16 位应用程序的执行），也不支持加载32位内核模式的设备驱动程序。<strong>WOW64进程只能加载32位的DLL，不能加载原生的64位DLL</strong>。类似的，<strong>原生的64位进程不能加载32位的DLL</strong>。</p>
+</li>
+</ul>
+<h3 id="2-3-虚拟内存"><a href="#2-3-虚拟内存" class="headerlink" title="2.3 虚拟内存"></a>2.3 虚拟内存</h3><p><strong>一个物理扇区的大小作为对齐粒度，512字节， 即200h（字节）</strong></p>
+<ul>
+<li>在x86系列CPU中，内存页是按4KB （<code>1000h</code>）排列的,所以，在x86系统中，PE文件区块的内存对齐值般为<code>1000h</code>，每个区块从<code>1000h</code>的倍数的内存偏移位置开始。（4*1024=4096 Byte=1000h Byte）</li>
+<li>在x64中， 内存页是按8KB（<code>2000h</code>）排列的。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Directoree 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Directoree 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Directoree
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/encryption-and-cracking-1-basic/" title="《加密与解密》_1_基础知识">https://directoree.github.io/post/encryption-and-cracking-1-basic/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E9%80%86%E5%90%91/" rel="tag"># 逆向</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/2020year-endsummary/" rel="prev" title="2020年终总结">
+                  <i class="fa fa-chevron-left"></i> 2020年终总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Directoree</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">454k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">6:53</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/encryption-and-cracking-1-basic/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
