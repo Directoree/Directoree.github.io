@@ -33,8 +33,13 @@
 <meta property="og:image" content="https://i.loli.net/2021/06/28/XEBnQq5kjosMexL.png">
 <meta property="og:image" content="https://i.loli.net/2021/06/28/PhAswXb1RzBaYHy.png">
 <meta property="og:image" content="https://i.loli.net/2021/06/28/HaiO8yfXGVoBZpw.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/06/Bogt2S61q4GYvy7.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/06/XzfhqEZmsOAB92K.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/07/d9W5s8ISJLMUGCj.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/05/uBxb4zF1cJ6Dryj.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/09/lrAfWe6vSmM7wRz.png">
 <meta property="article:published_time" content="2021-06-28T01:21:06.000Z">
-<meta property="article:modified_time" content="2021-06-30T02:28:58.832Z">
+<meta property="article:modified_time" content="2021-07-09T07:10:43.409Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
@@ -359,7 +364,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-06-30 10:28:58" itemprop="dateModified" datetime="2021-06-30T10:28:58+08:00">2021-06-30</time>
+        <time title="修改时间：2021-07-09 15:10:43" itemprop="dateModified" datetime="2021-07-09T15:10:43+08:00">2021-07-09</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -404,14 +409,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.9k</span>
+      <span>7.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -478,7 +483,7 @@
 <div class="note info"><p>NT系统是使用 Unicode 标准字符集重新开发的，其系统核心完全是用Unieode函数工作的。如果希望调用一个 Windows函数并向它传递一个 ANSI字符串，系统会先将ANSI字符串转换成Unicode字符串，再将Unicode字符串传递给操作系统。相反，如果希望函数返回ANSI字符串，系统会先将Unicode字符串转换成ANSI 字符串，然后将结果返回应用程序。也就是说，在NT架构下，Win32 API能接受Unicode和ASCII两种字符集，而其<mark class="label info">内核只能使用Unicode字符集</mark>。尽管这些操作对用户来说都是透明的，但字符串的转换需要占用系统资源。</p>
 </div>
 
-<h3 id="2-2-WOW64"><a href="#2-2-WOW64" class="headerlink" title="2.2 WOW64"></a>2.2 WOW64</h3><p>WOW64（Windows-on-Windows 64 -bit）是64位Windows操作系统的子系统，可以使大多数32位应用程序在不进行修改的情况下运行在64位操作系统上。</p>
+<h3 id="2-2-WOW64"><a href="#2-2-WOW64" class="headerlink" title="2.2 WOW64"></a>2.2 WOW64</h3><p>WOW64（Windows-on-Windows 64-bit）是64位Windows操作系统的子系统，可以使大多数32位应用程序在不进行修改的情况下运行在64位操作系统上。</p>
 <p><strong>64位的Windows，除了带有64位操作系统应有的系统文件，还带有32位操作系统应有的系统文件。</strong></p>
 <ul>
 <li><p>Windows的64位系统文件都放在一个叫作<code>System32</code>的文件夹中，<code>\Windows\System32</code>文件夹中包含原生的64位映像文件。为了兼容32位操作系统，还增加了<code>\Windows\SysWOW64</code>文件夹，其中存储了32位的系统文件。</p>
@@ -492,10 +497,105 @@
 <li><p>WOW64既不支持16位应用程序的执行（32位Windows支持16 位应用程序的执行），也不支持加载32位内核模式的设备驱动程序。<strong>WOW64进程只能加载32位的DLL，不能加载原生的64位DLL</strong>。类似的，<strong>原生的64位进程不能加载32位的DLL</strong>。</p>
 </li>
 </ul>
-<h3 id="2-3-虚拟内存"><a href="#2-3-虚拟内存" class="headerlink" title="2.3 虚拟内存"></a>2.3 虚拟内存</h3><p><strong>一个物理扇区的大小作为对齐粒度，512字节， 即200h（字节）</strong></p>
+<h3 id="2-3-虚拟内存"><a href="#2-3-虚拟内存" class="headerlink" title="2.3 虚拟内存"></a>2.3 虚拟内存</h3><p>CPU的运行模式：实模式、保护模式、虚拟8086模式。<a target="_blank" rel="noopener" href="https://blog.csdn.net/laviolette/article/details/51658650">实模式和保护模式</a></p>
+<p>X86机器主要使用实模式和保护模式：</p>
 <ul>
-<li>在x86系列CPU中，内存页是按4KB （<code>1000h</code>）排列的,所以，在x86系统中，PE文件区块的内存对齐值般为<code>1000h</code>，每个区块从<code>1000h</code>的倍数的内存偏移位置开始。（4*1024=4096 Byte=1000h Byte）</li>
+<li><p>实模式：<strong>16位的操作系统，应用程序直接使用物理内存，无虚拟内存的概念</strong>。内存并没有分段，段的划分来自于CPU，由于8086CPU用$段地址*16+偏移地址=物理地址$的方式给出内存单元的物理地址，使得我们可以用分段的方式来管理内存物理地址，寻址使用段寄存器：</p>
+<ul>
+<li><p>CS：代码段寄存器；</p>
+</li>
+<li><p>DS：数据段寄存器；</p>
+</li>
+<li><p>SS：堆栈段寄存器；</p>
+</li>
+<li><p>ES：扩展段寄存器；</p>
+</li>
+<li><p>IP：指令指针寄存器。</p>
+<p>当CPU要访问内存时，有这四个段寄存器提供内存单元的段地址CS和IP是CPU中最关键的寄存器，他们指示了CPU当前要读取指令的地址。在任何时候 CPU将CS、IP中的内容当做指令的段地址和偏移地址，用他们合成指令的物理地址到内存中读取指令码。$物理地址=CS*16+IP$</p>
+</li>
+</ul>
+</li>
+<li><p>保护模式：32位系统开始采用的模式，<strong>使用虚拟内存技术</strong>，给每个运行的程序分配逻辑上的4GB虚拟内存（32位和64位进程），使应用程序不直接操作物理内存、各应用程序独立运行互不影响、提高物理内存的使用效率，<strong>CPU使用段页式内存管理</strong>。</p>
+</li>
+</ul>
+<p><strong>虚拟内存：</strong></p>
+<ol>
+<li>当一个 PE 文件被执行时，操作系统会先为该程序创建一个 4GB 的进程虚拟地址空间，当创建完虚拟地址空间所需要的数据结构后，进程开始读取 PE 文件的第一页。在PE 文件的第一页包含了 PE 文件头和段表等信息，进程根据文件头和段表等信息，将 PE 文件中所有的段一一映射到虚拟地址空间中相应的页（PE 文件中的段的长度都是页长的整数倍）。这时 PE 文件的真正指令和数据还没有被装入内存中，操作系统只是据 PE 文件的头部等信息建立了 PE 文件和进程虚拟地址空间中页的映射关系而已。</li>
+<li>当 CPU 要访问程序中用到的某个虚拟地址时，当 CPU 发现该地址并没有相关联的物理地址时， CPU 认为该虚拟地址所在的页面是个空页面， CPU 会认为这是个<mark class="label danger">页错误</mark>（Page Fault）， CPU 也就知道了操作系统还未给该 PE 页面分配内存，CPU 会将控制权交还给操作系统。</li>
+<li>操作系统于是为该 PE 页面在物理空间中分配一个页面，然后再将这个物理页面与虚拟空间中的虚拟页面映射起来，然后将控制权再还给进程，进程从刚才发生页错误的位置重新开始执行。由于此时已为 PE 文件的那个页面分配了内存，所以就不会发生页错误了。随着程序的执行，页错误会不断地产生，操作系统也会为进程分配相应的物理页面来满足进程执行的需求。</li>
+</ol>
+<p>1）程序执行时，PE文件与虚拟地址映射过程如下图（<a target="_blank" rel="noopener" href="https://www.cnblogs.com/kekec/p/7350993.html">Windows虚拟内存机制</a>）：</p>
+<p><img data-src="https://i.loli.net/2021/07/06/Bogt2S61q4GYvy7.png" alt="6.png"></p>
+<p>2）虚拟地址与物理地址的映射如下图（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41723615/article/details/102541030">物理地址、虚拟地址、虚拟内存、分段、分页以及Windows/Linux内存管理</a>）：</p>
+<p><img data-src="https://i.loli.net/2021/07/06/XzfhqEZmsOAB92K.png" alt="7.png"></p>
+<p>3）当CPU访问数据时将已经从虚拟地址与物理地址映射好的数据装进物理内存过程如下图（<a target="_blank" rel="noopener" href="https://blog.csdn.net/lwwl12/article/details/88859044">Windows API（四）Win32 内存结构</a>）：</p>
+<p><img data-src="https://i.loli.net/2021/07/07/d9W5s8ISJLMUGCj.png" alt="8.png"></p>
+<div class="note info"><p><strong>段的定义</strong>：把程序与其相关的数据划分到几个段中，比如数据段、代码段和堆栈段。段的长度有限制，但是不要求所有程序的所有段长度都一样。</p>
+<p>现代操作系统使用<mark class="label primary">段页式内存管理</mark>，在段页式系统中，程序的地址空间首先被分成若干个逻辑段（.data、.text、.bss、栈、堆等），每段都有自己的段号，然后再将每一段分成若干个大小固定的页。对内存空间的管理仍然和分页存储管理一样，将其分成若干个和页面大小相同的存储块，对内存的分配以存储块为单位。</p>
+<p>段，是从编程的角度来看的，比如PE文件的各个分段就是一种划分，每个段的属性可以不同。段的使用方法先于分页，然后到现在使用的段页式内存管理方式。</p>
+<p><mark class="label warning">程序（PE文件）载入虚拟内存使用分段方式，MMU将虚拟内存转换为物理内存使用分页方式。PE文件中也是进行分段处理。</mark></p>
+<ul>
+<li><strong>分段机制</strong>：实现虚拟地址（由段和偏移构成的逻辑地址）到线性地址（<code>0xXXXX XXXX</code>）的转换。</li>
+<li><strong>分页机制</strong>：分页管理机制实现线性地址到物理地址的转换。</li>
+</ul>
+<p><strong>先分段 , 再分页</strong></p>
+<p>将进程按逻辑模块分段，再将各段分页（如每个页面 4KB) 再将内存空间分为大小相同的内存块/页框/页帧/物理块进程前将各页面分别装入各内存块中。</p>
+</div>
+
+<p>实现线性地址到物理地址的转换这个对应是由MMU硬件实现的，不用程序员操心！而且分页和分段对于虚拟地址的映射方式基本一致，<strong>分段是通过段表GDT，LDT中的段描述符来确定段的属性和物理地址范围；而分页是通过页表项（页表描述符）来记录页框的属性和物理地址位置！</strong></p>
+<p>在段页式存储管理系统中，作业的地址空间首先被分成若干个逻辑分段，每段都有自己的段号，然后再将每段分成若干个大小相等的页。对于主存空间也分成大小相等的页，主存的分配以页为单位。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lianghe_work/article/details/47776447">浅谈进程地址空间与虚拟存储空间</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41723615/article/details/102541030">物理地址、虚拟地址、虚拟内存、分段、分页以及Windows/Linux内存管理</a></li>
+</ul>
+<p>分段和分页的区别：</p>
+<ol>
+<li>在分段的方法中，<strong>每次程序运行时总是把程序全部装入内存</strong>，而分页的方法则有所不同。分页的思想是程序运行时用到哪页就为哪页分配内存，没用到的页暂时保留在硬盘上。当用到这些页时再在物理地址空间中为这些页分配内存，然后建立虚拟地址空间中的页和刚分配的物理内存页间的映射。</li>
+<li>分页仅仅是由于系统管理的需要而不是用户的需要。段则是信息的逻辑单位，它含有一组其意义相对完整的信息。分段的目的是为了能更好地满足用户的需要。</li>
+<li>页的大小固定且由系统决定，由系统把逻辑地址划分为页号和页内地址两部分，是由机器硬件实现的，因而在系统中只能有一种大小的页面；而段的长度却不固定，决定于用户所编写的程序，通常由编译程序在对源程序进行编译时，根据信息的性质来划分。</li>
+<li>分页的作业地址空间是一维的，即单一的线性地址空间，程序员只需利用一个记忆符，即可表示一个地址；而分段的作业地址空间则是二维的，程序员在标识一个地址时，既需给出段名，又需给出段内地址。</li>
+<li>在段式存储管理中，将程序的地址空间划分为若干段（segment），如代码段，数据段，堆栈段；这样每个进程有一个二维地址空间，相互独立，互不干扰。段式管理的优点是：没有内碎片（因为段大小可变，改变段大小来消除内碎片）。但段换入换出时，会产生外碎片（比如4k的段换5k的段，会产生1k的外碎片）。</li>
+</ol>
+<ul>
+<li>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/bupt_tinyfisher/article/details/8939689">分段和分页内存管理</a>】</li>
+</ul>
+<div class="note success"><p><strong>磁盘一个物理扇区的大小为512字节， 即200h（字节），PE文件的区块在磁盘中以这个粒度为大小进行对齐。</strong></p>
+<ul>
+<li>在x86系列CPU中，内存页是按4KB （<code>1000h</code>）排列的,所以，在x86系统中（虚拟内存），PE文件区块的内存对齐值般为<code>1000h</code>，每个区块从<code>1000h</code>的倍数的内存偏移位置开始。（4(KB)*1024=4096 Byte=1000h Byte）</li>
 <li>在x64中， 内存页是按8KB（<code>2000h</code>）排列的。</li>
+</ul>
+</div>
+
+
+
+<p>32位处理器将分配给每个应用程秀的虚拟地址空间做如下划分，一般给用户模式划分2GB虚拟内存，也可扩大3GB。无论是32位还是64位windows若要让32位程序能使用3GB内存，必须在链接时加上参数：<a target="_blank" rel="noopener" href="https://blog.csdn.net/lff0305/article/details/7613741"><code> /LARGEADDRESSAWARE</code></a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/u011430225/article/details/88950730?utm_medium=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~BlogCommendFromMachineLearnPai2~default-2.control">32位Exe程序突破系统内存限制</a></p>
+<p>在早期版本的Windows中，Microsoft不允许用户程序访问2GB以上的地址空间，为了让此类应用程序即使在用模式分区大于2GB的环境下仍能正常运行，Microsoft提供代了一种模式来增大用户模式分区，最多不超过3GB。 当前系统即将运行一个应用程序时，它会检查应用程序在链接时是否使用了<code>/LARGEADDRESSAWARE</code>链接器开关。如果是，则相应于应用程序在声明它会充分利用大用户模式地址空间，而不会对内在地址进行任何不当的操作。反之，如果应用程序在链接时没有使用<code>/LARGEADDRESSAWARE</code>开关，那么操作系统会保留用户模式分区中2GB以上到内核模式开始处的整个部分。</p>
+<p>本文以默认情况2GB用户模式为例。</p>
+<p><img data-src="https://i.loli.net/2021/07/05/uBxb4zF1cJ6Dryj.png" alt="5.png"></p>
+<div class="note default"><ol>
+<li><strong>64KB NULL指针区</strong> （<code>0x00000000~0x0000FFFF</code>）: 如果进程中的一个线程试图操作这个分区中的数据，CPU就会引发非法访问。他的作用是，调用<code>malloc</code>等内存分配函数时，如果无法找到足够的内存空间，它将返回<code>NULL</code>。而不进行安全性检查。它只是假设地址分配成功，并开始访问内存地址<code>0x00000000</code>（NULL）。由于禁止访问内存的这个分区，因此会发生非法访问现象，并终止这个进程的运行。没有任何办法可以让我们分配到位于这一地址空间的虚拟内存，即使是使用Win32 API也不例外。</li>
+<li><strong>用户模式分区</strong> ( <code>0x00010000~0xBFFEFFFF</code>)：这个分区中存放进程的私有地址空间，DLL被装入这一分区，内存映射文件映射到该分区。一个进程无法以任何方式访问另外一个进程驻留在这个分区中的数据 （相同 exe，通过 copy-on-write 来完成地址隔离）。（在Windows中，<mark class="label warning">所有 .exe 和动态链接库都载入到这一区域</mark>。<strong>系统同时会把该进程可以访问的所有内存映射文件（系统DLL）映射到这一分区</strong>，对所有应用程序来说，进程的大部分数据都保存在这一分区。）。</li>
+<li><strong>64KB 禁入区</strong> (<code>0xBFFF0000~0xBFFFFFFF</code>)：这个分区禁止进入，禁止访问分区只有在Win2000中有。这个分区是用户分区和内核分区之间的一个隔离带，目的是为了防止用户程序违规访问内核分区。任何试图访问这个内存分区的操作都是违规的。微软保留这块分区的目的是为了简化操作系统的现实。</li>
+<li><strong>内核区</strong> (0xC0000000~0xFFFFFFFF)：装入Windows NT执行体、内核和设备驱动。这个分区存放操作系统驻留的代码、内核对象也驻留在此。线程调度、内存管理、文件系统支持、网络支持和所有设备驱动程序代码都在这个分区加载。内核分区对用户的程序来说是禁止访问的，操作系统的代码在此。内核对象也驻留在此。<mark class="label warning">这个分区被所有进程共享</mark>。</li>
+</ol>
+</div>
+
+<p>给每个应用程序分配4GB虚拟内存（如上图），但是只有用户模式的2/3GB可以被应用程序直接使用，各个应用程序的用户区都是隔离的，逻辑上的，虚拟的。但是内核区的1/2GB，内核区保存的是系统线程调度、内存管理、设备驱动等数据，这部分数据供<strong>所有的进程</strong>共享，但应用程序是不能直接访问的。</p>
+<div class="note primary"><p>Windows系统在进程空间中专门划出一块<code>0x7000 0000 - 0x8000 0000</code>（共256MB）区域，用于映射这些常用的系统DLL(如kernel32.dll、ntdll.dll等)</p>
+</div>
+
+<p>2GB用户模式分区：</p>
+<p><img data-src="https://i.loli.net/2021/07/09/lrAfWe6vSmM7wRz.png" alt="10.png"></p>
+<p>参考：</p>
+<ul>
+<li><p>32位：【<a target="_blank" rel="noopener" href="https://blog.csdn.net/muyangjun/article/details/83795640">Windows 内存机制说明</a>】、【<a target="_blank" rel="noopener" href="https://www.cnblogs.com/kekec/p/7350993.html">windows虚拟内存机制</a>】、【<a target="_blank" rel="noopener" href="https://blog.csdn.net/lianghe_work/article/details/47776447">浅谈进程地址空间与虚拟存储空间</a>】、【<a target="_blank" rel="noopener" href="https://blog.csdn.net/zhanxiao5287/article/details/83902332">内存、虚拟内存的布局</a>】</p>
+</li>
+<li><p>64位：【<a target="_blank" rel="noopener" href="https://www.cnblogs.com/xuanyuan/p/5260871.html">64 位 Windows 内核虚拟地址空间布局（基于 X64 CPU）</a>】</p>
+</li>
+<li><p>Win98和Win2000虚拟内存分区的区别：【<a target="_blank" rel="noopener" href="https://www.cnblogs.com/gd-luojialin/p/7591274.html">进程的虚拟地址空间</a>】</p>
+</li>
+<li><p>Linux：【<a target="_blank" rel="noopener" href="https://blog.csdn.net/Arlingtonroad/article/details/107148527?ops_request_misc=&request_id=&biz_id=102&utm_term=%E8%BF%9B%E7%A8%8B%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%88%86%E5%B8%83%E5%92%8C%E5%8F%AF%E6%89%A7%E8%A1%8C%E6%96%87%E4%BB%B6%E5%88%86%E5%B8%83&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-6-.nonecase&spm=1018.2226.3001.4187">进程虚拟地址空间的分布详解</a>】、<a target="_blank" rel="noopener" href="https://www.cnblogs.com/zszmhd/archive/2012/08/29/2661461.html">Linux内存寻址和内存管理</a>、【《CS：APP》】、【<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1624718">Linux可执行文件与进程的虚拟地址空间</a>】</p>
+</li>
 </ul>
 
     </div>
@@ -613,14 +713,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">454k</span>
+    <span title="站点总字数">459k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">6:53</span>
+    <span title="站点阅读时长">6:57</span>
   </span>
 </div>
 <div class="busuanzi-count">
