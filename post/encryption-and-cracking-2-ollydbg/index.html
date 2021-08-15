@@ -29,11 +29,14 @@
 <meta property="og:site_name" content="Directoree">
 <meta property="og:description" content="⍢⃝  ⍤⃝ ⍥⃝ ⍨⃝ ⌓̈⃝ ◡̈⃝  ⠒̫⃝  ʚ◡̈⃝ɞ  ༛̥⃝ʺ̤">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/07/26/qR17DOSweKpa9k5.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/26/jrmVBpbEflYau3A.png">
 <meta property="article:published_time" content="2021-07-25T09:00:51.000Z">
-<meta property="article:modified_time" content="2021-07-25T09:12:16.568Z">
+<meta property="article:modified_time" content="2021-07-27T05:21:01.076Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="逆向">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/07/26/qR17DOSweKpa9k5.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/encryption-and-cracking-2-ollydbg/">
@@ -218,7 +221,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -230,6 +233,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF"><span class="nav-text">动态分析技术</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%B0%83%E8%AF%95%E7%AA%97%E5%8F%A3"><span class="nav-text">1 调试窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C"><span class="nav-text">2 基本操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%B8%B8%E7%94%A8%E6%96%AD%E7%82%B9"><span class="nav-text">3 常用断点</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -345,10 +349,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2021-07-25 17:00:51 / 修改时间：17:12:16" itemprop="dateCreated datePublished" datetime="2021-07-25T17:00:51+08:00">2021-07-25</time>
+      <time title="创建时间：2021-07-25 17:00:51" itemprop="dateCreated datePublished" datetime="2021-07-25T17:00:51+08:00">2021-07-25</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-07-27 13:21:01" itemprop="dateModified" datetime="2021-07-27T13:21:01+08:00">2021-07-27</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -392,7 +402,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>27</span>
+      <span>1.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -413,7 +423,70 @@
         <p>⍢⃝  ⍤⃝ ⍥⃝ ⍨⃝ ⌓̈⃝ ◡̈⃝  ⠒̫⃝  ʚ◡̈⃝ɞ  ༛̥⃝ʺ̤ </p>
 <a id="more"></a>
 
+<h2 id="动态分析技术"><a href="#动态分析技术" class="headerlink" title="动态分析技术"></a>动态分析技术</h2><div class="note danger"><p>动态调试器：</p>
+<ul>
+<li><mark class="label default">用户模式</mark>：工作在Ring3。<ul>
+<li>OllyDbg、x64dbg、MDebug、Visual C++等。</li>
+</ul>
+</li>
+<li><mark class="label default">内核模式</mark>：工作在Ring0，操作系统内核调试器。<ul>
+<li>WinDbg</li>
+</ul>
+</li>
+</ul>
+</div>
 
+<h3 id="1-调试窗口"><a href="#1-调试窗口" class="headerlink" title="1 调试窗口"></a>1 调试窗口</h3><p>OllyDbg的5个窗口：</p>
+<p><img data-src="https://i.loli.net/2021/07/26/qR17DOSweKpa9k5.png" alt="1.png"></p>
+<ol>
+<li><p><strong>反汇编窗口</strong>：</p>
+<ul>
+<li><strong>Address</strong> 列：显示被双击行地址的相对地址，再次双击返回标准地址模式（栈区也可双击地址）。虚拟地址，<mark class="label warning">在一般情况下，同一程序的同一条指令在不同系统环境下此值相同</mark>。</li>
+<li><strong>Hex dump</strong> 列：设置或取消无条件断点，快捷键：<mark class="label success">F2</mark>键。</li>
+<li><strong>Disassembly</strong> 列：调用汇编器，可直接修改汇编代码，快捷键：空格键。</li>
+<li><strong>Comment</strong> 列：允许增加或编辑注释，快捷键：<mark class="label success">；</mark>键。</li>
+</ul>
+</li>
+<li><p><strong>信息窗口</strong>：在进行动态跟踪时，信息面板窗口（Information window）将显示以下等信息：</p>
+<ul>
+<li>寄存器的值；</li>
+<li>API 函数调用提示；</li>
+<li>跳转提示。</li>
+</ul>
+</li>
+<li><p><strong>数据窗口</strong>：以<strong>十六进制</strong>和<strong>字符方式</strong>显示<strong>文件在内存中的数据</strong>。可使用数据窗口跟随或在数据窗口按“<code>Ctl+G”</code>快捷键，打开地址窗口，输入地址。</p>
+</li>
+<li><p><strong>寄存器窗口</strong>：显示 CPU 各寄存器的值，支持浮点、MMX 和 3DNow!寄存器。可以单击右键或窗口标题切换显示寄存器的方式。修改寄存器的值可直接双击（EIP除外）。EIP寄存器，不能直接修改，需要在反汇编窗口选择新的指令起始地址，在弹出的快捷菜单中选择“New origin here”（此处为新的EIP）。</p>
+</li>
+<li><p><strong>栈面板窗口</strong>：显示栈的内容。栈窗口非常重要，各 API 函数和子程序都利用它传递参数和变量等。</p>
+</li>
+</ol>
+<ul>
+<li>OD所在目录下的UDD 文件是 Ollydbg 的工程文件，用于保存当前调试的一些状态，例如断点、注释等，以</li>
+</ul>
+<p>便下次调试时继续使用。</p>
+<ul>
+<li>插件用于扩充功能。路径设置正确后，将插件复制到<code>plugin</code>目录里，相应的选项就会在Ollydbg 的主菜单<code>Plugin</code>（插件）里显示出来。</li>
+</ul>
+<h3 id="2-基本操作"><a href="#2-基本操作" class="headerlink" title="2 基本操作"></a>2 基本操作</h3><p>大部分程序在启动时都会停在入口点（EntryPoint）。通过一些特殊的修改方式，有些程序可以在启动时不停在入口点，以达到反调试的目的。</p>
+<p>快捷键：</p>
+<p><img data-src="https://i.loli.net/2021/07/26/jrmVBpbEflYau3A.png" alt="2.png"></p>
+<p>Call的跟进与回退查看：</p>
+<ul>
+<li>按<code>F7</code>进入子程序的过程后，若想回看之前单步跟踪的代码，可以按<mark class="label success">-</mark>（减号）键。（除了反汇编窗口中能会退看之前的代码外，其余窗口数据不会变化）；</li>
+<li>若想让光标回到当前EIP所指向的语句，可以单击快捷窗口<strong>C</strong>按钮或双击EIP寄存器。</li>
+</ul>
+<mark class="label danger">OllyDbg对API的大小写敏感，输入的函数名大小写必须正确。</mark>
+
+
+
+<p>通过屏蔽程序的某些功能或改变程序流程使程序保护方式失效的方法称为“爆破”。</p>
+<p>代码分析：</p>
+<ul>
+<li>如<code>mov bl,[eax+405030]</code>：若eax每次自增<code>inc</code>或自减<code>dec</code>，则<code>0x405030</code>有很大可能是一个数组集合，构成两个循环自变量，<code>0x405030</code>为大循环自变量。</li>
+<li>函数<code>wsprintf()</code>是唯一需要需要手动平衡栈的API函数。</li>
+</ul>
+<h3 id="3-常用断点"><a href="#3-常用断点" class="headerlink" title="3 常用断点"></a>3 常用断点</h3>
     </div>
 
     
@@ -529,14 +602,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">452k</span>
+    <span title="站点总字数">453k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">6:51</span>
+    <span title="站点阅读时长">6:52</span>
   </span>
 </div>
 <div class="busuanzi-count">
