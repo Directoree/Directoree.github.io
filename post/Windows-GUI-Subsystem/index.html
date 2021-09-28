@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows-GUI-Subsystem">
+<meta property="og:url" content="https://directoree.github.io/post/Windows-GUI-Subsystem/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-09-28T13:50:46.000Z">
+<meta property="article:modified_time" content="2022-09-28T16:11:39.039Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x86子系统">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Windows-GUI-Subsystem/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows-GUI-Subsystem | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%A4%B1%E8%B4%A5%E7%9A%84%E5%88%86%E6%9E%90-Windows-10-PsEstablishWin32Callouts"><span class="nav-text">1 失败的分析-Windows 10 PsEstablishWin32Callouts</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nt-PsEstablishWin32Callouts"><span class="nav-text">nt!PsEstablishWin32Callouts</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nt-ExAllocateCallBack"><span class="nav-text">nt!ExAllocateCallBack</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nt-ExCompareExchangeCallBack"><span class="nav-text">nt!ExCompareExchangeCallBack</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-PsConvertToGuiThread"><span class="nav-text">2 PsConvertToGuiThread</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">134</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows-GUI-Subsystem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows-GUI-Subsystem
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-28 21:50:46" itemprop="dateCreated datePublished" datetime="2022-09-28T21:50:46+08:00">2022-09-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-09-29 00:11:39" itemprop="dateModified" datetime="2022-09-29T00:11:39+08:00">2022-09-29</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x86GUI/" itemprop="url" rel="index"><span itemprop="name">x86GUI</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Windows-GUI-Subsystem/" class="post-meta-item leancloud_visitors" data-flag-title="Windows-GUI-Subsystem" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Windows-GUI-Subsystem/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows-GUI-Subsystem/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+
+
+
+
+<h2 id="1-失败的分析-Windows-10-PsEstablishWin32Callouts"><a href="#1-失败的分析-Windows-10-PsEstablishWin32Callouts" class="headerlink" title="1 失败的分析-Windows 10 PsEstablishWin32Callouts"></a>1 失败的分析-Windows 10 PsEstablishWin32Callouts</h2><p>Win32k.sys 在初始化阶段通过 <code>win32k!SysEntryPsEstablishWin32Callouts</code> 调用 <code>nt!PsEstablishWin32Callouts</code>  函数向内核注册一组出调（callout ） 函数，参考 <a target="_blank" rel="noopener" href="https://www.geoffchappell.com/studies/windows/km/ntoskrnl/inc/ntos/ps/win32_callouts_operation.htm">Geoff Chappell -Software Analyst</a> 在 Windows 10 中数据结构 <code>WIN32_CALLOUTS_OPERATION</code> 的成员，如 <code>Win32ProcessCallout</code>、<code>Win32PowerEventCallout</code> 为出调函数。该结构在 Windows XP 中为 <code>WIN32_CALLOUTS_FPNS</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000111</span>A8 <span class="comment">// __stdcall SysEntryPsEstablishWin32Callouts()</span></span><br><span class="line">.text:<span class="number">000111</span>A8                 <span class="keyword">public</span> _SysEntryPsEstablishWin32Callouts@<span class="number">0</span></span><br><span class="line">.text:<span class="number">000111</span>A8 _SysEntryPsEstablishWin32Callouts@<span class="number">0</span> proc near</span><br><span class="line">.text:<span class="number">000111</span>A8                                         <span class="comment">// DATA XREF: .data:0003EDE4↓o</span></span><br><span class="line">.text:<span class="number">000111</span>A8                 push    offset _W32CalloutDispatchThunk@<span class="number">12</span> <span class="comment">// W32CalloutDispatchThunk(x,x,x)</span></span><br><span class="line">.text:<span class="number">000111</span>AD                 call    ds:__imp__PsEstablishWin32Callouts@<span class="number">4</span> <span class="comment">// nt!PsEstablishWin32Callouts(x)</span></span><br><span class="line">.text:<span class="number">000111B</span>3                 retn</span><br><span class="line">.text:<span class="number">000111B</span>3 _SysEntryPsEstablishWin32Callouts@<span class="number">0</span> endp</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="nt-PsEstablishWin32Callouts"><a href="#nt-PsEstablishWin32Callouts" class="headerlink" title="nt!PsEstablishWin32Callouts"></a>nt!PsEstablishWin32Callouts</h4><p><code>nt!PsEstablishWin32Callouts</code>  函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">PAGE:<span class="number">008</span>A4BD2 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BD2</span><br><span class="line">PAGE:<span class="number">008</span>A4BD2 <span class="comment">// 参数：win32k!W32CalloutDispatchThunk</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BD2 <span class="comment">// Attributes: bp-based frame</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BD2</span><br><span class="line">PAGE:<span class="number">008</span>A4BD2 <span class="comment">// __stdcall PsEstablishWin32Callouts(x)</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BD2                 <span class="keyword">public</span> _PsEstablishWin32Callouts@<span class="number">4</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BD2 _PsEstablishWin32Callouts@<span class="number">4</span> proc near</span><br><span class="line">PAGE:<span class="number">008</span>A4BD2</span><br><span class="line">PAGE:<span class="number">008</span>A4BD2 arg_0           = dword ptr  <span class="number">8</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BD2</span><br><span class="line">PAGE:<span class="number">008</span>A4BD2 <span class="comment">// FUNCTION CHUNK AT PAGE:00935569 SIZE 0000000D BYTES</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BD2</span><br><span class="line">PAGE:<span class="number">008</span>A4BD2                 mov     edi, edi</span><br><span class="line">PAGE:<span class="number">008</span>A4BD4                 push    ebp</span><br><span class="line">PAGE:<span class="number">008</span>A4BD5                 mov     ebp, esp</span><br><span class="line">PAGE:<span class="number">008</span>A4BD7                 mov     ecx, [ebp+arg_0]</span><br><span class="line">PAGE:<span class="number">008</span>A4BDA                 <span class="keyword">xor</span>     edx, edx</span><br><span class="line">PAGE:<span class="number">008</span>A4BDC                 push    esi</span><br><span class="line">PAGE:<span class="number">008</span>A4BDD                 call    _ExAllocateCallBack@<span class="number">8</span> <span class="comment">// ExAllocateCallBack(x,x)</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BE2                 mov     esi, eax        <span class="comment">// 返回_EX_CALLBACK_ROUTINE_BLOCK结构</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BE4                 test    esi, esi</span><br><span class="line">PAGE:<span class="number">008</span>A4BE6                 jz      <span class="keyword">short</span> loc_8A4C05</span><br><span class="line">PAGE:<span class="number">008</span>A4BE8                 push    <span class="number">0</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BEA                 mov     edx, esi</span><br><span class="line">PAGE:<span class="number">008</span>A4BEC                 mov     ecx, offset _PsWin32CallBack</span><br><span class="line">PAGE:<span class="number">008</span>A4BF1                 call    _ExCompareExchangeCallBack@<span class="number">12</span> <span class="comment">// 参数一：ecx = &amp;PsWin32CallBack</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BF1                                         <span class="comment">// 参数二：edx = EX_CALLBACK_ROUTINE_BLOCK</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BF1                                         <span class="comment">// 参数三：0</span></span><br><span class="line">PAGE:<span class="number">008</span>A4BF6                 test    al, al</span><br><span class="line">PAGE:<span class="number">008</span>A4BF8                 jz      loc_935569</span><br><span class="line">PAGE:<span class="number">008</span>A4BFE                 mov     _PsWin32CalloutsEstablished, <span class="number">1</span></span><br><span class="line">PAGE:<span class="number">008</span>A4C05</span><br><span class="line">PAGE:<span class="number">008</span>A4C05 loc_8A4C05:                             <span class="comment">// CODE XREF: PsEstablishWin32Callouts(x)+14↑j</span></span><br><span class="line">PAGE:<span class="number">008</span>A4C05                                         <span class="comment">// PsEstablishWin32Callouts(x)+9099F↓j</span></span><br><span class="line">PAGE:<span class="number">008</span>A4C05                 pop     esi</span><br><span class="line">PAGE:<span class="number">008</span>A4C06                 pop     ebp</span><br><span class="line">PAGE:<span class="number">008</span>A4C07                 retn    <span class="number">4</span></span><br><span class="line">PAGE:<span class="number">008</span>A4C07 _PsEstablishWin32Callouts@<span class="number">4</span> endp</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="nt-ExAllocateCallBack"><a href="#nt-ExAllocateCallBack" class="headerlink" title="nt!ExAllocateCallBack"></a>nt!ExAllocateCallBack</h4><p>在函数 <code>ExAllocateCallBack</code> 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">PAGE:<span class="number">00845</span>C7A <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">PAGE:<span class="number">00845</span>C7A</span><br><span class="line">PAGE:<span class="number">00845</span>C7A</span><br><span class="line">PAGE:<span class="number">00845</span>C7A <span class="comment">// __stdcall ExAllocateCallBack(x, x)</span></span><br><span class="line">PAGE:<span class="number">00845</span>C7A _ExAllocateCallBack@<span class="number">8</span> proc near         <span class="comment">// CODE XREF: KeRegisterBoundCallback(x)+1A↑p</span></span><br><span class="line">PAGE:<span class="number">00845</span>C7A                                         <span class="comment">// PsSetLoadImageNotifyRoutineEx(x,x)+17↑p ...</span></span><br><span class="line">PAGE:<span class="number">00845</span>C7A                 mov     edi, edi</span><br><span class="line">PAGE:<span class="number">00845</span>C7C                 push    ebx</span><br><span class="line">PAGE:<span class="number">00845</span>C7D                 push    esi</span><br><span class="line">PAGE:<span class="number">00845</span>C7E                 push    edi</span><br><span class="line">PAGE:<span class="number">00845</span>C7F                 push    <span class="number">62726243</span>h       <span class="comment">// Tag</span></span><br><span class="line">PAGE:<span class="number">00845</span>C84                 push    <span class="number">0</span>Ch             <span class="comment">// NumberOfBytes</span></span><br><span class="line">PAGE:<span class="number">00845</span>C86                 push    <span class="number">200</span>h            <span class="comment">// PoolType</span></span><br><span class="line">PAGE:<span class="number">00845</span>C8B                 mov     edi, edx</span><br><span class="line">PAGE:<span class="number">00845</span>C8D                 mov     ebx, ecx</span><br><span class="line">PAGE:<span class="number">00845</span>C8F                 call    _ExAllocatePoolWithTag@<span class="number">12</span> <span class="comment">// ExAllocatePoolWithTag(x,x,x)</span></span><br><span class="line">PAGE:<span class="number">00845</span>C94                 mov     esi, eax</span><br><span class="line">PAGE:<span class="number">00845</span>C96                 test    esi, esi</span><br><span class="line">PAGE:<span class="number">00845</span>C98                 jz      <span class="keyword">short</span> loc_845CA7</span><br><span class="line">PAGE:<span class="number">00845</span>C9A                 mov     ecx, esi        <span class="comment">// -------------------------------------------</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9A                                         <span class="comment">// 由这里可以猜到，申请的0xC字节：</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9A                                         <span class="comment">// +0：_EX_RUNDOWN_REF</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9A                                         <span class="comment">// +4：ebx = win32k!W32CalloutDispatchThunk</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9A                                         <span class="comment">// +8：edi = edx = 0</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9A                                         <span class="comment">// 实际上是 _EX_CALLBACK_ROUTINE_BLOCK 结构</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9A                                         <span class="comment">// -------------------------------------------</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9C                 mov     [esi+<span class="number">4</span>], ebx    <span class="comment">// ebx = win32k!W32CalloutDispatchThunk</span></span><br><span class="line">PAGE:<span class="number">00845</span>C9F                 mov     [esi+<span class="number">8</span>], edi    <span class="comment">// edi = edx = 0</span></span><br><span class="line">PAGE:<span class="number">00845</span>CA2                 call    @ExInitializeRundownProtection@<span class="number">4</span> <span class="comment">// ExInitializeRundownProtection(x)</span></span><br><span class="line">PAGE:<span class="number">00845</span>CA7</span><br><span class="line">PAGE:<span class="number">00845</span>CA7 loc_845CA7:                             <span class="comment">// CODE XREF: ExAllocateCallBack(x,x)+1E↑j</span></span><br><span class="line">PAGE:<span class="number">00845</span>CA7                 pop     edi</span><br><span class="line">PAGE:<span class="number">00845</span>CA8                 mov     eax, esi</span><br><span class="line">PAGE:<span class="number">00845</span>CAA                 pop     esi</span><br><span class="line">PAGE:<span class="number">00845</span>CAB                 pop     ebx</span><br><span class="line">PAGE:<span class="number">00845</span>CAC                 retn</span><br><span class="line">PAGE:<span class="number">00845</span>CAC _ExAllocateCallBack@<span class="number">8</span> endp</span><br></pre></td></tr></table></figure>
+
+<p>该函数就是申请了一个 <code>EX_CALLBACK_ROUTINE_BLOCK</code> 结构，并给成员赋值，源码和 XP 中是一样的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PEX_CALLBACK_ROUTINE_BLOCK <span class="title">ExAllocateCallBack</span><span class="params">(win32k!W32CalloutDispatchThunk,<span class="number">0</span>)</span>	<span class="comment">//Function,Context</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  PEX_CALLBACK_ROUTINE_BLOCK NewBlock;</span><br><span class="line">  </span><br><span class="line">  NewBlock = ExAllocatePoolWithTag (PagedPool,</span><br><span class="line">                                    <span class="keyword">sizeof</span> (EX_CALLBACK_ROUTINE_BLOCK),</span><br><span class="line">                                    &#x27;brbC&#x27;);</span><br><span class="line">  <span class="keyword">if</span> (NewBlock != <span class="literal">NULL</span>) &#123;</span><br><span class="line">    NewBlock-&gt;Function = win32k!W32CalloutDispatchThunk;</span><br><span class="line">    NewBlock-&gt;Context = Context;</span><br><span class="line">    ExInitializeRundownProtection (&amp;NewBlock-&gt;RundownProtect);</span><br><span class="line">  &#125;</span><br><span class="line">    <span class="keyword">return</span> NewBlock;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>EX_CALLBACK_ROUTINE_BLOCK</code> 结构参考 <a target="_blank" rel="noopener" href="https://doxygen.reactos.org/de/d22/ndk_2extypes_8h_source.html#535">ReactOS 0.4.15</a>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Internal Callback Object</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">EX_CALLBACK_ROUTINE_BLOCK</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    EX_RUNDOWN_REF RundownProtect;</span><br><span class="line">    PEX_CALLBACK_FUNCTION Function;</span><br><span class="line">    PVOID Context;</span><br><span class="line">&#125; EX_CALLBACK_ROUTINE_BLOCK, *PEX_CALLBACK_ROUTINE_BLOCK;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="nt-ExCompareExchangeCallBack"><a href="#nt-ExCompareExchangeCallBack" class="headerlink" title="nt!ExCompareExchangeCallBack"></a>nt!ExCompareExchangeCallBack</h4><p>此函数分配、删除或交换低开销回调函数。该函数只是对当前的快速引用数量上面申请内存 建立的<code>RundownProtect</code> 进行处理。</p>
+<p>最后 <code>mov _PsWin32CalloutsEstablished, 1</code>，表示出调函数已经完成注册。但是实际并没有给出出调函数。这里猜测注册的实现是在 win32k.sys 中完成的。大概率是在参数 <code>win32k!W32CalloutDispatchThunk</code> 和 <code>win32kbase!W32CalloutDispatch</code> 函数有关。</p>
+<p>ROS 中指出 Windows 7 的注册回调函数如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID NTAPI <span class="title">PsEstablishWin32Callouts</span><span class="params">(IN PWIN32_CALLOUTS_FPNS CalloutData)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">/* Setup the callback pointers */</span></span><br><span class="line">    PspW32ProcessCallout = CalloutData-&gt;ProcessCallout;</span><br><span class="line">    PspW32ThreadCallout = CalloutData-&gt;ThreadCallout;</span><br><span class="line">    ExpWindowStationObjectParse = CalloutData-&gt;WindowStationParseProcedure;</span><br><span class="line">    ExpWindowStationObjectDelete = CalloutData-&gt;WindowStationDeleteProcedure;</span><br><span class="line">    ExpWindowStationObjectOkToClose = CalloutData-&gt;WindowStationOkToCloseProcedure;</span><br><span class="line">    ExpDesktopObjectOkToClose = CalloutData-&gt;DesktopOkToCloseProcedure;</span><br><span class="line">    ExpDesktopObjectDelete = CalloutData-&gt;DesktopDeleteProcedure;</span><br><span class="line">    ExpDesktopObjectOpen = CalloutData-&gt;DesktopOpenProcedure;</span><br><span class="line">    ExpDesktopObjectClose = CalloutData-&gt;DesktopCloseProcedure;</span><br><span class="line">    PopEventCallout = CalloutData-&gt;PowerEventCallout;</span><br><span class="line">    KeGdiFlushUserBatch = CalloutData-&gt;BatchFlushRoutine;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="2-PsConvertToGuiThread"><a href="#2-PsConvertToGuiThread" class="headerlink" title="2 PsConvertToGuiThread"></a>2 PsConvertToGuiThread</h2><p>W32pProcessCallout</p>
+<p>这部分内容目前分析 Windows 10 难度较大，先参考文章《<a target="_blank" rel="noopener" href="https://xiaodaozhi.com/exploit/29.html">通过 Windows 用户模式回调实施的内核攻击</a>》、《<a target="_blank" rel="noopener" href="https://troopers.de/media/filer_public/f6/07/f6076037-85e0-42b7-9a51-507986edafce/the_joy_of_sandbox_mitigations_export.pdf">The Joy of<br>Sandbox Mitigations</a>》看一下大概的逻辑。以后再分析 Windows 10。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Windows-GUI-Subsystem/" title="Windows-GUI-Subsystem">https://directoree.github.io/post/Windows-GUI-Subsystem/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x86%E5%AD%90%E7%B3%BB%E7%BB%9F/" rel="tag"><i class="fa fa-tag"></i> x86子系统</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/x86-Memory3/" rel="prev" title="x86 内存管理（三）无效/原型 PTE 与页面错误">
+                  <i class="fa fa-chevron-left"></i> x86 内存管理（三）无效/原型 PTE 与页面错误
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">26:22</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Windows-GUI-Subsystem/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
