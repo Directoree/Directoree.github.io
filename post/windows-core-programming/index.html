@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://i.loli.net/2021/11/04/PMXndw8cJgW5673.png">
 <meta property="og:image" content="https://i.loli.net/2021/11/08/RDKUTtOVds4i5wg.png">
 <meta property="article:published_time" content="2021-11-03T07:28:58.000Z">
-<meta property="article:modified_time" content="2021-11-09T02:39:19.967Z">
+<meta property="article:modified_time" content="2021-11-10T08:52:12.398Z">
 <meta property="article:author" content="Directoree">
 <meta property="article:tag" content="Windows内核">
 <meta name="twitter:card" content="summary">
@@ -359,7 +359,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-11-09 10:39:19" itemprop="dateModified" datetime="2021-11-09T10:39:19+08:00">2021-11-09</time>
+        <time title="修改时间：2021-11-10 16:52:12" itemprop="dateModified" datetime="2021-11-10T16:52:12+08:00">2021-11-10</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -408,7 +408,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.5k</span>
+      <span>7.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -583,12 +583,10 @@
 
 <h2 id="3-内核对象"><a href="#3-内核对象" class="headerlink" title="3 内核对象"></a>3 内核对象</h2><p>各种对象的区分：</p>
 <div class="note success"><ul>
-<li><p><mark class="label danger">HINSTANCE</mark>：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/autopwn/p/15493308.html">HINSTANCE是个数据类型</a>，本质就是个结构体指针，里面结构体成员只有一个int类型变量，指向的是PE结构中讲到的ImageBase，仅此而已；</p>
-</li>
-<li><p><mark class="label danger">HWND</mark>：也是个结构体类型指针，里面定义的类型同样是int类型，只是她这个结构体指针指向的是Windows给其分配的一个唯一的ID而已；HWND同样是个数据类型，只是改了名称叫法而已，叫做窗口句柄，将其实例化后，就是个整型int类型的数据，只是是用指针的方式指向她，其本质是个结构体指针，里面结构体成员只有一个int类型变量，所以HWND是个带有int类型成员的结构体指针，指向每个不同的窗口，并且给不同的窗口分配唯一的编号，通过这个编号就能找到不同的窗口，仅此而已；**</p>
-</li>
-<li><p>内核句柄<mark class="label danger">HANDLE</mark>：系统用索引来表示内核对象的信息保存在进程句柄表中的具体位置，要得到实际的索引值，句柄值实际应该除以4（或右移两位，以忽略Windows操作系统内部使用的最后两位）。所以，在调试应用程序时查看内核对象句柄的实际值时，会看到4、8之类的很小的值。记住，句柄的含义尚未公开，将来可能发生变化**</p>
-</li>
+<li><mark class="label danger">HINSTANCE</mark>：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/autopwn/p/15493308.html">HINSTANCE是个数据类型</a>，本质就是个结构体指针，里面结构体成员只有一个int类型变量，指向的是PE结构中讲到的ImageBase，仅此而已；</li>
+<li><mark class="label danger">HMODULE</mark>：事实上，HMODULE和HINSTANCE完全是一回事。如果某个函数的文档指出需要一个HMODULE参数，我们可以传入一个HINSTANCE，反之亦然。之所以有两种数据类型，是由于在16位Windows中，HMODULE和HINSTANCE表示不同类型的数据。《Windows核心编程第五版-4.1.1进程实例句柄》</li>
+<li><mark class="label danger">HWND</mark>：也是个结构体类型指针，里面定义的类型同样是int类型，只是她这个结构体指针指向的是Windows给其分配的一个唯一的ID而已；HWND同样是个数据类型，只是改了名称叫法而已，叫做窗口句柄，将其实例化后，就是个整型int类型的数据，只是是用指针的方式指向她，其本质是个结构体指针，里面结构体成员只有一个int类型变量，所以HWND是个带有int类型成员的结构体指针，指向每个不同的窗口，并且给不同的窗口分配唯一的编号，通过这个编号就能找到不同的窗口，仅此而已；</li>
+<li>内核句柄<mark class="label danger">HANDLE</mark>：系统用索引来表示内核对象的信息保存在进程句柄表中的具体位置，要得到实际的索引值，句柄值实际应该除以4（或右移两位，以忽略Windows操作系统内部使用的最后两位）。所以，在调试应用程序时查看内核对象句柄的实际值时，会看到4、8之类的很小的值。记住，句柄的含义尚未公开，将来可能发生变化</li>
 </ul>
 </div>
 
