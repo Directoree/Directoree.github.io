@@ -22,16 +22,25 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Directoree">
-<meta property="og:url" content="https://directoree.github.io/categories/%E7%AC%94%E8%AE%B0/page/2/index.html">
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="启动函数和入口函数">
+<meta property="og:url" content="https://directoree.github.io/post/translater-start-entry-function/index.html">
 <meta property="og:site_name" content="Directoree">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img.shields.io/badge/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-%E3%80%8AC++%E5%8F%8D%E6%B1%87%E7%BC%96%E4%B8%8E%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF%E8%A7%A3%E5%AF%86%EF%BC%88%E7%AC%AC%E4%B8%80%E7%89%88%EF%BC%89%E3%80%8B-1fd0f6.svg?colorA=ff69b4">
+<meta property="og:image" content="https://img.shields.io/badge/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-%E3%80%8AWindows%E6%A0%B8%E5%BF%83%E7%BC%96%E7%A8%8B%EF%BC%88%E7%AC%AC%E4%BA%94%E7%89%88%EF%BC%89%E3%80%8B-1fd0f6.svg?colorA=ff69b4">
+<meta property="og:image" content="https://i.loli.net/2021/11/18/fplLEeshwGWT9Vz.png">
+<meta property="article:published_time" content="2021-11-18T08:52:09.000Z">
+<meta property="article:modified_time" content="2021-11-19T09:04:01.747Z">
 <meta property="article:author" content="Directoree">
+<meta property="article:tag" content="Windows内核">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.shields.io/badge/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-%E3%80%8AC++%E5%8F%8D%E6%B1%87%E7%BC%96%E4%B8%8E%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF%E8%A7%A3%E5%AF%86%EF%BC%88%E7%AC%AC%E4%B8%80%E7%89%88%EF%BC%89%E3%80%8B-1fd0f6.svg?colorA=ff69b4">
 
 
-<link rel="canonical" href="https://directoree.github.io/categories/%E7%AC%94%E8%AE%B0/page/2/">
+<link rel="canonical" href="https://directoree.github.io/post/translater-start-entry-function/">
 
 
 <script class="page-configurations">
@@ -39,12 +48,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>分类: 笔记 | Directoree</title>
+  <title>启动函数和入口函数 | Directoree</title>
   
 
 
@@ -213,7 +222,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -225,6 +234,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%A8%8B%E5%BA%8F%E7%9A%84%E5%90%AF%E5%8A%A8%E5%87%BD%E6%95%B0%E5%92%8C%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-text">1 程序的启动函数和入口函数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-CUI%E7%A8%8B%E5%BA%8F"><span class="nav-text">2 CUI程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%90%AF%E5%8A%A8%E5%87%BD%E6%95%B0"><span class="nav-text">2.1 启动函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-text">2.2 入口函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-GUI%E7%A8%8B%E5%BA%8F"><span class="nav-text">3 GUI程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%90%AF%E5%8A%A8%E5%87%BD%E6%95%B0"><span class="nav-text">3.1 启动函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%85%A5%E5%8F%A3%E5%87%BD%E6%95%B0"><span class="nav-text">3.2 入口函数</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -304,124 +314,244 @@
 </noscript>
 
 
-    <div class="main-inner category posts-collapse">
+    <div class="main-inner post posts-expand">
       
 
       
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h2 class="collection-header">笔记
-          <small>分类</small>
-        </h2>
-      </div>
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/translater-start-entry-function/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Directoree">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Directoree">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          启动函数和入口函数
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-11-18 16:52:09" itemprop="dateCreated datePublished" datetime="2021-11-18T16:52:09+08:00">2021-11-18</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-11-19 17:04:01" itemprop="dateModified" datetime="2021-11-19T17:04:01+08:00">2021-11-19</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E9%80%86%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">逆向</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E9%80%86%E5%90%91/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/translater-start-entry-function/" class="post-meta-item leancloud_visitors" data-flag-title="启动函数和入口函数" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/translater-start-entry-function/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/translater-start-entry-function/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<p><img data-src="https://img.shields.io/badge/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-%E3%80%8AC++%E5%8F%8D%E6%B1%87%E7%BC%96%E4%B8%8E%E9%80%86%E5%90%91%E5%88%86%E6%9E%90%E6%8A%80%E6%9C%AF%E8%A7%A3%E5%AF%86%EF%BC%88%E7%AC%AC%E4%B8%80%E7%89%88%EF%BC%89%E3%80%8B-1fd0f6.svg?colorA=ff69b4"></p>
+<p><img data-src="https://img.shields.io/badge/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0-%E3%80%8AWindows%E6%A0%B8%E5%BF%83%E7%BC%96%E7%A8%8B%EF%BC%88%E7%AC%AC%E4%BA%94%E7%89%88%EF%BC%89%E3%80%8B-1fd0f6.svg?colorA=ff69b4"></p>
+<h2 id="1-程序的启动函数和入口函数"><a href="#1-程序的启动函数和入口函数" class="headerlink" title="1 程序的启动函数和入口函数"></a>1 程序的启动函数和入口函数</h2><div class="note default"><p>Windows支持两种类型的应用程序：</p>
+<ul>
+<li><strong>GUI</strong>：图形化应用程序（图形用户界面程序）</li>
+<li><strong>CUI</strong>：控制台应用程序（控制台用户界面程序）</li>
+</ul>
+</div>
+
+<p><strong><code>main</code>、<code>Winmain</code>函数被称为入口函数，入口函数被调用前，会先运行启动函数，然后由启动函数来调用入口函数。</strong></p>
+<p>启动函数和入口函数在多字节编码（ANSI）和Unicode编码环境下是不一样的，具体对应关系如下：</p>
+<p><img data-src="https://i.loli.net/2021/11/18/fplLEeshwGWT9Vz.png" alt="4.png"></p>
+<p>也可指定/移除链接器开关（如果移除链接器开关，程序将会自动判断子系统），VS中设置如下：</p>
+<ul>
+<li><code>/SUBSYSTEM:WINDOWS</code></li>
+<li><code>/SUBSYSTEM:CONSOLE</code></li>
+</ul>
+<p><strong>入口函数</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">int</span> WINAPI _tWinMain(</span><br><span class="line">	HINSTANCE hInstanceExe, </span><br><span class="line">	HINSTANCE,</span><br><span class="line">	PTSTR pszCmdline,</span><br><span class="line">	<span class="keyword">int</span> nCmdShow);</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> _tmain(</span><br><span class="line">	<span class="keyword">int</span> argc,</span><br><span class="line">	TCHAR *argv[],</span><br><span class="line">	TCHAR *envp[]);</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动函数</strong>：</p>
+<ol>
+<li>启动函数由KERNEL32.dll中的<code>KERNEL32</code>函数调用，我们无法查看KERNEL32.dll的源码。</li>
+<li>VC++自带<a target="_blank" rel="noopener" href="https://www.cnblogs.com/renyuan/p/5031100.html">C运行库</a>的源代码，可以在<code>crtexe.c</code>中找到这4个启动函数的源代码。</li>
+</ol>
+<h2 id="2-CUI程序"><a href="#2-CUI程序" class="headerlink" title="2 CUI程序"></a>2 CUI程序</h2><div class="note warning"><p><strong>调用顺序：</strong><mark class="label default"><code>KERNEL32</code> --&gt; <code>mainCRTStartup</code> --&gt; <code>main</code>。</mark></p>
+</div>
+
+<h3 id="2-1-启动函数"><a href="#2-1-启动函数" class="headerlink" title="2.1 启动函数"></a>2.1 启动函数</h3><div class="note danger"><p>启动函数工作流程：</p>
+<ol>
+<li><p><mark class="label danger">GetVersion() ：</mark><mark class="label success">获取当前运行平台的版本号</mark>。控制台程序运行在Windows模拟的DOS下，因此这里获取的版本号为MS-DOS的版本信息。</p>
+</li>
+<li><p><mark class="label danger">_heap_init() ：</mark><mark class="label success">用于初始化堆空间</mark>。在函数实现中使用<code>HeapCreate</code>申请堆空间，申请空间的大小由<code>_heap_init</code>传递的参数决定。<code>_sbh_heap_init</code>函数用于初始化堆结构信息。堆结构的说明将在第7章详细讲解。</p>
+</li>
+<li><p><mark class="label danger">GetCommandLineA() ：</mark><mark class="label success">获取命令行参数信息的首地址。</mark></p>
+</li>
+<li><p><mark class="label danger">_crtGetEnvironmentStringsA：</mark><mark class="label success">获取环境变量信息的首地址。</mark></p>
+</li>
+<li><p><mark class="label danger">_setargv() ：</mark><mark class="label success">参数分析。</mark>此函数根据<code>GetCommandLineA()</code>获取命令行参数信息的首地址并进行参数分析，将分离出的参数的个数保存在全局变量<code>_argc</code>中，将分析出的每个命令行参数的首地址存放在数组中，并将这个字符指针数组的首地址保存在全局变量<code>_argv</code>中。这样就得到了命令行参数的个数，以及命令行参数信息。</p>
+</li>
+<li><p><mark class="label danger">_setenvp() ：</mark><mark class="label success">环境变量分析。</mark>此函数根据<code>_crtGetEnvironmentStringsA</code>函数获取环境变量信息的首地址并进行分析，将得到的每条环境变量字符串的首地址存放在字符指针数组中，并将这个数组的首地址存放在全局变量<code>env</code>中。</p>
+</li>
+<li><p><mark class="label danger">_cinit() ：</mark><mark class="label success">用于全局数据和浮点寄存器的初始化。</mark>全局对象和IO流等的初始化都是通过这个函数实现的。利用函数<code>_initterm</code>进行数据链初始化，这个函数由两个参数组成，类型为<code>_PVFV*</code>，这是一个函数指针数组，其中保留了每个初始化函数的地址。初始化函数的类型为<code>_PVFV</code>，其定义原型如下：</p>
+<p><code>typedef void (_cdecl *_PVFV) (void);</code></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+<h3 id="2-2-入口函数"><a href="#2-2-入口函数" class="headerlink" title="2.2 入口函数"></a>2.2 入口函数</h3><h2 id="3-GUI程序"><a href="#3-GUI程序" class="headerlink" title="3 GUI程序"></a>3 GUI程序</h2><h3 id="3-1-启动函数"><a href="#3-1-启动函数" class="headerlink" title="3.1 启动函数"></a>3.1 启动函数</h3><h3 id="3-2-入口函数"><a href="#3-2-入口函数" class="headerlink" title="3.2 入口函数"></a>3.2 入口函数</h3>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2021-01-05T16:41:19+08:00"
-              content="2021-01-05">
-          01-05
-        </time>
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Directoree 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Directoree 支付宝">
+        <span>支付宝</span>
       </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/post/web-basic-safety-guide-xss/" itemprop="url">
-            <span itemprop="name">Web 安全防护指南基础篇-XSS攻击</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-12-21T16:23:28+08:00"
-              content="2020-12-21">
-          12-21
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/post/web-basic-safety-guide-sqlinject/" itemprop="url">
-            <span itemprop="name">Web 安全防护指南基础篇-SQL注入</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-12-17T09:53:54+08:00"
-              content="2020-12-17">
-          12-17
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/post/web-basic-safety-guide-uploadfile/" itemprop="url">
-            <span itemprop="name">Web 安全防护指南基础篇-文件上传</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2020-10-30T14:06:08+08:00"
-              content="2020-10-30">
-          10-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/post/learning-testing-with-python/" itemprop="url">
-            <span itemprop="name">Python 测试之道</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-    </div>
   </div>
-  
-  
-  
+</div>
 
-  
-  <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/categories/%E7%AC%94%E8%AE%B0/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/categories/%E7%AC%94%E8%AE%B0/">1</a><span class="page-number current">2</span>
-  </nav>
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Directoree
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/translater-start-entry-function/" title="启动函数和入口函数">https://directoree.github.io/post/translater-start-entry-function/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"># Windows内核</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/windows-core-programming/" rel="prev" title="Windows核心编程（第五版）_1_错误处理_字符处理_内核对象">
+                  <i class="fa fa-chevron-left"></i> Windows核心编程（第五版）_1_错误处理_字符处理_内核对象
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
 
 
 
       
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -627,7 +757,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/categories/%E7%AC%94%E8%AE%B0/page/2/",
+      path: "/post/translater-start-entry-function/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
