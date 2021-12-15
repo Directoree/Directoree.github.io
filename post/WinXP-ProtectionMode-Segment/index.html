@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 段保护">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2021/12/14/6R9qUTsupMkz827.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/14/e4MfhwDpIEPmLFl.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/14/6icvS7AetpMmVrC.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/voiAm8XzI35Buwj.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/S6cn71NYfpQdw2h.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/14/hjy1X9lCY3OULfi.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/HmBJCXDugr95czQ.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/voiAm8XzI35Buwj.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/voiAm8XzI35Buwj.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/WGDYjrnBzgNEv74.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/XDhxQR5jtH7GL4s.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/iPe4ZLHvujJ1pEt.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/G8WLm1bTtCSkVpX.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/15/VHM7wEbe92Ooys1.png">
+<meta property="article:published_time" content="2021-12-14T11:38:56.000Z">
+<meta property="article:modified_time" content="2021-12-15T13:48:44.293Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2021/12/14/6R9qUTsupMkz827.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 段保护 | Catecat</title><meta name="robots" content="noindex">
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F"><span class="nav-text">1 什么是保护模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2 段寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">2.1 段寄存器的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">2.2 段寄存器的属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">3 段描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%B1%9E%E6%80%A7%E6%89%80%E5%9C%A8%E4%BD%8D%E7%BD%AE"><span class="nav-text">3.1 段描述符属性所在位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E6%9F%A5%E6%89%BE%E7%BB%83%E4%B9%A0"><span class="nav-text">3.2 段描述查找练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="nav-text">4 段选择子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84P%EF%BC%8CG%E4%BD%8D"><span class="nav-text">5 段描述符的P，G位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84S%E3%80%81Type%E5%9F%9F"><span class="nav-text">6 段描述符的S、Type域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-S%E4%BD%8D"><span class="nav-text">6.1 S位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Type%E5%9F%9F"><span class="nav-text">6.2 Type域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E7%BB%83%E4%B9%A0"><span class="nav-text">6.3 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84D-B%E4%BD%8D"><span class="nav-text">7 段描述符的D&#x2F;B位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E6%AE%B5%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-text">8 段权限检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E6%AE%B5%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-text">8.1 段权限检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E7%BB%83%E4%B9%A0"><span class="nav-text">8.2 练习</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">97</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 段保护
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-12-14 19:38:56" itemprop="dateCreated datePublished" datetime="2021-12-14T19:38:56+08:00">2021-12-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-12-15 21:48:44" itemprop="dateModified" datetime="2021-12-15T21:48:44+08:00">2021-12-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">保护模式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-ProtectionMode-Segment/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 段保护" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-ProtectionMode-Segment/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-ProtectionMode-Segment/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="1-什么是保护模式"><a href="#1-什么是保护模式" class="headerlink" title="1 什么是保护模式"></a>1 什么是保护模式</h2><p>R3--SDK</p>
+<p>R0--WDK</p>
+<p>X86 CPU的3个工作模式：<strong>实模式</strong>、<strong>保护模式</strong>和<strong>虚拟8086模式</strong>。<br>现在的操作系统都是基于<strong>保护模式</strong>。<br>保护模式的两个重要机制：段的机制、页的机制。</p>
+<div class="note warning"><p>保护模式：保护对内存的访问、保护某些指令的执行（特权指令 ）</p>
+</div>
+
+<p>段的机制非常复杂，了解段机制就要先了解<strong>段寄存器</strong>。</p>
+<h2 id="2-段寄存器"><a href="#2-段寄存器" class="headerlink" title="2 段寄存器"></a>2 段寄存器</h2><p>段寄存器一共有八个：ES、CS、SS、DS、FS、GS、LDTR（Windows没有使用）、TR。</p>
+<ul>
+<li>每个段寄存器有<mark class="label danger">96位</mark>其中GS、LDTR这两寄存器Windows没有使用。</li>
+<li>LDT表Windows也没有使用。</li>
+<li>只有16位的可见部分：<code>Selecter</code>。</li>
+</ul>
+<h3 id="2-1-段寄存器的结构"><a href="#2-1-段寄存器的结构" class="headerlink" title="2.1 段寄存器的结构"></a>2.1 段寄存器的结构</h3><p><img data-src="https://s2.loli.net/2021/12/14/6R9qUTsupMkz827.png" alt="1.png"></p>
+<p>可以通过结构体表示为如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SegMent</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    WORD Selecter;   <span class="comment">//16位的可见部分（段选择子）</span></span><br><span class="line">    WORD Atrributes; <span class="comment">//16位的属性（可读可写可执行）</span></span><br><span class="line">    DWORD Base;      <span class="comment">//32位的Base(当前段的起始地址)</span></span><br><span class="line">    DWORD Limit;     <span class="comment">//32位的Limit(当前段的长度)</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>汇编读写一个地址：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov dword ptr ds:[<span class="number">0x00123456</span>],eax</span><br></pre></td></tr></table></figure>
+
+<p>读写的地址实际上是<code>ds.Base+0x123456</code>。</p>
+<div class="note warning"><p><strong>实际所有地址的读写都是这个结构</strong>：<code>XS.Base+Offset</code></p>
+</div>
+
+
+
+<h3 id="2-2-段寄存器的属性"><a href="#2-2-段寄存器的属性" class="headerlink" title="2.2 段寄存器的属性"></a>2.2 段寄存器的属性</h3><p><img data-src="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png" alt="2.png"></p>
+<p><strong>段寄存器的读写：</strong></p>
+<ul>
+<li>mov ax,ds      //只能读16位可见部分</li>
+<li>mov ds,ax      //写入是96位</li>
+<li>可以通过MOV指令进行读写（LDTR和TR除外）</li>
+<li>CS是可读、可执行、但不可写</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/Kwansy/article/details/108738075">探测Base示例：</a></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> var = <span class="number">1</span>;					</span><br><span class="line">__asm					</span><br><span class="line">&#123;					</span><br><span class="line">	mov ax,fs				</span><br><span class="line">	mov gs,ax       <span class="comment">//等价于fs.base+0			</span></span><br><span class="line">	mov eax,gs:[<span class="number">0</span>]	<span class="comment">//不要用DS 否则编译不过去		</span></span><br><span class="line">	mov dword ptr ds:[var],eax	</span><br><span class="line">	<span class="comment">//mov edx,dword ptr ds:[0x7FFDF000]</span></span><br><span class="line">	<span class="comment">//常规来说，地址0x00是不允许读的，但是FS.Base!=0，所以这里可以编译并执行</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的GS就是FS。</p>
+<h2 id="3-段描述符"><a href="#3-段描述符" class="headerlink" title="3 段描述符"></a>3 段描述符</h2><p>GDT表存的是段描述符，每个段描述符是64位（8字节）</p>
+<p>这里涉及到两张表：GDT(全局描述符表)与 LDT(局部描述符表)。Windows用的是GDT表，LDT表几乎没用。</p>
+<p>段描述符结构：（Intel手册卷3A）</p>
+<p><img data-src="https://s2.loli.net/2021/12/14/e4MfhwDpIEPmLFl.png" alt="3.png"></p>
+<div class="note warning"><p>段描述符表的位置、大小信息存在<mark class="label danger">GDTR位</mark>寄存器中，GDTR寄存器共6字节：</p>
+<ul>
+<li><p><strong>低2字节</strong>：段描述符表的<strong>大小</strong></p>
+</li>
+<li><p><strong>高4字节</strong>：段描述符表的<strong>起始地址</strong></p>
+<p><img data-src="https://s2.loli.net/2021/12/14/6icvS7AetpMmVrC.png" alt="4.png"></p>
+</li>
+</ul>
+<p>L表述输出的组数。</p>
+</div>
+
+<h3 id="3-1-段描述符属性所在位置"><a href="#3-1-段描述符属性所在位置" class="headerlink" title="3.1 段描述符属性所在位置"></a>3.1 段描述符属性所在位置</h3><p><strong>Atrribute</strong>：高4字节中，8～23位</p>
+<p> <strong>Base</strong>：</p>
+<ul>
+<li>高4字节中，24～31位，0～7位</li>
+<li>低4字节中，16～31位</li>
+</ul>
+<p><strong>Limit</strong>：</p>
+<ul>
+<li>高4字节中，16～19位</li>
+<li>低4字节中，0～15位</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2021/12/15/voiAm8XzI35Buwj.png" alt="9.png"></p>
+<h3 id="3-2-段描述查找练习"><a href="#3-2-段描述查找练习" class="headerlink" title="3.2 段描述查找练习"></a>3.2 段描述查找练习</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; r gdtr</span><br><span class="line">gdtr=<span class="number">8003f</span>000</span><br><span class="line">kd&gt; dq <span class="number">8003f</span>000</span><br><span class="line"><span class="number">8003f</span>000  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00</span>cf9b00`<span class="number">0000f</span>fff</span><br><span class="line"><span class="number">8003f</span>010  <span class="number">00</span>cf9300`<span class="number">0000f</span>fff <span class="number">00</span>cffa00`<span class="number">0000f</span>fff</span><br><span class="line"><span class="number">8003f</span>020  <span class="number">00</span>cff300`<span class="number">0000f</span>fff <span class="number">80008b</span>04`<span class="number">200020</span>ab</span><br><span class="line"><span class="number">8003f</span>030  ffc093df`f0000001 <span class="number">0040f</span>300`<span class="number">00000f</span>ff</span><br><span class="line"><span class="number">8003f</span>040  <span class="number">0000f</span>200`<span class="number">0400f</span>fff <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line"><span class="number">8003f</span>050  <span class="number">80008955</span>`<span class="number">27000068</span> <span class="number">80008955</span>`<span class="number">27680068</span></span><br><span class="line"><span class="number">8003f</span>060  <span class="number">00009302</span>`<span class="number">2f</span>40ffff <span class="number">0000920b</span>`<span class="number">80003f</span>ff</span><br><span class="line"><span class="number">8003f</span>070  ff0092ff`<span class="number">700003f</span>f <span class="number">80009</span>a40`<span class="number">0000f</span>fff</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2021/12/15/S6cn71NYfpQdw2h.png" alt="10.png"></p>
+<h2 id="4-段选择子"><a href="#4-段选择子" class="headerlink" title="4 段选择子"></a>4 段选择子</h2><p>段选择子是一个16位数，该数决定了取gdt表中查哪一个数据。这个值就是MOV DS,AX给的AX的值，从这个值中取赋值剩下的80位(96-16)。</p>
+<p><img data-src="https://s2.loli.net/2021/12/14/hjy1X9lCY3OULfi.png" alt="5.png"></p>
+<div class="note primary"><p>RPL共2位，<mark class="label info">值越小权限越大</mark>。值为0x00、0x11，对应于Windows使用的0环、3环。</p>
+</div>
+
+<p><img data-src="https://s2.loli.net/2021/12/15/HmBJCXDugr95czQ.png" alt="6.png"></p>
+<p><strong>加载段描述符至段寄存器（其他几个汇编指令修改段寄存器）</strong></p>
+<p>除了MOV指令，我们还可以使用LES、LSS、LDS、LFS、LGS指令修改寄存器。</p>
+<p>CS不能通过上述的指令进行修改，CS为代码段，CS的改变会导致EIP的改变，要改CS，必须要保证CS与EIP一起改。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> buffer[<span class="number">6</span>];                    </span><br><span class="line">__asm                            </span><br><span class="line">&#123;            </span><br><span class="line">    les ecx,fword ptr ds:[buffer] <span class="comment">//高2个字节给es，低四个字节给ecx    </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<div class="note danger"><p><strong>注意</strong>：RPL&lt;=DPL(在数值上)</p>
+<p>RPL是段选择子的权限，DPL是段描述符的权限，数值越大权限越小。</p>
+</div>
+
+
+
+<h2 id="5-段描述符的P，G位"><a href="#5-段描述符的P，G位" class="headerlink" title="5 段描述符的P，G位"></a>5 段描述符的P，G位</h2><p><img data-src="https://s2.loli.net/2021/12/15/voiAm8XzI35Buwj.png" alt="9.png"></p>
+<p><strong>P位</strong></p>
+<ul>
+<li>P = 1 段描述符有效</li>
+<li>P = 0 段描述符无效</li>
+</ul>
+<p>通过指令将段描述符加载至段寄存器中，<strong>先检查P位，如果为0，那么该段描述符无效，其他检查都不做了</strong>。</p>
+<p><strong>G位</strong></p>
+<p>G位决定Limit的大小范围。</p>
+<ul>
+<li>当G=0时，Limit的范围是0x00000000-0x<strong>000</strong>FFFFF，其中，段描述符的20位在低位，<mark class="label warning">高位补0</mark>。</li>
+<li>当G=1时，Limit的范围是0x00000FFF-0xFFFFF<strong>FFF</strong>，其中，段描述符的20位在高位，<mark class="label warning">低位补F</mark>。</li>
+</ul>
+<h2 id="6-段描述符的S、Type域"><a href="#6-段描述符的S、Type域" class="headerlink" title="6 段描述符的S、Type域"></a>6 段描述符的S、Type域</h2><p><img data-src="https://s2.loli.net/2021/12/15/voiAm8XzI35Buwj.png" alt="9.png"></p>
+<div class="note success"><p>分析一个段描述符：</p>
+<ol>
+<li>先看P位</li>
+<li>再看S位（S = 1  代码段或者数据段描述符，S = 0 系统段描述符)</li>
+</ol>
+</div>
+
+<h3 id="6-1-S位"><a href="#6-1-S位" class="headerlink" title="6.1 S位"></a>6.1 S位</h3><ul>
+<li><p>S=1，表示代码段/数据段；</p>
+</li>
+<li><p>S=0，表示系统段。</p>
+<p>S位决定着Type域的含义。</p>
+</li>
+</ul>
+<p>DPL两种情况：00、11</p>
+<p>也就是 00cf<strong>9</strong>300`0000ffff 的十六进制高四字节第5个数只能为9或F才表示一个有效（P=1）的段描述符CODE/DATA</p>
+<ul>
+<li>S = 1，CODE/DATA<ul>
+<li>0x1001：DPL = 0x00</li>
+<li>0x1111：DPL = 0x11</li>
+</ul>
+</li>
+<li>S = 0，系统段描述符<ul>
+<li>0x1000：DPL = 0x00</li>
+<li>0x1110：DPL = 0x11</li>
+</ul>
+</li>
+</ul>
+<h3 id="6-2-Type域"><a href="#6-2-Type域" class="headerlink" title="6.2 Type域"></a>6.2 Type域</h3><p>TYPE域共4位，可以通过查表来确定其含义。（S=1，CODE/DTA、S=0系统段描述符）</p>
+<ul>
+<li>当S = 1时，段描述符表示CODE/DATA。</li>
+<li>当S = 0时，段描述符是一个系统段描述符。</li>
+</ul>
+<div class="note success"><p><strong>S = 1，Type=0x1xxx，CODE代码段描述符</strong></p>
+<p>CODE：</p>
+<ul>
+<li>A：段描述符是否被使用过<ul>
+<li>1：使用过</li>
+<li>0：未使用过</li>
+</ul>
+</li>
+<li>R：是否可读<ul>
+<li>1：可读</li>
+<li>0：不可读</li>
+</ul>
+</li>
+<li>C：一致位<ul>
+<li>1：一致代码段</li>
+<li>0：非一致代码段</li>
+</ul>
+</li>
+</ul>
+<p><strong>S = 0，Type=0x0xxx，DATA数据段描述符</strong></p>
+<p>DATA：</p>
+<ul>
+<li><p>A：段描述符是否被使用过</p>
+<ul>
+<li>1：使用过</li>
+<li>0：未使用过</li>
+</ul>
+</li>
+<li><p>W：是否可写</p>
+<ul>
+<li>1：可写</li>
+<li>0：不可写</li>
+</ul>
+</li>
+<li><p>E：拓展位</p>
+<ul>
+<li><p>1：向下拓展，有效地址为右边红色（红色为64KB或4GB）</p>
+</li>
+<li><p>0：向上拓展，有效地址为左边红色（<strong>Windows使用</strong>，红色为64KB或4GB）</p>
+<p><img data-src="https://s2.loli.net/2021/12/15/WGDYjrnBzgNEv74.png" alt="14.png"></p>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+
+<p><img data-src="https://s2.loli.net/2021/12/15/XDhxQR5jtH7GL4s.png" alt="13.png"></p>
+<p><img data-src="https://s2.loli.net/2021/12/15/iPe4ZLHvujJ1pEt.png" alt="15.png"></p>
+<h3 id="6-3-练习"><a href="#6-3-练习" class="headerlink" title="6.3 练习"></a>6.3 练习</h3><p>1、判断哪些是系统段描述符？哪些是代码或者数据段描述符？</p>
+<p>2、判断哪些是代码段描述符？哪些是数据段描述符？</p>
+<p>3、查分几个数据段：EWA</p>
+<p>4、查分几个代码段：CRA</p>
+<p>5、查分几个系统段描述符，分析属性</p>
+<p>先看P位，再看S位。</p>
+<p><img data-src="https://s2.loli.net/2021/12/15/G8WLm1bTtCSkVpX.png" alt="16.png"></p>
+<h2 id="7-段描述符的D-B位"><a href="#7-段描述符的D-B位" class="headerlink" title="7 段描述符的D/B位"></a>7 段描述符的D/B位</h2><ol>
+<li><p>情况一：<strong>对CS段的影响</strong>（加载：MOV CS, AX）  </p>
+<p>D = 1  采用32位寻址方式  </p>
+<p>D = 0  采用16位寻址方式 </p>
+</li>
+<li><p>情况二：<strong>对SS段的影响</strong>（加载：MOV SS, AX）  </p>
+<p>D = 1 隐式堆栈访问指令（如：PUSH POP CALL等会修改ESP） 使用32位堆栈指针寄存器ESP          </p>
+<p>D = 0 隐式堆栈访问指令（如：PUSH POP CALL等会修改SP） 使用16位堆栈指针寄存器SP  </p>
+<p>指令前缀67：改变默认寻址方式，但不是改D/B位，若默认是32寻址，则改为16位寻址。若默认是16寻址，则改为32位寻址。</p>
+</li>
+<li><p>情况三：<strong>对数据段DS、ES的影响</strong>（加载：MOV DS, AX）</p>
+<p><strong>D/B位对数据段来说决定地址空间大小</strong>。</p>
+<p>D = 1 段上限为4GB     0xFFFFFFFF  </p>
+<p>D = 0 段上限为64KB    0xFFFF </p>
+<p><img data-src="https://s2.loli.net/2021/12/15/VHM7wEbe92Ooys1.png" alt="17.png"></p>
+</li>
+</ol>
+<h2 id="8-段权限检查"><a href="#8-段权限检查" class="headerlink" title="8 段权限检查"></a>8 段权限检查</h2><ol>
+<li><strong>根据段选择子找到段描述符之后，将段描述符加载到段寄存器之前会进行权限检查</strong>（是否将该段描述符加载到段寄存器中）。</li>
+<li>Windows没有使用R1、R2</li>
+<li>CS、SS段寄存器的低2位存储的就是CPL（RPL是段选择子的低2位，CPL特指CS、SS低2位），当前程序的特权级别。Windows中只能为0x00或0x11</li>
+</ol>
+<p>G位：决定limit的大小</p>
+<ul>
+<li>1：limit = <strong>0xFFFFFFFF</strong></li>
+<li>0：limit =<strong>0xFFFFF</strong></li>
+</ul>
+<p>D/B位：地址空间的大小</p>
+<ul>
+<li>1：4GB（<strong>FFFFFFFF</strong>）</li>
+<li>0：64K（<strong>FFFF</strong>）</li>
+</ul>
+<div class="note danger"><p>RPL：段选择子的权限<br>DPL：段的权限<br>CPL：CPU权限</p>
+</div>
+
+<p>数据段（DS）的权限检查和CS、SS段不同。</p>
+<h3 id="8-1-段权限检查"><a href="#8-1-段权限检查" class="headerlink" title="8.1 段权限检查"></a>8.1 段权限检查</h3><p>段权限检查步骤：</p>
+<p>1、段选择子拆分</p>
+<p>2、查表得到段描述符</p>
+<p>3、权限检查</p>
+<p>4、加载段描述符到段寄存器</p>
+<p>5、代码执行EIP</p>
+<div class="note primary"><p><strong>数据段权限检查</strong>（满足条件，才能成功访问数据段。）：</p>
+<p>CPL &lt;= DPL 并且 RPL &lt;= DPL (数值上的比较)</p>
+<p><strong>代码段权限检查：</strong></p>
+<ul>
+<li>非一致代码段：CPL = DPL 并且 RPL &lt;= DPL</li>
+<li>一致代码段：CPL &gt;= DPL</li>
+</ul>
+</div>
+
+<h3 id="8-2-练习"><a href="#8-2-练习" class="headerlink" title="8.2 练习"></a>8.2 练习</h3><p>&lt;1&gt; 在3环能加载的数据段有哪些？<br>3环CPL=3，只能加载DPL=3的数据段。</p>
+<p>&lt;2&gt; 在0环能加载的数据段有哪些？<br>0环CPL=0，满足RPL&lt;=DPL的数据段都可以加载。</p>
+<p>&lt;3&gt; 详细描述这下面代码的执行过程：<br>mov ax,0x23<br>mov ds,ax<br>段选择子是0x0023，RPL=11b=3，属于最低权限，只能访问DPL=3的数据段。而CPL则无影响，不管是0环还是3环，都满足CPL&lt;=RPL，只要RPL满足，CPL也一定满足。</p>
+<p>当执行 mov ds,ax 时，CPU先解析段选择子0023，然后去GDT表找段描述符，检查段描述符P位是否有效，然后检查S位，确认是数据段或代码段，然后检查TYPE域确认是数据段，然后看DPL是否等于3.只要上述条件都满足，则mov指令执行成功，只要有一条不满足，mov失败。</p>
+<!-- flag of hidden posts -->
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/" title="Windows XP 段保护">https://directoree.github.io/post/WinXP-ProtectionMode-Segment/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+          </div>
+
+        
+
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">662k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">10:01</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXP-ProtectionMode-Segment/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

