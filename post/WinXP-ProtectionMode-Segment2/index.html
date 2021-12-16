@@ -22,21 +22,29 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:type" content="article">
-<meta property="og:title" content="读书笔记">
-<meta property="og:url" content="https://directoree.github.io/post/column-1/index.html">
+<meta property="og:title" content="Windows XP 段保护（二）">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-ProtectionMode-Segment2/index.html">
 <meta property="og:site_name" content="Catecat">
-<meta property="og:description" content="漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2030-10-30T05:20:50.000Z">
-<meta property="article:modified_time" content="2021-12-16T12:01:55.000Z">
+<meta property="og:image" content="https://s2.loli.net/2021/12/16/2s4piJ5AOWluU1n.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/16/lqxMnHeQzXGyvaV.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/16/WX5ozUf4IZx2cr9.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/16/3YnZtWK2AVzTSi8.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/16/BS6VDfrvMzhk1RH.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/16/WepnhoVQUHCtxDl.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/16/TFt1aQp7xCZXIqe.png">
+<meta property="article:published_time" content="2021-12-16T11:57:16.000Z">
+<meta property="article:modified_time" content="2021-12-16T13:40:00.994Z">
 <meta property="article:author" content="Catecat">
-<meta property="article:tag" content="读书笔记">
+<meta property="article:tag" content="WinXP内核">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2021/12/16/2s4piJ5AOWluU1n.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/column-1/">
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment2/">
 
 
 <script class="page-configurations">
@@ -49,7 +57,7 @@
   };
 </script>
 
-  <title>读书笔记 | Catecat</title>
+  <title>Windows XP 段保护（二） | Catecat</title><meta name="robots" content="noindex">
   
 
 
@@ -230,7 +238,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Web-%E6%96%B9%E5%90%91"><span class="nav-text">1 Web 方向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%BA%8C%E8%BF%9B%E5%88%B6%E6%96%B9%E5%90%91"><span class="nav-text">2 二进制方向</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B9%A6%E7%9B%AE"><span class="nav-text">3 书目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Windows-XP-%E5%86%85%E6%A0%B8%E8%A7%86%E9%A2%91"><span class="nav-text">4 Windows XP 内核视频</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%AE%B5%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-text">1 段权限检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%AE%B5%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-text">1.1 段权限检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%BB%83%E4%B9%A0"><span class="nav-text">1.2 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%96%AD%E9%97%B4%E8%B7%B3%E8%BD%ACJMP-FAR"><span class="nav-text">2 断间跳转JMP FAR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%BB%83%E4%B9%A0%EF%BC%9A%E9%9D%9E%E4%B8%80%E8%87%B4%E6%80%A7%E4%BB%A3%E7%A0%81%E6%AE%B5%E8%B7%B3%E8%BD%AC"><span class="nav-text">2.1 练习：非一致性代码段跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%BB%83%E4%B9%A0%EF%BC%9A%E4%B8%80%E8%87%B4%E6%80%A7%E4%BB%A3%E7%A0%81%E6%AE%B5%E8%B7%B3%E8%BD%AC"><span class="nav-text">2.2 练习：一致性代码段跳转</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BB%A3%E7%A0%81%E8%B7%A8%E6%AE%B5%E8%B7%B3%E8%BD%ACCALL-FAR%EF%BC%88%E6%97%A0%E5%8F%82%E6%95%B0%EF%BC%89"><span class="nav-text">3 代码跨段跳转CALL FAR（无参数）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BB%A3%E7%A0%81%E8%B7%A8%E6%AE%B5%E8%B7%B3%E8%BD%ACCALL-FAR%EF%BC%88%E6%9C%89%E5%8F%82%E6%95%B0%EF%BC%89"><span class="nav-text">4 代码跨段跳转CALL FAR（有参数）</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -323,7 +331,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/column-1/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -336,7 +344,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          读书笔记
+          Windows XP 段保护（二）
         </h1>
 
         <div class="post-meta-container">
@@ -346,16 +354,10 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2030-10-30 13:20:50" itemprop="dateCreated datePublished" datetime="2030-10-30T13:20:50+08:00">2030-10-30</time>
+      <time title="创建时间：2021-12-16 19:57:16 / 修改时间：21:40:00" itemprop="dateCreated datePublished" datetime="2021-12-16T19:57:16+08:00">2021-12-16</time>
     </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-16 20:01:55" itemprop="dateModified" datetime="2021-12-16T20:01:55+08:00">2021-12-16</time>
-      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -364,10 +366,18 @@
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
           <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
         </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">保护模式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
     </span>
 
   
-    <span id="/post/column-1/" class="post-meta-item leancloud_visitors" data-flag-title="读书笔记" title="阅读次数">
+    <span id="/post/WinXP-ProtectionMode-Segment2/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 段保护（二）" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -382,8 +392,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/column-1/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/column-1/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/WinXP-ProtectionMode-Segment2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-ProtectionMode-Segment2/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -395,14 +405,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>885</span>
+      <span>3.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -413,107 +423,161 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>漏洞利用技术才是实施有效攻击的最核心技术，才是突破安全边界、实施深度入侵的关键所在。ʕ •ᴥ•ʔ (๑˃̵ᴗ˂̵) ପ( ˘ᵕ˘ ) ੭ </p>
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
 <a id="more"></a>
 
-<h2 id="1-Web-方向"><a href="#1-Web-方向" class="headerlink" title="1 Web 方向"></a>1 Web 方向</h2><ol>
-<li><a href="https://directoree.github.io/post/learning-testing-with-python">【Python 测试之道】读书笔记</a></li>
-<li><a href="https://directoree.github.io/post/web-basic-safety-guide-uploadfile/">【Web 安全防护指南基础篇-文件上传】读书笔记</a></li>
-<li><a href="https://directoree.github.io/post/web-basic-safety-guide-sqlinject/">【Web 安全防护指南基础篇-SQL注入】读书笔记</a></li>
-<li><a href="https://directoree.github.io/post/web-basic-safety-guide-xss/">【Web 安全防护指南基础篇-XSS注入】读书笔记</a></li>
-<li><a href="https://directoree.github.io/post/sqlinject/">【数据库编译原理和注入】</a></li>
+<h2 id="1-段权限检查"><a href="#1-段权限检查" class="headerlink" title="1 段权限检查"></a>1 段权限检查</h2><ol>
+<li><strong>根据段选择子找到段描述符之后，将段描述符加载到段寄存器之前会进行权限检查</strong>（是否将该段描述符加载到段寄存器中）。</li>
+<li>Windows没有使用R1、R2</li>
+<li>CS、SS段寄存器的低2位存储的就是CPL（RPL是段选择子的低2位，CPL特指CS、SS低2位），当前程序的特权级别。Windows中只能为0x00或0x11</li>
 </ol>
-<h2 id="2-二进制方向"><a href="#2-二进制方向" class="headerlink" title="2 二进制方向"></a>2 二进制方向</h2><ol>
-<li><a href="https://directoree.github.io/post/cssapp_notes-1-2-3/">《深入理解计算机系统 CSS:APP》 读书笔记</a></li>
-<li><a href="https://directoree.github.io/post/0day2-1-2/">《0day安全：软件漏洞分析技术（第二版）》读书笔记（1-2）</a></li>
-<li><a href="https://directoree.github.io/post/0day2-3-4/">《0day安全：软件漏洞分析技术（第二版）》读书笔记（3-4）</a></li>
-<li><a href="https://directoree.github.io/post/encryption-and-cracking-11-PE/">《加密与解密（第四版）PE文件格式》</a></li>
-<li><a href="https://directoree.github.io/post/Windows-Kernel-Base/">《Windows内核基础》</a><ul>
-<li>《深入解析Windows操作系统（第六版）》</li>
-<li>《Windows内核原理与实现》</li>
+<p>G位：决定limit的大小</p>
+<ul>
+<li>1：limit = <strong>0xFFFFFFFF</strong></li>
+<li>0：limit =<strong>0xFFFFF</strong></li>
 </ul>
-</li>
-<li><a href="https://directoree.github.io/post/encryption-and-cracking-1-basic/">《加密与解密》_1_基础知识》</a></li>
-<li><a href="https://directoree.github.io/post/encryption-and-cracking-2-ollydbg/">《《加密与解密》_2_动态调试技术_OllyDbg》</a>     </li>
-</ol>
-<h2 id="3-书目"><a href="#3-书目" class="headerlink" title="3 书目"></a>3 书目</h2><table>
-<thead>
-<tr>
-<th align="center">分类</th>
-<th align="left">书名</th>
-<th>列表</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">二进制逆向</td>
-<td align="left">《深入理解计算机系统》（CSS:APP）</td>
-<td>1. <a href="https://directoree.github.io/post/cssapp_notes-1-2-3/">《深入理解计算机系统 CSS:APP》 读书笔记</a></td>
-</tr>
-<tr>
-<td align="center">二进制逆向</td>
-<td align="left">《0day安全：软件漏洞分析技术（第二版）》</td>
-<td>1. <a href="https://directoree.github.io/post/0day2-1-2/">《0day安全：软件漏洞分析技术（第二版）》读书笔记（1-2）</a><br>2. <a href="https://directoree.github.io/post/0day2-3-4/">《0day安全：软件漏洞分析技术（第二版）》读书笔记（3-4）</a></td>
-</tr>
-<tr>
-<td align="center">二进制逆向</td>
-<td align="left">《加密与解密（第四版）》</td>
-<td>1. <a href="https://directoree.github.io/post/encryption-and-cracking-11-PE/">《加密与解密（第四版）11_PE文件格式》</a><br/>2. <a href="https://directoree.github.io/post/encryption-and-cracking-1-basic/">《加密与解密》_1_基础知识》</a> <br/>3. <a href="https://directoree.github.io/post/encryption-and-cracking-2-ollydbg/">《加密与解密》_2_动态调试技术_OllyDbg》</a></td>
-</tr>
-<tr>
-<td align="center">二进制逆向</td>
-<td align="left">《深入解析Windows操作系统（第六版）》<br />《Windows内核原理与实现》</td>
-<td>1. <a href="https://directoree.github.io/post/Windows-Kernel-Base/">《Windows内核基础》</a></td>
-</tr>
-</tbody></table>
-<table>
-<thead>
-<tr>
-<th align="center">分类</th>
-<th>书名</th>
-<th>列表</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">Web</td>
-<td>《Python 测试之道》</td>
-<td>1. <a href="https://directoree.github.io/post/learning-testing-with-python">【Python 测试之道】读书笔记</a></td>
-</tr>
-<tr>
-<td align="center">Web</td>
-<td>《Web 安全防护指南基础篇》</td>
-<td>1. <a href="https://directoree.github.io/post/web-basic-safety-guide-uploadfile/">【Web 安全防护指南基础篇-文件上传】读书笔记</a><br />2. <a href="https://directoree.github.io/post/web-basic-safety-guide-sqlinject/">【Web 安全防护指南基础篇-SQL注入】读书笔记</a><br />3. <a href="https://directoree.github.io/post/web-basic-safety-guide-xss/">【Web 安全防护指南基础篇-XSS注入】读书笔记</a></td>
-</tr>
-<tr>
-<td align="center">Web</td>
-<td>数据库编译原理和注入</td>
-<td>1. <a href="https://directoree.github.io/post/sqlinject/">【数据库编译原理和注入】</a></td>
-</tr>
-</tbody></table>
-<h2 id="4-Windows-XP-内核视频"><a href="#4-Windows-XP-内核视频" class="headerlink" title="4 Windows XP 内核视频"></a>4 Windows XP 内核视频</h2><table>
-<thead>
-<tr>
-<th align="center">章节</th>
-<th>分类</th>
-<th>列表</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">1.保护模式</td>
-<td>1. 段保护</td>
-<td>1. <a target="_blank" rel="noopener" href="https://directoree.top/post/WinXP-ProtectionMode-Segment/">Windows XP 段保护（一）</a><br />2. <a target="_blank" rel="noopener" href="https://directoree.top/post/WinXP-ProtectionMode-Segment2/">Windows XP 段保护（二）</a></td>
-</tr>
-<tr>
-<td align="center"></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td align="center"></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
+<p>D/B位：地址空间的大小</p>
+<ul>
+<li>1：4GB（<strong>FFFFFFFF</strong>）</li>
+<li>0：64K（<strong>FFFF</strong>）</li>
+</ul>
+<div class="note danger"><p>RPL：段选择子的权限（我以什么样的特权去访问你）<br>DPL：段的权限（你要访问我，你应该具有什么特权）<br>CPL：CPU当前的权限级别（CPL特指CS、SS低2位）</p>
+</div>
 
+<p>数据段（DS）的权限检查和CS、SS段不同。</p>
+<h3 id="1-1-段权限检查"><a href="#1-1-段权限检查" class="headerlink" title="1.1 段权限检查"></a>1.1 段权限检查</h3><p>段权限检查步骤：</p>
+<p>1、段选择子拆分</p>
+<p>2、查表得到段描述符</p>
+<p>3、权限检查</p>
+<p>4、加载段描述符到段寄存器</p>
+<p>5、代码执行EIP</p>
+<div class="note primary"><p><strong>数据段权限检查</strong>（满足条件，才能成功访问数据段。）：</p>
+<p>CPL &lt;= DPL 并且 RPL &lt;= DPL (数值上的比较)</p>
+<p><strong>代码段权限检查：</strong></p>
+<ul>
+<li>非一致代码段：CPL = DPL 并且 RPL &lt;= DPL</li>
+<li>一致代码段：CPL &gt;= DPL</li>
+</ul>
+</div>
+
+<h3 id="1-2-练习"><a href="#1-2-练习" class="headerlink" title="1.2 练习"></a>1.2 练习</h3><p>&lt;1&gt; 在3环能加载的数据段有哪些？<br>3环CPL=3，只能加载DPL=3的数据段。</p>
+<p>&lt;2&gt; 在0环能加载的数据段有哪些？<br>0环CPL=0，满足RPL&lt;=DPL的数据段都可以加载。</p>
+<p>&lt;3&gt; 详细描述这下面代码的执行过程：<br>mov ax,0x23<br>mov ds,ax<br>段选择子是0x0023，RPL=11b=3，属于最低权限，只能访问DPL=3的数据段。而CPL则无影响，不管是0环还是3环，都满足CPL&lt;=RPL，只要RPL满足，CPL也一定满足。</p>
+<p>当执行 mov ds,ax 时，CPU先解析段选择子0023，然后去GDT表找段描述符，检查段描述符P位是否有效，然后检查S位，确认是数据段或代码段，然后检查TYPE域确认是数据段，然后看DPL是否等于3.只要上述条件都满足，则mov指令执行成功，只要有一条不满足，mov失败。</p>
+<h2 id="2-断间跳转JMP-FAR"><a href="#2-断间跳转JMP-FAR" class="headerlink" title="2 断间跳转JMP FAR"></a>2 断间跳转JMP FAR</h2><p><strong>3环执行JMP FAR并不能提权（CPL不改变）。</strong></p>
+<p>可参看：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Kwansy/article/details/108813337">《（8）JMP FAR段间跳转》</a>、<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/258060#h2-0">《深耕保护模式（二）》</a></p>
+<p>要点回顾：</p>
+<p>段寄存器：ES、CS、SS、DS、FS、GS、LDTR、TR<br>段寄存器读写：除CS外，其他的段寄存器都可以通过MOV,LES,LSS,LDS,LFS,LGS,LTR（仅在0环之行）指令进行修改。</p>
+<p><strong>CS为什么不可以直接修改呢？</strong></p>
+<p>CS为代码段，CS的改变意味着EIP的改变，改变CS的同时必须修改EIP和SS，SS改变就必须修改堆栈，所以我们无法使用上面的指令来进行修改。</p>
+<p>段间跳转，有两种情况，即要跳转的段是一致代码段还是非一致代码段（参见代码段type域）。</p>
+<div class="note warning"><p><strong>同时修改CS与EIP的指令：</strong></p>
+<p>JMP FAR / CALL FAR / RETF / INT /IRETED</p>
+<p><strong>只改变EIP的指令：</strong></p>
+<p>JMP / CALL / JCC / RET</p>
+</div>
+
+<div class="note danger"><p><strong>一致代码段</strong>：也就是共享的段，要求：CPL &gt;= DPL。</p>
+<ul>
+<li><strong>特权级高的程序不允许访问特权级低的数据</strong>：核心态不允许访问用户态的数据</li>
+<li><strong>特权级低的程序可以访问到特权级高的数据</strong>，但特权级不会改变：用户态还是用户态  </li>
+</ul>
+<p><strong>非一致代码段：</strong>普通代码段（Windows使用），要求：CPL = DPL 并且 RPL &lt;= DPL。</p>
+<ul>
+<li><strong>只允许同级访问</strong> </li>
+<li>绝对禁止不同级别的访问：核心态不是用户态，用户态也不是核心态</li>
+</ul>
+</div>
+
+<p><strong>代码间的跳转(段间跳转 非调用门之类的) 执行流程</strong></p>
+<p>JMP 0x20:0x004183D7 CPU如何执行这行代码？</p>
+<p><strong>（1）段选择子拆分</strong></p>
+<p>0x20 对应二进制形式 0000 0000 0010 0000</p>
+<ul>
+<li>RPL = 00</li>
+<li>TI = 0</li>
+<li>Index = 4</li>
+</ul>
+<p><strong>（2） 查表得到段描述符</strong></p>
+<p>TI = 0 所以查GDT表</p>
+<p>Index = 4 找到对应的段描述符，并不是所有的段描述符都可以跳转。</p>
+<p>四种情况可以跳转：<mark class="label warning">代码段、调用门、TSS任务段、任务门</mark>。</p>
+<p><strong>（3）权限检查</strong></p>
+<p>如果是非一致代码段，要求：CPL = DPL 并且 RPL &lt;= DPL。</p>
+<p>如果是一致代码段，要求：CPL &gt;= DPL。</p>
+<p>简要说明什么是一致代码段什么是非一致代码段。</p>
+<blockquote>
+<p>一致代码段又称共享代码段。假设操作系统有一段代码是提供了某些通用功能，这段代码并不会对内核产生影响，并希望这些功能能够被应用层(三环程序)直接使用，即可让一直代码段去修饰这块代码。这也是为什么一致代码段要求：CPL &gt;= DPL(当前权限比描述权限低)就可以了。这段代码就是给低权限的应用使用的。</p>
+<p>非一致代码段相反，严格控制权限。</p>
+</blockquote>
+<p><strong>（4）加载段描述符</strong></p>
+<p>通过上面的权限检查后，CPU会将段描述符加载到CS段寄存器中.</p>
+<p><strong>（5）代码执行</strong></p>
+<p>CPU将 CS.Base + Offset 的值写入EIP 然后执行CS:EIP处的代码，段间跳转结束.</p>
+<p>注意：直接对代码段进行JMP 或者 CALL的操作，无论目标是一致代码段还是非一致代码段，CPL都不会发生改变.如果要提升CPL的权限，只能通过<strong>调用门</strong>。</p>
+<h3 id="2-1-练习：非一致性代码段跳转"><a href="#2-1-练习：非一致性代码段跳转" class="headerlink" title="2.1 练习：非一致性代码段跳转"></a>2.1 练习：非一致性代码段跳转</h3><p>条件：非一致性代码段跳转，只允许同级访问：CPL=3的CPU只允许访问DPL=3的代码</p>
+<p>要求分析：</p>
+<p>（1）<strong>CPL=DPL=0x11，RPL&lt;=DPL</strong>，则RPL可为0x00或0x11，TI=0，则选择子：0x–000/0x–011；</p>
+<p>（2）因为要修改CS，所以段描述符的Type域应该是Code —- Type最高位为1，则Type为：0x1xxx；</p>
+<p>（3）非一致性代码—-Type次高位为0，则Type为：0x10xx —- 大于0x8；</p>
+<p>（4）P、DPL、S（因为要修改CS，S=1）位分别为：0x1111 —- F。</p>
+<p><img data-src="https://s2.loli.net/2021/12/16/2s4piJ5AOWluU1n.png" alt="18.png"></p>
+<p>段选择子分别为以下两种情况：</p>
+<p><strong>本练习以段选择子中RPL = 0x11为例</strong></p>
+<p>该描述符即指向一个非代码段，我们需要构造一个段选择子来找到该描述符，然后将该段描述符加载到CS寄存器，最后执行跳转。</p>
+<p>步骤一：</p>
+<p>根据段描述符构造段选择子：</p>
+<p>（1）该段描述符为第四个，Index=3</p>
+<p>（2）TI=0（查GDT）</p>
+<p>（3）RPL=0x11，如果此例RPL=0x00，则修改CS时会发生错误。因为非一致性代码跳转不改变CPU权限CPL。</p>
+<p>（4）段选择子=0x0011 0 11=0x1B</p>
+<p>（5）Base=0，G=1则Limit=0xFFFFFFFF，则Offset可随意构造</p>
+<p>（6）JMP FAR格式：CS:EIP=1B:0x004xxxxx，跳转地址为：CS.Base+Offset</p>
+<p>（7）<strong>如果执行成功，应该会修改CS和EIP</strong></p>
+<p>步骤二：</p>
+<p>打开OD观察此时的CS=0x1B、EIP=0x00441EC如下图</p>
+<p><img data-src="https://s2.loli.net/2021/12/16/lqxMnHeQzXGyvaV.png" alt="19.png"></p>
+<p>步骤三：</p>
+<p>为了能看到CS变化，则当前的段描述符的位置需要修改，可以将该段描述符复制到0x8003F048处，该处目前为0（P=0），如果复制到一个原先P=1的段描述符可能会卡死或者蓝屏。</p>
+<p><img data-src="https://s2.loli.net/2021/12/16/WX5ozUf4IZx2cr9.png" alt="20.png"></p>
+<p>c此时段选择子Index=9 —- 0x1001 0 11=0x4B，在XP中，修改此时的EIP地址处：JMP FAR 004B:0x0044420C，单步F8看CS、EIP变化。</p>
+<p><img data-src="https://s2.loli.net/2021/12/16/3YnZtWK2AVzTSi8.png" alt="21.png"></p>
+<div class="note default"><p><strong>结论：</strong></p>
+<ol>
+<li><p>非一致性代码段JMP FAR跳转时，满足段权限检查：CPL=DPL=0x11，RPL&lt;=DPL即能成功。</p>
+</li>
+<li><p><strong>如果此例RPL=0x00，则修改CS时会发生错误。因为JMP FAR不改变CPU权限CPL。</strong></p>
+</li>
+<li><p>所以3环的非一致性代码跳转成功条件：<strong>CPL=DPL=0x11，RPL&lt;=DPL，RPL=0x11</strong>。</p>
+</li>
+</ol>
+</div>
+
+<h3 id="2-2-练习：一致性代码段跳转"><a href="#2-2-练习：一致性代码段跳转" class="headerlink" title="2.2 练习：一致性代码段跳转"></a>2.2 练习：一致性代码段跳转</h3><p>条件：<strong>只允许低权限的程序访问高权限的代码：CPL=3的CPU只允许访问DPL=0的代码</strong>。</p>
+<p>要求：</p>
+<p>（1）目前CPL=3，则P=1，DPL=00，S=1（因为要修改CS。DATA/CODE），1001=9</p>
+<p>（2）Type：Decimal=1（代码段），C=1（一致性代码），11xx&gt;=C，由于此时的的CPL=0x11，因为不能修改特权级别，所以RPL必须RPL=0x11</p>
+<p>（3）构造段选择子0x004B</p>
+<p>直接构造一个：00cf<strong>9F</strong>00`0000ffff</p>
+<p><img data-src="https://s2.loli.net/2021/12/16/BS6VDfrvMzhk1RH.png" alt="22.png"></p>
+<p>重启一下OD，让CS复位如下图。</p>
+<p><img data-src="https://s2.loli.net/2021/12/16/WepnhoVQUHCtxDl.png" alt="23.png"></p>
+<p>OD中EIP指向的地址构造：JMP FAR 004B:0x0044420D，F8单步看CS、EIP变化。</p>
+<p><img data-src="https://s2.loli.net/2021/12/16/TFt1aQp7xCZXIqe.png" alt="24.png"></p>
+<div class="note default"><p><strong>结论：</strong></p>
+<ol>
+<li><p>一致性代码段JMP FAR跳转时，满足段权限检查：CPL&gt;DPL即能成功。</p>
+</li>
+<li><p><strong>如果此例RPL=0x00，则修改CS时会发生错误。因为JMP FAR不改变CPU权限CPL。</strong></p>
+</li>
+<li><p>所以3环的一致性代码跳转成功条件：<strong>CPL&gt;DPL，RPL=0x11</strong>。</p>
+</li>
+</ol>
+</div>
+
+<h2 id="3-代码跨段跳转CALL-FAR（无参数）"><a href="#3-代码跨段跳转CALL-FAR（无参数）" class="headerlink" title="3 代码跨段跳转CALL FAR（无参数）"></a>3 代码跨段跳转CALL FAR（无参数）</h2><h2 id="4-代码跨段跳转CALL-FAR（有参数）"><a href="#4-代码跨段跳转CALL-FAR（有参数）" class="headerlink" title="4 代码跨段跳转CALL FAR（有参数）"></a>4 代码跨段跳转CALL FAR（有参数）</h2><p><a target="_blank" rel="noopener" href="https://directoree.top/post/WinXP-ProtectionMode-Segment/">Windows XP 段保护（一）</a></p>
+<p><a target="_blank" rel="noopener" href="https://directoree.top/post/WinXP-ProtectionMode-Segment2/">Windows XP 段保护（二）</a></p>
+<!-- flag of hidden posts -->
     </div>
 
     
@@ -548,7 +612,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/column-1/" title="读书笔记">https://directoree.github.io/post/column-1/</a>
+      <a href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment2/" title="Windows XP 段保护（二）">https://directoree.github.io/post/WinXP-ProtectionMode-Segment2/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -557,20 +621,11 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" rel="tag"># 读书笔记</a>
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
           </div>
 
         
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/post/Parallels-Windbg-Win7-WinXP/" rel="prev" title="Parallels+Windbg+Win7+WinXP搭建双机调试">
-                  <i class="fa fa-chevron-left"></i> Parallels+Windbg+Win7+WinXP搭建双机调试
-                </a>
-            </div>
-            <div class="post-nav-item">
-            </div>
-          </div>
     </footer>
   </article>
 </div>
@@ -787,7 +842,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/column-1/",
+      path: "/post/WinXP-ProtectionMode-Segment2/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);

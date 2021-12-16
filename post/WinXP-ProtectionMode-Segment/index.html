@@ -24,7 +24,7 @@
 
   <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows XP 段保护">
+<meta property="og:title" content="Windows XP 段保护（一）">
 <meta property="og:url" content="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
@@ -45,7 +45,7 @@
 <meta property="og:image" content="https://s2.loli.net/2021/12/15/G8WLm1bTtCSkVpX.png">
 <meta property="og:image" content="https://s2.loli.net/2021/12/15/VHM7wEbe92Ooys1.png">
 <meta property="article:published_time" content="2021-12-14T11:38:56.000Z">
-<meta property="article:modified_time" content="2021-12-15T14:01:05.560Z">
+<meta property="article:modified_time" content="2021-12-16T13:40:18.268Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta name="twitter:card" content="summary">
@@ -65,7 +65,7 @@
   };
 </script>
 
-  <title>Windows XP 段保护 | Catecat</title><meta name="robots" content="noindex">
+  <title>Windows XP 段保护（一） | Catecat</title><meta name="robots" content="noindex">
   
 
 
@@ -246,7 +246,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F"><span class="nav-text">1 什么是保护模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2 段寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">2.1 段寄存器的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">2.2 段寄存器的属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">3 段描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%B1%9E%E6%80%A7%E6%89%80%E5%9C%A8%E4%BD%8D%E7%BD%AE"><span class="nav-text">3.1 段描述符属性所在位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E6%9F%A5%E6%89%BE%E7%BB%83%E4%B9%A0"><span class="nav-text">3.2 段描述查找练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="nav-text">4 段选择子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84P%EF%BC%8CG%E4%BD%8D"><span class="nav-text">5 段描述符的P，G位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84S%E3%80%81Type%E5%9F%9F"><span class="nav-text">6 段描述符的S、Type域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-S%E4%BD%8D"><span class="nav-text">6.1 S位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Type%E5%9F%9F"><span class="nav-text">6.2 Type域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E7%BB%83%E4%B9%A0"><span class="nav-text">6.3 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84D-B%E4%BD%8D"><span class="nav-text">7 段描述符的D&#x2F;B位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E6%AE%B5%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-text">8 段权限检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E6%AE%B5%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-text">8.1 段权限检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E7%BB%83%E4%B9%A0"><span class="nav-text">8.2 练习</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BB%80%E4%B9%88%E6%98%AF%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F"><span class="nav-text">1 什么是保护模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2 段寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E7%BB%93%E6%9E%84"><span class="nav-text">2.1 段寄存器的结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E5%B1%9E%E6%80%A7"><span class="nav-text">2.2 段寄存器的属性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">3 段描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E5%B1%9E%E6%80%A7%E6%89%80%E5%9C%A8%E4%BD%8D%E7%BD%AE"><span class="nav-text">3.1 段描述符属性所在位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E6%9F%A5%E6%89%BE%E7%BB%83%E4%B9%A0"><span class="nav-text">3.2 段描述查找练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="nav-text">4 段选择子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84P%EF%BC%8CG%E4%BD%8D"><span class="nav-text">5 段描述符的P，G位</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84S%E3%80%81Type%E5%9F%9F"><span class="nav-text">6 段描述符的S、Type域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-S%E4%BD%8D"><span class="nav-text">6.1 S位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-Type%E5%9F%9F"><span class="nav-text">6.2 Type域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E7%BB%83%E4%B9%A0"><span class="nav-text">6.3 练习</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E7%9A%84D-B%E4%BD%8D"><span class="nav-text">7 段描述符的D&#x2F;B位</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -352,7 +352,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Windows XP 段保护
+          Windows XP 段保护（一）
         </h1>
 
         <div class="post-meta-container">
@@ -370,7 +370,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-12-15 22:01:05" itemprop="dateModified" datetime="2021-12-15T22:01:05+08:00">2021-12-15</time>
+        <time title="修改时间：2021-12-16 21:40:18" itemprop="dateModified" datetime="2021-12-16T21:40:18+08:00">2021-12-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -391,7 +391,7 @@
     </span>
 
   
-    <span id="/post/WinXP-ProtectionMode-Segment/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 段保护" title="阅读次数">
+    <span id="/post/WinXP-ProtectionMode-Segment/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 段保护（一）" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -419,14 +419,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4k</span>
+      <span>3.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -533,7 +533,7 @@
 </ul>
 <p>通过指令将段描述符加载至段寄存器中，<strong>先检查P位，如果为0，那么该段描述符无效，其他检查都不做了</strong>。</p>
 <p><strong>G位</strong></p>
-<p>G位决定Limit的大小范围。</p>
+<p>G位决定Limit的大小范围。D/B位对数据段来说决定地址空间大小。</p>
 <ul>
 <li>当G=0时，Limit的范围是0x00000000-0x<strong>000</strong>FFFFF，其中，段描述符的20位在低位，<mark class="label warning">高位补0</mark>。</li>
 <li>当G=1时，Limit的范围是0x00000FFF-0xFFFFF<strong>FFF</strong>，其中，段描述符的20位在高位，<mark class="label warning">低位补F</mark>。</li>
@@ -627,7 +627,8 @@
 <p>5、查分几个系统段描述符，分析属性</p>
 <p>先看P位，再看S位。</p>
 <p><img data-src="https://s2.loli.net/2021/12/15/G8WLm1bTtCSkVpX.png" alt="16.png"></p>
-<h2 id="7-段描述符的D-B位"><a href="#7-段描述符的D-B位" class="headerlink" title="7 段描述符的D/B位"></a>7 段描述符的D/B位</h2><ol>
+<h2 id="7-段描述符的D-B位"><a href="#7-段描述符的D-B位" class="headerlink" title="7 段描述符的D/B位"></a>7 段描述符的D/B位</h2><p><strong>D/B位对数据段来说决定地址空间大小</strong>。</p>
+<ol>
 <li><p>情况一：<strong>对CS段的影响</strong>（加载：MOV CS, AX）  </p>
 <p>D = 1  采用32位寻址方式  </p>
 <p>D = 0  采用16位寻址方式 </p>
@@ -638,50 +639,13 @@
 <p>指令前缀67：改变默认寻址方式，但不是改D/B位，若默认是32寻址，则改为16位寻址。若默认是16寻址，则改为32位寻址。</p>
 </li>
 <li><p>情况三：<strong>对数据段DS、ES的影响</strong>（加载：MOV DS, AX）</p>
-<p><strong>D/B位对数据段来说决定地址空间大小</strong>。</p>
 <p>D = 1 段上限为4GB     0xFFFFFFFF  </p>
 <p>D = 0 段上限为64KB    0xFFFF </p>
 <p><img data-src="https://s2.loli.net/2021/12/15/VHM7wEbe92Ooys1.png" alt="17.png"></p>
 </li>
 </ol>
-<h2 id="8-段权限检查"><a href="#8-段权限检查" class="headerlink" title="8 段权限检查"></a>8 段权限检查</h2><ol>
-<li><strong>根据段选择子找到段描述符之后，将段描述符加载到段寄存器之前会进行权限检查</strong>（是否将该段描述符加载到段寄存器中）。</li>
-<li>Windows没有使用R1、R2</li>
-<li>CS、SS段寄存器的低2位存储的就是CPL（RPL是段选择子的低2位，CPL特指CS、SS低2位），当前程序的特权级别。Windows中只能为0x00或0x11</li>
-</ol>
-<p>G位：决定limit的大小</p>
-<ul>
-<li>1：limit = <strong>0xFFFFFFFF</strong></li>
-<li>0：limit =<strong>0xFFFFF</strong></li>
-</ul>
-<p>D/B位：地址空间的大小</p>
-<ul>
-<li>1：4GB（<strong>FFFFFFFF</strong>）</li>
-<li>0：64K（<strong>FFFF</strong>）</li>
-</ul>
-<div class="note danger"><p>RPL：段选择子的权限（我以什么样的特权去访问你）<br>DPL：段的权限（你要访问我，你应该具有什么特权）<br>CPL：CPU当前的权限级别（CPL特指CS、SS低2位）</p>
-</div>
-
-<p>数据段（DS）的权限检查和CS、SS段不同。</p>
-<h3 id="8-1-段权限检查"><a href="#8-1-段权限检查" class="headerlink" title="8.1 段权限检查"></a>8.1 段权限检查</h3><p>段权限检查步骤：</p>
-<p>1、段选择子拆分</p>
-<p>2、查表得到段描述符</p>
-<p>3、权限检查</p>
-<p>4、加载段描述符到段寄存器</p>
-<p>5、代码执行EIP</p>
-<div class="note primary"><p><strong>数据段权限检查</strong>（满足条件，才能成功访问数据段。）：</p>
-<p>CPL &lt;= DPL 并且 RPL &lt;= DPL (数值上的比较)</p>
-<p><strong>代码段权限检查：</strong></p>
-<ul>
-<li>非一致代码段：CPL = DPL 并且 RPL &lt;= DPL</li>
-<li>一致代码段：CPL &gt;= DPL</li>
-</ul>
-</div>
-
-<h3 id="8-2-练习"><a href="#8-2-练习" class="headerlink" title="8.2 练习"></a>8.2 练习</h3><p>&lt;1&gt; 在3环能加载的数据段有哪些？<br>3环CPL=3，只能加载DPL=3的数据段。</p>
-<p>&lt;2&gt; 在0环能加载的数据段有哪些？<br>0环CPL=0，满足RPL&lt;=DPL的数据段都可以加载。</p>
-<p>&lt;3&gt; 详细描述这下面代码的执行过程：<br>mov ax,0x23<br>mov ds,ax<br>段选择子是0x0023，RPL=11b=3，属于最低权限，只能访问DPL=3的数据段。而CPL则无影响，不管是0环还是3环，都满足CPL&lt;=RPL，只要RPL满足，CPL也一定满足。</p>
-<p>当执行 mov ds,ax 时，CPU先解析段选择子0023，然后去GDT表找段描述符，检查段描述符P位是否有效，然后检查S位，确认是数据段或代码段，然后检查TYPE域确认是数据段，然后看DPL是否等于3.只要上述条件都满足，则mov指令执行成功，只要有一条不满足，mov失败。</p>
+<p><a target="_blank" rel="noopener" href="https://directoree.top/post/WinXP-ProtectionMode-Segment/">Windows XP 段保护（一）</a></p>
+<p><a target="_blank" rel="noopener" href="https://directoree.top/post/WinXP-ProtectionMode-Segment2/">Windows XP 段保护（二）</a></p>
 <!-- flag of hidden posts -->
     </div>
 
@@ -717,7 +681,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/" title="Windows XP 段保护">https://directoree.github.io/post/WinXP-ProtectionMode-Segment/</a>
+      <a href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/" title="Windows XP 段保护（一）">https://directoree.github.io/post/WinXP-ProtectionMode-Segment/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
