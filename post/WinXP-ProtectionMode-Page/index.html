@@ -59,7 +59,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/01/02/ukwKTxjbW3BUSfm.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/03/yIhRYajNOdwM6Zt.png">
 <meta property="article:published_time" content="2021-12-26T08:20:51.000Z">
-<meta property="article:modified_time" content="2022-01-04T13:05:45.229Z">
+<meta property="article:modified_time" content="2022-01-05T15:10:11.243Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta name="twitter:card" content="summary">
@@ -384,7 +384,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-04 21:05:45" itemprop="dateModified" datetime="2022-01-04T21:05:45+08:00">2022-01-04</time>
+        <time title="修改时间：2022-01-05 23:10:11" itemprop="dateModified" datetime="2022-01-05T23:10:11+08:00">2022-01-05</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -433,7 +433,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>8.6k</span>
+      <span>8.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -538,6 +538,7 @@
 </div>
 
 <h2 id="5-练习：挂靠物理页读写NULL地址"><a href="#5-练习：挂靠物理页读写NULL地址" class="headerlink" title="5 练习：挂靠物理页读写NULL地址"></a>5 练习：挂靠物理页读写NULL地址</h2><p>编程中，不能读写NULL，否则会报<code>0xC0000005</code>错误，原因是NULL指针地址的PTE没有对应的物理页，因此，只要我们让NULL指针最终映射到一块可读写的物理页，就可以用NULL去读写数据了。</p>
+<p><strong>注意：</strong>如果NULL的PDE项不为0，则直接修改NULL的PTE即可。</p>
 <p>只需要将线性地址<code>0x00000000</code>的PTE挂载到变量x对应的物理页上，这样就可以读写了。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> x = <span class="number">0x1</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;变量x的线性地址为：%X\n&quot;</span>,&amp;x);</span><br><span class="line">  getchar();	<span class="comment">//在Windbg中获取CR3的值并获取线性地址x的PTE和NULL的PTE</span></span><br><span class="line">  </span><br><span class="line">  *(<span class="keyword">int</span>*)<span class="literal">NULL</span> = <span class="number">0x123</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;NULL地址的值为：%X\n&quot;</span>,*(<span class="keyword">int</span>*)<span class="literal">NULL</span>);</span><br><span class="line">  getchar();</span><br><span class="line">  system(<span class="string">&quot;Pause&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -590,7 +591,7 @@
 <p><img data-src="https://s2.loli.net/2021/12/30/ObrX7mJCiTyBIcY.png" alt="15.png"></p>
 <p><img data-src="https://s2.loli.net/2021/12/30/74qTRyDSm152OUY.png" alt="16.png"></p>
 <p>PDE和PTE的低12位表示物理页的属性。</p>
-<mark class="label danger">物理页的属性 = PDE属性 & PTE属性</mark>
+<mark class="label danger">物理页的属性 = PDE属性 & PTE属性</mark>（除了G位和2-9-9-12的最高XD位，为OR，）
 
 <h3 id="6-1-P位-0"><a href="#6-1-P位-0" class="headerlink" title="6.1 P位[0]"></a>6.1 P位[0]</h3><p>P位（Present）是存在位标志，该标志表明，该表项所指向的页或者页表当前是否在内存中。</p>
 <div class="note primary"><ul>
@@ -695,6 +696,14 @@
 <p>结果仍然还是不能读写高2G的地址，重启了几遍还是没能成功，但是同样的方法，其他人是可以成功的。目前还没有找到解决方法。</p>
 </li>
 </ol>
+<p>   <strong>已经找到方法解决</strong>：原因是TLB（可以看后面TLB的内容了解TLB），首先看到PDE、PTE中下标8即第9位的G = 1。</p>
+<ul>
+<li><p>PDE中的PS = 0，此时是小页，G位无效。</p>
+</li>
+<li><p>PTE中的G = 1，说明原来的TLB中有线性地址0x8003F00C的缓存（物理地址）。</p>
+<p>故这里修改后运行失败，若先将PTE的G位清零（<code>invlpg dword ptr ds:[0x8003F00C]</code>），再修改PTE即可成功。</p>
+</li>
+</ul>
 <h3 id="6-4-A位-5"><a href="#6-4-A位-5" class="headerlink" title="6.4 A位[5]"></a>6.4 A位[5]</h3><p><img data-src="https://s2.loli.net/2021/12/30/G3TKJmn6heCHOXQ.png" alt="14.png"></p>
 <p>A（Accessed）位是标记是否被访问（读或者写）过。访问过置1 即使只访问一个字节也会导致PDE PTE置1</p>
 <div class="note warning"><ul>
@@ -906,14 +915,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">704k</span>
+    <span title="站点总字数">709k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">10:40</span>
+    <span title="站点阅读时长">10:44</span>
   </span>
 </div>
 <div class="busuanzi-count">
