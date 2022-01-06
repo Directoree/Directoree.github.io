@@ -22,17 +22,17 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="1 TLB1.1 TLB结构当程序访问一个线性地址，需要先查PDPT，然后查PDT，然后查页表PTT，最后才是访问物理页。这期间多次访问内存，效率非常低。于是TLB就被设计出来了。（64位CPU分页及TLB请点这儿） TLB（Translation Lookaside Buffer），也叫快表。TLB 表在CPU内部，一个CPU有一张TLB表，用来缓存线性地址和物理地址的映射关系，以及属性和访问次">
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Windows XP 页保护（三）">
 <meta property="og:url" content="https://directoree.github.io/post/WinXP-ProtectionMode-Page3/index.html">
 <meta property="og:site_name" content="Catecat">
-<meta property="og:description" content="1 TLB1.1 TLB结构当程序访问一个线性地址，需要先查PDPT，然后查PDT，然后查页表PTT，最后才是访问物理页。这期间多次访问内存，效率非常低。于是TLB就被设计出来了。（64位CPU分页及TLB请点这儿） TLB（Translation Lookaside Buffer），也叫快表。TLB 表在CPU内部，一个CPU有一张TLB表，用来缓存线性地址和物理地址的映射关系，以及属性和访问次">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/01/06/2fU8YBRA6mJ9Sqe.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/06/8JXZN1HGzQkmKui.png">
 <meta property="article:published_time" content="2022-01-06T02:52:59.000Z">
-<meta property="article:modified_time" content="2022-01-06T02:53:53.707Z">
+<meta property="article:modified_time" content="2022-01-06T16:13:56.465Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta name="twitter:card" content="summary">
@@ -349,10 +349,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-01-06 10:52:59 / 修改时间：10:53:53" itemprop="dateCreated datePublished" datetime="2022-01-06T10:52:59+08:00">2022-01-06</time>
+      <time title="创建时间：2022-01-06 10:52:59" itemprop="dateCreated datePublished" datetime="2022-01-06T10:52:59+08:00">2022-01-06</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-01-07 00:13:56" itemprop="dateModified" datetime="2022-01-07T00:13:56+08:00">2022-01-07</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -400,7 +406,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>897</span>
+      <span>904</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -418,7 +424,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h2 id="1-TLB"><a href="#1-TLB" class="headerlink" title="1 TLB"></a>1 TLB</h2><h3 id="1-1-TLB结构"><a href="#1-1-TLB结构" class="headerlink" title="1.1 TLB结构"></a>1.1 TLB结构</h3><p>当程序访问一个线性地址，需要先查PDPT，然后查PDT，然后查页表PTT，最后才是访问物理页。这期间多次访问内存，效率非常低。于是TLB就被设计出来了。（<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/108425561">64位CPU分页及TLB请点这儿</a>）</p>
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="1-TLB"><a href="#1-TLB" class="headerlink" title="1 TLB"></a>1 TLB</h2><h3 id="1-1-TLB结构"><a href="#1-1-TLB结构" class="headerlink" title="1.1 TLB结构"></a>1.1 TLB结构</h3><p>当程序访问一个线性地址，需要先查PDPT，然后查PDT，然后查页表PTT，最后才是访问物理页。这期间多次访问内存，效率非常低。于是TLB就被设计出来了。（<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/108425561">64位CPU分页及TLB请点这儿</a>）</p>
 <p>TLB（Translation Lookaside Buffer），也叫<strong>快表</strong>。TLB 表<strong>在CPU内部</strong>，一个CPU有一张TLB表，用来缓存线性地址和物理地址的映射关系，以及属性和访问次数。（实际上缓存的线性地址、物理地址为<mark class="label danger">页基地址</mark>）</p>
 <p><img data-src="https://s2.loli.net/2022/01/06/2fU8YBRA6mJ9Sqe.png" alt="37.png"></p>
 <p><img data-src="https://s2.loli.net/2022/01/06/8JXZN1HGzQkmKui.png" alt="38.png"></p>
