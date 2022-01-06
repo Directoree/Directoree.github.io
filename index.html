@@ -240,7 +240,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">102</span>
+          <span class="site-state-item-count">103</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -441,6 +441,149 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-ProtectionMode-Page3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/WinXP-ProtectionMode-Page3/" class="post-title-link" itemprop="url">Windows XP 页保护（三）</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-01-06 10:52:59 / 修改时间：10:53:53" itemprop="dateCreated datePublished" datetime="2022-01-06T10:52:59+08:00">2022-01-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/" itemprop="url" rel="index"><span itemprop="name">保护模式</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E4%BF%9D%E6%8A%A4%E6%A8%A1%E5%BC%8F/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-ProtectionMode-Page3/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 页保护（三）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-ProtectionMode-Page3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-ProtectionMode-Page3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>897</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="1-TLB"><a href="#1-TLB" class="headerlink" title="1 TLB"></a>1 TLB</h2><h3 id="1-1-TLB结构"><a href="#1-1-TLB结构" class="headerlink" title="1.1 TLB结构"></a>1.1 TLB结构</h3><p>当程序访问一个线性地址，需要先查PDPT，然后查PDT，然后查页表PTT，最后才是访问物理页。这期间多次访问内存，效率非常低。于是TLB就被设计出来了。（<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/108425561">64位CPU分页及TLB请点这儿</a>）</p>
+<p>TLB（Translation Lookaside Buffer），也叫<strong>快表</strong>。TLB 表<strong>在CPU内部</strong>，一个CPU有一张TLB表，用来缓存线性地址和物理地址的映射关系，以及属性和访问次数。（实际上缓存的线性地址、物理地址为<mark class="label danger">页基地址</mark>）</p>
+<p><img data-src="https://s2.loli.net/2022/01/06/2fU8YBRA6mJ9Sqe.png" alt="37.png"></p>
+<p><img data-src="https://s2.loli.net/2022/01/06/8JXZN1HGzQkmKui.png" alt="38.png"></p>
+<ul>
+<li>LA：存储的是线性地址所在<strong>页基地址</strong>。</li>
+<li>PA：线性地址所在对应的<strong>物理页基址</strong>。</li>
+<li>ATTR：属性，除了G、XD位属性为<strong>OR</strong>外，其余的位的属性为<strong>AND</strong>。</li>
+<li>LRU：统计这个线性地址的读写情况的，这是因为TLB这个表在CPU内部，那么他就不会很大，当线性地址存储满了的时候，他就会看LRU的统计情况，把读写的次数比较少的项删除，然后再把新的线性地址项添上。</li>
+</ul>
+<div class="note danger"><p>关于TLB表：</p>
+<ol>
+<li><strong>TLB是受PDE和PTE中的G位影响的</strong>，PDE中的G位又受PS位影响，且G位属性：<mark class="label success">PDE_G | PTE_G</mark>。</li>
+<li>不同的CPU这个TLB表的大小不一样，能存几十项或者几百项。</li>
+<li>只要CR3寄存器被重写，<strong>哪怕重新写的值和原来的相同</strong>，<strong>TLB立马刷新</strong>。一核一套TLB。</li>
+<li>操作系统的<strong>高2G映射基本不变</strong>，如果CR3被重写了，TLB刷新，重建高2G以上很浪费。故高2G的线性地址对应的物理页的G位常为1（全局页）。<br>所以PDE和PTE中有个G标志位：<ul>
+<li>G = 1，刷新TLB时将不会刷新PDE/PTE的G位为1的页。</li>
+<li>当TLB满了，根据统计信息将不常用的地址废弃，最近最常用的保留.</li>
+</ul>
+</li>
+</ol>
+</div>
+
+<p>TLB在X86体系的CPU里的实际应用最早是从Intel的486CPU开始的，在X86体系的CPU里边，一般都设有如下4组TLB：<br>第一组：缓存一般页表（4K字节页面）的指令页表缓存（Instruction-TLB）；<br>第二组：缓存一般页表（4K字节页面）的数据页表缓存（Data-TLB）；<br>第三组：缓存大尺寸页表（2M/4M字节页面）的指令页表缓存（Instruction-TLB）；<br>第四组：缓存大尺寸页表（2M/4M字节页面）的数据页表缓存（Data-TLB）</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-ProtectionMode-Page2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -473,7 +616,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-06 00:22:38" itemprop="dateModified" datetime="2022-01-06T00:22:38+08:00">2022-01-06</time>
+        <time title="修改时间：2022-01-06 23:52:44" itemprop="dateModified" datetime="2022-01-06T23:52:44+08:00">2022-01-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -522,14 +665,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.6k</span>
+      <span>12k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>5 分钟</span>
+      <span>11 分钟</span>
     </span>
 </div>
 
@@ -1493,129 +1636,6 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/PE-SourceCode-C/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Catecat">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Catecat">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/PE-SourceCode-C/" class="post-title-link" itemprop="url">PE-SourceCode-C</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2021-09-25 21:16:02 / 修改时间：22:27:15" itemprop="dateCreated datePublished" datetime="2021-09-25T21:16:02+08:00">2021-09-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
-        </span>
-          ，
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AC%94%E8%AE%B0/%E9%80%86%E5%90%91/" itemprop="url" rel="index"><span itemprop="name">逆向</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/post/PE-SourceCode-C/" class="post-meta-item leancloud_visitors" data-flag-title="PE-SourceCode-C" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/PE-SourceCode-C/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/PE-SourceCode-C/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>61k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>56 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>ʕ •ᴥ•ʔ  ɔ: </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/post/PE-SourceCode-C/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
 
   
   <nav class="pagination">
@@ -1672,14 +1692,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">709k</span>
+    <span title="站点总字数">716k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">10:44</span>
+    <span title="站点阅读时长">10:51</span>
   </span>
 </div>
 <div class="busuanzi-count">
