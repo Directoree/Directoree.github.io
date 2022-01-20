@@ -41,16 +41,16 @@
 <meta property="og:image" content="https://s2.loli.net/2022/01/16/NpbWX9M4nTzHvGA.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/16/Qy9u7DbM6IaWSNc.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/16/X31Hsk95gCy7Qb8.png">
-<meta property="og:image" content="https://s2.loli.net/2022/01/19/QJlrEIiZUAzOWBS.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/20/JKsiP5R6Qz8nM1t.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/17/wBxzcRrdjIWhe9l.jpg">
 <meta property="og:image" content="https://s2.loli.net/2022/01/19/HSEWsYBdh7bpizI.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/19/LdJzAtlMWf8jXk2.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/19/BfJVO62pFlYxHMR.png">
-<meta property="og:image" content="https://s2.loli.net/2022/01/20/3SGw9IpQtJUucVW.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/20/gePFphB7rXS1J4d.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/20/bexjKra2ZDINPEo.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/20/Rd6YH9gJO7ZxhpU.png">
 <meta property="article:published_time" content="2022-01-15T07:19:27.000Z">
-<meta property="article:modified_time" content="2022-01-20T05:58:45.773Z">
+<meta property="article:modified_time" content="2022-01-20T14:29:32.810Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="PEB断链">
@@ -379,7 +379,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-20 13:58:45" itemprop="dateModified" datetime="2022-01-20T13:58:45+08:00">2022-01-20</time>
+        <time title="修改时间：2022-01-20 22:29:32" itemprop="dateModified" datetime="2022-01-20T22:29:32+08:00">2022-01-20</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -486,7 +486,7 @@
 </div>
 
 <p>该结构在VS2010的<code>wdm.h</code>及<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/ns-wdm-_driver_object#:~:text=Each%20driver%20object%20represents%20the%20image%20of%20a,if%20any.%20A%20driver%20object%20is%20partially%20opaque.">MSDN</a>中的定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_OBJECT</span> &#123;</span></span><br><span class="line">    CSHORT Type;</span><br><span class="line">    CSHORT Size;</span><br><span class="line">    PDEVICE_OBJECT DeviceObject;</span><br><span class="line">    ULONG Flags;</span><br><span class="line">    PVOID DriverStart;			<span class="comment">//驱动对象的起始地址</span></span><br><span class="line">    ULONG DriverSize;			<span class="comment">//驱动对象的大小</span></span><br><span class="line">    PVOID DriverSection;		<span class="comment">//内核模块链表,指向当前模块的_LDR_DATA_TABLE_ENTRY</span></span><br><span class="line">    PDRIVER_EXTENSION DriverExtension;	<span class="comment">//驱动的扩展信息.可以自定义存放我们的数据</span></span><br><span class="line">    UNICODE_STRING DriverName;		<span class="comment">//驱动对象的名字</span></span><br><span class="line">    PUNICODE_STRING HardwareDatabase;</span><br><span class="line">    PFAST_IO_DISPATCH FastIoDispatch;</span><br><span class="line">    PDRIVER_INITIALIZE DriverInit;</span><br><span class="line">    PDRIVER_STARTIO DriverStartIo;</span><br><span class="line">    PDRIVER_UNLOAD DriverUnload;	<span class="comment">//驱动对象的卸载地址</span></span><br><span class="line">    PDRIVER_DISPATCH MajorFunction[IRP_MJ_MAXIMUM_FUNCTION + <span class="number">1</span>];</span><br><span class="line">&#125; DRIVER_OBJECT;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_OBJECT</span> *<span class="title">PDRIVER_OBJECT</span>;</span> </span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_OBJECT</span> &#123;</span></span><br><span class="line">    CSHORT Type;</span><br><span class="line">    CSHORT Size;</span><br><span class="line">    PDEVICE_OBJECT DeviceObject;</span><br><span class="line">    ULONG Flags;</span><br><span class="line">    PVOID DriverStart;			<span class="comment">//驱动对象的起始地址</span></span><br><span class="line">    ULONG DriverSize;			<span class="comment">//驱动对象的大小</span></span><br><span class="line">    PVOID DriverSection;		<span class="comment">//内核模块链表,指向当前模块的_LDR_DATA_TABLE_ENTRY</span></span><br><span class="line">    PDRIVER_EXTENSION DriverExtension;	<span class="comment">//驱动的扩展信息，可以自定义存放我们的数据（非分页内存，不会被换页，当全局变量用）</span></span><br><span class="line">    UNICODE_STRING DriverName;		<span class="comment">//驱动对象的名字</span></span><br><span class="line">    PUNICODE_STRING HardwareDatabase;</span><br><span class="line">    PFAST_IO_DISPATCH FastIoDispatch;</span><br><span class="line">    PDRIVER_INITIALIZE DriverInit;</span><br><span class="line">    PDRIVER_STARTIO DriverStartIo;</span><br><span class="line">    PDRIVER_UNLOAD DriverUnload;	<span class="comment">//驱动对象的卸载地址</span></span><br><span class="line">    PDRIVER_DISPATCH MajorFunction[IRP_MJ_MAXIMUM_FUNCTION + <span class="number">1</span>];</span><br><span class="line">&#125; DRIVER_OBJECT;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_OBJECT</span> *<span class="title">PDRIVER_OBJECT</span>;</span> </span><br></pre></td></tr></table></figure>
 
 <p>几个重要的属性：</p>
 <p>DriverStart：驱动在内存中的基址。<br>DriverSize：驱动在内存中的大小。<br><strong>DriverSection</strong>：内核模块链表基址。<code>_LDR_DATA_TABLE_ENTRY</code><br>DriverName：驱动（模块）名称。</p>
@@ -636,7 +636,7 @@
 </div>
 
 <p>示意图如下：具体可以参考：《<a target="_blank" rel="noopener" href="https://www.cnblogs.com/bokernb/p/6404795.html">PEB及LDR链</a><a target="_blank" rel="noopener" href="https://www.cnblogs.com/bokernb/p/6404795.html">PEB及LDR链</a>》</p>
-<p><img data-src="https://s2.loli.net/2022/01/19/QJlrEIiZUAzOWBS.png" alt="19.png"></p>
+<p><img data-src="https://s2.loli.net/2022/01/20/JKsiP5R6Qz8nM1t.png" alt="19.png"></p>
 <p><img data-src="https://s2.loli.net/2022/01/17/wBxzcRrdjIWhe9l.jpg" alt="20.jpeg"></p>
 <p>⚠️<strong>注意</strong>：这里的<code>LDR_DATA_TABLE_ENTRY</code>是3环的，在3环通过该结构只能够列举该进程在3环加载的所有模块。</p>
 <h3 id="3-1-TEB、PEB"><a href="#3-1-TEB、PEB" class="headerlink" title="3.1 TEB、PEB"></a>3.1 TEB、PEB</h3><p><strong>一、TEB</strong></p>
@@ -727,7 +727,7 @@
 <li><code>InInitializationOrderModuleList-&gt;Flink == InInitializationOrderLinks</code></li>
 </ul>
 <p>示意图如下：</p>
-<p><img data-src="https://s2.loli.net/2022/01/20/3SGw9IpQtJUucVW.png" alt="30.png"></p>
+<p><img data-src="https://s2.loli.net/2022/01/20/gePFphB7rXS1J4d.png" alt="30.png"></p>
 <p>由上图可知，<code>InLoadOrderModuleList-&gt;Flink == InLoadOrderLinks</code>与其他两个不一定在同一个结构体中。切都是对应指过去。</p>
 <p>故如下代码注释可以改为：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Ldte = (PLDR_DATA_TABLE_ENTRY)pTemp;</span><br><span class="line">Ldte = (PLDR_DATA_TABLE_ENTRY)(pTemp - <span class="number">0x8</span>);</span><br><span class="line">Ldte = (PLDR_DATA_TABLE_ENTRY)(pTemp - <span class="number">0x10</span>);</span><br></pre></td></tr></table></figure>
@@ -863,14 +863,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">809k</span>
+    <span title="站点总字数">810k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">12:15</span>
+    <span title="站点阅读时长">12:17</span>
   </span>
 </div>
 <div class="busuanzi-count">
