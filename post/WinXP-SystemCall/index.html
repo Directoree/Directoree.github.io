@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 系统调用（一）">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-SystemCall/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/01/26/Cu9FTQ8IcReJiWE.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/26/ItuSlcjqzDEWH7e.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/26/Dg8BRmF7kTw1UrV.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/26/lrzeQEsgUFGw8Tm.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/26/HNrdkgY6aeqyJmR.png">
+<meta property="article:published_time" content="2022-01-26T06:14:58.000Z">
+<meta property="article:modified_time" content="2022-01-26T16:12:01.194Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="系统调用">
+<meta property="article:tag" content="API调用">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/01/26/Cu9FTQ8IcReJiWE.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-SystemCall/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 系统调用（一） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Windows-API"><span class="nav-text">1 Windows API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3%E7%8E%AF%E8%BF%9B0%E7%8E%AF"><span class="nav-text">2 3环进0环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%86%E6%9E%90ReadProcessMemory3%E7%8E%AF%E8%B0%83%E7%94%A8%E8%BF%87%E7%A8%8B"><span class="nav-text">2.1 分析ReadProcessMemory3环调用过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-KUSER-SHARED-DATA%E7%BB%93%E6%9E%84"><span class="nav-text">2.2 _KUSER_SHARED_DATA结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-SystemCall"><span class="nav-text">2.3 SystemCall</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-3%E7%8E%AF%E8%BF%9B0%E7%8E%AF%E9%9C%80%E8%A6%81%E6%9B%B4%E6%94%B9%E7%9A%844%E4%B8%AA%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2.4 3环进0环需要更改的4个寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E6%80%BB%E7%BB%93"><span class="nav-text">2.4 总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E9%87%8D%E5%86%99ReadProcessMemory%E5%92%8CWriteProcessMemory"><span class="nav-text">2.5 重写ReadProcessMemory和WriteProcessMemory</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%88%86%E6%9E%90-INT-0x2E-%E5%92%8C-sysenter"><span class="nav-text">3 分析 INT 0x2E 和 sysenter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%AD%E6%96%AD%E9%97%A8%E8%BF%9B0%E7%8E%AF"><span class="nav-text">3.1 中断门进0环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%BF%AB%E9%80%9F%E8%B0%83%E7%94%A8%E8%BF%9B0%E7%8E%AF"><span class="nav-text">3.2 快速调用进0环</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">107</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">41</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-SystemCall/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 系统调用（一）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-01-26 14:14:58" itemprop="dateCreated datePublished" datetime="2022-01-26T14:14:58+08:00">2022-01-26</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-01-27 00:12:01" itemprop="dateModified" datetime="2022-01-27T00:12:01+08:00">2022-01-27</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/API%E8%B0%83%E7%94%A8/" itemprop="url" rel="index"><span itemprop="name">API调用</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/API%E8%B0%83%E7%94%A8/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-SystemCall/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 系统调用（一）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-SystemCall/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-SystemCall/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>7.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>7 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="1-Windows-API"><a href="#1-Windows-API" class="headerlink" title="1 Windows API"></a>1 Windows API</h2><ol>
+<li><p><code>Application Programming Interface</code>，简称 API 函数。</p>
+</li>
+<li><p>主要是存放在 <code>C:\WINDOWS\system32</code>下面所有的dll导出的函数。</p>
+</li>
+<li><p>几个重要的DLL</p>
+<ul>
+<li>Kernel32.dll：最核心的功能模块，比如管理内存、进程和线程相关的函数等。</li>
+<li>User32.dll：是Windows用户界面相关应用程序接口，如创建窗口和发送消息等。</li>
+<li>GDI32.dll：全称是Graphical Device Interface(图形设备接口)，包含用于画图和显示文本的函数。比如要显示一个程序窗口，就调用了其中的函数来画这个窗口。</li>
+<li>Ntdll.dll：<mark class="label default">大多数API都会通过这个DLL进入内核(0环)</mark>。</li>
+</ul>
+</li>
+</ol>
+<h2 id="2-3环进0环"><a href="#2-3环进0环" class="headerlink" title="2 3环进0环"></a>2 3环进0环</h2><h3 id="2-1-分析ReadProcessMemory3环调用过程"><a href="#2-1-分析ReadProcessMemory3环调用过程" class="headerlink" title="2.1 分析ReadProcessMemory3环调用过程"></a>2.1 分析ReadProcessMemory3环调用过程</h3><p>分析kernel32.dll导出函数<code>ReadProcessMemory(x,x,x,x)</code>调用流程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">7</span>C8021CB                 align <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">7</span>C8021D0 ; Exported entry <span class="number">682.</span> ReadProcessMemory</span><br><span class="line">.text:<span class="number">7</span>C8021D0</span><br><span class="line">.text:<span class="number">7</span>C8021D0 ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">7</span>C8021D0</span><br><span class="line">.text:<span class="number">7</span>C8021D0 ; Attributes: bp-based frame</span><br><span class="line">.text:<span class="number">7</span>C8021D0</span><br><span class="line">.text:<span class="number">7</span>C8021D0 ; <span class="function">BOOL __stdcall <span class="title">ReadProcessMemory</span><span class="params">(HANDLE hProcess, LPCVOID lpBaseAddress, LPVOID lpBuffer, SIZE_T nSize, SIZE_T *lpNumberOfBytesRead)</span></span></span><br><span class="line">.text:7C8021D0                 public ReadProcessMemory</span><br><span class="line">.text:<span class="number">7</span>C8021D0 ReadProcessMemory proc near             ; CODE XREF: GetProcessVersion+<span class="number">2F</span>12F↓p</span><br><span class="line">.text:<span class="number">7</span>C8021D0                                         ; GetProcessVersion+<span class="number">2F</span>14E↓p ...</span><br><span class="line">.text:<span class="number">7</span>C8021D0</span><br><span class="line">.text:<span class="number">7</span>C8021D0 hProcess        = dword ptr  <span class="number">8</span></span><br><span class="line">.text:<span class="number">7</span>C8021D0 lpBaseAddress   = dword ptr  <span class="number">0</span>Ch</span><br><span class="line">.text:<span class="number">7</span>C8021D0 lpBuffer        = dword ptr  <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">7</span>C8021D0 nSize           = dword ptr  <span class="number">14</span>h</span><br><span class="line">.text:<span class="number">7</span>C8021D0 lpNumberOfBytesRead= dword ptr  <span class="number">18</span>h</span><br><span class="line">.text:<span class="number">7</span>C8021D0</span><br><span class="line">.text:<span class="number">7</span>C8021D0                 mov     edi, edi</span><br><span class="line">.text:<span class="number">7</span>C8021D2                 push    ebp</span><br><span class="line">.text:<span class="number">7</span>C8021D3                 mov     ebp, esp</span><br><span class="line">.text:<span class="number">7</span>C8021D5                 lea     eax, [ebp+nSize]</span><br><span class="line">.text:<span class="number">7</span>C8021D8                 push    eax             ; NumberOfBytesRead</span><br><span class="line">.text:<span class="number">7</span>C8021D9                 push    [ebp+nSize]     ; NumberOfBytesToRead</span><br><span class="line">.text:<span class="number">7</span>C8021DC                 push    [ebp+lpBuffer]  ; Buffer</span><br><span class="line">.text:<span class="number">7</span>C8021DF                 push    [ebp+lpBaseAddress] ; BaseAddress</span><br><span class="line">.text:<span class="number">7</span>C8021E2                 push    [ebp+hProcess]  ; ProcessHandle</span><br><span class="line">.text:<span class="number">7</span>C8021E5                 call    ds:NtReadVirtualMemory</span><br><span class="line">.text:<span class="number">7</span>C8021EB                 mov     ecx, [ebp+lpNumberOfBytesRead]</span><br><span class="line">.text:<span class="number">7</span>C8021EE                 test    ecx, ecx</span><br><span class="line">.text:<span class="number">7</span>C8021F0                 jnz     <span class="keyword">short</span> loc_7C8021FD</span><br><span class="line">.text:<span class="number">7</span>C8021F2</span><br><span class="line">.text:<span class="number">7</span>C8021F2 loc_7C8021F2:                           ; CODE XREF: ReadProcessMemory+<span class="number">32</span>↓j</span><br><span class="line">.text:<span class="number">7</span>C8021F2                 test    eax, eax</span><br><span class="line">.text:<span class="number">7</span>C8021F4                 jl      <span class="keyword">short</span> loc_7C802204</span><br><span class="line">.text:<span class="number">7</span>C8021F6                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">7</span>C8021F8                 inc     eax</span><br><span class="line">.text:<span class="number">7</span>C8021F9</span><br><span class="line">.text:<span class="number">7</span>C8021F9 loc_7C8021F9:                           ; CODE XREF: ReadProcessMemory+<span class="number">3</span>C↓j</span><br><span class="line">.text:<span class="number">7</span>C8021F9                 pop     ebp</span><br><span class="line">.text:<span class="number">7</span>C8021FA                 retn    <span class="number">14</span>h</span><br><span class="line">.text:<span class="number">7</span>C8021FD ; ---------------------------------------------------------------------------</span><br><span class="line">.text:<span class="number">7</span>C8021FD</span><br><span class="line">.text:<span class="number">7</span>C8021FD loc_7C8021FD:                           ; CODE XREF: ReadProcessMemory+<span class="number">20</span>↑j</span><br><span class="line">.text:<span class="number">7</span>C8021FD                 mov     edx, [ebp+nSize]</span><br><span class="line">.text:<span class="number">7</span>C802200                 mov     [ecx], edx</span><br><span class="line">.text:<span class="number">7</span>C802202                 jmp     <span class="keyword">short</span> loc_7C8021F2</span><br><span class="line">.text:<span class="number">7</span>C802204 ; ---------------------------------------------------------------------------</span><br><span class="line">.text:<span class="number">7</span>C802204</span><br><span class="line">.text:<span class="number">7</span>C802204 loc_7C802204:                           ; CODE XREF: ReadProcessMemory+<span class="number">24</span>↑j</span><br><span class="line">.text:<span class="number">7</span>C802204                 push    eax             ; Status</span><br><span class="line">.text:<span class="number">7</span>C802205                 call    sub_7C8093FD</span><br><span class="line">.text:<span class="number">7</span>C80220A                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">7</span>C80220C                 jmp     <span class="keyword">short</span> loc_7C8021F9</span><br><span class="line">.text:<span class="number">7</span>C80220C ReadProcessMemory endp</span><br><span class="line">.text:<span class="number">7</span>C80220C</span><br><span class="line">.text:<span class="number">7</span>C80220C ; ---------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<p>双击查看<code>.text:7C8021E5    call    ds:NtReadVirtualMemory</code>，结果如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.idata:<span class="number">7</span>C801418 ; <span class="function">NTSTATUS __stdcall <span class="title">NtReadVirtualMemory</span><span class="params">(HANDLE ProcessHandle, </span></span></span><br><span class="line"><span class="function"><span class="params">                                                         PVOID BaseAddress, </span></span></span><br><span class="line"><span class="function"><span class="params">                                                         PVOID Buffer, </span></span></span><br><span class="line"><span class="function"><span class="params">                                                         SIZE_T NumberOfBytesToRead, </span></span></span><br><span class="line"><span class="function"><span class="params">                                                         PSIZE_T NumberOfBytesRead</span></span></span><br><span class="line"><span class="function"><span class="params">                                                        )</span></span></span><br><span class="line">.idata:7C801418   extrn NtReadVirtualMemory:dword</span><br></pre></td></tr></table></figure>
+
+<p>这里的<code>NtReadVirtualMemory</code>函数是从导入表导入的，在IDA导入表中查看可得<code>NtReadVirtualMemory</code>：位于ntdll.dll。</p>
+<p><img data-src="https://s2.loli.net/2022/01/26/Cu9FTQ8IcReJiWE.png" alt="1.png"></p>
+<p>分析得如下结论：</p>
+<ul>
+<li><code>ReadProcessMemory</code>：位于kernel32.dll</li>
+<li><code>NtReadVirtualMemory</code>：位于ntdll.dll</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL __stdcall <span class="title">ReadProcessMemory</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params"> [IN]	HANDLE hProcess,	<span class="comment">//目标进程的句柄，该句柄必须对目标进程具有PROCESS_VM_READ的访问权限。</span></span></span></span><br><span class="line"><span class="function"><span class="params"> [IN]	LPCVOID lpBaseAddress,	<span class="comment">//从目标进程中读取数据的起始地址。</span></span></span></span><br><span class="line"><span class="function"><span class="params"> [OUT]	LPVOID lpBuffer,	<span class="comment">//用来接收数据的缓存区地址。</span></span></span></span><br><span class="line"><span class="function"><span class="params"> [IN]	SIZE_T nSize,		<span class="comment">// 从目标进程读取数据的字节数。如果被指定为NULL,那么将忽略此参数。</span></span></span></span><br><span class="line"><span class="function"><span class="params"> [OUT]	SIZE_T *lpNumberOfBytesRead)</span><span class="comment">//实际被读取数据大小的存放地址。</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  ...</span><br><span class="line">  NtReadVirtualMemory(hProcess,lpBaseAddress,Buffer,nSize,&amp;nSize);</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入到<code>ntdll.dll</code>的导出表查看<code>NtReadVirtualMemory</code>函数，发现其调用了<code>0x7FFE0300</code>处的函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">7</span>C92D9E0 ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">7</span>C92D9E0</span><br><span class="line">.text:<span class="number">7</span>C92D9E0</span><br><span class="line">.text:<span class="number">7</span>C92D9E0                 <span class="keyword">public</span> ZwReadVirtualMemory</span><br><span class="line">.text:<span class="number">7</span>C92D9E0 ZwReadVirtualMemory proc near           ; CODE XREF: LdrFindCreateProcessManifest+<span class="number">1</span>CC↓p</span><br><span class="line">.text:<span class="number">7</span>C92D9E0                                         ; LdrCreateOutOfProcessImage+<span class="number">7</span>C↓p ...</span><br><span class="line">.text:<span class="number">7</span>C92D9E0                 mov     eax, <span class="number">0B</span>Ah       ; NtReadVirtualMemory</span><br><span class="line">.text:<span class="number">7</span>C92D9E5                 mov     edx, <span class="number">7F</span>FE0300h</span><br><span class="line">.text:<span class="number">7</span>C92D9EA                 call    dword ptr [edx]</span><br><span class="line">.text:<span class="number">7</span>C92D9EC                 retn    <span class="number">14</span>h</span><br><span class="line">.text:<span class="number">7</span>C92D9EC ZwReadVirtualMemory endp</span><br><span class="line">.text:<span class="number">7</span>C92D9EC</span><br><span class="line">.text:<span class="number">7</span>C92D9EC ; ---------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<p>可以看到在这里调用了一个地址：<code>0x7FFE0300</code>（其中eax存的值为系统服务号，即一个0环函数的编号），具体该地址是什么函数需要学习下一节。</p>
+<h3 id="2-2-KUSER-SHARED-DATA结构"><a href="#2-2-KUSER-SHARED-DATA结构" class="headerlink" title="2.2 _KUSER_SHARED_DATA结构"></a>2.2 _KUSER_SHARED_DATA结构</h3><mark class="label danger">_KUSER_SHARED_DATA</mark>结构为一块3环和0环共享的内存块<mark class="label primary">（共享同一个物理页）</mark>。
+
+<div class="note success"><ol>
+<li>在 User 层和 Kernel 层分别定义了一个<code>_KUSER_SHARED_DATA</code>结构区域，用于 User 层和 Kernel 层共享某些数据。</li>
+<li>它们使用固定的地址值映射，<code>_KUSER_SHARED_DATA</code>结构区域在 User 和 Kernel 层地址分别为：<ul>
+<li>User 层地址为：<mark class="label warning">0x7FFE0000</mark>   只读</li>
+<li>Kernnel 层地址为：<mark class="label success">0xFFDF0000</mark>   可读可写</li>
+</ul>
+</li>
+</ol>
+</div>
+
+<p><strong>特别说明：</strong>虽然指向的是同一个物理页，但<strong>在User 层是只读</strong>的，<strong>在Kernnel层是可读可写</strong>的。同一个物理页映射了两个线性地址，这两个线性地址的对应的访问权限不同。（PDE、PTE的R/W位），使用<code>dd 0x7FFE0000</code>和<code>dd 0xFFDF0000</code>里面的数据是一样的。</p>
+<p>该结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KUSER_SHARED_DATA <span class="number">0x7FFE0000</span></span><br><span class="line">ntdll!_KUSER_SHARED_DATA</span><br><span class="line">   +<span class="number">0x000</span> TickCountLow     : <span class="number">0x1572</span></span><br><span class="line">   +<span class="number">0x004</span> TickCountMultiplier : <span class="number">0xfa00000</span></span><br><span class="line">   +<span class="number">0x008</span> InterruptTime    : _KSYSTEM_TIME</span><br><span class="line">   +<span class="number">0x014</span> SystemTime       : _KSYSTEM_TIME</span><br><span class="line">   +<span class="number">0x020</span> TimeZoneBias     : _KSYSTEM_TIME</span><br><span class="line">   +<span class="number">0x02c</span> ImageNumberLow   : <span class="number">0x14c</span></span><br><span class="line">   +<span class="number">0x02e</span> ImageNumberHigh  : <span class="number">0x14c</span></span><br><span class="line">   +<span class="number">0x030</span> NtSystemRoot     : [<span class="number">260</span>] <span class="number">0x43</span></span><br><span class="line">   +<span class="number">0x238</span> MaxStackTraceDepth : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x23c</span> CryptoExponent   : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x240</span> TimeZoneId       : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x244</span> Reserved2        : [<span class="number">8</span>] <span class="number">0</span></span><br><span class="line">   +<span class="number">0x264</span> NtProductType    : <span class="number">1</span> ( NtProductWinNt )</span><br><span class="line">   +<span class="number">0x268</span> ProductTypeIsValid : <span class="number">0x1</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">   +0x26c NtMajorVersion   : 5</span><br><span class="line">   +<span class="number">0x270</span> NtMinorVersion   : <span class="number">1</span></span><br><span class="line">   +<span class="number">0x274</span> ProcessorFeatures : [<span class="number">64</span>]  <span class="string">&quot;&quot;</span></span><br><span class="line">   +<span class="number">0x2b4</span> Reserved1        : <span class="number">0x7ffeffff</span></span><br><span class="line">   +<span class="number">0x2b8</span> Reserved3        : <span class="number">0x80000000</span></span><br><span class="line">   +<span class="number">0x2bc</span> TimeSlip         : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x2c0</span> AlternativeArchitecture : <span class="number">0</span> ( StandardDesign )</span><br><span class="line">   +<span class="number">0x2c8</span> SystemExpirationDate : _LARGE_INTEGER <span class="number">0x0</span></span><br><span class="line">   +<span class="number">0x2d0</span> SuiteMask        : <span class="number">0x110</span></span><br><span class="line">   +<span class="number">0x2d4</span> KdDebuggerEnabled : <span class="number">0x3</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">   +0x2d5 NXSupportPolicy  : 0x2 &#x27;&#x27;</span><br><span class="line">   +<span class="number">0x2d8</span> ActiveConsoleId  : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x2dc</span> DismountCount    : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x2e0</span> ComPlusPackage   : <span class="number">0xffffffff</span></span><br><span class="line">   +<span class="number">0x2e4</span> LastSystemRITEventTickCount : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x2e8</span> NumberOfPhysicalPages : <span class="number">0x3ff77</span></span><br><span class="line">   +<span class="number">0x2ec</span> SafeBootMode     : <span class="number">0</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">   +0x2f0 TraceLogging     : 0</span><br><span class="line">   +<span class="number">0x2f8</span> TestRetInstruction : <span class="number">0xc3</span></span><br><span class="line">   +<span class="number">0x300</span> SystemCall       : <span class="number">0x7c92e4f0</span></span><br><span class="line">   +<span class="number">0x304</span> SystemCallReturn : <span class="number">0x7c92e4f4</span></span><br><span class="line">   +<span class="number">0x308</span> SystemCallPad    : [<span class="number">3</span>] <span class="number">0</span></span><br><span class="line">   +<span class="number">0x320</span> TickCount        : _KSYSTEM_TIME</span><br><span class="line">   +<span class="number">0x320</span> TickCountQuad    : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x330</span> Cookie           : <span class="number">0x83dcba5</span></span><br></pre></td></tr></table></figure>
+
+<p>在偏移<code>0x300</code>的地方即为<code>NtReadVirtualMemory</code>函数调用的<code>0x7FFE0300</code>处的函数，为一个<code>SystemCall</code>（系统调用函数）。该函数但汇编代码为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; u <span class="number">0x7c92e4f0</span></span><br><span class="line">ntdll!KiFastSystemCall:</span><br><span class="line"><span class="number">7</span>c92e4f0 <span class="number">8b</span>d4            mov     edx,esp</span><br><span class="line"><span class="number">7</span>c92e4f2 <span class="number">0f</span>34            sysenter</span><br><span class="line">ntdll!KiFastSystemCallRet:</span><br><span class="line"><span class="number">7</span>c92e4f4 c3              ret</span><br><span class="line"><span class="number">7</span>c92e4f5 <span class="number">8</span>da42400000000  lea     esp,[esp]</span><br><span class="line"><span class="number">7</span>c92e4fc <span class="number">8</span>d642400        lea     esp,[esp]</span><br><span class="line">ntdll!KiIntSystemCall:</span><br><span class="line"><span class="number">7</span>c92e500 <span class="number">8</span>d542408        lea     edx,[esp+<span class="number">8</span>]</span><br><span class="line"><span class="number">7</span>c92e504 cd2e            <span class="keyword">int</span>     <span class="number">2</span>Eh</span><br><span class="line"><span class="number">7</span>c92e506 c3              ret</span><br></pre></td></tr></table></figure>
+
+<p>可以看到该函数使用了指令<code>sysenter</code>进入到0环，同时EDX指向栈顶。该指令具体的实现请看下一节。</p>
+<h3 id="2-3-SystemCall"><a href="#2-3-SystemCall" class="headerlink" title="2.3 SystemCall"></a>2.3 SystemCall</h3><p><strong>SystemCall</strong>是两个能从3环进入到0环的函数的名称。系统调用有<strong>中断调用</strong>和<strong>快速调用</strong>两种方式，中断调用是通过<mark class="label success">中断门</mark>进0环，此过程需要查IDT表和TSS表；快速调用则是使用<mark class="label warning">sysenter</mark>指令进0环，这种方式不需要查内存，而是直接从CPU的<strong>MSR寄存器</strong>中获取所需数据，所以称为快速调用。</p>
+<div class="note info"><p>怎么判断系统是否支持快速调用？<br>当通过 <mark class="label danger">eax = 1</mark> 来执行<code>cpuid</code>指令时，处理器的特征信息被放在 <mark class="label default">ecx</mark> 和 <mark class="label default">edx</mark> 寄存器中，其中edx包含了一个SEP位（EDX值的第12位，下标为11），该位指明了当前处理器知否支持<code>sysenter/sysexit</code>指令（SEP == 1，支持）</p>
+<ul>
+<li>SEP == 1，支持。SystemCall为：<br><code>ntdll.dll!KiFastSystemCall()</code></li>
+<li>SEP == 0，不支持。SystemCall为：<br><code>ntdll.dll!KiIntSystemCall()</code></li>
+</ul>
+</div>
+
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ntdll!KiFastSystemCall:</span><br><span class="line"><span class="number">7</span>c92e4f0 <span class="number">8b</span>d4            mov     edx,esp</span><br><span class="line"><span class="number">7</span>c92e4f2 <span class="number">0f</span>34            sysenter</span><br><span class="line">  </span><br><span class="line">ntdll!KiIntSystemCall:</span><br><span class="line"><span class="number">7</span>c92e500 <span class="number">8</span>d542408        lea     edx,[esp+<span class="number">8</span>]</span><br><span class="line"><span class="number">7</span>c92e504 cd2e            <span class="keyword">int</span>     <span class="number">2</span>Eh</span><br><span class="line"><span class="number">7</span>c92e506 c3              ret</span><br></pre></td></tr></table></figure>
+
+
+
+<p>实验：</p>
+<p>将eax = 1，ecx = 0、edx = 0，执行<code>cpuid</code>指令前：</p>
+<p><img data-src="https://s2.loli.net/2022/01/26/ItuSlcjqzDEWH7e.png" alt="2.png"></p>
+<p>执行<code>cpuid</code>指令后如下图，edx = 0x1F8BFBFF，B = <strong>1</strong>011，第12位为1，说明支持快速调用。</p>
+<p><img data-src="https://s2.loli.net/2022/01/26/Dg8BRmF7kTw1UrV.png" alt="3.png"></p>
+<div class="note primary"><p>关于<code>KiFastSystemCall()</code>和<code>KiIntSystemCall()</code>这两个函数：</p>
+<ol>
+<li><strong>这两个函数都叫做SystemCall</strong>。如果系统支持快速调用，就会把KiFastSystemCall()函数的地址写到0x7FFE0300处。不支持就会把KiIntSystemCall()的函数地址写到0x7FFE0300处。</li>
+<li>这两个函数的相同点：都是找新的CS、SS、ESP、EIP。不同点：找的方式不同。</li>
+</ol>
+</div>
+
+<h3 id="2-4-3环进0环需要更改的4个寄存器"><a href="#2-4-3环进0环需要更改的4个寄存器" class="headerlink" title="2.4 3环进0环需要更改的4个寄存器"></a>2.4 3环进0环需要更改的4个寄存器</h3><p><strong>3环进0环需要更改哪些寄存器？</strong></p>
+<ol>
+<li>CS的权限由3变为0 ，意味着需要新的<strong>CS</strong>。</li>
+<li>SS与CS的权限永远一致，需要新的<strong>SS</strong>。</li>
+<li>权限发生切换的时候，堆栈也一定会切换，需要新的<strong>ESP</strong>。</li>
+</ol>
+<ol start="4">
+<li>进0环后代码的位置，需要新的<strong>EIP</strong>。</li>
+</ol>
+<p>简单复习一下，中断门进0环时，我们在IDT表里填的中断门描述符，然后根据中断门描述符中的段选择子找到一个代码段描述符去提权，包含了0环的CS和EIP，而SS和0环的ESP是在TSS里存储的，当时我们还有一个结论，Windows里不使用任务，所以TSS的唯一作用就是提权时提供ESP0、SS0和EIP。</p>
+<p>现在，我们知道了进0环需要更改的4个寄存器，接下来分析 KiFastSystemCall 和 KiIntSystemCall 时，只要明白一点，这两个函数做的事情就是更改这4个寄存器。</p>
+<h3 id="2-4-总结"><a href="#2-4-总结" class="headerlink" title="2.4 总结"></a>2.4 总结</h3><h3 id="2-5-重写ReadProcessMemory和WriteProcessMemory"><a href="#2-5-重写ReadProcessMemory和WriteProcessMemory" class="headerlink" title="2.5 重写ReadProcessMemory和WriteProcessMemory"></a>2.5 重写ReadProcessMemory和WriteProcessMemory</h3><h2 id="3-分析-INT-0x2E-和-sysenter"><a href="#3-分析-INT-0x2E-和-sysenter" class="headerlink" title="3 分析 INT 0x2E 和 sysenter"></a>3 分析 INT 0x2E 和 sysenter</h2><h3 id="3-1-中断门进0环"><a href="#3-1-中断门进0环" class="headerlink" title="3.1 中断门进0环"></a>3.1 中断门进0环</h3><p><img data-src="https://s2.loli.net/2022/01/26/lrzeQEsgUFGw8Tm.png" alt="4.png"></p>
+<p>EAX保存系统调用号，内核函数编号。<br>EDX保存的指针，指向函数参数的起始地址。<br>然后通过中断门进入内核。且中断号都是0x2E。</p>
+<p>查看IDT表中的中断门描述符看一下提权跳转过程：</p>
+<ol>
+<li><p>0x2E = 46D，即第47项。8054ee00`00082451</p>
+<p><img data-src="https://s2.loli.net/2022/01/26/HNrdkgY6aeqyJmR.png" alt="5.png"></p>
+<p>可以看到：</p>
+<ul>
+<li>0xE = 1110：P = 1，DPL = 11，S = 0（<strong>系统段</strong>）。 </li>
+<li>Type = 0xE = 1110： <strong>为32位中断门</strong>。</li>
+<li>代码段选择子：0008 = 1 0 00<ul>
+<li>RPL = 00</li>
+<li>TI = 0，查GDT</li>
+<li>Index = 1，第二项，查得<strong>00</strong>cf9b<strong>00</strong>`<strong>0000</strong>ffff，代码段Base = 0x0。</li>
+</ul>
+</li>
+<li>中断门偏移：0x80542451</li>
+<li>中断门跳转执行地址 = Code.Base + Interrupt.Offset = 0x0 + 0x80542451 = 0x80542451。该地址已经为高2G（0环）。</li>
+</ul>
+</li>
+</ol>
+<h3 id="3-2-快速调用进0环"><a href="#3-2-快速调用进0环" class="headerlink" title="3.2 快速调用进0环"></a>3.2 快速调用进0环</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-SystemCall/" title="Windows XP 系统调用（一）">https://directoree.github.io/post/WinXP-SystemCall/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" rel="tag"># 系统调用</a>
+              <a href="/tags/API%E8%B0%83%E7%94%A8/" rel="tag"># API调用</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Driver3/" rel="prev" title="Windows XP 驱动开发（三）">
+                  <i class="fa fa-chevron-left"></i> Windows XP 驱动开发（三）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">833k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">12:37</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXP-SystemCall/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
