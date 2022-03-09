@@ -441,14 +441,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>11k</span>
+      <span>12k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>10 分钟</span>
+      <span>11 分钟</span>
     </span>
 </div>
 
@@ -469,10 +469,10 @@
 </ol>
 <p>G位：决定limit的大小</p>
 <ul>
-<li>1：limit = <strong>0xFFFFFFFF</strong></li>
-<li>0：limit =<strong>0xFFFFF</strong></li>
+<li>1：limit &#x3D; <strong>0xFFFFFFFF</strong></li>
+<li>0：limit &#x3D;<strong>0xFFFFF</strong></li>
 </ul>
-<p>D/B位：地址空间的大小</p>
+<p>D&#x2F;B位：地址空间的大小</p>
 <ul>
 <li>1：4GB（<strong>FFFFFFFF</strong>）</li>
 <li>0：64K（<strong>FFFF</strong>）</li>
@@ -488,17 +488,17 @@
 <p>4、加载段描述符到段寄存器</p>
 <p>5、代码执行EIP</p>
 <div class="note primary"><p><strong>数据段权限检查</strong>（满足条件，才能成功访问数据段。）：</p>
-<p>CPL &lt;= DPL 并且 RPL &lt;= DPL (数值上的比较)</p>
+<p>CPL &lt;&#x3D; DPL 并且 RPL &lt;&#x3D; DPL (数值上的比较)</p>
 <p><strong>代码段权限检查：</strong></p>
 <ul>
-<li>非一致代码段：CPL = DPL 并且 RPL &lt;= DPL</li>
-<li>一致代码段：CPL &gt;= DPL</li>
+<li>非一致代码段：CPL &#x3D; DPL 并且 RPL &lt;&#x3D; DPL</li>
+<li>一致代码段：CPL &gt;&#x3D; DPL</li>
 </ul>
 </div>
 
-<h3 id="1-2-练习"><a href="#1-2-练习" class="headerlink" title="1.2 练习"></a>1.2 练习</h3><p>&lt;1&gt; 在3环能加载的数据段有哪些？<br>3环CPL=3，只能加载DPL=3的数据段。</p>
-<p>&lt;2&gt; 在0环能加载的数据段有哪些？<br>0环CPL=0，满足RPL&lt;=DPL的数据段都可以加载。</p>
-<p>&lt;3&gt; 详细描述这下面代码的执行过程：<br>mov ax,0x23<br>mov ds,ax<br>段选择子是0x0023，RPL=11b=3，属于最低权限，只能访问DPL=3的数据段。而CPL则无影响，不管是0环还是3环，都满足CPL&lt;=RPL，只要RPL满足，CPL也一定满足。</p>
+<h3 id="1-2-练习"><a href="#1-2-练习" class="headerlink" title="1.2 练习"></a>1.2 练习</h3><p>&lt;1&gt; 在3环能加载的数据段有哪些？<br>3环CPL&#x3D;3，只能加载DPL&#x3D;3的数据段。</p>
+<p>&lt;2&gt; 在0环能加载的数据段有哪些？<br>0环CPL&#x3D;0，满足RPL&lt;&#x3D;DPL的数据段都可以加载。</p>
+<p>&lt;3&gt; 详细描述这下面代码的执行过程：<br>mov ax,0x23<br>mov ds,ax<br>段选择子是0x0023，RPL&#x3D;11b&#x3D;3，属于最低权限，只能访问DPL&#x3D;3的数据段。而CPL则无影响，不管是0环还是3环，都满足CPL&lt;&#x3D;RPL，只要RPL满足，CPL也一定满足。</p>
 <p>当执行 mov ds,ax 时，CPU先解析段选择子0023，然后去GDT表找段描述符，检查段描述符P位是否有效，然后检查S位，确认是数据段或代码段，然后检查TYPE域确认是数据段，然后看DPL是否等于3.只要上述条件都满足，则mov指令执行成功，只要有一条不满足，mov失败。</p>
 <h2 id="2-断间跳转JMP-FAR"><a href="#2-断间跳转JMP-FAR" class="headerlink" title="2 断间跳转JMP FAR"></a>2 断间跳转JMP FAR</h2><p><strong>3环执行JMP FAR并不能提权（CPL不改变）。</strong></p>
 <p>可参看：<a target="_blank" rel="noopener" href="https://blog.csdn.net/Kwansy/article/details/108813337">《（8）JMP FAR段间跳转》</a>、<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/258060#h2-0">《深耕保护模式（二）》</a></p>
@@ -508,17 +508,17 @@
 <p>CS为代码段，CS的改变意味着EIP的改变，改变CS的同时必须修改EIP和SS，SS改变就必须修改堆栈，所以我们无法使用上面的指令来进行修改。</p>
 <p>段间跳转，有两种情况，即要跳转的段是一致代码段还是非一致代码段（参见代码段type域）。</p>
 <div class="note warning"><p><strong>同时修改CS与EIP的指令：</strong></p>
-<p>JMP FAR / CALL FAR / RETF / INT /IRETED</p>
+<p>JMP FAR &#x2F; CALL FAR &#x2F; RETF &#x2F; INT &#x2F;IRETED</p>
 <p><strong>只改变EIP的指令：</strong></p>
-<p>JMP / CALL / JCC / RET</p>
+<p>JMP &#x2F; CALL &#x2F; JCC &#x2F; RET</p>
 </div>
 
-<div class="note danger"><p><strong>一致代码段</strong>：也就是共享的段，要求：CPL &gt;= DPL。</p>
+<div class="note danger"><p><strong>一致代码段</strong>：也就是共享的段，要求：CPL &gt;&#x3D; DPL。</p>
 <ul>
 <li><strong>特权级高的程序不允许访问特权级低的数据</strong>：核心态不允许访问用户态的数据</li>
-<li><strong>特权级低的程序可以访问到特权级高的数据</strong>，但特权级不会改变：用户态还是用户态  </li>
+<li><strong>特权级低的程序可以访问到特权级高的数据</strong>，但特权级不会改变：用户态还是用户态</li>
 </ul>
-<p><strong>非一致代码段：</strong>普通代码段（Windows使用），要求：CPL = DPL 并且 RPL &lt;= DPL。</p>
+<p><strong>非一致代码段：</strong>普通代码段（Windows使用），要求：CPL &#x3D; DPL 并且 RPL &lt;&#x3D; DPL。</p>
 <ul>
 <li><strong>只允许同级访问</strong> </li>
 <li>绝对禁止不同级别的访问：核心态不是用户态，用户态也不是核心态</li>
@@ -530,20 +530,20 @@
 <p><strong>（1）段选择子拆分</strong></p>
 <p>0x20 对应二进制形式 0000 0000 0010 0000</p>
 <ul>
-<li>RPL = 00</li>
-<li>TI = 0</li>
-<li>Index = 4</li>
+<li>RPL &#x3D; 00</li>
+<li>TI &#x3D; 0</li>
+<li>Index &#x3D; 4</li>
 </ul>
 <p><strong>（2） 查表得到段描述符</strong></p>
-<p>TI = 0 所以查GDT表</p>
-<p>Index = 4 找到对应的段描述符，并不是所有的段描述符都可以跳转。</p>
+<p>TI &#x3D; 0 所以查GDT表</p>
+<p>Index &#x3D; 4 找到对应的段描述符，并不是所有的段描述符都可以跳转。</p>
 <p>四种情况可以跳转：<mark class="label warning">代码段、调用门、TSS任务段、任务门</mark>。</p>
 <p><strong>（3）权限检查</strong></p>
-<p>如果是非一致代码段，要求：CPL = DPL 并且 RPL &lt;= DPL。</p>
-<p>如果是一致代码段，要求：CPL &gt;= DPL。</p>
+<p>如果是非一致代码段，要求：CPL &#x3D; DPL 并且 RPL &lt;&#x3D; DPL。</p>
+<p>如果是一致代码段，要求：CPL &gt;&#x3D; DPL。</p>
 <p>简要说明什么是一致代码段什么是非一致代码段。</p>
 <blockquote>
-<p>一致代码段又称共享代码段。假设操作系统有一段代码是提供了某些通用功能，这段代码并不会对内核产生影响，并希望这些功能能够被应用层(三环程序)直接使用，即可让一直代码段去修饰这块代码。这也是为什么一致代码段要求：CPL &gt;= DPL(当前权限比描述权限低)就可以了。这段代码就是给低权限的应用使用的。</p>
+<p>一致代码段又称共享代码段。假设操作系统有一段代码是提供了某些通用功能，这段代码并不会对内核产生影响，并希望这些功能能够被应用层(三环程序)直接使用，即可让一直代码段去修饰这块代码。这也是为什么一致代码段要求：CPL &gt;&#x3D; DPL(当前权限比描述权限低)就可以了。这段代码就是给低权限的应用使用的。</p>
 <p>非一致代码段相反，严格控制权限。</p>
 </blockquote>
 <p><strong>（4）加载段描述符</strong></p>
@@ -551,50 +551,50 @@
 <p><strong>（5）代码执行</strong></p>
 <p>CPU将 CS.Base + Offset 的值写入EIP 然后执行CS:EIP处的代码，段间跳转结束.</p>
 <p>注意：直接对代码段进行JMP 或者 CALL的操作，无论目标是一致代码段还是非一致代码段，CPL都不会发生改变.如果要提升CPL的权限，只能通过<strong>调用门</strong>。</p>
-<h3 id="2-1-练习：非一致性代码段跳转"><a href="#2-1-练习：非一致性代码段跳转" class="headerlink" title="2.1 练习：非一致性代码段跳转"></a>2.1 练习：非一致性代码段跳转</h3><p>条件：非一致性代码段跳转，只允许同级访问：CPL=3的CPU只允许访问DPL=3的代码</p>
+<h3 id="2-1-练习：非一致性代码段跳转"><a href="#2-1-练习：非一致性代码段跳转" class="headerlink" title="2.1 练习：非一致性代码段跳转"></a>2.1 练习：非一致性代码段跳转</h3><p>条件：非一致性代码段跳转，只允许同级访问：CPL&#x3D;3的CPU只允许访问DPL&#x3D;3的代码</p>
 <p>要求分析：</p>
-<p>（1）<strong>CPL=DPL=0x11，RPL&lt;=DPL</strong>，则RPL可为0x00或0x11，TI=0，则选择子：0x–000/0x–011；</p>
+<p>（1）<strong>CPL&#x3D;DPL&#x3D;0x11，RPL&lt;&#x3D;DPL</strong>，则RPL可为0x00或0x11，TI&#x3D;0，则选择子：0x–000&#x2F;0x–011；</p>
 <p>（2）因为要修改CS，所以段描述符的Type域应该是Code —- Type最高位为1，则Type为：0x1xxx；</p>
-<p>（3）非一致性代码—-Type次高位为0，则Type为：0x10xx —- &gt;=0x8；</p>
-<p>（4）P、DPL、S（因为要修改CS，S=1）位分别为：0x1111 —- F。</p>
+<p>（3）非一致性代码—-Type次高位为0，则Type为：0x10xx —- &gt;&#x3D;0x8；</p>
+<p>（4）P、DPL、S（因为要修改CS，S&#x3D;1）位分别为：0x1111 —- F。</p>
 <p><img data-src="https://s2.loli.net/2021/12/16/2s4piJ5AOWluU1n.png" alt="18.png"></p>
 <p>段选择子分别为以下两种情况：</p>
-<p><strong>本练习以段选择子中RPL = 0x11为例</strong></p>
+<p><strong>本练习以段选择子中RPL &#x3D; 0x11为例</strong></p>
 <p>该描述符即指向一个非代码段，我们需要构造一个段选择子来找到该描述符，然后将该段描述符加载到CS寄存器，最后执行跳转。</p>
 <p>步骤一：</p>
 <p>根据段描述符构造段选择子：</p>
-<p>（1）该段描述符为第四个，Index=3</p>
-<p>（2）TI=0（查GDT）</p>
-<p>（3）RPL=0x11，如果此例RPL=0x00，则修改CS时会发生错误。因为非一致性代码跳转不改变CPU权限CPL。</p>
-<p>（4）段选择子=0x0011 0 11=0x1B</p>
-<p>（5）Base=0，G=1则Limit=0xFFFFFFFF，则Offset可随意构造</p>
-<p>（6）JMP FAR格式：CS:EIP=1B:0xxxxxxxx，跳转地址为：CS.Base+Offset</p>
+<p>（1）该段描述符为第四个，Index&#x3D;3</p>
+<p>（2）TI&#x3D;0（查GDT）</p>
+<p>（3）RPL&#x3D;0x11，如果此例RPL&#x3D;0x00，则修改CS时会发生错误。因为非一致性代码跳转不改变CPU权限CPL。</p>
+<p>（4）段选择子&#x3D;0x0011 0 11&#x3D;0x1B</p>
+<p>（5）Base&#x3D;0，G&#x3D;1则Limit&#x3D;0xFFFFFFFF，则Offset可随意构造</p>
+<p>（6）JMP FAR格式：CS:EIP&#x3D;1B:0xxxxxxxx，跳转地址为：CS.Base+Offset</p>
 <p>（7）<strong>如果执行成功，应该会修改CS和EIP</strong></p>
 <p>步骤二：</p>
-<p>打开OD观察此时的CS=0x1B、EIP=0x00441EC如下图</p>
+<p>打开OD观察此时的CS&#x3D;0x1B、EIP&#x3D;0x00441EC如下图</p>
 <p><img data-src="https://s2.loli.net/2021/12/16/lqxMnHeQzXGyvaV.png" alt="19.png"></p>
 <p>步骤三：</p>
-<p>为了能看到CS变化，则当前的段描述符的位置需要修改，可以将该段描述符复制到0x8003F048处，该处目前为0（P=0），如果复制到一个原先P=1的段描述符可能会卡死或者蓝屏。</p>
+<p>为了能看到CS变化，则当前的段描述符的位置需要修改，可以将该段描述符复制到0x8003F048处，该处目前为0（P&#x3D;0），如果复制到一个原先P&#x3D;1的段描述符可能会卡死或者蓝屏。</p>
 <p><img data-src="https://s2.loli.net/2021/12/16/WX5ozUf4IZx2cr9.png" alt="20.png"></p>
-<p>此时段选择子Index=9 —- 0x1001 0 11=0x4B，在XP中，修改此时的EIP地址处：JMP FAR 004B:0x0044420C，单步F8看CS、EIP变化。</p>
+<p>此时段选择子Index&#x3D;9 —- 0x1001 0 11&#x3D;0x4B，在XP中，修改此时的EIP地址处：JMP FAR 004B:0x0044420C，单步F8看CS、EIP变化。</p>
 <p><img data-src="https://s2.loli.net/2021/12/16/3YnZtWK2AVzTSi8.png" alt="21.png"></p>
 <div class="note default"><p><strong>结论：</strong></p>
 <ol>
-<li><p>非一致性代码段JMP FAR跳转时，满足段权限检查：CPL=DPL=0x11，RPL&lt;=DPL即能成功。</p>
+<li><p>非一致性代码段JMP FAR跳转时，满足段权限检查：CPL&#x3D;DPL&#x3D;0x11，RPL&lt;&#x3D;DPL即能成功。</p>
 </li>
-<li><p><strong>如果此例RPL=0x00，则修改CS时会发生错误。因为JMP FAR不改变CPU权限CPL。</strong></p>
+<li><p><strong>如果此例RPL&#x3D;0x00，则修改CS时会发生错误。因为JMP FAR不改变CPU权限CPL。</strong></p>
 </li>
-<li><p>所以3环的非一致性代码跳转成功条件：<strong>CPL=DPL=0x11，RPL&lt;=DPL，RPL=0x11</strong>。</p>
+<li><p>所以3环的非一致性代码跳转成功条件：<strong>CPL&#x3D;DPL&#x3D;0x11，RPL&lt;&#x3D;DPL，RPL&#x3D;0x11</strong>。</p>
 </li>
 </ol>
 </div>
 
-<h3 id="2-2-练习：一致性代码段跳转"><a href="#2-2-练习：一致性代码段跳转" class="headerlink" title="2.2 练习：一致性代码段跳转"></a>2.2 练习：一致性代码段跳转</h3><p>条件：<strong>只允许低权限的程序访问高权限的代码：CPL=3的CPU只允许访问DPL=0的代码</strong>。</p>
+<h3 id="2-2-练习：一致性代码段跳转"><a href="#2-2-练习：一致性代码段跳转" class="headerlink" title="2.2 练习：一致性代码段跳转"></a>2.2 练习：一致性代码段跳转</h3><p>条件：<strong>只允许低权限的程序访问高权限的代码：CPL&#x3D;3的CPU只允许访问DPL&#x3D;0的代码</strong>。</p>
 <p>要求：</p>
-<p>（1）目前CPL=3，则P=1，DPL=00，S=1（因为要修改CS。DATA/CODE），1001=9</p>
-<p>（2）Type：Decimal=1（代码段），C=1（一致性代码），11xx&gt;=0xC，由于此时的的CPL=0x11，因为不能修改特权级别，所以RPL必须RPL=0x11</p>
+<p>（1）目前CPL&#x3D;3，则P&#x3D;1，DPL&#x3D;00，S&#x3D;1（因为要修改CS。DATA&#x2F;CODE），1001&#x3D;9</p>
+<p>（2）Type：Decimal&#x3D;1（代码段），C&#x3D;1（一致性代码），11xx&gt;&#x3D;0xC，由于此时的的CPL&#x3D;0x11，因为不能修改特权级别，所以RPL必须RPL&#x3D;0x11</p>
 <p>（3）构造段选择子0x004B</p>
-<p>直接构造一个：00cf<strong>9F</strong>00`0000ffff</p>
+<p>直接构造一个：00cf<strong>9F</strong>00&#96;0000ffff</p>
 <p><img data-src="https://s2.loli.net/2021/12/16/BS6VDfrvMzhk1RH.png" alt="22.png"></p>
 <p>重启一下OD，让CS复位如下图。</p>
 <p><img data-src="https://s2.loli.net/2021/12/16/WepnhoVQUHCtxDl.png" alt="23.png"></p>
@@ -604,9 +604,9 @@
 <ol>
 <li><p>一致性代码段JMP FAR跳转时，满足段权限检查：CPL&gt;DPL即能成功。</p>
 </li>
-<li><p><strong>如果此例RPL=0x00，则修改CS时会发生错误。因为JMP FAR不改变CPU权限CPL。</strong></p>
+<li><p><strong>如果此例RPL&#x3D;0x00，则修改CS时会发生错误。因为JMP FAR不改变CPU权限CPL。</strong></p>
 </li>
-<li><p>所以3环的一致性代码跳转成功条件：<strong>CPL&gt;DPL，RPL=0x11</strong>。</p>
+<li><p>所以3环的一致性代码跳转成功条件：<strong>CPL&gt;DPL，RPL&#x3D;0x11</strong>。</p>
 </li>
 </ol>
 </div>
@@ -647,9 +647,9 @@
 <li>CALL CS:EIP EIP废弃不用，真正要跳转的地方是由段描述符装载进CS后的CS决定。</li>
 <li>堆栈的变化：<strong>同一个线程从3环的堆栈切换到0环的堆栈</strong>。</li>
 <li>在段描述符加载进CS之前，会将CS保存到堆栈，方便RETF回来时恢复原来的CS。</li>
-<li>跨段的意思就是修改CS，不提权：CS段描述符的DPL=CPL时，提权：CS段描述符的DPL &lt; CPL时。</li>
+<li>跨段的意思就是修改CS，不提权：CS段描述符的DPL&#x3D;CPL时，提权：CS段描述符的DPL &lt; CPL时。</li>
 <li>RETF回去时也要进行权限检查。</li>
-<li><strong>不管提不提权，调用门描述符的DPL=0x11，如果不为3那么我们将无法访问到门描述符，敲门的资格都没有。</strong></li>
+<li><strong>不管提不提权，调用门描述符的DPL&#x3D;0x11，如果不为3那么我们将无法访问到门描述符，敲门的资格都没有。</strong></li>
 </ol>
 <div class="note primary"><p>长调用的EIP是废弃的，所有信息都根据CS获取，这个CS是段选择子，指向GDT表中的一个特殊的段描述符，这个段描述符叫<strong>调用门</strong>。</p>
 <p>Windows中没有使用调用门，需要自己去构造调用门。</p>
@@ -670,9 +670,9 @@
 
 <p>执行步骤：</p>
 <ol>
-<li>根据CS的值查GDT表，找到对应的段描述符，这个描述符是一个<strong>调用门</strong>。（S=0，Type=1100）</li>
+<li>根据CS的值查GDT表，找到对应的段描述符，这个描述符是一个<strong>调用门</strong>。（S&#x3D;0，Type&#x3D;1100）</li>
 <li>在调用门描述符中存储另一个代码段段的选择子。（具体看下图低四字节16到31位）</li>
-<li>该选择子指向的段段.Base + 调用门偏移地址 = 就是真正要执行的地址。</li>
+<li>该选择子指向的段段.Base + 调用门偏移地址 &#x3D; 就是真正要执行的地址。</li>
 </ol>
 <p>为了能够访问不同特权级的代码段，处理器提供了一个特殊的描述符集合，叫做门描述符。以下是四种门描述符：</p>
 <ul>
@@ -690,27 +690,27 @@
 <li><strong>Windows中没有使用调用门</strong>，需要自己去构造调用门。</li>
 <li>如果从3环使用调用门，则DPL要为3，如果不为3那么我们将无法访问到门描述符，敲门的资格都没有。</li>
 <li>ParamCount是传参用的，为参数个数。</li>
-<li>Segenment Selector是段选择子，指向要加载到CS的的段描述符，也就是要执行的段描述符，RPL=0x00/0x11。</li>
+<li>Segenment Selector是段选择子，指向要加载到CS的的段描述符，也就是要执行的段描述符，RPL&#x3D;0x00&#x2F;0x11。</li>
 </ol>
 </div>
 
 <h3 id="4-1-调用门段权限检查"><a href="#4-1-调用门段权限检查" class="headerlink" title="4.1 调用门段权限检查"></a>4.1 调用门段权限检查</h3><p><img data-src="https://s2.loli.net/2021/12/19/2ptJhca47nNfGOW.png" alt="61.png"></p>
 <h3 id="4-2-练习：使用调用门进行调试"><a href="#4-2-练习：使用调用门进行调试" class="headerlink" title="4.2 练习：使用调用门进行调试"></a>4.2 练习：使用调用门进行调试</h3><p>本题要求：写代码实现一个调用门进行提权，并观察在3环和0环下的ESP、CS、SS段寄存器变化，观察3环进到0环时的堆栈。</p>
 <p><strong>先使用自己代码的段选择子找到调用门，然后根据调用门去找要调用的段描述符</strong>。</p>
-<p>调用门描述符的DPL必须=0x11，因为使用VC6做实验，低4字节高16位（段选择子）要指向一个0环的代码段描述符才能完成本实验。</p>
-<div class="note warning"><p><strong>要执行的程序入口地址 = Call_Gate.Offset ⊕ CS.Base</strong></p>
+<p>调用门描述符的DPL必须&#x3D;0x11，因为使用VC6做实验，低4字节高16位（段选择子）要指向一个0环的代码段描述符才能完成本实验。</p>
+<div class="note warning"><p><strong>要执行的程序入口地址 &#x3D; Call_Gate.Offset ⊕ CS.Base</strong></p>
 </div>
 
 <p>步骤：</p>
 <ol>
-<li><p>构造调用门段描述符，0x00000000`00000000；（是DPL要为3，否则在3环无法访问到门描述符）</p>
+<li><p>构造调用门段描述符，0x00000000&#96;00000000；（是DPL要为3，否则在3环无法访问到门描述符）</p>
 <ul>
-<li>P=1，DPL=11，S=0，0x1110=0xE，0x0000<strong>E</strong>000`00000000；</li>
-<li>调用门Type=0x1100=0xC，0x0000<strong>EC</strong>00`00000000；</li>
-<li><strong>构造选择子</strong>：调用门来执行提权，需要根据自身结构中隐含的段选择子去找一个DPL=00的CS段描述符，可构造0x0008/0x000B，0x0000<strong>EC00</strong>`<strong>0008</strong>0000。剩下还需要构造一个偏移地址让CS去执行。</li>
+<li>P&#x3D;1，DPL&#x3D;11，S&#x3D;0，0x1110&#x3D;0xE，0x0000<strong>E</strong>000&#96;00000000；</li>
+<li>调用门Type&#x3D;0x1100&#x3D;0xC，0x0000<strong>EC</strong>00&#96;00000000；</li>
+<li><strong>构造选择子</strong>：调用门来执行提权，需要根据自身结构中隐含的段选择子去找一个DPL&#x3D;00的CS段描述符，可构造0x0008&#x2F;0x000B，0x0000<strong>EC00</strong>&#96;<strong>0008</strong>0000。剩下还需要构造一个偏移地址让CS去执行。</li>
 </ul>
 </li>
-<li><p>将段描述符写入GDT表中<strong>P=0</strong>的上面去，否则可能会卡死或蓝屏。</p>
+<li><p>将段描述符写入GDT表中<strong>P&#x3D;0</strong>的上面去，否则可能会卡死或蓝屏。</p>
 <p><img data-src="https://s2.loli.net/2021/12/17/1JIQZMYLBr9U56e.png" alt="31.png"></p>
 </li>
 <li><p>构造偏移地址：</p>
@@ -721,13 +721,13 @@
 <p>如图：</p>
 <p><img data-src="https://s2.loli.net/2021/12/17/U5NMtLzP14dxmJ6.png" alt="31_1.png"></p>
 <p><img data-src="https://s2.loli.net/2021/12/17/flkgNpcjvKLdTb5.png" alt="32.png"></p>
-<p>要执行的程序入口地址：0x00401020，则调用门段描述符：0x<strong>0040</strong>EC00`0008<strong>1020</strong>。</p>
+<p>要执行的程序入口地址：0x00401020，则调用门段描述符：0x<strong>0040</strong>EC00&#96;0008<strong>1020</strong>。</p>
 <p><img data-src="https://s2.loli.net/2021/12/17/KBJyWH7CvX9lhMp.png" alt="33.png"></p>
-<p>观察3环下：ESP=0x0012FF28，CS=0x001B，SS=0x0023。</p>
+<p>观察3环下：ESP&#x3D;0x0012FF28，CS&#x3D;0x001B，SS&#x3D;0x0023。</p>
 <p><strong>注意</strong>：在XP中继续执行时如果不取消此时设置的断点的话，从0环返回时将会卡死（目前应该在0环调试状态下）。</p>
 <p>此时，取消断点，F5执行，观察Windbg。</p>
 <p><img data-src="https://s2.loli.net/2021/12/18/S93Yu2fBivCPkKw.png" alt="34.png"></p>
-<p>观察0环下：ESP=0xAA15ADD0，CS=0x0008，SS=0x0010。</p>
+<p>观察0环下：ESP&#x3D;0xAA15ADD0，CS&#x3D;0x0008，SS&#x3D;0x0010。</p>
 <div class="note danger"><p><strong>注意：</strong></p>
 <ol>
 <li>函数<code>GetGdtRegister()</code>虽然是我们在3环写的，但是通过调用门去执行的时候，该函数的执行权限为0环。</li>
@@ -745,7 +745,7 @@
 <p><img data-src="https://s2.loli.net/2021/12/18/G8i2QSF6q1ofXMe.png" alt="35.png"></p>
 <p><img data-src="https://s2.loli.net/2021/12/18/eKSO2PUCYoxt7BH.png" alt="36.png"></p>
 </li>
-<li><p>修改调用门段描述符。0040EC00`00081030</p>
+<li><p>修改调用门段描述符。0040EC00&#96;00081030</p>
 <p><img data-src="https://s2.loli.net/2021/12/18/udfbCTh5l9iELQ4.png" alt="37.png"></p>
 </li>
 <li><p>将代码中的<code>int 3</code>注释后执行，否则无法正常从0环返回到3环。在XP的VC6中F5执行如下图。</p>
@@ -764,7 +764,7 @@
 <p><img data-src="https://s2.loli.net/2021/12/18/xcimQ29yB6YSz78.png" alt="41.png"></p>
 <p><img data-src="https://s2.loli.net/2021/12/18/1nyxRj93E4HrUdc.png" alt="40_1.png"></p>
 <ol>
-<li><p>构造调用门有参数的段描述符：0040EC0<strong>3</strong>`00081020。</p>
+<li><p>构造调用门有参数的段描述符：0040EC0<strong>3</strong>&#96;00081020。</p>
 <p><img data-src="https://s2.loli.net/2021/12/18/gWkicQ1hZs47aeu.png" alt="42.png"></p>
 </li>
 <li><p>回到XP中取消断点，F5执行，此时将会在断点在0环的int 3。观察堆栈和预期一样。</p>
@@ -794,7 +794,7 @@
 <li><p>如下图，第二个函数的入口地址是<code>0x00401050</code>，代码中修改如下。</p>
 <p><img data-src="https://s2.loli.net/2021/12/18/9NlYEd3HsVqTSmZ.png" alt="46.png"></p>
 </li>
-<li><p>根据第一个函数的入口地址构造调用门段描述符，0040EC00`00081030</p>
+<li><p>根据第一个函数的入口地址构造调用门段描述符，0040EC00&#96;00081030</p>
 <p><img data-src="https://s2.loli.net/2021/12/18/9NEHiy38vFkeAMt.png" alt="45.png"></p>
 <p><img data-src="https://s2.loli.net/2021/12/18/FaCpr3liQUGonD6.png" alt="47.png"></p>
 </li>
@@ -803,20 +803,20 @@
 </li>
 </ol>
 <h3 id="6-2-双调用门"><a href="#6-2-双调用门" class="headerlink" title="6.2 双调用门"></a>6.2 双调用门</h3><p>题目：通过调用门提权后，在第一个函数中再使用一个调用门去执行第二个函数。</p>
-<p><strong>注意：</strong>这里使用了2个调用门段描述符，第1个调用门段描述符的DPL=0x11，<strong>第2个调用门段描述符的DPL=0x00</strong>。因为第一个函数去调用第二个函数是在0环权限下，所以第二个调用门的DPL=0x00。</p>
+<p><strong>注意：</strong>这里使用了2个调用门段描述符，第1个调用门段描述符的DPL&#x3D;0x11，<strong>第2个调用门段描述符的DPL&#x3D;0x00</strong>。因为第一个函数去调用第二个函数是在0环权限下，所以第二个调用门的DPL&#x3D;0x00。</p>
 <p>步骤：</p>
 <ol>
 <li><p>构造2个函数，提权后进入第一个函数，在第一个函数中再使用调用门去执行第二个函数。</p>
-<p>第一个函数执行成功时，设置bFlag_1=1。</p>
-<p>第二个函数执行成功时，设置bFlag_2=1。</p>
+<p>第一个函数执行成功时，设置bFlag_1&#x3D;1。</p>
+<p>第二个函数执行成功时，设置bFlag_2&#x3D;1。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdafx.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">DWORD dwHigh2GValue;</span><br><span class="line">BYTE bFlag_1 = <span class="number">0</span>;</span><br><span class="line">BYTE bFlag_2 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">char</span> Gate_1[<span class="number">6</span>] = &#123;<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0x48</span>,<span class="number">0</span>&#125;;	<span class="comment">//CS_1:8003f048 0040EC00`00081030</span></span><br><span class="line"><span class="keyword">char</span> Gate_2[<span class="number">6</span>] = &#123;<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0x90</span>,<span class="number">0</span>&#125;;	<span class="comment">//CS_2:P=1,DPL=0x00,S=0,0x1000=8,调用门Type=0x1100=C</span></span><br><span class="line">                                  	<span class="comment">//另一个门的CS的位置8003f090</span></span><br><span class="line">                                  	<span class="comment">//CS_2:8003f090 00408C00`00081060</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 该函数通过 CALL FAR 调用，使用调用门提权，拥有0环权限</span></span><br><span class="line"><span class="keyword">void</span> __declspec(naked) FunctionHas0CPL_1()</span><br><span class="line">&#123;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//int 3  注意这里的断点在调试时可以用，但是在真正运行时不能</span></span><br><span class="line">		<span class="comment">//写到函数里，不然会导致程序崩溃</span></span><br><span class="line">		pushad</span><br><span class="line">		pushfd</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 读取了GDT表第二项的低4字节</span></span><br><span class="line">		mov eax,<span class="number">0x8003f008</span></span><br><span class="line">		mov eax,[eax]</span><br><span class="line">		mov dwHigh2GValue,eax</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 修改返回地址，跳转到Exit函数执行</span></span><br><span class="line">		<span class="comment">//mov eax,0x401060</span></span><br><span class="line">		<span class="comment">//mov [esp+0x24],eax</span></span><br><span class="line">		test eax,eax</span><br><span class="line">		mov al,<span class="number">0x1</span></span><br><span class="line">		mov bFlag_1,al	<span class="comment">//mov byte ptr ds:[bFlag_1],al</span></span><br><span class="line"></span><br><span class="line">		call fword ptr ds:[Gate_2]</span><br><span class="line"></span><br><span class="line">		popfd</span><br><span class="line">		popad		</span><br><span class="line"></span><br><span class="line">		retf	<span class="comment">// 注意堆栈平衡，写错蓝屏</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> __declspec(naked) FunctionHas0CPL_2()</span><br><span class="line">&#123;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//int 3  注意这里的断点在调试时可以用，但是在真正运行时不能</span></span><br><span class="line">		<span class="comment">//写到函数里，不然会导致程序崩溃</span></span><br><span class="line">		pushad</span><br><span class="line">		pushfd</span><br><span class="line">		</span><br><span class="line">		test eax,eax</span><br><span class="line">		mov al,<span class="number">0x1</span></span><br><span class="line">		mov bFlag_2,al	<span class="comment">//mov byte ptr ds:[bFlag_2],al </span></span><br><span class="line"></span><br><span class="line">		popfd</span><br><span class="line">		popad		</span><br><span class="line"></span><br><span class="line">		retf	<span class="comment">// 注意堆栈平衡，写错蓝屏</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		call fword ptr ds:[Gate_1] <span class="comment">// 长调用，使用调用门提权</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%08x\nGate_1:%x,Gate_2:%x\n&quot;</span>,dwHigh2GValue,bFlag_1,bFlag_2);</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>获取两个函数的入口地址准备构造两个调用门的段描述符。</p>
 <p><img data-src="https://s2.loli.net/2021/12/18/hzAY17tUIsDqKJd.png" alt="49.png"></p>
 </li>
-<li><p>构造2个调用门的段描述符，第一个放在一个P=0的0x8003F048。第二个放在P=0的0x8003F090，如下图。</p>
-<p>eq 8003F048 0040EC00`00081030</p>
-<p>eq 8003F090 00408C00`00081060（DPL=0x00）</p>
+<li><p>构造2个调用门的段描述符，第一个放在一个P&#x3D;0的0x8003F048。第二个放在P&#x3D;0的0x8003F090，如下图。</p>
+<p>eq 8003F048 0040EC00&#96;00081030</p>
+<p>eq 8003F090 00408C00&#96;00081060（DPL&#x3D;0x00）</p>
 <p><img data-src="https://s2.loli.net/2021/12/18/JSiBCfjMYUPTRWz.png" alt="50.png"></p>
 </li>
 <li><p>回到XP的VC6中F9取消断点后F5执行，结果如下图。</p>
@@ -945,14 +945,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

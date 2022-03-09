@@ -468,7 +468,7 @@
 <h2 id="2-编译调试驱动程序"><a href="#2-编译调试驱动程序" class="headerlink" title="2 编译调试驱动程序"></a>2 编译调试驱动程序</h2><h3 id="2-1-驱动开发流程"><a href="#2-1-驱动开发流程" class="headerlink" title="2.1 驱动开发流程"></a>2.1 驱动开发流程</h3><p>驱动的开发流程：<br>编写代码 ----&gt;  生成.sys文件 ----&gt; 部署 ----&gt; 启动 ----&gt; 停止 ----&gt; 卸载。</p>
 <h3 id="2-2-PDB文件"><a href="#2-2-PDB文件" class="headerlink" title="2.2 .PDB文件"></a>2.2 .PDB文件</h3><ol>
 <li>PDB文件是在我们编译工程的时候产生的，它是和对应的模块（exe、dll或sys）一起生成出来的。</li>
-<li>每个模块编译的时候都可以生成自己的PDB文件。比如.exe/.dll/.sys等等。</li>
+<li>每个模块编译的时候都可以生成自己的PDB文件。比如.exe&#x2F;.dll&#x2F;.sys等等。</li>
 </ol>
 <p>PDB文件是编译驱动的同时生成的调试信息文件，它可以帮助我们像调试应用程序一样调试驱动程序。其实之前我们已经使用过PDB，我们配置双机调试环境时，在物理机上安装了符号文件，并在Windbg中导入过。</p>
 <p>有了PDB，我们就可以知道当前汇编语句属于哪个函数，程序定义的结构体等关键信息，说一句题外话，软件发布的时候，切记不要把PDB也发布出去，因为这会给别人破解你的软件提供巨大便利。</p>
@@ -522,19 +522,21 @@
 
 <blockquote>
 <ul>
-<li><p>NT_SUCCESS(<em>Status</em>) </p>
-<p>Evaluates to TRUE if the return value specified by <em>Status</em> is a  success type (0 − 0x3FFFFFFF) or an informational type (0x40000000 −  0x7FFFFFFF). </p>
-</li>
-<li><p>NT_INFORMATION(<em>Status</em>) </p>
-<p>Evaluates to TRUE if the return value specified by <em>Status</em> is an  informational type (0x40000000 − 0x7FFFFFFF). </p>
-</li>
-<li><p>NT_WARNING(<em>Status</em>) </p>
-<p>Evaluates to TRUE if the return value specified by <em>Status</em> is a  warning type (0x80000000 − 0xBFFFFFFF). </p>
-</li>
-<li><p>NT_ERROR(<em>Status</em>) </p>
-<p>Evaluates to TRUE if the return value specified by <em>Status</em> is an error  type (0xC0000000 - 0xFFFFFFFF). </p>
-</li>
+<li>NT_SUCCESS(<em>Status</em>)</li>
 </ul>
+<p> Evaluates to TRUE if the return value specified by <em>Status</em> is a  success type (0 − 0x3FFFFFFF) or an informational type (0x40000000 −  0x7FFFFFFF). </p>
+<ul>
+<li>NT_INFORMATION(<em>Status</em>)</li>
+</ul>
+<p> Evaluates to TRUE if the return value specified by <em>Status</em> is an  informational type (0x40000000 − 0x7FFFFFFF). </p>
+<ul>
+<li>NT_WARNING(<em>Status</em>)</li>
+</ul>
+<p> Evaluates to TRUE if the return value specified by <em>Status</em> is a  warning type (0x80000000 − 0xBFFFFFFF). </p>
+<ul>
+<li>NT_ERROR(<em>Status</em>)</li>
+</ul>
+<p> Evaluates to TRUE if the return value specified by <em>Status</em> is an error  type (0xC0000000 - 0xFFFFFFFF). </p>
 </blockquote>
 <h3 id="4-6-内核异常处理"><a href="#4-6-内核异常处理" class="headerlink" title="4.6 内核异常处理"></a>4.6 内核异常处理</h3><p>在内核中，一个小小的错误就可能导致蓝屏，比如：读写一个无效的内存地址。为了让自己的内核程序更加健壮，强烈建议大家在编写内核程序时，使用异常处。<br>Windows提供了结构化异常处理机制，一般的编译器都是支持的，如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__try&#123;</span><br><span class="line">	<span class="comment">//可能出错的代码</span></span><br><span class="line">&#125;</span><br><span class="line">__except(filter_value) &#123;</span><br><span class="line">	<span class="comment">//出错时要执行的代码</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -773,14 +775,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

@@ -402,7 +402,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.6k</span>
+      <span>9.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -468,21 +468,21 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">Image/jpg</td>
+<td align="center">Image&#x2F;jpg</td>
 <td align="center">JPG 图像</td>
-<td align="center">Text/html</td>
+<td align="center">Text&#x2F;html</td>
 <td align="center">HTML 文档</td>
 </tr>
 <tr>
-<td align="center">Image/gif</td>
+<td align="center">Image&#x2F;gif</td>
 <td align="center">GIF 图像</td>
-<td align="center">application/XML</td>
+<td align="center">application&#x2F;XML</td>
 <td align="center">XML 文档</td>
 </tr>
 <tr>
-<td align="center">Image/png</td>
+<td align="center">Image&#x2F;png</td>
 <td align="center">PNG 图像</td>
-<td align="center">application/PDF</td>
+<td align="center">application&#x2F;PDF</td>
 <td align="center">PDF 文档</td>
 </tr>
 </tbody></table>
@@ -490,20 +490,18 @@
 <p><strong>绕过方式</strong>：由于<code>Content-Type</code>类型是由客户端浏览器自动生成的，那么在这个过程中<code>Content-Type</code>的值是可控的（因为在客户端生成），只需要 HTTP 抓包后修改<code>Content-Type</code>即可绕过。</p>
 <h4 id="1-3-3-服务器端文件扩展名检测及绕过"><a href="#1-3-3-服务器端文件扩展名检测及绕过" class="headerlink" title="1.3.3 服务器端文件扩展名检测及绕过"></a>1.3.3 服务器端文件扩展名检测及绕过</h4><p><strong>防护思路</strong>：</p>
 <ol>
-<li>基于客户端参数的检测手段可以在文件上传到服务器前对 HTTP 报文拦截进行修改，当服务器就收到上传的信息后，校验文件名是否合法，采用黑/白名单方式。</li>
+<li>基于客户端参数的检测手段可以在文件上传到服务器前对 HTTP 报文拦截进行修改，当服务器就收到上传的信息后，校验文件名是否合法，采用黑&#x2F;白名单方式。</li>
 <li>完全不信赖用户所上传文件的后缀名，在用户上传文件到服务器之后，<strong>重新给上传文件添加后缀名</strong>。</li>
 </ol>
 <p><strong>防护方法</strong>：</p>
 <ul>
 <li><mark class="label info">文件后缀重命名</mark></li>
 <li><mark class="label warning">白名单过滤</mark></li>
-<li><mark class="label primary">黑名单过滤</mark>
-
-</li>
+<li><mark class="label primary">黑名单过滤</mark></li>
 </ul>
 <p>对于文件上传在服务器端文件重命名（重命名<strong>文件名和文件后缀</strong>）时，能够针对后缀名的各种绕过。通常会使用一个随机数生成函数来生成文件名，可以防止<code>%00</code>截断和解析漏洞。由于该方法适用场景单一，目前基本上无有效手段进行绕过。</p>
 <p>文件重命名防护代码示例：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$filerename =<span class="string">&#x27;jpg&#x27;</span>;</span><br><span class="line">$newfile = md5 (uniqid (microtime(<span class="number">7</span>)).<span class="string">&#x27;_&#x27;</span>.$flerename;</span><br><span class="line"><span class="keyword">if</span>(move_uploaded_fle($_ FILES[<span class="string">&#x27;upfile&#x27;</span>]l<span class="string">&#x27;tmp_name&#x27;</span>], $distination.<span class="string">&#x27;/&#x27;</span>.$newfile))</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$filerename</span> =<span class="string">&#x27;jpg&#x27;</span>;</span><br><span class="line"><span class="variable">$newfile</span> = md5 (uniqid (microtime(<span class="number">7</span>)).<span class="string">&#x27;_&#x27;</span>.<span class="variable">$flerename</span>;</span><br><span class="line"><span class="keyword">if</span>(move_uploaded_fle(<span class="variable">$_</span> FILES[<span class="string">&#x27;upfile&#x27;</span>]l<span class="string">&#x27;tmp_name&#x27;</span>], <span class="variable">$distination</span>.<span class="string">&#x27;/&#x27;</span>.<span class="variable">$newfile</span>))</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
 
 
 
@@ -550,7 +548,7 @@
 <p><strong>防护代码</strong>：</p>
 <p>（1）文件头判断</p>
 <p>读取文件<strong>开头部分的数个字节</strong>，判断文件头与文件类型是否匹配。通常情况下，通过判断前<mark class="label success">10个字节</mark>基本上就能判断出一个文件的真实类型。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getTypeList</span>(<span class="params"> </span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  	<span class="keyword">return</span> <span class="keyword">array</span>(</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;FFD8FFE0&quot;</span>, <span class="string">&quot;jpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;89504E47&quot;</span>, <span class="string">&quot;png&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;47494638&quot;</span>，<span class="string">&quot;gif&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;49492A00&quot;</span>，<span class="string">&quot;tif&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;424D&quot;</span>, <span class="string">&quot;bmp&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;41433130&quot;</span>，<span class="string">&quot;dwg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;38425053&quot;</span>, <span class="string">&quot;psd&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;7B5C727466&quot;</span>, <span class="string">&quot;rtf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;3C3F786D6C&quot;</span>, <span class="string">&quot;xml&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;68746D6C3E&quot;</span>, <span class="string">&quot;html&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;44656C69766572792D646174&quot;</span>, <span class="string">&quot;eml&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span> (<span class="string">&quot;CFAD12FEC5FD746F&quot;</span>, <span class="string">&quot;dbx&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2142444E&quot;</span>, <span class="string">&quot;pst&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;DOCF11E0&quot;</span>, <span class="string">&quot;xls/doc&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;5374616E64617264204A&quot;</span>, <span class="string">&quot;mdb&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;FF575043&quot;</span>, <span class="string">&quot;wpd&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;252150532041646F6265&quot;</span>, <span class="string">&quot;eps/ps&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;255044462D312E&quot;</span>, <span class="string">&quot;pdf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;B3828596&quot;</span>, <span class="string">&quot;pwl&quot;</span>)</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;504B0304&quot;</span>, <span class="string">&quot;zip&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;52617221&quot;</span>, <span class="string">&quot;rar&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;57415645&quot;</span>, <span class="string">&quot;wav&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;41564920&quot;</span>, <span class="string">&quot;avi&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2E7261FD&quot;</span>, <span class="string">&quot;ram&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2B524D46&quot;</span>, <span class="string">&quot;rm&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;000001BA&quot;</span>, <span class="string">&quot;mpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;000001B3&quot;</span>, <span class="string">&quot;mpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;6D6F6F76&quot;</span>, <span class="string">&quot;mov&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;3026B2758E66CF11&quot;</span>, <span class="string">&quot;asf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;4D546864&quot;</span>, <span class="string">&quot;mid&quot;</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkFileType</span>(<span class="params">$fleName</span>)</span>&#123;</span><br><span class="line">$file = @fopen( $fleName, <span class="string">&quot;rb&quot;</span>);</span><br><span class="line">$bin = fread($fle, <span class="number">5</span>);  <span class="comment">//只读5个字节</span></span><br><span class="line">fclose($file);</span><br><span class="line">$typelist=getTypeList();</span><br><span class="line"><span class="keyword">foreach</span> ($typelist <span class="keyword">as</span> $v)</span><br><span class="line">	&#123;</span><br><span class="line">  	$blen=strlen(pack(<span class="string">&quot;H*&quot;</span>,$v[<span class="number">0</span>])); <span class="comment">// 得到文件头标记字节数</span></span><br><span class="line">  	$tbin=substr($bin,<span class="number">0</span>,intval($blen));<span class="comment">//需要比较文件头长度</span></span><br><span class="line">		<span class="keyword">if</span>(strtolower($v[<span class="number">0</span>])==strtolower(array_shift(unpack(<span class="string">&quot;H*&quot;</span>,$tbin))))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">return</span> $v[<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;error&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">$upfile=$_FILES[<span class="string">&quot;upfile&quot;</span>];</span><br><span class="line">$name=$upfile[<span class="string">&quot;name&quot;</span>];</span><br><span class="line">$type=$upfile[<span class="string">&quot;type&quot;</span>];</span><br><span class="line">$size=$upfile[<span class="string">&quot;size&quot;</span>];</span><br><span class="line">$tmp_name=$upfile[<span class="string">&quot;tmp_ name&quot;</span>];</span><br><span class="line">	$distination = <span class="string">&#x27;/var/www/html/up1oad_04/fle/&#x27;</span>.$name;</span><br><span class="line">	<span class="keyword">echo</span> checkFileType($upfile[<span class="string">&#x27;tmp_name&#x27;</span>]);</span><br><span class="line">move_uploaded_file($upfile[<span class="string">&#x27;tmp_name&#x27;</span>],$distination);</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getTypeList</span>(<span class="params"> </span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  	<span class="keyword">return</span> <span class="keyword">array</span>(</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;FFD8FFE0&quot;</span>, <span class="string">&quot;jpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;89504E47&quot;</span>, <span class="string">&quot;png&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;47494638&quot;</span>，<span class="string">&quot;gif&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;49492A00&quot;</span>，<span class="string">&quot;tif&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;424D&quot;</span>, <span class="string">&quot;bmp&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;41433130&quot;</span>，<span class="string">&quot;dwg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;38425053&quot;</span>, <span class="string">&quot;psd&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;7B5C727466&quot;</span>, <span class="string">&quot;rtf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;3C3F786D6C&quot;</span>, <span class="string">&quot;xml&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;68746D6C3E&quot;</span>, <span class="string">&quot;html&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;44656C69766572792D646174&quot;</span>, <span class="string">&quot;eml&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span> (<span class="string">&quot;CFAD12FEC5FD746F&quot;</span>, <span class="string">&quot;dbx&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2142444E&quot;</span>, <span class="string">&quot;pst&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;DOCF11E0&quot;</span>, <span class="string">&quot;xls/doc&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;5374616E64617264204A&quot;</span>, <span class="string">&quot;mdb&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;FF575043&quot;</span>, <span class="string">&quot;wpd&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;252150532041646F6265&quot;</span>, <span class="string">&quot;eps/ps&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;255044462D312E&quot;</span>, <span class="string">&quot;pdf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;B3828596&quot;</span>, <span class="string">&quot;pwl&quot;</span>)</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;504B0304&quot;</span>, <span class="string">&quot;zip&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;52617221&quot;</span>, <span class="string">&quot;rar&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;57415645&quot;</span>, <span class="string">&quot;wav&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;41564920&quot;</span>, <span class="string">&quot;avi&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2E7261FD&quot;</span>, <span class="string">&quot;ram&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;2B524D46&quot;</span>, <span class="string">&quot;rm&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;000001BA&quot;</span>, <span class="string">&quot;mpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;000001B3&quot;</span>, <span class="string">&quot;mpg&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;6D6F6F76&quot;</span>, <span class="string">&quot;mov&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;3026B2758E66CF11&quot;</span>, <span class="string">&quot;asf&quot;</span>),</span><br><span class="line">      <span class="keyword">array</span>(<span class="string">&quot;4D546864&quot;</span>, <span class="string">&quot;mid&quot;</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">checkFileType</span>(<span class="params"><span class="variable">$fleName</span></span>)</span>&#123;</span><br><span class="line"><span class="variable">$file</span> = @fopen( <span class="variable">$fleName</span>, <span class="string">&quot;rb&quot;</span>);</span><br><span class="line"><span class="variable">$bin</span> = fread(<span class="variable">$fle</span>, <span class="number">5</span>);  <span class="comment">//只读5个字节</span></span><br><span class="line">fclose(<span class="variable">$file</span>);</span><br><span class="line"><span class="variable">$typelist</span>=getTypeList();</span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$typelist</span> <span class="keyword">as</span> <span class="variable">$v</span>)</span><br><span class="line">	&#123;</span><br><span class="line">  	<span class="variable">$blen</span>=strlen(pack(<span class="string">&quot;H*&quot;</span>,<span class="variable">$v</span>[<span class="number">0</span>])); <span class="comment">// 得到文件头标记字节数</span></span><br><span class="line">  	<span class="variable">$tbin</span>=substr(<span class="variable">$bin</span>,<span class="number">0</span>,intval(<span class="variable">$blen</span>));<span class="comment">//需要比较文件头长度</span></span><br><span class="line">		<span class="keyword">if</span>(strtolower(<span class="variable">$v</span>[<span class="number">0</span>])==strtolower(array_shift(unpack(<span class="string">&quot;H*&quot;</span>,<span class="variable">$tbin</span>))))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">return</span> <span class="variable">$v</span>[<span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="string">&#x27;error&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$upfile</span>=<span class="variable">$_FILES</span>[<span class="string">&quot;upfile&quot;</span>];</span><br><span class="line"><span class="variable">$name</span>=<span class="variable">$upfile</span>[<span class="string">&quot;name&quot;</span>];</span><br><span class="line"><span class="variable">$type</span>=<span class="variable">$upfile</span>[<span class="string">&quot;type&quot;</span>];</span><br><span class="line"><span class="variable">$size</span>=<span class="variable">$upfile</span>[<span class="string">&quot;size&quot;</span>];</span><br><span class="line"><span class="variable">$tmp_name</span>=<span class="variable">$upfile</span>[<span class="string">&quot;tmp_ name&quot;</span>];</span><br><span class="line">	<span class="variable">$distination</span> = <span class="string">&#x27;/var/www/html/up1oad_04/fle/&#x27;</span>.<span class="variable">$name</span>;</span><br><span class="line">	<span class="keyword">echo</span> checkFileType(<span class="variable">$upfile</span>[<span class="string">&#x27;tmp_name&#x27;</span>]);</span><br><span class="line">move_uploaded_file(<span class="variable">$upfile</span>[<span class="string">&#x27;tmp_name&#x27;</span>],<span class="variable">$distination</span>);</span><br></pre></td></tr></table></figure>
 
 <p>（2）文件加载检测中的图像二次渲染</p>
 <p>（3）图像内容检测</p>
@@ -560,10 +558,10 @@
 <p>修改文件头，对前<code>20</code>字节进行替换，后面再插人一句话木马，即可实现对文件内容检测的绕过。使用时先在要上传的文件的所有内容前添加<code>GIF89a</code>，Web 系统可判断当前文件为gif类型。需要注意的是，在实际中仅使用这种方法很多时候不能成功，因为上传功能还检测了后缀名<code>MIME</code>等。因此若仅仅是针对文件内容检测，可采用这种方法进行尝试。</p>
 </li>
 <li><p>文件二次渲染（极难）</p>
-<p>1）基于数据二义性，即让数据既是图像数据也包含一句话木马。</p>
-<p>2）对文件加载器进行溢出攻击。</p>
 </li>
 </ol>
+<p>   1）基于数据二义性，即让数据既是图像数据也包含一句话木马。</p>
+<p>   2）对文件加载器进行溢出攻击。</p>
 <p>这里需要注意的是，如果仅仅对<code>.php</code>文件添加上述文件头，并不一定会控制<code>MIME</code>的生成值。因为在不同浏览器下，针对文件生成<code>MIME</code>时会有不同的情况。<code>IE</code>浏览器默认会根据文件头确定<code>MIME</code>值。但是<code>Chrome</code>、<code>Firefox </code>则仍以后缀名方式进行判断。</p>
 </div>
 
@@ -596,7 +594,7 @@
 <div class="note danger"><p><strong>虚拟主机</strong>：Apache的虚拟主机功能 (Virtual Host) 是可以让一台服务器基于IP、主机名或端口号实现提供多个网站服务的技术。简单来说，Apache 虚拟主机就是在一个 Apache 服务器上配置多个虚拟空间，实现一个服务器提供多站点服务，其实就是访问同一个服务器上的不同目录。每个目录对应一个站点。</p>
 </div>
 
-<p><code>.htaccess</code>文件是 Apache 服务器中最常用的一个配置文件，它负责相关目录下的网页配置。通过 <code>.htaccess</code>文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置索引入口等功能。</p>
+<p><code>.htaccess</code>文件是 Apache 服务器中最常用的一个配置文件，它负责相关目录下的网页配置。通过 <code>.htaccess</code>文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许&#x2F;阻止特定的用户或者目录的访问、禁止目录列表、配置索引入口等功能。</p>
 <p>在早期以黑白名单为主流防护技术的时期，攻击者经常在获得当前系统的 Webshell 之后，会修改<code>.htaccess</code>文件内容，添加未知后缀以<code>.php</code>的方式执行（任意后缀的文件都会被当作 php 文件执行）。这样就算当前的 Webshell 丢失，也可在下次攻击时直接利用未知文件名重新快速获得 Webshell，这也算另一种“后门”的效果。</p>
 <p>虽然用户端做了大量的防护功能，但是可利用虚拟目录功能，实现中间件层的解析欺骗，导致木马可以非正常后缀名进行执行。不过，实际过程中可利用的场景非常少，主要是由于<mark class="label info">.htaccess 文件需放在当前 Web 目录下面</mark>。攻击者如果能在当前Web目录下插人任意的文件，其实攻击者已经获得当前系统的webshell，也就没有必要利用这种方式进行攻击。</p>
 <p>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/jamin25521/article/details/7883019">htaccess功能</a>】</p>
@@ -604,12 +602,12 @@
 <p>解析漏洞的危害在于对以上的文件上传防护机制都可以进行绕过。当然，存在解析漏洞的中间件的版本都比较老，新版本不存在上述问题。因此要解决解析漏洞的问题，简单有效的方法就是升级中间件版本。</p>
 <p>另外有一点需要注意， 很多人会使用集成环境来部署 Web 服务器。集成环境部署简易、使用方便，因此应用广泛。但需要注意的是，集成环境的软件版本并不是中间件的版本。因此从安全角度考虑，需要严格检查集成环境中的 Apache及 PHP 版本，避免出现解析漏洞或截断漏洞等。下面是些存在解析漏洞的集成环境版本及中间件对应版本信息，用以核对当前服务器安全状态或进行漏洞测试：</p>
 <ul>
-<li>WampServer2.0 All Version (WampServer2.0i / Apache 2.2.11)</li>
-<li>WampServer2. 1 All Version (WampServer2. le-x32 / Apache 2.2.17)</li>
-<li>Wamp5 All Version (Wamp5_ 1.7.4 / Apache 2.2.6)</li>
-<li>AppServ 2.4 All Version (AppServ - 2.4.9 / Apache 2.0.59)</li>
-<li>AppServ 2.5 All Version (AppServ - 2.5.10 / Apache 2.2.8)</li>
-<li>AppServ 2.6 AlI Version (AppServ - 2.6.0 / Apache 2.2.8)</li>
+<li>WampServer2.0 All Version (WampServer2.0i &#x2F; Apache 2.2.11)</li>
+<li>WampServer2. 1 All Version (WampServer2. le-x32 &#x2F; Apache 2.2.17)</li>
+<li>Wamp5 All Version (Wamp5_ 1.7.4 &#x2F; Apache 2.2.6)</li>
+<li>AppServ 2.4 All Version (AppServ - 2.4.9 &#x2F; Apache 2.0.59)</li>
+<li>AppServ 2.5 All Version (AppServ - 2.5.10 &#x2F; Apache 2.2.8)</li>
+<li>AppServ 2.6 AlI Version (AppServ - 2.6.0 &#x2F; Apache 2.2.8)</li>
 </ul>
 <h4 id="1-4-3-IIS-解析漏洞攻击"><a href="#1-4-3-IIS-解析漏洞攻击" class="headerlink" title="1.4.3 IIS 解析漏洞攻击"></a>1.4.3 IIS 解析漏洞攻击</h4><div class="note default"><p><strong>（1） IIS 6.0</strong></p>
 <p>随着 Windows Server 2003 的停止维护，IIS 6.0 的利用范围也在大幅度缩小。目前，新版的 IIS 中已不存在解析漏洞。这里仅以6.0环境作为漏洞利用场景来分析解析漏洞的综合利用方式。在解析<code>asp</code>格式的时候有两个解析漏洞：</p>
@@ -618,8 +616,8 @@
 <p>HIS 6.0 默认的可执行文件除了<code>asp</code>还包含如下三种：<code> /xx.asa</code>、<code> /xx.cer</code>、<code>/xx.cdx</code>。（在 IIS默认配置中，这几个后缀默认由<code>asp.dll</code>来解析，所以执行权限和<code>.asp</code>一模一样，可在配置中自行删除该后缀，以免出现安全隐患。）</p>
 </div>
 
-<div class="note primary"><p><strong>（2）IIS 7.0/IIS 7.5</strong></p>
-<p>IIS 7.0/7.5 存在的解析漏洞利用场景比 IIS 6.0要苛刻，主要是在对<code>php</code>解析时存在类似于 Nginx 的解析漏洞，并且需要处于<code>Fast-CGI</code>开启状态。在漏洞利用方式上，只要在任意文件名的 URL 后追加字符串<code>/任意文件名.php</code>，那么当前文件就会按照<code>php</code>的方式解析。</p>
+<div class="note primary"><p><strong>（2）IIS 7.0&#x2F;IIS 7.5</strong></p>
+<p>IIS 7.0&#x2F;7.5 存在的解析漏洞利用场景比 IIS 6.0要苛刻，主要是在对<code>php</code>解析时存在类似于 Nginx 的解析漏洞，并且需要处于<code>Fast-CGI</code>开启状态。在漏洞利用方式上，只要在任意文件名的 URL 后追加字符串<code>/任意文件名.php</code>，那么当前文件就会按照<code>php</code>的方式解析。</p>
 <p>利用方法如下：将一张图和一个写人后门代码的文本文件合并， 将恶意文本写人图片的二进制代码之后，避免破坏图片文件头和尾。Windows 下可利用 CMD 命令实现文件拼接:：<code>copy xx.jpg/b + yy.txt/a xy.jpg</code></p>
 <p>其中，参数的意义为：</p>
 <ul>
@@ -630,7 +628,7 @@
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?PHP</span> fputs(fopen(<span class="string">&#x27;shell.php&#x27;</span>,<span class="string">&#x27;w&#x27;</span>),<span class="string">&#x27;&lt;?php eval($_POST[cmd])?&gt;&#x27;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
 
 <p>这段代码的作用是写人一个内容为<code>&lt;?php eval($_POST[cmd])?&gt; </code>、名称为<code>shell.php</code>的文件。利用图片合成工具，也可达到上述效果。</p>
-<p>执行成功后的效果就是在上传文件的真实目录下生成一句话木马文件<code>shel.php</code>，再利用各类连接工具连接即可完成整体漏洞利用。需要注意的是，<strong>IIS7.0/7.5 下的解析漏洞是由于<code>php-cgi</code>本身的问题导致，与 IIS 自身并没有直接关系</strong>。</p>
+<p>执行成功后的效果就是在上传文件的真实目录下生成一句话木马文件<code>shel.php</code>，再利用各类连接工具连接即可完成整体漏洞利用。需要注意的是，<strong>IIS7.0&#x2F;7.5 下的解析漏洞是由于<code>php-cgi</code>本身的问题导致，与 IIS 自身并没有直接关系</strong>。</p>
 </div>
 
 <h4 id="1-4-4-Nginx-解析漏洞攻击"><a href="#1-4-4-Nginx-解析漏洞攻击" class="headerlink" title="1.4.4 Nginx 解析漏洞攻击"></a>1.4.4 Nginx 解析漏洞攻击</h4><p>目前 Nginx 的解析漏洞利用方式与 Apache、IIS基本一致。一个是对于任意文件名，在后面添加<code>/任意文件名.php</code>的解析漏洞，比如原本文件名是<code>test.jpg</code>，可以添加为<code>test.jpg/x.php</code>进行解析攻击。还有一种是针对低版本的 Nginx，可以在任意文件名后面添加<code>%00.php</code>进行解析攻击。</p>
@@ -638,10 +636,10 @@
 <ul>
 <li>Nginx 0.5.*</li>
 <li>Nginx 0.6.*</li>
-<li>Nginx 0.7 &lt;= 0.7.65</li>
-<li>Nginx 0.8 &lt;= 0.8.37</li>
+<li>Nginx 0.7 &lt;&#x3D; 0.7.65</li>
+<li>Nginx 0.8 &lt;&#x3D; 0.8.37</li>
 </ul>
-<p><code>任意文件名/任意文件名.php</code>这个漏洞其实是出现自<code>php-cgi</code>的漏洞，与 Nginx 自身无关，这点与 IIS 7.0/7.5 与 PHP 配合使用时解析漏洞产生原理一样。</p>
+<p><code>任意文件名/任意文件名.php</code>这个漏洞其实是出现自<code>php-cgi</code>的漏洞，与 Nginx 自身无关，这点与 IIS 7.0&#x2F;7.5 与 PHP 配合使用时解析漏洞产生原理一样。</p>
 
     </div>
 
@@ -761,14 +759,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

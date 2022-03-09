@@ -503,13 +503,13 @@
 </ol>
 <h5 id="1-2-2-Cookie的生命周期"><a href="#1-2-2-Cookie的生命周期" class="headerlink" title="1.2.2 Cookie的生命周期"></a>1.2.2 Cookie的生命周期</h5><ol>
 <li><strong>默认情况下</strong>：Cookie 数据保存到内存里，当浏览器关闭后，Cookie数据被销毁</li>
-<li><strong>持久化存储</strong>： 根据<code>setMaxAge(int seconds)</code>函数的参数来设置：<ul>
+<li><strong>持久化存储</strong>： 根据<code>setMaxAge(int seconds)</code>函数的参数来设置：</li>
+</ol>
+<ul>
 <li>正数：将Cookie数据写到硬盘的文件中，持久化存储。并指定Cookie存活时间，时间到后，Cookie文件自动失效。 </li>
 <li>负数：默认值，即关闭浏览器后，Cookie即失效 </li>
 <li>零：删除Cookie信息，会马上在浏览器上删除指定的cookie</li>
 </ul>
-</li>
-</ol>
 <p><code>setMaxAge</code>参数为正数时的情况如下：</p>
 <table>
 <thead>
@@ -549,7 +549,7 @@
 </li>
 </ul>
 </li>
-<li><p><strong>Expires/Max-Age</strong>：Cookie 失效时间，单位为秒。</p>
+<li><p><strong>Expires&#x2F;Max-Age</strong>：Cookie 失效时间，单位为秒。</p>
 <ul>
 <li>如果为正数，该 Cookie 会在 MaxAge 秒之后自动失效。</li>
 <li>为0时表示立即删除Cookie。</li>
@@ -655,7 +655,7 @@
 </ol>
 <ul>
 <li>Cookie 对客户端是可见的，别有用心的人可以分析存放在本地的 Cookie 并进行Cookie欺骗，所以它是不安全的。</li>
-<li>Session 存储在服务器上，对客户端是透明的，不存在敏感信息泄露的风险。 </li>
+<li>Session 存储在服务器上，对客户端是透明的，不存在敏感信息泄露的风险。</li>
 </ul>
 <p>假如选用 Cookie，比较好的方法是：敏感的的信息，如账号密码等，尽量不要写到 Cookie中。可以将 Cookie 信息加密，提交到服多务器后再进行解密。存储在本地的 Cookie 就需要自行加密。</p>
 <ol start="5">
@@ -718,7 +718,7 @@
 <li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/lufeiludaima/p/pz20190203.html">什么是token及怎样生成token</a></li>
 <li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000017831088">彻底弄懂session，cookie，token</a></li>
 </ul>
-<h4 id="1-5-JOSN-Web-Token（JWT）"><a href="#1-5-JOSN-Web-Token（JWT）" class="headerlink" title="1.5 JOSN Web Token（JWT）"></a>1.5 JOSN Web Token（JWT）</h4><p>JOSN Web Token（JWT）是一种开放标准（ RFC 7519），它定义了一种紧凑且安全的标准，用于将各方之间的信息传输为 JSON 对象。该信息通过数字简明进行校验。使用 HMAC 算法或者使用 RSA 的公钥/私钥对 JWT 进行检签名，但是在通信中为了提高通信的速度，所以一般使用对称密码算法进行数字签名。</p>
+<h4 id="1-5-JOSN-Web-Token（JWT）"><a href="#1-5-JOSN-Web-Token（JWT）" class="headerlink" title="1.5 JOSN Web Token（JWT）"></a>1.5 JOSN Web Token（JWT）</h4><p>JOSN Web Token（JWT）是一种开放标准（ RFC 7519），它定义了一种紧凑且安全的标准，用于将各方之间的信息传输为 JSON 对象。该信息通过数字简明进行校验。使用 HMAC 算法或者使用 RSA 的公钥&#x2F;私钥对 JWT 进行检签名，但是在通信中为了提高通信的速度，所以一般使用对称密码算法进行数字签名。</p>
 <p>JWT 由三部分组成：<mark class="label info">头部</mark>、<mark class="label warning">荷载</mark> 与 <mark class="label success">签名</mark>。</p>
 <h5 id="1-5-1-头部-Header"><a href="#1-5-1-头部-Header" class="headerlink" title="1.5.1 头部( Header )"></a>1.5.1 头部( Header )</h5><p>头部用于描述关于 JWT 的最基本的信息，例如，其类型以及签名所用的算法等。它被表示成一个 JSON 对象。</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="attr">&quot;typ&quot;</span>: <span class="string">&quot;JWT&quot;</span>,</span><br><span class="line"><span class="attr">&quot;alg&quot;</span>: <span class="string">&quot;HS256&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -751,12 +751,12 @@
 
 <p>下面通过一个实例了解<code>JWT</code>机制实现认证的过程。当用户第一次登录系统时，如图4.17所示。</p>
 <p>创建<code>JWT</code>的步骤如下。</p>
-<p>(1)第一次登录，用户从客户端输人用户名/密码，提交后到服务器的登录处理<code>Action</code>层 （ <code>Login Action</code>）。</p>
+<p>(1)第一次登录，用户从客户端输人用户名&#x2F;密码，提交后到服务器的登录处理<code>Action</code>层 （ <code>Login Action</code>）。</p>
 <p><img data-src="https://i.loli.net/2020/11/04/m1GFIQfnhrzsACE.png" alt="Login Action.png"></p>
 <p><img data-src="https://i.loli.net/2020/11/04/PjdGCvabwDmqFxn.png" alt="第4章 接口测试的基础 2.png"></p>
 <p><img data-src="https://i.loli.net/2020/11/04/TA2LqSRjkVfgxBe.png" alt="1598504-20190202220449263-1608141775.png"></p>
 <h3 id="2-HTTP-协议"><a href="#2-HTTP-协议" class="headerlink" title="2 HTTP 协议"></a>2 HTTP 协议</h3><p>网络协议就是为计算机网络中进行数据交换而建立的规则、标准或约定的集合。</p>
-<p>为了使不同计算机厂家 生产的计算机能够相互通信，以便在更大的范围内建立计算机网络，国际标准化组织（ISO）在1978 年提出了“开放系统互联参考模型”，即著名的 OSIRM 模型（Open System Itereonnection/RefrerceModel）。它将计算机网络体系结构的通信协议划分为七层，自下而上依次为：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。</p>
+<p>为了使不同计算机厂家 生产的计算机能够相互通信，以便在更大的范围内建立计算机网络，国际标准化组织（ISO）在1978 年提出了“开放系统互联参考模型”，即著名的 OSIRM 模型（Open System Itereonnection&#x2F;RefrerceModel）。它将计算机网络体系结构的通信协议划分为七层，自下而上依次为：物理层、数据链路层、网络层、传输层、会话层、表示层、应用层。</p>
 <p>每一层都有其不同的含义及网络协议。</p>
 <table>
 <thead>
@@ -767,7 +767,7 @@
 </thead>
 <tbody><tr>
 <td align="center"><strong>物理层</strong></td>
-<td>以太网、调制解调器、电力线通信(PLC)、SONET/SDH、光导纤维、同轴电缆、双绞线等。</td>
+<td>以太网、调制解调器、电力线通信(PLC)、SONET&#x2F;SDH、光导纤维、同轴电缆、双绞线等。</td>
 </tr>
 <tr>
 <td align="center"><strong>数据链路层</strong></td>
@@ -787,19 +787,19 @@
 </tr>
 </tbody></table>
 <p>本节主要讲的就是应用层中被应用最多的协议：HTTP 协议。</p>
-<h4 id="2-1-HTTP-协议介绍"><a href="#2-1-HTTP-协议介绍" class="headerlink" title="2.1 HTTP 协议介绍"></a>2.1 HTTP 协议介绍</h4><p>HTTP/1.0 没有充分考虑分层代理、缓存以及持久连接和虚拟主机的需求的影响。并且随着不完善的 HTTP/1.0 应用程序的激增，迫切需要一个新的版本，以便使两个通信程序能够确定彼此真实的能力。此规范协议叫做<mark class="label primary">HTTP/1.1</mark>，这个协议与<mark class="label success">HTTP/1.0</mark>相比，更为严格，以确保各个协议的特征得到可靠实现。</p>
+<h4 id="2-1-HTTP-协议介绍"><a href="#2-1-HTTP-协议介绍" class="headerlink" title="2.1 HTTP 协议介绍"></a>2.1 HTTP 协议介绍</h4><p>HTTP&#x2F;1.0 没有充分考虑分层代理、缓存以及持久连接和虚拟主机的需求的影响。并且随着不完善的 HTTP&#x2F;1.0 应用程序的激增，迫切需要一个新的版本，以便使两个通信程序能够确定彼此真实的能力。此规范协议叫做<mark class="label primary">HTTP/1.1</mark>，这个协议与<mark class="label success">HTTP/1.0</mark>相比，更为严格，以确保各个协议的特征得到可靠实现。</p>
 <p>把HTTP协议的官方定义进行归纳，得出HTTP协议的4个关键点。</p>
-<p>（1）HTTP 是建立在 TCP/IP 协议之上，面向应用层的超文本传输协议。</p>
+<p>（1）HTTP 是建立在 TCP&#x2F;IP 协议之上，面向应用层的超文本传输协议。</p>
 <p>（2）它由请求和响应组成，完全符合标准的客户端服务器的请求响应模型。</p>
 <p>（3）协议很轻便简单，并且请求与请求间没有关联，是无状态性的协议。</p>
 <p>（4）为了弥补这种无状态性就需要使用 HTTP 协议的扩展 Cookie 等方式建立关联。</p>
-<p>（5）HTTP 协议工作于客户端-服务器的架构上，采用请求/响应模型。</p>
+<p>（5）HTTP 协议工作于客户端-服务器的架构上，采用请求&#x2F;响应模型。</p>
 <h4 id="2-2-Uniform-Resource-Locator（URL）"><a href="#2-2-Uniform-Resource-Locator（URL）" class="headerlink" title="2.2 Uniform Resource Locator（URL）"></a>2.2 Uniform Resource Locator（URL）</h4><ul>
-<li>URL：统一资源定位器/统一资源定位系统。HTTP/1.0支持：GET、POST、HEAD三种HTTP请求方法。</li>
-<li>URI：统一资源定位标识符（Uniform Resource Identifiers），URL 是一种特殊类型的 URI，包含了用于查找某个资源的足够的信息。HTTP/1.1是当前正在使用的版本。该版本默认采用持久连接，并能很好地配合代理服务器工作。还支持以管道方式同时发送多个请求，以便降低线路负载，提高传输速度。HTTP/1.1 新增了：OPTIONS、PUT、DELETE、TRACE、CONNECT 五种 HTTP 请求方法。</li>
+<li>URL：统一资源定位器&#x2F;统一资源定位系统。HTTP&#x2F;1.0支持：GET、POST、HEAD三种HTTP请求方法。</li>
+<li>URI：统一资源定位标识符（Uniform Resource Identifiers），URL 是一种特殊类型的 URI，包含了用于查找某个资源的足够的信息。HTTP&#x2F;1.1是当前正在使用的版本。该版本默认采用持久连接，并能很好地配合代理服务器工作。还支持以管道方式同时发送多个请求，以便降低线路负载，提高传输速度。HTTP&#x2F;1.1 新增了：OPTIONS、PUT、DELETE、TRACE、CONNECT 五种 HTTP 请求方法。</li>
 </ul>
 <p>URL 的基本格式如下：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">schema://host[:port#]/path/.../[;url-params][?query-string][#anchor]</span><br><span class="line"><span class="tag">&lt;<span class="name">方案</span>&gt;</span>://<span class="tag">&lt;<span class="name">用户名</span>&gt;</span>:<span class="tag">&lt;<span class="name">密码</span>&gt;</span>@主机:端口/路径;参数?查询#片段</span><br></pre></td></tr></table></figure>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">schema://host[:port#]/path/.../[;url-params][?query-string][#anchor]</span><br><span class="line">&lt;方案&gt;://&lt;用户名&gt;:&lt;密码&gt;@主机:端口/路径;参数?查询#片段</span><br></pre></td></tr></table></figure>
 
 <p>URL主要有三个作用。</p>
 <p>（1）HTTP 是 URL 的方案，方案告诉客户端使用什么样的协议去访问服务器。</p>
@@ -847,7 +847,7 @@
 </tr>
 <tr>
 <td align="center"><strong>POST</strong></td>
-<td align="left">用来向目的服务器发出请求，要求它接收被附在请求后的实体，并把它当作请求队列中请求 URI 所指定资源的附加新子项，所以 post 请求可能会导致新的资源的建立和/或已有资源的修改。</td>
+<td align="left">用来向目的服务器发出请求，要求它接收被附在请求后的实体，并把它当作请求队列中请求 URI 所指定资源的附加新子项，所以 post 请求可能会导致新的资源的建立和&#x2F;或已有资源的修改。</td>
 </tr>
 <tr>
 <td align="center"><strong>HEAD</strong></td>
@@ -859,7 +859,7 @@
 </tr>
 <tr>
 <td align="center"><strong>CONNECT</strong></td>
-<td align="left">HTTP/1.1 协议中预留给能够将连接改为管道方式的代理服务器。</td>
+<td align="left">HTTP&#x2F;1.1 协议中预留给能够将连接改为管道方式的代理服务器。</td>
 </tr>
 <tr>
 <td align="center"><strong>OPTIONS</strong></td>
@@ -879,12 +879,12 @@
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><strong>HTTP/1.0</strong></td>
-<td>HTTP/1.0支持：GET、POST、HEAD三种HTTP请求方法。</td>
+<td align="center"><strong>HTTP&#x2F;1.0</strong></td>
+<td>HTTP&#x2F;1.0支持：GET、POST、HEAD三种HTTP请求方法。</td>
 </tr>
 <tr>
-<td align="center"><strong>HTTP/1.1</strong></td>
-<td>HTTP/1.1是当前正在使用的版本。该版本默认采用持久连接，并能很好地配合代理服务器工作。还支持以管道方式同时发送多个请求，以便降低线路负载，提高传输速度。HTTP/1.1新增了：OPTIONS、PUT、DELETE、TRACE、CONNECT 五种 HTTP 请求方法。</td>
+<td align="center"><strong>HTTP&#x2F;1.1</strong></td>
+<td>HTTP&#x2F;1.1是当前正在使用的版本。该版本默认采用持久连接，并能很好地配合代理服务器工作。还支持以管道方式同时发送多个请求，以便降低线路负载，提高传输速度。HTTP&#x2F;1.1新增了：OPTIONS、PUT、DELETE、TRACE、CONNECT 五种 HTTP 请求方法。</td>
 </tr>
 </tbody></table>
 <p>　</p>
@@ -908,7 +908,7 @@
 </thead>
 <tbody><tr>
 <td align="center"><strong>Cache-Control</strong></td>
-<td>用来指定Response-Request遵循的缓存机制。各个指令含义如下。<br/><strong>Cache-Control:Public</strong>：可以被任何缓存所缓存。<br/><strong>Cache-Control:Private</strong>：指示响应信息的全部或部分用于单个用户，而不能用一个共享缓存来缓存。这可以让源服务器指示，响应的特定部分只用于一个用户，而对其他用户的请求则是一个不可靠的响应。<br/><strong>Cache-Control:no-cache</strong>：所有内容都不会被缓存，请求头里的<code>no-cache</code>表示浏览器不想读 缓存，并不是说没有缓存。一般在浏览器按<code>Ctrl+F5</code>键强制刷新时，请求头里也会有这个<code>no-cache</code>，也就是跳过强缓存和协商缓存阶段，直接请求服务器。<br/><strong>Cache-Control:max-age=0</strong>：指示客户端愿意接收其绝对时间不大于指定的时间，以秒计。 如果直接按<code>F5</code>键的话，请求头是<code>max-age =0</code>，只跳过强缓存，但进行协商缓存。</td>
+<td>用来指定Response-Request遵循的缓存机制。各个指令含义如下。<br/><strong>Cache-Control:Public</strong>：可以被任何缓存所缓存。<br/><strong>Cache-Control:Private</strong>：指示响应信息的全部或部分用于单个用户，而不能用一个共享缓存来缓存。这可以让源服务器指示，响应的特定部分只用于一个用户，而对其他用户的请求则是一个不可靠的响应。<br/><strong>Cache-Control:no-cache</strong>：所有内容都不会被缓存，请求头里的<code>no-cache</code>表示浏览器不想读 缓存，并不是说没有缓存。一般在浏览器按<code>Ctrl+F5</code>键强制刷新时，请求头里也会有这个<code>no-cache</code>，也就是跳过强缓存和协商缓存阶段，直接请求服务器。<br/><strong>Cache-Control:max-age&#x3D;0</strong>：指示客户端愿意接收其绝对时间不大于指定的时间，以秒计。 如果直接按<code>F5</code>键的话，请求头是<code>max-age =0</code>，只跳过强缓存，但进行协商缓存。</td>
 </tr>
 <tr>
 <td align="center"><strong>if-Modified-Since</strong></td>
@@ -984,7 +984,7 @@
 </tr>
 <tr>
 <td><strong>Content-Type</strong></td>
-<td>①表示具体请求中的媒体类型信息。常见的媒体格式类型如下。<br/><strong>text/html</strong>：HTML格式<br/><strong>text/plain</strong>：纯文本格式<br/><strong>text/xml</strong>：XML格式<br/><strong>imag/gif</strong>：gif图片格式<br/><strong>image/jpeg</strong>：jpg图片格式<br/><strong>image/png</strong>：png图片格式<br/>②以application开头的媒体格式类型如下：<br/><strong>application/xhtml+xml</strong>：XHTML格式<br/><strong>application/xml</strong>：XML数据格式<br/><strong>application/atom+xml</strong>：Atom XML聚合格式<br/><strong>application/json</strong>：JSON数据格式<br/><strong>application/pdf</strong>：pdf格式<br/><strong>application/msword</strong>：Word文档格式<br/><strong>application/octet-stream</strong>：二进制流数据<br/><strong>application/x-www-form-urlencoded</strong>： <code>&lt;form encType=&quot;&quot;&gt;</code>中默认的<code>encType</code>，<code>form</code>表单数据被编码为<code>key/value</code><br/>格式发送到服务器（表单默认的提交数据的格式）。<br/>③另外一种常见的媒体格式是上传文件之时使用的。<br/><strong>multipart/form-data</strong>：需要在表单中进行文件上传时，就需要使用该格式。</td>
+<td>①表示具体请求中的媒体类型信息。常见的媒体格式类型如下。<br/><strong>text&#x2F;html</strong>：HTML格式<br/><strong>text&#x2F;plain</strong>：纯文本格式<br/><strong>text&#x2F;xml</strong>：XML格式<br/><strong>imag&#x2F;gif</strong>：gif图片格式<br/><strong>image&#x2F;jpeg</strong>：jpg图片格式<br/><strong>image&#x2F;png</strong>：png图片格式<br/>②以application开头的媒体格式类型如下：<br/><strong>application&#x2F;xhtml+xml</strong>：XHTML格式<br/><strong>application&#x2F;xml</strong>：XML数据格式<br/><strong>application&#x2F;atom+xml</strong>：Atom XML聚合格式<br/><strong>application&#x2F;json</strong>：JSON数据格式<br/><strong>application&#x2F;pdf</strong>：pdf格式<br/><strong>application&#x2F;msword</strong>：Word文档格式<br/><strong>application&#x2F;octet-stream</strong>：二进制流数据<br/><strong>application&#x2F;x-www-form-urlencoded</strong>： <code>&lt;form encType=&quot;&quot;&gt;</code>中默认的<code>encType</code>，<code>form</code>表单数据被编码为<code>key/value</code><br/>格式发送到服务器（表单默认的提交数据的格式）。<br/>③另外一种常见的媒体格式是上传文件之时使用的。<br/><strong>multipart&#x2F;form-data</strong>：需要在表单中进行文件上传时，就需要使用该格式。</td>
 </tr>
 </tbody></table>
 <p><strong>六、Transport 头域</strong></p>
@@ -1489,7 +1489,7 @@
 <td>浏览内容不会被缓存</td>
 </tr>
 </tbody></table>
-<p><strong>二、Cookie/Login 头域</strong></p>
+<p><strong>二、Cookie&#x2F;Login 头域</strong></p>
 <table>
 <thead>
 <tr>
@@ -1580,8 +1580,8 @@
 <p>一个传输层的实际环流，它是建立在两个相互通信的应用程序之间。</p>
 <p>在 HTTP1.1,中，<code>request</code>和<code>response</code>头中都有可能出现个<code>Connection</code>的头，此<code>header</code>的含义是当 Client 和 Server 通信时对于长连接如何进行处理。</p>
 <div class="note primary"><ul>
-<li>HTTP/1.0，Connection: close</li>
-<li>HTTP/1.1，Connection: keep-alive</li>
+<li>HTTP&#x2F;1.0，Connection: close</li>
+<li>HTTP&#x2F;1.1，Connection: keep-alive</li>
 <li>HTTP TCP，无状态，面向连接。</li>
 <li>HTTP UDP，无状态，无连接</li>
 </ul>
@@ -1726,14 +1726,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

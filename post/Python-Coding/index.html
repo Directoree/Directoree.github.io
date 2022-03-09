@@ -395,7 +395,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>5.6k</span>
+      <span>5.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -432,7 +432,7 @@
 </li>
 <li><p><font color="#FF7F00"><strong>因为计算机只能处理数字，如果要处理文本，就必须先把文本转换为数字才能处理</strong></font>。最早的计算机在设计时采用8个比特（**<code>8 bit</code><strong>）作为一个字节（</strong><code>1 byte</code>**）。</p>
 <ol>
-<li>所以，**<code>一个字节</code><strong>能表示的最大的整数就是</strong><code>255</code>**（二进制11111111=十进制255）；</li>
+<li>所以，**<code>一个字节</code><strong>能表示的最大的整数就是</strong><code>255</code>**（二进制11111111&#x3D;十进制255）；</li>
 <li>如果要表示更大的整数，就必须用更多的字节。比如两个字节可以表示的最大整数是65535，**<code>4个字节</code><strong>可以表示的最大整数是</strong><code>4294967295</code>**。</li>
 </ol>
 </li>
@@ -443,7 +443,7 @@
 <li><p>你可以想得到的是，全世界有上百种语言，日本把日文编到<code>Shift_JIS</code>里，韩国把韩文编到<code>Euc-kr</code>里，各国有各国的标准，就会不可避免地出现冲突，结果就是，在多语言混合的文本中，显示出来会有乱码。</p>
 </li>
 <li><p>因此，<code>Unicode</code>应运而生。<font color="#FF7F00"><strong>Unicode把所有语言都统一到一套编码里，这样就不会再有乱码问题了</strong></font>。</p>
-<ol>
+</li>
 <li><p>Unicode标准也在不断发展，但最常用的是<font color="#00B2EE"><strong>用两个字节表示一个字符</strong></font>（如果要用到非常偏僻的字符，就需要4个字节）。现代操作系统和大多数编程语言都直接支持Unicode。</p>
 </li>
 <li><p>现在，捋一捋ASCII编码和Unicode编码的区别：<font color="#00B2EE"><strong>ASCII编码是1个字节，而Unicode编码通常是2个字节</strong></font>。</p>
@@ -457,8 +457,6 @@
 <li><p>新的问题又出现了：如果统一成Unicode编码，乱码问题从此消失了。但是，如果你写的文本基本上全部是英文的话，<font color="#00B2EE"><strong>用Unicode编码比ASCII编码需要多一倍的存储空间</strong></font>，在存储和传输上就十分不划算。</p>
 </li>
 <li><p>所以，<strong>本着节约的精神</strong>，又出现了<font color="#00B2EE"><strong>把Unicode编码转化为“可变长编码”的UTF-8编码</strong></font>。UTF-8编码把一个Unicode字符根据不同的数字大小编码成1-6个字节，常用的英文字母被编码成1个字节，汉字通常是3个字节，只有很生僻的字符才会被编码成4-6个字节。如果你要传输的文本包含大量英文字符，用UTF-8编码就能节省空间：</p>
-</li>
-</ol>
 </li>
 </ol>
 <p>||||<br>:-:|:-:|:-:|:-:|<br>字符    |ASCII    |Unicode    |UTF-8<br>A    |1000001    |00000000 01000001    |01000001<br>中    |x            |01001110 00101101    |11100100 10111000 10101101</p>
@@ -483,7 +481,7 @@
 <h3 id="二-代码编码和文件编码的设置"><a href="#二-代码编码和文件编码的设置" class="headerlink" title="二. 代码编码和文件编码的设置"></a><font color="#FF6347" face="Comic sans MS">二. 代码编码和文件编码的设置</font></h3><blockquote>
 <p><strong>Python中默认的编码格式是 ASCII 格式，在没修改编码格式时无法正确打印汉字，所以在读取中文时会报错。</strong><br>解决方法为只要在文件开头加入<code># -*- coding: UTF-8 -*-</code> 或者 <code>#coding=utf-8</code> 就行了<br>（<strong>注意：</strong><code>#coding=utf-8</code> 的 <code>=</code> 号两边不要空格。）</p>
 </blockquote>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="keyword">print</span> <span class="string">&quot;你好，世界&quot;</span>;</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">你好，世界</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python</span></span><br><span class="line"><span class="comment"># -*- coding: UTF-8 -*-</span></span><br><span class="line"> </span><br><span class="line"><span class="built_in">print</span> <span class="string">&quot;你好，世界&quot;</span>;</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">你好，世界</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p><strong>注意：</strong></p>
@@ -506,7 +504,7 @@
 <li>ord()：将字符转换成其对应的整数（十进制），注意不是字符串；</li>
 <li>chr()：将十进制整数转换成其对应的字符。</li>
 </ol>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a=ord(<span class="string">&#x27;A&#x27;</span>)</span><br><span class="line">b=chr(<span class="number">120</span>)</span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="number">65</span> </span><br><span class="line">x </span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a=<span class="built_in">ord</span>(<span class="string">&#x27;A&#x27;</span>)</span><br><span class="line">b=<span class="built_in">chr</span>(<span class="number">120</span>)</span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="built_in">print</span>(b)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="number">65</span> </span><br><span class="line">x </span><br></pre></td></tr></table></figure>
 
 
 
@@ -514,7 +512,7 @@
 
 <h4 id="3-2-不同编码之间的转换"><a href="#3-2-不同编码之间的转换" class="headerlink" title="3.2 不同编码之间的转换"></a><font color="#3CB371" face="Comic sans MS">3.2 不同编码之间的转换</font></h4><p>由于Python的字符串类型是str，<font color="#FF7F00"><strong>在内存中以Unicode表示，一个字符对应若干个字节</strong></font>。如果要在网络上传输，或者保存到磁盘上，就需要<font color="#FF7F00"><strong>把str变为以字节为单位的bytes</strong></font>。</p>
 <p>Python对bytes类型的数据用带<code>b前缀</code>的<font color="#FF7F00"><strong>单引号</strong></font>或<font color="#FF7F00"><strong>双引号</strong></font>表示：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="string">b&#x27;ABC&#x27;</span></span><br><span class="line">print(x)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="string">b&#x27;ABC&#x27;</span> </span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">x = <span class="string">b&#x27;ABC&#x27;</span></span><br><span class="line"><span class="built_in">print</span>(x)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="string">b&#x27;ABC&#x27;</span> </span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p><strong>结论：</strong>要注意区分’ABC’和b’ABC’，前者是str，后者虽然内容显示得和前者一样，但<font color="#FF7F00"><strong>bytes的每个字符都只占用一个字节</strong></font>。</p>
@@ -526,8 +524,8 @@
 <ol>
 <li><strong>decode()：</strong> 解码，将其他编码的字符串解码成unicode编码；</li>
 <li><strong>encode()：</strong> 转码，将unicode编码的字符串转码成其他编码。</li>
-<li><strong>decode(“utf-8”, errors=”ignore”) ：</strong> 忽略其中有异常的编码，仅显示有效的编码；</li>
-<li><strong>decode(“utf-8”, errors=”replace”)：</strong> 替换其中异常的编码，这个相对来可能一眼就知道那些字符编码出问题了；</li>
+<li><strong>decode(“utf-8”, errors&#x3D;”ignore”) ：</strong> 忽略其中有异常的编码，仅显示有效的编码；</li>
+<li><strong>decode(“utf-8”, errors&#x3D;”replace”)：</strong> 替换其中异常的编码，这个相对来可能一眼就知道那些字符编码出问题了；</li>
 <li><strong>len()：</strong> 计算的是str的字符数，如果换成bytes，len()函数就计算字节数。</li>
 </ol>
 <br>
@@ -539,7 +537,7 @@
 <br>
 
 <p>举例1：以Unicode表示的str通过<code>encode()</code>方法可以编码为指定的bytes</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">&#x27;ABC&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">print(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">print(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;ascii&#x27;</span>))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="string">b&#x27;ABC&#x27;</span> </span><br><span class="line"><span class="string">b&#x27;\xe4\xb8\xad\xe6\x96\x87&#x27;</span> </span><br><span class="line">Traceback (most recent call last): </span><br><span class="line">  File <span class="string">&quot;C:\Users\Alvin\AppData\Local\Temp\learn_python_q5t__kzk_py\test_21.py&quot;</span>, line <span class="number">4</span>, <span class="keyword">in</span> &lt;module&gt; </span><br><span class="line">    print(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;ascii&#x27;</span>)) </span><br><span class="line">UnicodeEncodeError: <span class="string">&#x27;ascii&#x27;</span> codec can<span class="string">&#x27;t encode characters in position 0-1: ordinal not in range(128) </span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;ABC&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;ascii&#x27;</span>))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="string">b&#x27;ABC&#x27;</span> </span><br><span class="line"><span class="string">b&#x27;\xe4\xb8\xad\xe6\x96\x87&#x27;</span> </span><br><span class="line">Traceback (most recent call last): </span><br><span class="line">  File <span class="string">&quot;C:\Users\Alvin\AppData\Local\Temp\learn_python_q5t__kzk_py\test_21.py&quot;</span>, line <span class="number">4</span>, <span class="keyword">in</span> &lt;module&gt; </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;ascii&#x27;</span>)) </span><br><span class="line">UnicodeEncodeError: <span class="string">&#x27;ascii&#x27;</span> codec can<span class="string">&#x27;t encode characters in position 0-1: ordinal not in range(128) </span></span><br></pre></td></tr></table></figure>
 
 <br>
 
@@ -549,7 +547,7 @@
 <br>
 
 <p>举例2：以Unicode表示的str通过<code>encode()</code>方法可以编码为指定的bytes    </p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">b&#x27;ABC&#x27;</span>.decode(<span class="string">&#x27;ascii&#x27;</span>))</span><br><span class="line">print(<span class="string">b&#x27;\xe4\xb8\xad\xe6\x96\x87&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">print(<span class="string">b&#x27;\xe4\xb8\xad\xff&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">ABC </span><br><span class="line">中文 </span><br><span class="line">Traceback (most recent call last): </span><br><span class="line">  File <span class="string">&quot;C:\Users\Alvin\AppData\Local\Temp\learn_python_q5t__kzk_py\test_22.py&quot;</span>, line <span class="number">4</span>, <span class="keyword">in</span> &lt;module&gt; </span><br><span class="line">    print(<span class="string">b&#x27;\xe4\xb8\xad\xff&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>)) </span><br><span class="line">UnicodeDecodeError: <span class="string">&#x27;utf-8&#x27;</span> codec can<span class="string">&#x27;t decode byte 0xff in position 3: invalid start byte </span></span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">b&#x27;ABC&#x27;</span>.decode(<span class="string">&#x27;ascii&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">b&#x27;\xe4\xb8\xad\xe6\x96\x87&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">b&#x27;\xe4\xb8\xad\xff&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">ABC </span><br><span class="line">中文 </span><br><span class="line">Traceback (most recent call last): </span><br><span class="line">  File <span class="string">&quot;C:\Users\Alvin\AppData\Local\Temp\learn_python_q5t__kzk_py\test_22.py&quot;</span>, line <span class="number">4</span>, <span class="keyword">in</span> &lt;module&gt; </span><br><span class="line">    <span class="built_in">print</span>(<span class="string">b&#x27;\xe4\xb8\xad\xff&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>)) </span><br><span class="line">UnicodeDecodeError: <span class="string">&#x27;utf-8&#x27;</span> codec can<span class="string">&#x27;t decode byte 0xff in position 3: invalid start byte </span></span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>第三个输出报错是因为bytes中包含无法解码的字节，decode()方法会报错。</p>
@@ -557,12 +555,12 @@
 <br>
 
 <p>举例3：如果bytes中只有一小部分无效的字节，可以传入<code>errors=&#39;ignore&#39;</code>忽略错误的字节</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">print(<span class="string">b&#x27;\xe4\xb8\xad&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">print(<span class="string">&#x27;中&#x27;</span>.encode())</span><br><span class="line">print(<span class="string">b&#x27;\xe4\xb8\xad\xff&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">中 </span><br><span class="line"><span class="string">b&#x27;\xe4\xb8\xad&#x27;</span> </span><br><span class="line">中 </span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="string">b&#x27;\xe4\xb8\xad&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;中&#x27;</span>.encode())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">b&#x27;\xe4\xb8\xad\xff&#x27;</span>.decode(<span class="string">&#x27;utf-8&#x27;</span>, errors=<span class="string">&#x27;ignore&#x27;</span>))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">中 </span><br><span class="line"><span class="string">b&#x27;\xe4\xb8\xad&#x27;</span> </span><br><span class="line">中 </span><br></pre></td></tr></table></figure>
 
 <br>
 
 <p>举例4：<code>len()</code>函数计算的是str的字符数，如果换成bytes，len()函数就计算字节数</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">print(len(<span class="string">&#x27;ABC&#x27;</span>))</span><br><span class="line">print(len(<span class="string">&#x27;中文&#x27;</span>))</span><br><span class="line">print(len(<span class="string">b&#x27;ABC&#x27;</span>))</span><br><span class="line">print(len(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>)))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="number">3</span> </span><br><span class="line"><span class="number">2</span> </span><br><span class="line"><span class="number">3</span> </span><br><span class="line"><span class="number">6</span> </span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(<span class="string">&#x27;ABC&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(<span class="string">&#x27;中文&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(<span class="string">b&#x27;ABC&#x27;</span>))</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(<span class="string">&#x27;中文&#x27;</span>.encode(<span class="string">&#x27;utf-8&#x27;</span>)))</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line"><span class="number">3</span> </span><br><span class="line"><span class="number">2</span> </span><br><span class="line"><span class="number">3</span> </span><br><span class="line"><span class="number">6</span> </span><br></pre></td></tr></table></figure>
 
 <br>
 
@@ -584,7 +582,7 @@
 <li>我们经常会输出类似”亲爱的<code>xxx</code>你好！你<code>xx</code>月的话费是<code>xx</code>，余额是<code>xx</code>“之类的字符串，而<code>xxx</code>的内容都是根据变量变化的，所以，需要一种简便的格式化字符串的方式。</li>
 </ol>
 </li>
-<li>在Python中，采用的格式化方式和C语言是一致的，用<font color="#FF7F00">**%**</font>实现。</li>
+<li>在Python中，采用的格式化方式和C语言是一致的，用<font color="#FF7F00"><strong>%</strong></font>实现。</li>
 <li>%运算符就是用来格式化字符串的。在字符串内部，%s表示用字符串替换，%d表示用整数替换，有几个%?占位符，后面就跟几个变量或者值，顺序要对应好。如果只有一个%?，括号可以省略。</li>
 <li>格式化整数还可以指定<font color="#FF7F00"><strong>是否补0和整数</strong></font>；浮点数可以指定<font color="#FF7F00"><strong>小数的位数</strong></font>。</li>
 <li>要输出%，用%对其进行转义，即用%%来表示一个%。</li>
@@ -619,8 +617,8 @@
 </tbody></table>
 <br>
 
-<p>示例代码：（里面的“//”并不代表注释符）</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">&#x27;Hello, %s&#x27;</span> % <span class="string">&#x27;world&#x27;</span>    // 替换一个不使用括号</span><br><span class="line">b = <span class="string">&#x27;Hi, %s, you have $%d.&#x27;</span> % (<span class="string">&#x27;Michael&#x27;</span>, <span class="number">1000000</span>)   // 替换多个使用括号</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c = <span class="string">&#x27;%6d-%02d&#x27;</span> % (<span class="number">3</span>, <span class="number">1</span>)  //  %<span class="number">6</span>d  表示输出<span class="number">3</span>之前有（<span class="number">6</span><span class="number">-1</span>）个空格输出</span><br><span class="line">                         //  %<span class="number">05</span>d 表示输出<span class="number">1</span>之前有（<span class="number">5</span><span class="number">-1</span>）个<span class="number">0</span>输出</span><br><span class="line">d = <span class="string">&#x27;%.2f&#x27;</span> % <span class="number">3.145926</span>    //  %<span class="number">.2</span>f 表示输出的浮点数保留两位小数，第三位小数&gt;=<span class="number">5</span>就向前进<span class="number">1</span></span><br><span class="line">e = <span class="string">&#x27;growth rate: %d %%&#x27;</span> % <span class="number">7</span>   //  转义，用%%表示一个%输出</span><br><span class="line">f=<span class="string">&#x27;Hello, &#123;0&#125;, 成绩提升了 &#123;1:.1f&#125;%&#x27;</span>.format(<span class="string">&#x27;小明&#x27;</span>, <span class="number">17.125</span>)</span><br><span class="line">                         //  使用字符串format()方法，注意括号里面的<span class="number">1</span>的意义</span><br><span class="line"></span><br><span class="line">print(a)</span><br><span class="line">print(b)</span><br><span class="line">print(c)</span><br><span class="line">print(d)</span><br><span class="line">print(e)</span><br><span class="line">print(f)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">Hello, world </span><br><span class="line">Hi, Michael, you have $<span class="number">1000000.</span> </span><br><span class="line">     <span class="number">3</span><span class="number">-000000001</span> </span><br><span class="line"><span class="number">3.15</span></span><br><span class="line">growth rate: <span class="number">7</span> % </span><br><span class="line">Hello, 小明, 成绩提升了 <span class="number">17.1</span>% </span><br></pre></td></tr></table></figure>
+<p>示例代码：（里面的“&#x2F;&#x2F;”并不代表注释符）</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">&#x27;Hello, %s&#x27;</span> % <span class="string">&#x27;world&#x27;</span>    // 替换一个不使用括号</span><br><span class="line">b = <span class="string">&#x27;Hi, %s, you have $%d.&#x27;</span> % (<span class="string">&#x27;Michael&#x27;</span>, <span class="number">1000000</span>)   // 替换多个使用括号</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">c = <span class="string">&#x27;%6d-%02d&#x27;</span> % (<span class="number">3</span>, <span class="number">1</span>)  //  %6d  表示输出<span class="number">3</span>之前有（<span class="number">6</span>-<span class="number">1</span>）个空格输出</span><br><span class="line">                         //  %05d 表示输出<span class="number">1</span>之前有（<span class="number">5</span>-<span class="number">1</span>）个<span class="number">0</span>输出</span><br><span class="line">d = <span class="string">&#x27;%.2f&#x27;</span> % <span class="number">3.145926</span>    //  %<span class="number">.2</span>f 表示输出的浮点数保留两位小数，第三位小数&gt;=<span class="number">5</span>就向前进<span class="number">1</span></span><br><span class="line">e = <span class="string">&#x27;growth rate: %d %%&#x27;</span> % <span class="number">7</span>   //  转义，用%%表示一个%输出</span><br><span class="line">f=<span class="string">&#x27;Hello, &#123;0&#125;, 成绩提升了 &#123;1:.1f&#125;%&#x27;</span>.<span class="built_in">format</span>(<span class="string">&#x27;小明&#x27;</span>, <span class="number">17.125</span>)</span><br><span class="line">                         //  使用字符串<span class="built_in">format</span>()方法，注意括号里面的<span class="number">1</span>的意义</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(a)</span><br><span class="line"><span class="built_in">print</span>(b)</span><br><span class="line"><span class="built_in">print</span>(c)</span><br><span class="line"><span class="built_in">print</span>(d)</span><br><span class="line"><span class="built_in">print</span>(e)</span><br><span class="line"><span class="built_in">print</span>(f)</span><br><span class="line"></span><br><span class="line">运行结果：</span><br><span class="line">Hello, world </span><br><span class="line">Hi, Michael, you have $<span class="number">1000000.</span> </span><br><span class="line">     <span class="number">3</span>-000000001 </span><br><span class="line"><span class="number">3.15</span></span><br><span class="line">growth rate: <span class="number">7</span> % </span><br><span class="line">Hello, 小明, 成绩提升了 <span class="number">17.1</span>% </span><br></pre></td></tr></table></figure>
 
 <br>
 
@@ -743,14 +741,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

@@ -448,8 +448,8 @@
 
 
 
-<p>在Win16平台上（例如Windows 3.x），可执行文件格式是NE。在Win32平台上（包括Windows 9x/NT/2000/XP/Server 2003/Vista/CE/7/10），可执行文件格式是PE。“PE” 是“Portable Executable File Format” （可移植的执行体）的缩写。PE格式是目前Windows平台上的主流可执行文件格式。</p>
-<div class="note warning"><p><mark class="label success">Win32平台</mark><mark class="label danger">32/64位系统</mark></p>
+<p>在Win16平台上（例如Windows 3.x），可执行文件格式是NE。在Win32平台上（包括Windows 9x&#x2F;NT&#x2F;2000&#x2F;XP&#x2F;Server 2003&#x2F;Vista&#x2F;CE&#x2F;7&#x2F;10），可执行文件格式是PE。“PE” 是“Portable Executable File Format” （可移植的执行体）的缩写。PE格式是目前Windows平台上的主流可执行文件格式。</p>
+<div class="note warning"><p><mark class="label success">Win32平台</mark><mark class="label danger">32&#x2F;64位系统</mark></p>
 <p>不管是32位的Windows还是64位的，都是运行在NT内核之上的Win32子系统。<strong>Win32既包括32位的Windows又包括64位的Windows。</strong></p>
 <ul>
 <li>32位的Windows，叫Win32-i386。i386架构也可叫做i686或者x86或者IA-32。</li>
@@ -467,7 +467,7 @@
 <p>EXE文件和DLL文件的区别完全是语义上的。它们使用完全相同的PE格式，<mark class="label warning">唯一的区别就是用一个字段标识出这个文件是EXE还是DLL</mark>。还有许多DLL的扩展。例如，OCX控件和控制面板程序（<code>.CPL</code>文件）等都是DLL，它们拥有一样的实体。</p>
 <p>PE文件中的数据结构一般都有32位和64位之分，例如<code>IMAGE NT_HEADERS32</code>、<code>IMAGE NT_HEADER64</code>等。除了在64位版本中的一些扩展域以外，这些结构几乎是一样的，在<code>winnt.h</code>中都有<code>#defines</code>，它可以选择适当的32位或64位结构，并给它们起一个与大小无关的别名。结构的选择依赖于用户正在编译的模式（尤其是<code>_WIN64</code>是否被定义）。</p>
 <p><img data-src="https://i.loli.net/2021/04/06/gW6n8yKmMTUDHlY.png" alt="1.png"></p>
-<h2 id="1-基地址"><a href="#1-基地址" class="headerlink" title="1  基地址"></a>1  基地址</h2><p>PE文件使用的是一个平面地址空间， 所有代码和数据都合并在一起，组成了个很大的结构。文件的内容被分割为不同的<strong>区块</strong>（Section又称<strong>区段</strong>、<strong>节</strong>等，在本章中不区分“区块”与“块”）区块中包含代码或数据，各个区块按页边界对齐。<mark class="label success">区块没有大小限制，是个连续结构</mark>。 每个块都有它自己在内存中的一套属性，例如这个块是否包含代码、是否只读或可读/写等。</p>
+<h2 id="1-基地址"><a href="#1-基地址" class="headerlink" title="1  基地址"></a>1  基地址</h2><p>PE文件使用的是一个平面地址空间， 所有代码和数据都合并在一起，组成了个很大的结构。文件的内容被分割为不同的<strong>区块</strong>（Section又称<strong>区段</strong>、<strong>节</strong>等，在本章中不区分“区块”与“块”）区块中包含代码或数据，各个区块按页边界对齐。<mark class="label success">区块没有大小限制，是个连续结构</mark>。 每个块都有它自己在内存中的一套属性，例如这个块是否包含代码、是否只读或可读&#x2F;写等。</p>
 <p>认识到PE文件不是作为单一内存映射文件被载入内存是很重要的。Windows 加载器（又称PE 装载器）遍历PE文件并决定文件的哪一部分被映射， 这种映射方式是将文件较高的偏移位置映射到较高的内存地址中。<mark class="label default">磁盘文件一旦被载入内存，磁盘上的数据结构布局和内存中的数据结构布局就是一致的</mark>。这样，如果在磁盘的数据结构中寻找一些内容，那么几乎都能在被载入的内存映射文件中找到相同的信息，但数据之间的相对位置可能会改变，某项的偏移地址可能区别于原始的偏移位置。不管怎样，对所有表现出来的信息，都允许进行从磁盘文件偏移到内存偏移的转换，如图11.2所示。</p>
 <p><img data-src="https://i.loli.net/2021/04/06/yx76vb8uKQsDJAz.png" alt="2.png"></p>
 <p>当PE文件通过Windows加载器载入内存后，内存中的版本称为<mark class="label danger">模块</mark>（Module）。内存中映射文件的起始地址称为<mark class="label danger">模块句柄</mark>（hModule ），可以通过模块句柄访问内存中的其他数据结构。这个初始内存地址也称为基地址（ImageBase）。准确地说，对于Windows CE（精简的Windows 95），这是不成立的，一个模块句柄在WindowsCE下并不等同于安装的起始地址。</p>
@@ -481,7 +481,7 @@
 <p><mark class="label warning">基地址的值是由PE文件本身设定的。</mark>按照默认设置，用Visual C++建立的EXE文件的基地址是<mark class="label danger">400000h</mark>、DLL文件的基地址是<mark class="label danger">1000000h</mark>，可以在创建应用程序的EXE文件时改变这个地址，方法是在链接应用时使用链接程序的/BASE选项，或者在链接后通过REBASE应用程序进行设置。</p>
 </div>
 
-<h2 id="2-MS-DOS头部"><a href="#2-MS-DOS头部" class="headerlink" title="2 MS-DOS头部"></a>2 MS-DOS头部</h2><p>每个PE文件都是以一个DOS程序开始的，有了它，一且程序在DOS下执行，DOS就能识别出这是一个有效的执行体，然后运行紧随MZ header的DOS stub（DOS块）。DOS stub实际上是一个有效的EXE，在不支持PE文件格式的操作系统中它将简单地显示一个错误提示， 类似于字符串”This program cannot be run in MS-DOS mode”。程序员也可以根据自己的意图实现完整的DOS代码。用户通常对DOS stub不太感兴趣，因为在大多数情况下它是由汇编器/编译器自动生成的。我们通常把 DOS MZ头与DOS stub合称为DOS文件头。</p>
+<h2 id="2-MS-DOS头部"><a href="#2-MS-DOS头部" class="headerlink" title="2 MS-DOS头部"></a>2 MS-DOS头部</h2><p>每个PE文件都是以一个DOS程序开始的，有了它，一且程序在DOS下执行，DOS就能识别出这是一个有效的执行体，然后运行紧随MZ header的DOS stub（DOS块）。DOS stub实际上是一个有效的EXE，在不支持PE文件格式的操作系统中它将简单地显示一个错误提示， 类似于字符串”This program cannot be run in MS-DOS mode”。程序员也可以根据自己的意图实现完整的DOS代码。用户通常对DOS stub不太感兴趣，因为在大多数情况下它是由汇编器&#x2F;编译器自动生成的。我们通常把 DOS MZ头与DOS stub合称为DOS文件头。</p>
 <mark class="label default">MS-DOS</mark>头部，又称作<mark class="label default">IMAGE_DOS_HEADER</mark>，其结构如下（<mark class="label info">左边的数字是到文件头的偏移量</mark>）。
 
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">IMAGE_DOS_HEADER_STRUCT&#123; </span><br><span class="line">  +<span class="number">0</span>h     e_magic       WORD ?        <span class="comment">//DOS可执行文件标记&quot;MZ&quot;，IMAGE_DOS_SIGNATURE</span></span><br><span class="line">  +<span class="number">2</span>h     e_cblp        WORD ?</span><br><span class="line">  +<span class="number">4</span>h     e_cp          WORD ?</span><br><span class="line">  +<span class="number">6</span>h     e_crlc        WORD ? </span><br><span class="line">  +<span class="number">8</span>h     e_cparhdr     WORD ?</span><br><span class="line">  +<span class="number">0</span>ah    e_minalloc    WORD ? </span><br><span class="line">  +<span class="number">0</span>ch    e maxalloc    WORD ?</span><br><span class="line">  +<span class="number">0</span>eh    e_ss          WORD ? </span><br><span class="line">  +<span class="number">10</span>h    e_sp          WORD ?</span><br><span class="line">  +<span class="number">12</span>h    e_csum        WORD ?</span><br><span class="line">  +<span class="number">14</span>h    e_ip          WORD ?        <span class="comment">//DOS代码入口IP</span></span><br><span class="line">  +<span class="number">16</span>h    e_cs          WORD ?        <span class="comment">//DOS代码入口CS</span></span><br><span class="line">  +<span class="number">18</span>h    e_lfarlc      WORD ?</span><br><span class="line">  +<span class="number">1</span>ah    e_ovno        WORD ? </span><br><span class="line">  +<span class="number">1</span>ch    e_res         WORD <span class="number">4</span> dup(?) </span><br><span class="line">  +<span class="number">24</span>h    e_oemid       WORD ?</span><br><span class="line">  +<span class="number">26</span>h    e_oeminfo     WORD ?</span><br><span class="line">  +<span class="number">28</span>h    e_res2        WORD <span class="number">10</span> dup (?) </span><br><span class="line">  +<span class="number">3</span>ch    e_lfanew      DWORD ?       <span class="comment">//指向PE文件头&quot;PE&quot;,0,0 </span></span><br><span class="line">&#125;IMAGE_DOS_HEADER_ENDS    </span><br></pre></td></tr></table></figure>
@@ -495,7 +495,7 @@
 
 <h2 id="3-PE文件头"><a href="#3-PE文件头" class="headerlink" title="3 PE文件头"></a>3 PE文件头</h2><div class="note warning"><p>PE头是PE相关结构NT映像头的简称，即<mark class="label primary">IMAGE_NT_HEADER</mark>，其中包含许多PE装载器能用到的重要字段。</p>
 <p>当执行体在支持PE文件结构的操作系统中执行时，PE装载器将从IMAGE_DOS_HEADER结构的<code>e_lfanew</code>字段里找到PE Header的起始偏移量，用其加上基址，得到PE文件头的指针。</p>
-<p>$$PNTHeader = ImageBase + dosHeader -&gt;e\_lfanew $$</p>
+<p>$$PNTHeader &#x3D; ImageBase + dosHeader -&gt;e\_lfanew $$</p>
 <p>实际上有两个版本的IMAGE_NT_HEADER结构，一个是为PE32 （32位版本）可执行文件准备的，另一个是PE32+（64位版本）。因为它们几乎没有区别，所以在以后的讨论中将不作区分。</p>
 </div>
 
@@ -674,7 +674,7 @@
 </tr>
 <tr>
 <td>5</td>
-<td>OS/2字符子系统</td>
+<td>OS&#x2F;2字符子系统</td>
 </tr>
 <tr>
 <td>7</td>
@@ -714,104 +714,104 @@
 <th align="center">序号</th>
 <th>成员</th>
 <th>结构</th>
-<th>偏移量（PE/PE32+）</th>
+<th>偏移量（PE&#x2F;PE32+）</th>
 </tr>
 </thead>
 <tbody><tr>
 <td align="center">0</td>
 <td>Export Table（导出表）</td>
 <td>IMAGE_DIRECTORY_ENTRY_EXPORT</td>
-<td>78h/88h</td>
+<td>78h&#x2F;88h</td>
 </tr>
 <tr>
 <td align="center">1</td>
 <td>Import Table（导入表）</td>
 <td>IMAGE_DIRECTORY_ENTRY_IMPORT</td>
-<td>90h/90h</td>
+<td>90h&#x2F;90h</td>
 </tr>
 <tr>
 <td align="center">2</td>
 <td>Resources Table（资源）</td>
 <td>IMAGE_DIRECTORY_ENTRY_RESOURCE</td>
-<td>88h/98h</td>
+<td>88h&#x2F;98h</td>
 </tr>
 <tr>
 <td align="center">3</td>
 <td>Exception Table（异常）</td>
 <td>IMAGE_DIRECTORY_ENTRY_EXCEPTION</td>
-<td>90h/A0h</td>
+<td>90h&#x2F;A0h</td>
 </tr>
 <tr>
 <td align="center">4</td>
 <td>Security Table（安全）</td>
 <td>IMAGE_DIRECTORY_ENTRY_SECURITY</td>
-<td>98h/A8h</td>
+<td>98h&#x2F;A8h</td>
 </tr>
 <tr>
 <td align="center">5</td>
 <td>Base relocation Table（重定位表）</td>
 <td>IMAGE_DIRECTORY_ENTRY_BASERELOC</td>
-<td>A0h/B0h</td>
+<td>A0h&#x2F;B0h</td>
 </tr>
 <tr>
 <td align="center">6</td>
 <td>Debug（调试信息）</td>
 <td>IMAGE_DIRECTORY_ENTRY_DEBUG</td>
-<td>A8h/B8h</td>
+<td>A8h&#x2F;B8h</td>
 </tr>
 <tr>
 <td align="center">7</td>
 <td>Copyright（版权信息）</td>
 <td>IMAGE_DIRECTORY_ENTRY_ARCHITECTURE</td>
-<td>B0h/C0h</td>
+<td>B0h&#x2F;C0h</td>
 </tr>
 <tr>
 <td align="center">8</td>
 <td>Global Ptr（RVA of GP）</td>
 <td>IMAGE_DIRECTORY_ENTRY_GLOBALPTR</td>
-<td>B8h/C8h</td>
+<td>B8h&#x2F;C8h</td>
 </tr>
 <tr>
 <td align="center">9</td>
 <td>Thread local storage（TLS）</td>
 <td>IMAGE_DIRECTORY_ENTRY_TLS</td>
-<td>C0h/D0h</td>
+<td>C0h&#x2F;D0h</td>
 </tr>
 <tr>
 <td align="center">10</td>
 <td>Load Configuration</td>
 <td>IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG</td>
-<td>C8h/D8h</td>
+<td>C8h&#x2F;D8h</td>
 </tr>
 <tr>
 <td align="center">11</td>
 <td>Bound Import Directory in headers</td>
 <td>IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT</td>
-<td>D0h/E0h</td>
+<td>D0h&#x2F;E0h</td>
 </tr>
 <tr>
 <td align="center">12</td>
 <td>Import Address Table（IAT导入函数地址表）</td>
 <td>IMAGE_DIRECTORY_ENTRY_IAT</td>
-<td>D8h/E8h</td>
+<td>D8h&#x2F;E8h</td>
 </tr>
 <tr>
 <td align="center">13</td>
 <td>Delay Import（Delay Load Import Descriptors）</td>
 <td>IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT</td>
-<td>E0h/F0h</td>
+<td>E0h&#x2F;F0h</td>
 </tr>
 <tr>
 <td align="center">14</td>
 <td>COM descriptor（COM Runtime descriptor）</td>
 <td>IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR</td>
-<td>E8h/F8h</td>
+<td>E8h&#x2F;F8h</td>
 </tr>
 <tr>
 <td align="center">15</td>
 <td>保留，必须为0</td>
 <td></td>
-<td>F0h/100h</td>
+<td>F0h&#x2F;100h</td>
 </tr>
 </tbody></table>
 </li>
@@ -819,7 +819,7 @@
 </div>
 
 <h2 id="4-区块"><a href="#4-区块" class="headerlink" title="4 区块"></a>4 区块</h2><h3 id="4-1-区块表"><a href="#4-1-区块表" class="headerlink" title="4.1 区块表"></a>4.1 区块表</h3><p>区块表是一个<code>IMAGE_SECTION_HEADER</code>结构数组，数组中的每个结构包含了其所关联的区块的信息。区块的数目由<code>IMAGE_NT_HEADER.FileHeader.NumberOfSections</code>字段给出。其结构定义如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_SECTION_HEADER</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">        Name[IMAGE_SIZEOF_SHORT_NAME]  <span class="function">BYTE8 <span class="title">DUP</span><span class="params">(?)</span> </span>;   <span class="comment">// 8字节长度的区块名称,如“.text”</span></span><br><span class="line">                                                        <span class="comment">//IMAGE_SIZEOF_SHORT_NAME=8</span></span><br><span class="line">        <span class="keyword">union</span>                                           <span class="comment">//区块尺寸</span></span><br><span class="line">         &#123;</span><br><span class="line">             PhysicalAddress           DWORD ?          <span class="comment">// 物理地址</span></span><br><span class="line">             VirtualSize;              DWORD ?          <span class="comment">// 真实长度，这两个值是一个联合结构，可以使用其中的任何一个，一般是取后一个</span></span><br><span class="line">         &#125; Misc;</span><br><span class="line">        VirtualAddress                 DWORD ?          <span class="comment">// 区块的 RVA 地址</span></span><br><span class="line">        SizeOfRawData                  DWORD ?          <span class="comment">// 在文件中对齐后的尺寸</span></span><br><span class="line">        PointerToRawData               DWORD ?          <span class="comment">// 在文件中的偏移量</span></span><br><span class="line">        PointerToRelocations           DWORD ?          <span class="comment">// 在OBJ文件中使用，重定位的偏移</span></span><br><span class="line">        PointerToLinenumbers           DWORD ?          <span class="comment">// 行号表的偏移（供调试使用地）</span></span><br><span class="line">        NumberOfRelocations            WORD  ?          <span class="comment">// 在OBJ文件中使用，重定位项数目</span></span><br><span class="line">        NumberOfLinenumbers            WORD  ?          <span class="comment">// 行号表中行号的数目</span></span><br><span class="line">        Characteristics                DWORD ?          <span class="comment">// 节属性如可读，可写，可执行等</span></span><br><span class="line">&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_SECTION_HEADER</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">        Name[IMAGE_SIZEOF_SHORT_NAME]  <span class="function">BYTE8 <span class="title">DUP</span><span class="params">(?)</span> </span>;   <span class="comment">// 8字节长度的区块名称,如“.text”</span></span><br><span class="line">                                                        <span class="comment">//IMAGE_SIZEOF_SHORT_NAME=8</span></span><br><span class="line">        <span class="class"><span class="keyword">union</span>                                           //区块尺寸</span></span><br><span class="line"><span class="class">         &#123;</span></span><br><span class="line">             PhysicalAddress           DWORD ?          <span class="comment">// 物理地址</span></span><br><span class="line">             VirtualSize;              DWORD ?          <span class="comment">// 真实长度，这两个值是一个联合结构，可以使用其中的任何一个，一般是取后一个</span></span><br><span class="line">         &#125; Misc;</span><br><span class="line">        VirtualAddress                 DWORD ?          <span class="comment">// 区块的 RVA 地址</span></span><br><span class="line">        SizeOfRawData                  DWORD ?          <span class="comment">// 在文件中对齐后的尺寸</span></span><br><span class="line">        PointerToRawData               DWORD ?          <span class="comment">// 在文件中的偏移量</span></span><br><span class="line">        PointerToRelocations           DWORD ?          <span class="comment">// 在OBJ文件中使用，重定位的偏移</span></span><br><span class="line">        PointerToLinenumbers           DWORD ?          <span class="comment">// 行号表的偏移（供调试使用地）</span></span><br><span class="line">        NumberOfRelocations            WORD  ?          <span class="comment">// 在OBJ文件中使用，重定位项数目</span></span><br><span class="line">        NumberOfLinenumbers            WORD  ?          <span class="comment">// 行号表中行号的数目</span></span><br><span class="line">        Characteristics                DWORD ?          <span class="comment">// 节属性如可读，可写，可执行等</span></span><br><span class="line">&#125; IMAGE_SECTION_HEADER, *PIMAGE_SECTION_HEADER;</span><br></pre></td></tr></table></figure>
 
 
 
@@ -845,7 +845,7 @@
 </li>
 <li><p><strong>NumberOfLinenumbers</strong>：该区块在行号表中的行号数目。</p>
 </li>
-<li><p><strong>Characteristics</strong>：块属性，是一组指出块属性（如代码/数据，可读/可写）的标志，与之前介绍过的文件属性字段相类似：</p>
+<li><p><strong>Characteristics</strong>：块属性，是一组指出块属性（如代码&#x2F;数据，可读&#x2F;可写）的标志，与之前介绍过的文件属性字段相类似：</p>
 <table>
 <thead>
 <tr>
@@ -895,7 +895,7 @@
 <td>该区块可写。该标志没有设置，装载程序就会将内存映像也标记为可读或可执行。</td>
 </tr>
 </tbody></table>
-<p>区块属性通过<mark class="label danger">与运算</mark>得到，如$E0000020h=20000000h|40000000h|80000000h|00000020h$，表示该块可执行、可读、可写且包含代码。</p>
+<p>区块属性通过<mark class="label danger">与运算</mark>得到，如$E0000020h&#x3D;20000000h|40000000h|80000000h|00000020h$，表示该块可执行、可读、可写且包含代码。</p>
 </li>
 </ol>
 </div>
@@ -973,17 +973,15 @@
 
 <ul>
 <li><mark class="label success">区块事实上就是相同属性数据的组合。当区块被装入到内存中的时候，相同一个节所对应的内存页都将被赋予相同的页属性。</mark></li>
-<li><mark class="label danger">事实上，Windows 系统对内存属性的设置是以页为单位进行的，所以一个区块在内存中对齐单位必须至少是一个页的大小。</mark>
-
-</li>
+<li><mark class="label danger">事实上，Windows 系统对内存属性的设置是以页为单位进行的，所以一个区块在内存中对齐单位必须至少是一个页的大小。</mark></li>
 </ul>
 <p><img data-src="https://i.loli.net/2021/04/16/PBC5TmNopiJRMLj.png" alt="11.png"></p>
 <div class="note info"><p><strong>文件偏移与虚拟地址转换规则：</strong></p>
 <p>文件被映射到内存中时，<mark class="label success">MS_DOS头部</mark><mark class="label warning">PE文件头</mark><mark class="label info">和块表</mark>的偏移位置与大小均没有变化，而当各他区块被映射到内存中后，其偏移位置就发生了变化。</p>
 <p>例如，磁盘文件中<code>.text</code>块起始端与文件头的偏移量为add1，映射到内存后，<code>.text</code>块起始端与文件头（基地址）的偏移量为add2。同时，<code>.text</code>块与块表之间形成了一大段空隙，这部分数据全是以<code>0</code>填充的。</p>
 <p>在这里，add1的值就是文件偏移地址（File Offset），add2的值就是相对虚拟地址( RVA )。假设它们的差值为$\Delta{k}$（填充量的长度），则文件偏移地址与虚拟地址的关系如下。</p>
-<p>$$File\ Offset= RVA - \Delta{k}$$</p>
-<p>$$File\ Offset= VA - ImageBase - \Delta{k}$$</p>
+<p>$$File\ Offset&#x3D; RVA - \Delta{k}$$</p>
+<p>$$File\ Offset&#x3D; VA - ImageBase - \Delta{k}$$</p>
 <ul>
 <li>在同一区块中，各地址的偏移量是相等的，可用上面的公式对此区块中的任意<code>File Offset</code>与<code>VA</code>进行转换。</li>
 <li>但请不要错误地认为在整个文件里<code>File Offset</code>与<code>VA</code>的差值是$\Delta{k}$，因为不同的区块填充的<code>0</code>的个数不一样占的页也不一样，各区块在内存中是以一个页边界开始的，从第1个区块的结束到第2个区块的开始( 1000h对齐处)全以数据0填充，所以不同区块在磁盘与内存中的差值不同。</li>
@@ -1029,9 +1027,7 @@
 <li><p>高效调用：<code>call DWORD PTR [00402010] </code></p>
 </li>
 <li><p>低效调用：</p>
-<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">call <span class="number">00401164</span></span><br><span class="line">:<span class="number">00401164</span></span><br><span class="line">  JMP DWORD <span class="keyword">PTR</span> [<span class="number">00402010</span>] </span><br></pre></td></tr></table></figure>
-
-</li>
+<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">call <span class="number">00401164</span></span><br><span class="line">:<span class="number">00401164</span></span><br><span class="line">  JMP DWORD <span class="keyword">PTR</span> [<span class="number">00402010</span>] </span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>默认情况下，对被输入函数的调用将使用低效的形式。</p>
 </div>
@@ -1053,7 +1049,7 @@
 </div>
 
 <p>输入表结构体<code>IMAGE_IMPORT_DESCRIPTOR</code>（IID）：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_IMPORT_DESCRIPTOR</span> &#123;</span></span><br><span class="line">	_ANONYMOUS_UNION <span class="keyword">union</span> &#123;              <span class="comment">//00h</span></span><br><span class="line">		DWORD Characteristics;</span><br><span class="line">		DWORD OriginalFirstThunk;           <span class="comment">//桥1</span></span><br><span class="line">	&#125; DUMMYUNIONNAME;</span><br><span class="line">	DWORD TimeDateStamp;                  <span class="comment">//04h</span></span><br><span class="line">	DWORD ForwarderChain;                 <span class="comment">//08h</span></span><br><span class="line">	DWORD Name;                           <span class="comment">//0Ch</span></span><br><span class="line">	DWORD FirstThunk;                     <span class="comment">//10h，桥2</span></span><br><span class="line">&#125; IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_IMPORT_DESCRIPTOR</span> &#123;</span></span><br><span class="line">	_ANONYMOUS_UNION <span class="class"><span class="keyword">union</span> &#123;</span>              <span class="comment">//00h</span></span><br><span class="line">		DWORD Characteristics;</span><br><span class="line">		DWORD OriginalFirstThunk;           <span class="comment">//桥1</span></span><br><span class="line">	&#125; DUMMYUNIONNAME;</span><br><span class="line">	DWORD TimeDateStamp;                  <span class="comment">//04h</span></span><br><span class="line">	DWORD ForwarderChain;                 <span class="comment">//08h</span></span><br><span class="line">	DWORD Name;                           <span class="comment">//0Ch</span></span><br><span class="line">	DWORD FirstThunk;                     <span class="comment">//10h，桥2</span></span><br><span class="line">&#125; IMAGE_IMPORT_DESCRIPTOR,*PIMAGE_IMPORT_DESCRIPTOR;</span><br></pre></td></tr></table></figure>
 
 <div class="note default"><ol>
 <li><strong>OriginalFirstThunk（Characteristics）</strong>：双字，是一个RVA，指向输入名称表（Import Name Table，INT）  INT是一个    <code>IMAGE_THUNK_DATA</code>结构数组，数组每一个成员都指向<code>IMAGE_IMPORT_BY_NAME</code>结构数组的成员。这些数组都以<code>0</code>数组成员结尾简称桥1。</li>
@@ -1076,7 +1072,7 @@
 </div>
 
 <p><code>IMAGE_THUNK_DATA</code>的双字结构为（<mark class="label primary">也就是一个数组只能取下面联合体中的一种状态</mark>）：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_THUNK_DATA32</span> &#123;</span> </span><br><span class="line">  <span class="keyword">union</span> &#123; </span><br><span class="line">    DWORD ForwarderString;      <span class="comment">// 指向一个转向者字符串的RVA </span></span><br><span class="line">    DWORD Function;             <span class="comment">// 被输入的函数的内存地址 </span></span><br><span class="line">    DWORD Ordinal;              <span class="comment">// 被输入的API的序列值 </span></span><br><span class="line">    DWORD AddressOfData;        <span class="comment">// 指向 PIMAGE_IMPORT_BY_NAME </span></span><br><span class="line">  &#125; u1; </span><br><span class="line">&#125; IMAGE_THUNK_DATA32,*PIMAGE_THUNK_DATA32;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_THUNK_DATA32</span> &#123;</span> </span><br><span class="line">  <span class="class"><span class="keyword">union</span> &#123;</span> </span><br><span class="line">    DWORD ForwarderString;      <span class="comment">// 指向一个转向者字符串的RVA </span></span><br><span class="line">    DWORD Function;             <span class="comment">// 被输入的函数的内存地址 </span></span><br><span class="line">    DWORD Ordinal;              <span class="comment">// 被输入的API的序列值 </span></span><br><span class="line">    DWORD AddressOfData;        <span class="comment">// 指向 PIMAGE_IMPORT_BY_NAME </span></span><br><span class="line">  &#125; u1; </span><br><span class="line">&#125; IMAGE_THUNK_DATA32,*PIMAGE_THUNK_DATA32;</span><br></pre></td></tr></table></figure>
 
 <div class="note primary"><ul>
 <li>每个<code>IMAGE_THUNK_DATA</code>元素对应于一个从可执行文件输入的函数。</li>
@@ -1184,7 +1180,7 @@
 </li>
 <li><p><strong>Name</strong>：双字，是一个指针，指向一个以<code>\0</code>结尾ASCII字符串，该字符串是输出函数所在的本文件最初的文件名。</p>
 </li>
-<li><p><strong>Base</strong>：DLL中第一个输出函数并不是从0开始的，该值一般设置为1，但是当通过序数来查询一个输出函数时使用到这个值（不一定为1），表示导出函数序号的起始值，导出函数序号 = 函数入口地址数组下标索引值（<strong>AddressOfNameOrdinals</strong>指向的索引值） + 起始值。假如Base 字段的值为x，那么入口地址表指定的第1个导出函数的序号就是x+0；第2个导出函数的序号就是x＋1。其结果作为进入输出地址表（EAT）的索引。</p>
+<li><p><strong>Base</strong>：DLL中第一个输出函数并不是从0开始的，该值一般设置为1，但是当通过序数来查询一个输出函数时使用到这个值（不一定为1），表示导出函数序号的起始值，导出函数序号 &#x3D; 函数入口地址数组下标索引值（<strong>AddressOfNameOrdinals</strong>指向的索引值） + 起始值。假如Base 字段的值为x，那么入口地址表指定的第1个导出函数的序号就是x+0；第2个导出函数的序号就是x＋1。其结果作为进入输出地址表（EAT）的索引。</p>
 </li>
 <li><p><strong>NumberOfFunctions</strong>：该PE文件导出函数的个数，也就是EAT的条目数目。</p>
 </li>
@@ -1194,7 +1190,7 @@
 </li>
 <li><p><strong>AddressOfNames</strong>：ENT的RVA，ENT是一个指向输出函数名ASCII字符串的RVA的数组。每一个ASCII字符串对应于一个通过函数名输出的函数。这个表需要对ASCII字符串进行排序，这允许加载器可以通过二进制查找方式查找输出函数名。</p>
 </li>
-<li><p><strong>AddressOfNameOrdinals</strong>：双字大小的指针，输出序数表（索引值）的RVA。这个数组表的每个元素是字大小的，即索引值是一个字大小，<mark class="label danger">他将ENT的数组索引映射到相应的输出地址表条目里</mark> 。索引值=函数的编号-<strong>Base</strong>。</p>
+<li><p><strong>AddressOfNameOrdinals</strong>：双字大小的指针，输出序数表（索引值）的RVA。这个数组表的每个元素是字大小的，即索引值是一个字大小，<mark class="label danger">他将ENT的数组索引映射到相应的输出地址表条目里</mark> 。索引值&#x3D;函数的编号-<strong>Base</strong>。</p>
 <p>导出序号<code>AddressOfNameOrdinals</code>指向的也是到处序号列表地址，其中的每个序号与导出函数名称一一对应，代表了这个函数名称对应的函数在导出函数列表里序号。</p>
 </li>
 </ol>
@@ -1243,7 +1239,7 @@
 
 <p>每8个字节为这样一个结构，每个这样的结构描述一个Directory[15]数组元素，以一个元素来举例，如Directory[0]为输出表，其对应的8个字节（双字）为<code>40 21 00 00 8F 00 00 00</code>，则表示：</p>
 <ul>
-<li>输出表所在的地址为RVA=<code>0x00002140</code>，输出表的大小为<code>0000008F</code>个字节。</li>
+<li>输出表所在的地址为RVA&#x3D;<code>0x00002140</code>，输出表的大小为<code>0000008F</code>个字节。</li>
 <li>然后将RVA转换为FOA（文件偏移地址）。</li>
 <li>用PE工具查看PE文件每一个块对应的RVA和FOA，然后使用以上第二步的FOA值定位到其所处的区块（辅助，不一定非要此步骤）。</li>
 <li>在PE文件中从已经定位到的FOA地址开始，然后对照着输出表的结构，去查看每一个<code>IMAGE_EXPORT_DIRECTORY</code>成员对应的字节码是什么即可。</li>
@@ -1298,9 +1294,9 @@
 <li>根据上述的图计算得到发生被重定位的地址的RVA，然后加上PE文件载入内存基址，即可得到发生被重定位的VA，最后可以使用OD去查看该地址处对应的内容，可能是全局变量发生地址重定位。</li>
 <li>使用工具PEView：<ul>
 <li>根据上述的图计算得到$RVA$。</li>
-<li>$RVA+ImageBase=VA_1$。（文件发生重定位前的地址，因为ImageBase是在编译器生成可执行文件时写死的，不是PE文件载入内存后的才写入的）。使用PE工具查看$VA_1$地址内的内容，如下图图1中$VA_1$的值为<code>0x01001420</code>，地址里面的数据为<code>0x010010C4</code>。</li>
-<li>$0x010010C4-ImageBase(0x01000000)=VA_2(0x000010C4)$。</li>
-<li>加上装载基地址：$0x000010C4+0x00270000=0x002710C4$，该地址（$VA_2$）即为重定位后的地址，如下图2。</li>
+<li>$RVA+ImageBase&#x3D;VA_1$。（文件发生重定位前的地址，因为ImageBase是在编译器生成可执行文件时写死的，不是PE文件载入内存后的才写入的）。使用PE工具查看$VA_1$地址内的内容，如下图图1中$VA_1$的值为<code>0x01001420</code>，地址里面的数据为<code>0x010010C4</code>。</li>
+<li>$0x010010C4-ImageBase(0x01000000)&#x3D;VA_2(0x000010C4)$。</li>
+<li>加上装载基地址：$0x000010C4+0x00270000&#x3D;0x002710C4$，该地址（$VA_2$）即为重定位后的地址，如下图2。</li>
 </ul>
 </li>
 </ol>
@@ -1413,14 +1409,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

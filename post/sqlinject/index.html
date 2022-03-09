@@ -455,7 +455,7 @@
 <p>对合法的查询语句进行语义查询，即根据数据字典中有关的模式定义检查语句中的数据库对象（关系名、属性名）是否存在和有效。如果是对视图的操作，要用视图消解方法把对视图的操作转换成对基本表的操作。还要根据数据字典中的用户权限和完整性约束定义对用户的存取权限进行检查。如果对该用户没有相应的防伪权限或违反了完整性约束，就拒绝执行该查询。当然，这时的完整性检查是初步、静态的检查。检查通过后便把 SQL 查询语句转换成内部表示，即等价的关系代数表达式。这个过程中要把数据库对象的外部名称转换为内部表示。关系数据库管理系统一般都用查询树，也称为语法分析树来表示扩展的关系代数表达式。</p>
 <p>关键点：</p>
 <ol>
-<li>SQL解析包括语法分析器和词法分析器。<br>简便的做法是用 bison/flex 组合。不过MySQL的词法分析器是手工打造的。<br>语法分析器的入口函数是 MYSQLparse，词法分析器的入口函数是 MYSQLlex。</li>
+<li>SQL解析包括语法分析器和词法分析器。<br>简便的做法是用 bison&#x2F;flex 组合。不过MySQL的词法分析器是手工打造的。<br>语法分析器的入口函数是 MYSQLparse，词法分析器的入口函数是 MYSQLlex。</li>
 <li><strong>词法分析中会检查 token 是否为关键字</strong>。<br>最直接的做法是弄个大的关键字数组，进行折半查找。MySQL 在此做了些优化。<br>本文主要介绍的是这一部分。</li>
 </ol>
 <ul>
@@ -464,7 +464,7 @@
 <li>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_22860341/article/details/78487812">SQL查询执行流程</a>】</li>
 <li>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_39164332/article/details/89003624">MySQL-词法分析</a>】</li>
 <li>【<a target="_blank" rel="noopener" href="https://www.cnblogs.com/BlogNetSpace/p/5108845.html">词法分析、语法分析、语义分析</a>】</li>
-<li>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/pentiumCM/article/details/106076655">SQL - 词法/语法分析各种方案总结</a>】</li>
+<li>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/pentiumCM/article/details/106076655">SQL - 词法&#x2F;语法分析各种方案总结</a>】</li>
 <li>【<a target="_blank" rel="noopener" href="https://wenku.baidu.com/view/70feb67c5acfa1c7aa00ccb1.html">数据库查询语言SQL的语法分析及实现</a>】</li>
 <li>【<a target="_blank" rel="noopener" href="https://www.cnblogs.com/yuyue2014/p/3826941.html">MySQL查询执行过程</a>】</li>
 <li>【<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_45505313/article/details/106540525">MySQL 查询执行的流程</a>】</li>
@@ -482,7 +482,7 @@
 <li>MySQL 的最优可能与你想的最优不一样。 </li>
 <li>MySQL 从不考虑其他并发的查询，这可能会影响当前查询的速度。 </li>
 <li>MySQL 也不是任何时候都是基于成本的优化，有时候也会基于一些固定的规则。 </li>
-<li>MySQL 不会考虑不受其控制的成本，例如执行存储过程或者用户自定义的函数的成本。 </li>
+<li>MySQL 不会考虑不受其控制的成本，例如执行存储过程或者用户自定义的函数的成本。</li>
 </ol>
 <p>MySQL 的查询优化使用了很多优化策略来生成一个最优的执行的计划。优化策略可以分为两种，静态优化和动态优化。静态优化可以直接对解析树进行分析，并完成优化。例如优化器可以通过一些简单的代数变换将<code>where</code>条件转换成另一种等价形式。静态优化不依赖于特别的数值，如<code>where</code>条件中带入的一些常数等。静态优化在第一次完成后就一直有效，即使使用不同的参数重复查询也不会变化，可以认为是一种“编译时优化”。 相反，动态优化则和查询的上下文有关。也可能和很多其他因素有关，例如<code>where</code>条件中的取值、索引中条目对应的数据行数等，这些需要每次查询的时候重新评估，可以认为是“运行时优化”。</p>
 <ul>
@@ -491,7 +491,7 @@
 </ul>
 <h3 id="1-6-查询执行引擎"><a href="#1-6-查询执行引擎" class="headerlink" title="1.6 查询执行引擎"></a>1.6 查询执行引擎</h3><p>在解析和优化阶段，MySQL将生成查询对应的执行计划，MySQL的查询执行引擎则根据这个执行计划来完成整个查询。这里执行计划是一个数据结构，而不是和很多其他的关系型数据库那样会生成对应的字节码。</p>
 <p>相对于查询优化阶段，查询执行阶段不是那么复杂：MySQL只是简单的根据执行计划给出的指令逐步执行。在根据执行计划逐步执行的过程中，有大量的操作需要通过调用存储引擎实现的接口来完成，这些接口就是我们称为<code>handler API</code>的接口。实际上，MySQL在优化阶段就为每个表创建了一个handler实例，优化器根据这些实例的接口可以获取表的相关信息，包括表的所有列名、索引统计信息等。</p>
-<h3 id="1-7-返回结果给客户端"><a href="#1-7-返回结果给客户端" class="headerlink" title="1.7 返回结果给客户端"></a>1.7 返回结果给客户端</h3><p>查询执行的最后一个阶段是将结果返回给客户端。即使查询不需要返回结果给客户端，MySQL 仍然会返回这个查询的一些信息，如查询影响到的行数。如果查询可以被缓存，那么 MySQL 在这个阶段，会将结果存放到查询缓存中。MySQL 将结果返回客户端是一个增量、逐步返回的过程。例如，在关联表操作时，一旦服务器处理完最后一个关联表，开始生成第一条结果时，MySQL就可以开始向客户端逐步返回结果集了。这样处理有两个好处：服务器无需存储太多的结果，也就不会因为要返回太多的结果而消耗太多的内存。另外，这样的处理也让 MySQL 客户端第一时间获得返回的结果。结果集中的每一行都会以一个满足 MySQL 客户端/服务器通信协议的封包发送，再通过 TCP 协议进行传输，在 TCP 传输过程中，可能对 MySQL 的封包进行缓存然后批量传输。</p>
+<h3 id="1-7-返回结果给客户端"><a href="#1-7-返回结果给客户端" class="headerlink" title="1.7 返回结果给客户端"></a>1.7 返回结果给客户端</h3><p>查询执行的最后一个阶段是将结果返回给客户端。即使查询不需要返回结果给客户端，MySQL 仍然会返回这个查询的一些信息，如查询影响到的行数。如果查询可以被缓存，那么 MySQL 在这个阶段，会将结果存放到查询缓存中。MySQL 将结果返回客户端是一个增量、逐步返回的过程。例如，在关联表操作时，一旦服务器处理完最后一个关联表，开始生成第一条结果时，MySQL就可以开始向客户端逐步返回结果集了。这样处理有两个好处：服务器无需存储太多的结果，也就不会因为要返回太多的结果而消耗太多的内存。另外，这样的处理也让 MySQL 客户端第一时间获得返回的结果。结果集中的每一行都会以一个满足 MySQL 客户端&#x2F;服务器通信协议的封包发送，再通过 TCP 协议进行传输，在 TCP 传输过程中，可能对 MySQL 的封包进行缓存然后批量传输。</p>
 <h2 id="2-预编译防御SQL注入"><a href="#2-预编译防御SQL注入" class="headerlink" title="2 预编译防御SQL注入"></a>2 预编译防御SQL注入</h2><p><img data-src="https://i.loli.net/2020/12/31/qe2tadnFjOmxPEK.png" alt="Snip20201231_13.png"></p>
 <p>学习总结SQL注入的防范原理</p>
 <ol>
@@ -635,14 +635,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

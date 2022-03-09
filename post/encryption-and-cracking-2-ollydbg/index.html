@@ -412,7 +412,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.3k</span>
+      <span>7.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -502,16 +502,12 @@
 <li><mark class="label default">INT3 断点</mark></li>
 <li><mark class="label default">硬件断点</mark></li>
 <li><mark class="label default">内存断点</mark></li>
-<li><mark class="label default">消息断点 ...</mark>
-
-</li>
+<li><mark class="label default">消息断点 ...</mark></li>
 </ul>
-<h4 id="3-1-INT-3-断点"><a href="#3-1-INT-3-断点" class="headerlink" title="3.1 INT 3 断点"></a>3.1 INT 3 断点</h4><p>在Ollydbg中可以使用如下快捷键来设置/取消断点：</p>
+<h4 id="3-1-INT-3-断点"><a href="#3-1-INT-3-断点" class="headerlink" title="3.1 INT 3 断点"></a>3.1 INT 3 断点</h4><p>在Ollydbg中可以使用如下快捷键来设置&#x2F;取消断点：</p>
 <ul>
 <li><mark class="label warning">bp</mark></li>
-<li><mark class="label warning">F2</mark>
-
-</li>
+<li><mark class="label warning">F2</mark></li>
 </ul>
 <p>原理：当执行一个 INT3 断点时，该地址处的<strong>机器码</strong>被调试器用 INT3 指令替换了，此时 Ollydbg 将 INT3 隐藏，显示出来的仍是中断前的指令。如在<code>004013A5h</code>处设置int3 断点，则该地址处的机器码被替换成<code>CC</code>，当<code>CC</code>执行完之后，再去执行该地址处的指令。</p>
 <div class="note danger"><p>这个 INT 3 指令，因其机器码是<code>0xCC</code>，也常被称为<mark class="label danger">CC 指令</mark>，故一般缓冲区经常填充为<strong>C</strong>。</p>
@@ -561,8 +557,8 @@
 <p>硬件断点的优点是速度快，在 INT 3 断点容易被发现的地方使用硬件断点会有很好的效果，缺点是最多只能使用 4 个断点。</p>
 <h4 id="3-3-内存断点"><a href="#3-3-内存断点" class="headerlink" title="3.3 内存断点"></a>3.3 内存断点</h4><div class="note danger"><p>内存断点：只能下<mark class="label default">1</mark>个内存断点。</p>
 <ul>
-<li>内存访问断点；“断点”→“内存访问”/“删除内存断点”）</li>
-<li>内存写入断点。（“断点”→“内存写入”/“删除内存断点”）</li>
+<li>内存访问断点；“断点”→“内存访问”&#x2F;“删除内存断点”）</li>
+<li>内存写入断点。（“断点”→“内存写入”&#x2F;“删除内存断点”）</li>
 </ul>
 </div>
 
@@ -571,13 +567,13 @@
 </div>
 
 <p>Ollydbg可以设置内存访问断点或内存写断点。</p>
-<p>原理：对所设的地址赋予<strong>不可访/不可写</strong>属性，这样当访问/写的时候就会产生异常。Ollydbg 截获异常后，比较异常地址是不是断点地址，如果是就中断，让用户继续操作。</p>
+<p>原理：对所设的地址赋予<strong>不可访&#x2F;不可写</strong>属性，这样当访问&#x2F;写的时候就会产生异常。Ollydbg 截获异常后，比较异常地址是不是断点地址，如果是就中断，让用户继续操作。</p>
 <p>程序运行时有 3 种状态，分别是读取、写入和执行（被CPU执行）。写入和读取的示例代码如下</p>
  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov dword ptr ds:[<span class="number">405528</span>], edx   ;对【<span class="number">405528</span>] 处的内存进行写入</span><br><span class="line">mov edx, dword ptr ds:[<span class="number">405528</span>]   ;对【<span class="number">405528</span>] 处的内存进行读取</span><br></pre></td></tr></table></figure>
 
 <p><strong>硬件断点与内存断点：</strong></p>
 <p>硬件断点在<mark class="label info">数据区</mark>下断也可以实现与内存断点相同的效果。单个硬件写入访问断点可以设置为 1 字节、2 字节或 4 字节，而且不论选择的数据范围有多大，只有前 4 个字节会起作用。</p>
-<div class="note danger"><p><mark class="label primary"><strong>硬件访问/写入断点是在触发硬件断点的下一条指令处下断，而内存断点是在触发断点的指令处下断。</strong></mark></p>
+<div class="note danger"><p><mark class="label primary"><strong>硬件访问&#x2F;写入断点是在触发硬件断点的下一条指令处下断，而内存断点是在触发断点的指令处下断。</strong></mark></p>
 </div>
 
 
@@ -586,7 +582,7 @@
 <p>简称为<mark class="label info">段断点</mark>，在脱壳时捕捉调用或返回某个模块很有用。</p>
 <p>使用方法：</p>
 <ul>
-<li>在OD里按<code>Alt+M</code>/快捷按钮<strong>M</strong>→在相应的段上单击右键→在访问上设置断点（Set break-on-access）</li>
+<li>在OD里按<code>Alt+M</code>&#x2F;快捷按钮<strong>M</strong>→在相应的段上单击右键→在访问上设置断点（Set break-on-access）</li>
 </ul>
 <div class="note default"><p>段断点与内存断点是有区别的，段断点（<mark class="label success">在访问上设置中断</mark>）是一次性的，而内存断点不是一次性的。</p>
 </div>
@@ -713,7 +709,7 @@
 <tr>
 <td align="center">执行复制到可执行文件时，提示错误信息“Unable to locate data in executable file”</td>
 <td align="left">◡̈⃝：修改<code>RawSize =VirtualSize</code></td>
-<td align="left">这里要修改的地方不在RawSize范围内。修改PE文件，使“RawSize =VirtualSize”，具体方法参见第11章。<br />或者添加的代码所在区段属性不是<code>CODE/TEXT</code></td>
+<td align="left">这里要修改的地方不在RawSize范围内。修改PE文件，使“RawSize &#x3D;VirtualSize”，具体方法参见第11章。<br />或者添加的代码所在区段属性不是<code>CODE/TEXT</code></td>
 </tr>
 <tr>
 <td align="center">把call调用改成函数名的形式</td>
@@ -840,14 +836,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

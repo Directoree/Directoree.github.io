@@ -409,7 +409,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.6k</span>
+      <span>7.7k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -455,7 +455,7 @@
 
 <h2 id="2-Windows操作系统"><a href="#2-Windows操作系统" class="headerlink" title="2 Windows操作系统"></a>2 Windows操作系统</h2><h3 id="2-1-Win32-API函数"><a href="#2-1-Win32-API函数" class="headerlink" title="2.1 Win32 API函数"></a>2.1 Win32 API函数</h3><div class="note info"><ul>
 <li>用于16位Windows的API（Windows 1.0~Windows3.1）称作“Win16”；</li>
-<li>用于32位Windows的 API（Windows 9x/NT/2000/XP/7/10）称作“Win32” ；</li>
+<li>用于32位Windows的 API（Windows 9x&#x2F;NT&#x2F;2000&#x2F;XP&#x2F;7&#x2F;10）称作“Win32” ；</li>
 <li>64位Windows API的名称和功能基本没有变化，还是使用Win32的函数名，只不过是用64位代码实现的。</li>
 </ul>
 </div>
@@ -464,8 +464,8 @@
 <div class="note danger"><p><strong>所有32位Windows都支持Win16 API（以确保与旧的应用程序兼容）和Win32 API（以运行新的应用程序）</strong>。</p>
 </div>
 
-<p>非常有趣的是，Windows NT/2000/XP/7与Windows 9x 的工作方式不同。在Windows NT/2000/XP/7中，Win16 函数调用通过一个转换层转换为Win32函数调用，然后被操作系统处理。 在Windows 9x中，该操作正好相反，Win32 函数调用通过转换层转换为Win16函数调用，再由操作系统进行处理。</p>
-<p>Windows运转的核心是动态链接。Windows 提供了丰富的应用程序可利用的函数调用，这些函数采用动态链接库（DLL）实现。在Windows 9x中，DLL 通常位于<code>\WINDOWS\SYSTEM</code>子目录中。 在Windows NT/2000/XP/7中，DLL通常位于系统安装目录的<code>\SYSTEM</code>和<code>\SYSTEM32</code>子目录中。</p>
+<p>非常有趣的是，Windows NT&#x2F;2000&#x2F;XP&#x2F;7与Windows 9x 的工作方式不同。在Windows NT&#x2F;2000&#x2F;XP&#x2F;7中，Win16 函数调用通过一个转换层转换为Win32函数调用，然后被操作系统处理。 在Windows 9x中，该操作正好相反，Win32 函数调用通过转换层转换为Win16函数调用，再由操作系统进行处理。</p>
+<p>Windows运转的核心是动态链接。Windows 提供了丰富的应用程序可利用的函数调用，这些函数采用动态链接库（DLL）实现。在Windows 9x中，DLL 通常位于<code>\WINDOWS\SYSTEM</code>子目录中。 在Windows NT&#x2F;2000&#x2F;XP&#x2F;7中，DLL通常位于系统安装目录的<code>\SYSTEM</code>和<code>\SYSTEM32</code>子目录中。</p>
 <div class="note warning"><p> 在早期， Windows的主要部分只需要在3个动态链接库中实现，它们分别代表Windows的3个主要子系统，叫作Kernel、User和GDI。</p>
 <ol>
 <li><strong>Kernel</strong>（由KERNEL32.DLL实现）：操作系统核心功能服务，包括进程与线程控制、内存管理、文件访问等。</li>
@@ -500,7 +500,7 @@
 <h3 id="2-3-虚拟内存"><a href="#2-3-虚拟内存" class="headerlink" title="2.3 虚拟内存"></a>2.3 虚拟内存</h3><p>CPU的运行模式：实模式、保护模式、虚拟8086模式。<a target="_blank" rel="noopener" href="https://blog.csdn.net/laviolette/article/details/51658650">实模式和保护模式</a></p>
 <p>X86机器主要使用实模式和保护模式：</p>
 <ul>
-<li><p>实模式：<strong>16位的操作系统，应用程序直接使用物理内存，无虚拟内存的概念</strong>。内存并没有分段，段的划分来自于CPU，由于8086CPU用$段地址*16+偏移地址=物理地址$的方式给出内存单元的物理地址，使得我们可以用分段的方式来管理内存物理地址，寻址使用段寄存器：</p>
+<li><p>实模式：<strong>16位的操作系统，应用程序直接使用物理内存，无虚拟内存的概念</strong>。内存并没有分段，段的划分来自于CPU，由于8086CPU用$段地址*16+偏移地址&#x3D;物理地址$的方式给出内存单元的物理地址，使得我们可以用分段的方式来管理内存物理地址，寻址使用段寄存器：</p>
 <ul>
 <li><p>CS：代码段寄存器；</p>
 </li>
@@ -511,7 +511,7 @@
 <li><p>ES：扩展段寄存器；</p>
 </li>
 <li><p>IP：指令指针寄存器。</p>
-<p>当CPU要访问内存时，有这四个段寄存器提供内存单元的段地址CS和IP是CPU中最关键的寄存器，他们指示了CPU当前要读取指令的地址。在任何时候 CPU将CS、IP中的内容当做指令的段地址和偏移地址，用他们合成指令的物理地址到内存中读取指令码。$物理地址=CS*16+IP$</p>
+<p>当CPU要访问内存时，有这四个段寄存器提供内存单元的段地址CS和IP是CPU中最关键的寄存器，他们指示了CPU当前要读取指令的地址。在任何时候 CPU将CS、IP中的内容当做指令的段地址和偏移地址，用他们合成指令的物理地址到内存中读取指令码。$物理地址&#x3D;CS*16+IP$</p>
 </li>
 </ul>
 </li>
@@ -526,7 +526,7 @@
 </ol>
 <p>1）程序执行时，PE文件与虚拟地址映射过程如下图（<a target="_blank" rel="noopener" href="https://www.cnblogs.com/kekec/p/7350993.html">Windows虚拟内存机制</a>）：</p>
 <p><img data-src="https://i.loli.net/2021/07/06/Bogt2S61q4GYvy7.png" alt="6.png"></p>
-<p>2）虚拟地址与物理地址的映射如下图（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41723615/article/details/102541030">物理地址、虚拟地址、虚拟内存、分段、分页以及Windows/Linux内存管理</a>）：</p>
+<p>2）虚拟地址与物理地址的映射如下图（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41723615/article/details/102541030">物理地址、虚拟地址、虚拟内存、分段、分页以及Windows&#x2F;Linux内存管理</a>）：</p>
 <p><img data-src="https://i.loli.net/2021/07/06/XzfhqEZmsOAB92K.png" alt="7.png"></p>
 <p>3）当CPU访问数据时将已经从虚拟地址与物理地址映射好的数据装进物理内存过程如下图（<a target="_blank" rel="noopener" href="https://blog.csdn.net/lwwl12/article/details/88859044">Windows API（四）Win32 内存结构</a>）：</p>
 <p><img data-src="https://i.loli.net/2021/07/07/d9W5s8ISJLMUGCj.png" alt="8.png"></p>
@@ -539,14 +539,14 @@
 <li><strong>分页机制</strong>：分页管理机制实现线性地址到物理地址的转换。</li>
 </ul>
 <p><strong>先分段 , 再分页</strong></p>
-<p>将进程按逻辑模块分段，再将各段分页（如每个页面 4KB) 再将内存空间分为大小相同的内存块/页框/页帧/物理块进程前将各页面分别装入各内存块中。</p>
+<p>将进程按逻辑模块分段，再将各段分页（如每个页面 4KB) 再将内存空间分为大小相同的内存块&#x2F;页框&#x2F;页帧&#x2F;物理块进程前将各页面分别装入各内存块中。</p>
 </div>
 
 <p>实现线性地址到物理地址的转换这个对应是由MMU硬件实现的，不用程序员操心！而且分页和分段对于虚拟地址的映射方式基本一致，<strong>分段是通过段表GDT，LDT中的段描述符来确定段的属性和物理地址范围；而分页是通过页表项（页表描述符）来记录页框的属性和物理地址位置！</strong></p>
 <p>在段页式存储管理系统中，作业的地址空间首先被分成若干个逻辑分段，每段都有自己的段号，然后再将每段分成若干个大小相等的页。对于主存空间也分成大小相等的页，主存的分配以页为单位。</p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://blog.csdn.net/lianghe_work/article/details/47776447">浅谈进程地址空间与虚拟存储空间</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41723615/article/details/102541030">物理地址、虚拟地址、虚拟内存、分段、分页以及Windows/Linux内存管理</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_41723615/article/details/102541030">物理地址、虚拟地址、虚拟内存、分段、分页以及Windows&#x2F;Linux内存管理</a></li>
 </ul>
 <p>分段和分页的区别：</p>
 <ol>
@@ -561,7 +561,7 @@
 </ul>
 <div class="note success"><p><strong>磁盘一个物理扇区的大小为512字节， 即200h（字节），PE文件的区块在磁盘中以这个粒度为大小进行对齐。</strong></p>
 <ul>
-<li>在x86系列CPU中，内存页是按4KB （<code>1000h</code>）排列的,所以，在x86系统中（虚拟内存），PE文件区块的内存对齐值般为<code>1000h</code>，每个区块从<code>1000h</code>的倍数的内存偏移位置开始。（4(KB)*1024=4096 Byte=1000h Byte）</li>
+<li>在x86系列CPU中，内存页是按4KB （<code>1000h</code>）排列的,所以，在x86系统中（虚拟内存），PE文件区块的内存对齐值般为<code>1000h</code>，每个区块从<code>1000h</code>的倍数的内存偏移位置开始。（4(KB)*1024&#x3D;4096 Byte&#x3D;1000h Byte）</li>
 <li>在x64中， 内存页是按8KB（<code>2000h</code>）排列的。</li>
 </ul>
 </div>
@@ -580,7 +580,7 @@
 </ol>
 </div>
 
-<p>给每个应用程序分配4GB虚拟内存（如上图），但是只有用户模式的2/3GB可以被应用程序直接使用，各个应用程序的用户区都是隔离的，逻辑上的，虚拟的。但是内核区的1/2GB，内核区保存的是系统线程调度、内存管理、设备驱动等数据，这部分数据供<strong>所有的进程</strong>共享，但应用程序是不能直接访问的。</p>
+<p>给每个应用程序分配4GB虚拟内存（如上图），但是只有用户模式的2&#x2F;3GB可以被应用程序直接使用，各个应用程序的用户区都是隔离的，逻辑上的，虚拟的。但是内核区的1&#x2F;2GB，内核区保存的是系统线程调度、内存管理、设备驱动等数据，这部分数据供<strong>所有的进程</strong>共享，但应用程序是不能直接访问的。</p>
 <div class="note primary"><p>Windows系统在进程空间中专门划出一块<code>0x7000 0000 - 0x8000 0000</code>（共256MB）区域，用于映射这些常用的系统DLL(如kernel32.dll、ntdll.dll等)</p>
 </div>
 
@@ -733,14 +733,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">

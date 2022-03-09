@@ -461,11 +461,7 @@
 <h2 id="第一章-基础知识"><a href="#第一章-基础知识" class="headerlink" title="第一章 基础知识"></a>第一章 基础知识</h2><p>我们通常把能够引起软件做一些“超出设计范围的事情”的bug 称为漏洞（vulnerability）。</p>
 <ol>
 <li><mark class="label success">功能性逻辑缺陷（bug）</mark>：影响软件的正常功能，例如，执行结果错误、图标显示错误等。</li>
-<li><mark class="label warning">安全性逻辑缺陷（漏洞）</mark>：通常情况下不影响软件的正常功能，但被攻击者成功利用后，有可能引起软件去执行额外的恶意代码。常见的漏洞包括软件中的缓冲区溢出漏洞、网站中的跨站脚本漏洞（XSS）、 SQL注入漏洞等。
-
-
-
-</li>
+<li><mark class="label warning">安全性逻辑缺陷（漏洞）</mark>：通常情况下不影响软件的正常功能，但被攻击者成功利用后，有可能引起软件去执行额外的恶意代码。常见的漏洞包括软件中的缓冲区溢出漏洞、网站中的跨站脚本漏洞（XSS）、 SQL注入漏洞等。</li>
 </ol>
 <h3 id="1-1-漏洞挖掘、漏洞分析、漏洞利用"><a href="#1-1-漏洞挖掘、漏洞分析、漏洞利用" class="headerlink" title="1.1 漏洞挖掘、漏洞分析、漏洞利用"></a>1.1 漏洞挖掘、漏洞分析、漏洞利用</h3><p>利用漏洞进行攻击可以大致分为漏洞挖掘、漏洞分析、漏洞利用三个步骤。这三部分所用的技术有相同之处，比如都需要精通系统底层知识逆向工程等：同时也有一定的差异。</p>
 <h4 id="1-1-1-漏洞挖掘"><a href="#1-1-1-漏洞挖掘" class="headerlink" title="1.1.1 漏洞挖掘"></a>1.1.1 漏洞挖掘</h4><p>由于安全性漏洞往往有极高的利用价值，例如，导致计算机被非法远程控制，数据库数据泄漏等，所以总是有无数技术精湛、精力旺盛的家伙在夜以继日地寻找软件中的这类<strong>逻辑瑕疵</strong>。他们精通二进制、汇编语言、操作系统底层的知识;他们往往也是杰出的程序员，因此能够敏锐地捕捉到程序员所犯的细小错误。</p>
@@ -511,7 +507,7 @@
 </li>
 </ol>
 <p>虚拟内存地址、映射基址、相对虚拟内存地址三者之间有如下关系。</p>
-<p>$$VA=Image Base + RVA$$</p>
+<p>$$VA&#x3D;Image Base + RVA$$</p>
 <p>文件偏移是相对于文件开始处<mark class="label success">0字节</mark>的偏移，RVA（想对虚拟地址）则是相对于<mark class="label success">装载基址</mark><code>0x00400000</code>处的偏移。</p>
 </div>
 
@@ -524,11 +520,11 @@
 </div>
 
 <p>这种由存储单位差异引起的节基址差称为<mark class="label danger">不足的地方将被 0x00 填充</mark>节偏移。</p>
-<p>$.text节偏移=0x 1000-0x400=0xC00$</p>
-<p>$.rdata节偏移=0x7000-0x6200=0xE00$</p>
-<p>$.data节偏移=0x9000-0x7400=0x1C00$</p>
-<p>$.rsrc节偏移=0x2D000-0x7800=0x25800$</p>
-<p>$$文件偏移地址 = 虚拟内存地址(VA) - 装载基址(Image Base) -节偏移 = RVA - 节偏移$$</p>
+<p>$.text节偏移&#x3D;0x 1000-0x400&#x3D;0xC00$</p>
+<p>$.rdata节偏移&#x3D;0x7000-0x6200&#x3D;0xE00$</p>
+<p>$.data节偏移&#x3D;0x9000-0x7400&#x3D;0x1C00$</p>
+<p>$.rsrc节偏移&#x3D;0x2D000-0x7800&#x3D;0x25800$</p>
+<p>$$文件偏移地址 &#x3D; 虚拟内存地址(VA) - 装载基址(Image Base) -节偏移 &#x3D; RVA - 节偏移$$</p>
 <h2 id="第二章-栈溢出原理与实践"><a href="#第二章-栈溢出原理与实践" class="headerlink" title="第二章 栈溢出原理与实践"></a>第二章 栈溢出原理与实践</h2><h3 id="2-1-系统栈的工作原理"><a href="#2-1-系统栈的工作原理" class="headerlink" title="2.1 系统栈的工作原理"></a>2.1 系统栈的工作原理</h3><div class="note primary"><p>简单说来，缓冲区溢出就是在大缓冲区中的数据向小缓冲区复制的过程中，由于没有注意小缓冲区的边界，“撑爆”了较小的缓冲区，从而冲掉了和小缓冲区相邻内存区域的其他数据而引起的内存问题。缓冲溢出是最常见的内存错误之一，也是攻击者入侵系统时所用到的最强大、最经典的一类漏洞利用方式。</p>
 <p>成功地利用缓冲区溢出漏洞可以修改内存中变量的值，甚至可以劫持进程，执行恶意代码， 最终获得主机的控制权。</p>
 </div>
@@ -543,7 +539,7 @@
 </ul>
 </div>
 
-<p>具体内容：<a target="_blank" rel="noopener" href="https://directoree.top/post/memory-management/">C/C++ 语言内存管理</a></p>
+<p>具体内容：<a target="_blank" rel="noopener" href="https://directoree.top/post/memory-management/">C&#x2F;C++ 语言内存管理</a></p>
 <mark class="label success">在 Windows 平台下，高级语言写出的程序经过编译链接，最终会变成 PE 文件。</mark><mark class="label danger">当PE文件被装载运行后，就成了所谓的进程。</mark>
 
 <p><img data-src="https://i.loli.net/2021/04/26/FkUCpIm46aLsSW2.png" alt="4.png"></p>
@@ -624,9 +620,7 @@
 <li>分析<code>0x0040106C</code>和<code>0x0040106E</code>处的代码：<code>TEST EAX,EAX</code>，<code>JE XXXXXXXX</code>。也就是说，EAX 中的值为 0 时，跳转将被执行，程序进入密码确认流程；否则跳转不执行，程序进入密码重输的流程。</li>
 <li>两种破解修改方法：<ul>
 <li><mark class="label warning">把 JE 这条指令的机器代码修改成 JNE（非 0 则跳转）</mark>，那么整个程序的逻辑就会反过来：输入错误的密码会被确认，输入正确的密码反而要求重新输入!（双击JE这条指令，将其修改成 JNE，单击“Assemble"按钮将其写入内存如图 1.4.9 所示）OllyDbg 将汇编指令翻译成机器代码后写入内存。原来内存中的机器代码74 （JE）现在变 成了75 （JNE）。 </li>
-<li><mark class="label default">把 TEST EAX ,EAX 指令修改成 XOR EAX,EAX</mark> 也能达到改变程序流程的目的，这时不论正确与否，密码都将被接受。
-
-</li>
+<li><mark class="label default">把 TEST EAX ,EAX 指令修改成 XOR EAX,EAX</mark> 也能达到改变程序流程的目的，这时不论正确与否，密码都将被接受。</li>
 </ul>
 </li>
 </ol>
@@ -635,8 +629,8 @@
 <li><p>将 PE 文件<mark class="label danger">硬编码</mark>。上面动态调试只是在内存中修改程序数据，当程序再一次打开的时候内存丢失则不会继续执行上述结果，所以还需要在二进制文件中也修改相应的字节。</p>
 <ul>
 <li><p>上面得到的是内存虚拟地址（VA）为<code>0x0040106E</code>，使用<mark class="label info">LordPE</mark> 打开<code>.exe    </code>文件，如图 1.4.10。按照 VA 与文件地址的换算公式：</p>
-<p>$文件偏移地址 = 虚拟内存地址(VA) - 装载基址(Image Base) - 节偏移$</p>
-<p>$ = 0x0040106E - 0x00400000 - (0x00001000 - 0x00001000) = 0x106E$</p>
+<p>$文件偏移地址 &#x3D; 虚拟内存地址(VA) - 装载基址(Image Base) - 节偏移$</p>
+<p>$ &#x3D; 0x0040106E - 0x00400000 - (0x00001000 - 0x00001000) &#x3D; 0x106E$</p>
 </li>
 </ul>
 </li>
@@ -842,19 +836,7 @@
 <li><p>将上述汇编指令对应的机器代码以十六进制形式逐字写入<code>password.txt</code>，第53~ 56字节填入<code>buffer</code>的起址<code>0x0012FAF0</code>，其余的字节用<code>0x90</code>（nop指令）填充。</p>
 <p><img data-src="https://i.loli.net/2021/02/04/x2SGDJ7OE583Wye.png" alt="28.png"></p>
 <div class="note success"><p>因为MessageBoxA 调用的代码执行完成后，没有写用于安全退出的代码的缘故。在植入代码中没有安全地退出，程序会崩溃。<mark class="label success">所以应该在植入代码中安全地退出程序，甚至在植入代码结束后修复堆栈和寄存器，让程序重新回到正常的执行流程</mark>。</p>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-</li>
+</div></li>
 </ol>
 
     </div>
@@ -975,14 +957,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">879k</span>
+    <span title="站点总字数">891k</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">13:19</span>
+    <span title="站点阅读时长">13:30</span>
   </span>
 </div>
 <div class="busuanzi-count">
