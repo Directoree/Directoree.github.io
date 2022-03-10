@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 进程线程（一）">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-ProcessThread/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-03-10T14:08:32.000Z">
+<meta property="article:modified_time" content="2022-03-10T14:31:14.461Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="进程线程">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-ProcessThread/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 进程线程（一） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BF%9B%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B"><span class="nav-text">1 进程与线程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B%E8%AF%B4%E6%98%8E"><span class="nav-text">1.1 进程线程说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-EPROCESS%E7%BB%93%E6%9E%84"><span class="nav-text">1.2 EPROCESS结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-KPROCESS%E7%BB%93%E6%9E%84"><span class="nav-text">1.2.1 _KPROCESS结构</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">109</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">43</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-ProcessThread/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 进程线程（一）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-03-10 22:08:32 / 修改时间：22:31:14" itemprop="dateCreated datePublished" datetime="2022-03-10T22:08:32+08:00">2022-03-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">进程线程</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-ProcessThread/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 进程线程（一）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-ProcessThread/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-ProcessThread/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="1-进程与线程"><a href="#1-进程与线程" class="headerlink" title="1 进程与线程"></a>1 进程与线程</h2><h3 id="1-1-进程线程说明"><a href="#1-1-进程线程说明" class="headerlink" title="1.1 进程线程说明"></a>1.1 进程线程说明</h3><p>3期时就已经知道，进程实际上就是提供一个空间，线程是进程中一个个运行起来跑起来的实例（一个进程得到CPU执行时一行行运行的代码就是线程在跑）。进程有了线程才有活力，否则啥也不是。</p>
+<div class="note primary"><p>从0环的角度来看，<mark class="label danger">无论是进程还是线程，就是两个结构体</mark>。<strong>操作系统创建进程或线程时，就是分配一块内存，然后填充结构体，进程线程也就创建出来了</strong>。所以一定要对进程&#x2F;线程结构体进行了解。</p>
+</div>
+
+<p>进程最重要的就是提供了一个CR3，分配线性地址空间。</p>
+<p>进程的切换：实质上是线程的切换。<strong>进程就提供了一个CR3</strong>。A：x,y,z，B：m,n（AB进程，xyzmn线程）。x、z线程切换不会切换CR3的值，但是x、m线程切换时会切换CR3的值。本来是没有进程切换这种说法的，但是CR3切换时也就叫做进程切换了。 attach 和 .process 本质也是切换CR3。</p>
+<blockquote>
+<p>OpenProcess得到某进程结构体Eprocess，但是不能让3环使用，所以返回一个句柄（结构体EPROCESS临时的编号），也就得到句柄值。</p>
+</blockquote>
+<h3 id="1-2-EPROCESS结构"><a href="#1-2-EPROCESS结构" class="headerlink" title="1.2 EPROCESS结构"></a>1.2 EPROCESS结构</h3><p><code>EPROCESS</code>称为进程结构体，每个Windows进程在0环都有一个对应的结构体：<code>EPROCESS</code> ，这个结构体<strong>包含了进程所有重要的信息</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _EPROCESS</span><br><span class="line">nt!_EPROCESS</span><br><span class="line">   +<span class="number">0x000</span> Pcb              : _KPROCESS</span><br><span class="line">   +<span class="number">0x06c</span> ProcessLock      : _EX_PUSH_LOCK</span><br><span class="line">   +<span class="number">0x070</span> CreateTime       : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x078</span> ExitTime         : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x080</span> RundownProtect   : _EX_RUNDOWN_REF</span><br><span class="line">   +<span class="number">0x084</span> UniqueProcessId  : Ptr32 Void</span><br><span class="line">   +<span class="number">0x088</span> ActiveProcessLinks : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x090</span> QuotaUsage       : [<span class="number">3</span>] Uint4B</span><br><span class="line">   +<span class="number">0x09c</span> QuotaPeak        : [<span class="number">3</span>] Uint4B</span><br><span class="line">   +<span class="number">0x0a8</span> CommitCharge     : Uint4B</span><br><span class="line">   +<span class="number">0x0ac</span> PeakVirtualSize  : Uint4B</span><br><span class="line">   +<span class="number">0x0b0</span> VirtualSize      : Uint4B</span><br><span class="line">   +<span class="number">0x0b4</span> SessionProcessLinks : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x0bc</span> DebugPort        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x0c0</span> ExceptionPort    : Ptr32 Void</span><br><span class="line">   +<span class="number">0x0c4</span> ObjectTable      : Ptr32 _HANDLE_TABLE</span><br><span class="line">   +<span class="number">0x0c8</span> Token            : _EX_FAST_REF</span><br><span class="line">   +<span class="number">0x0cc</span> WorkingSetLock   : _FAST_MUTEX</span><br><span class="line">   +<span class="number">0x0ec</span> WorkingSetPage   : Uint4B</span><br><span class="line">   +<span class="number">0x0f0</span> AddressCreationLock : _FAST_MUTEX</span><br><span class="line">   +<span class="number">0x110</span> HyperSpaceLock   : Uint4B</span><br><span class="line">   +<span class="number">0x114</span> ForkInProgress   : Ptr32 _ETHREAD</span><br><span class="line">   +<span class="number">0x118</span> HardwareTrigger  : Uint4B</span><br><span class="line">   +<span class="number">0x11c</span> VadRoot          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x120</span> VadHint          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x124</span> CloneRoot        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x128</span> NumberOfPrivatePages : Uint4B</span><br><span class="line">   +<span class="number">0x12c</span> NumberOfLockedPages : Uint4B</span><br><span class="line">   +<span class="number">0x130</span> Win32Process     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x134</span> Job              : Ptr32 _EJOB</span><br><span class="line">   +<span class="number">0x138</span> SectionObject    : Ptr32 Void</span><br><span class="line">   +<span class="number">0x13c</span> SectionBaseAddress : Ptr32 Void</span><br><span class="line">   +<span class="number">0x140</span> QuotaBlock       : Ptr32 _EPROCESS_QUOTA_BLOCK</span><br><span class="line">   +<span class="number">0x144</span> WorkingSetWatch  : Ptr32 _PAGEFAULT_HISTORY</span><br><span class="line">   +<span class="number">0x148</span> Win32WindowStation : Ptr32 Void</span><br><span class="line">   +<span class="number">0x14c</span> InheritedFromUniqueProcessId : Ptr32 Void</span><br><span class="line">   +<span class="number">0x150</span> LdtInformation   : Ptr32 Void</span><br><span class="line">   +<span class="number">0x154</span> VadFreeHint      : Ptr32 Void</span><br><span class="line">   +<span class="number">0x158</span> VdmObjects       : Ptr32 Void</span><br><span class="line">   +<span class="number">0x15c</span> DeviceMap        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x160</span> PhysicalVadList  : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x168</span> PageDirectoryPte : _HARDWARE_PTE</span><br><span class="line">   +<span class="number">0x168</span> Filler           : Uint8B</span><br><span class="line">   +<span class="number">0x170</span> Session          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x174</span> ImageFileName    : [<span class="number">16</span>] UChar</span><br><span class="line">   +<span class="number">0x184</span> JobLinks         : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x18c</span> LockedPagesList  : Ptr32 Void</span><br><span class="line">   +<span class="number">0x190</span> ThreadListHead   : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x198</span> SecurityPort     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x19c</span> PaeTop           : Ptr32 Void</span><br><span class="line">   +<span class="number">0x1a0</span> ActiveThreads    : Uint4B</span><br><span class="line">   +<span class="number">0x1a4</span> GrantedAccess    : Uint4B</span><br><span class="line">   +<span class="number">0x1a8</span> DefaultHardErrorProcessing : Uint4B</span><br><span class="line">   +<span class="number">0x1ac</span> LastThreadExitStatus : Int4B</span><br><span class="line">   +<span class="number">0x1b0</span> Peb              : Ptr32 _PEB</span><br><span class="line">   +<span class="number">0x1b4</span> PrefetchTrace    : _EX_FAST_REF</span><br><span class="line">   +<span class="number">0x1b8</span> ReadOperationCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1c0</span> WriteOperationCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1c8</span> OtherOperationCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1d0</span> ReadTransferCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1d8</span> WriteTransferCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1e0</span> OtherTransferCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1e8</span> CommitChargeLimit : Uint4B</span><br><span class="line">   +<span class="number">0x1ec</span> CommitChargePeak : Uint4B</span><br><span class="line">   +<span class="number">0x1f0</span> AweInfo          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x1f4</span> SeAuditProcessCreationInfo : _SE_AUDIT_PROCESS_CREATION_INFO</span><br><span class="line">   +<span class="number">0x1f8</span> Vm               : _MMSUPPORT</span><br><span class="line">   +<span class="number">0x238</span> LastFaultCount   : Uint4B</span><br><span class="line">   +<span class="number">0x23c</span> ModifiedPageCount : Uint4B</span><br><span class="line">   +<span class="number">0x240</span> NumberOfVads     : Uint4B</span><br><span class="line">   +<span class="number">0x244</span> JobStatus        : Uint4B</span><br><span class="line">   +<span class="number">0x248</span> Flags            : Uint4B</span><br><span class="line">   +<span class="number">0x248</span> CreateReported   : Pos <span class="number">0</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> NoDebugInherit   : Pos <span class="number">1</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ProcessExiting   : Pos <span class="number">2</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ProcessDelete    : Pos <span class="number">3</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Wow64SplitPages  : Pos <span class="number">4</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> VmDeleted        : Pos <span class="number">5</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> OutswapEnabled   : Pos <span class="number">6</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Outswapped       : Pos <span class="number">7</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ForkFailed       : Pos <span class="number">8</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> HasPhysicalVad   : Pos <span class="number">9</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> AddressSpaceInitialized : Pos <span class="number">10</span>, <span class="number">2</span> Bits</span><br><span class="line">   +<span class="number">0x248</span> SetTimerResolution : Pos <span class="number">12</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> BreakOnTermination : Pos <span class="number">13</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> SessionCreationUnderway : Pos <span class="number">14</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> WriteWatch       : Pos <span class="number">15</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ProcessInSession : Pos <span class="number">16</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> OverrideAddressSpace : Pos <span class="number">17</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> HasAddressSpace  : Pos <span class="number">18</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> LaunchPrefetched : Pos <span class="number">19</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> InjectInpageErrors : Pos <span class="number">20</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> VmTopDown        : Pos <span class="number">21</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused3          : Pos <span class="number">22</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused4          : Pos <span class="number">23</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> VdmAllowed       : Pos <span class="number">24</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused           : Pos <span class="number">25</span>, <span class="number">5</span> Bits</span><br><span class="line">   +<span class="number">0x248</span> Unused1          : Pos <span class="number">30</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused2          : Pos <span class="number">31</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x24c</span> ExitStatus       : Int4B</span><br><span class="line">   +<span class="number">0x250</span> NextPageColor    : Uint2B</span><br><span class="line">   +<span class="number">0x252</span> SubSystemMinorVersion : UChar</span><br><span class="line">   +<span class="number">0x253</span> SubSystemMajorVersion : UChar</span><br><span class="line">   +<span class="number">0x252</span> SubSystemVersion : Uint2B</span><br><span class="line">   +<span class="number">0x254</span> PriorityClass    : UChar</span><br><span class="line">   +<span class="number">0x255</span> WorkingSetAcquiredUnsafe : </span><br></pre></td></tr></table></figure>
+
+<p>下面对进程结构体<code>EPROCESS</code>的重要成员&#x2F;结构进行说明介绍。</p>
+<h4 id="1-2-1-KPROCESS结构"><a href="#1-2-1-KPROCESS结构" class="headerlink" title="1.2.1 _KPROCESS结构"></a>1.2.1 _KPROCESS结构</h4>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-ProcessThread/" title="Windows XP 进程线程（一）">https://directoree.github.io/post/WinXP-ProcessThread/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/%E8%BF%9B%E7%A8%8B%E7%BA%BF%E7%A8%8B/" rel="tag"># 进程线程</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXP-SystemCall2/" rel="prev" title="Windows XP 系统调用（二）">
+                  <i class="fa fa-chevron-left"></i> Windows XP 系统调用（二）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">895k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">13:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXP-ProcessThread/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
