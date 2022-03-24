@@ -29,12 +29,14 @@
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png">
 <meta property="article:published_time" content="2022-03-23T06:43:54.000Z">
-<meta property="article:modified_time" content="2022-03-24T14:28:04.690Z">
+<meta property="article:modified_time" content="2022-03-24T15:15:15.362Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="进程线程">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/WinXP-ProcessThread2/">
@@ -219,7 +221,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -231,6 +233,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%BA%BF%E7%A8%8B%E9%93%BE%E8%A1%A8"><span class="nav-text">1 线程链表</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -354,7 +357,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-03-24 22:28:04" itemprop="dateModified" datetime="2022-03-24T22:28:04+08:00">2022-03-24</time>
+        <time title="修改时间：2022-03-24 23:15:15" itemprop="dateModified" datetime="2022-03-24T23:15:15+08:00">2022-03-24</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -403,7 +406,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7</span>
+      <span>179</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -423,6 +426,8 @@
     <div class="post-body" itemprop="articleBody">
         <p>ʕ •ᴥ•ʔ  ɔ: </p>
 <a id="more"></a>
+
+<h2 id="1-线程链表"><a href="#1-线程链表" class="headerlink" title="1 线程链表"></a>1 线程链表</h2><p>进程结构体EPROCESS(0x50和0x190)是2个链表，里面圈着当前进程所有的线程。<br><img data-src="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png" alt="32.png"><br>对进程断链，程序可以正常运行，原因是CPU执行与调度是基于线程的，进程断链只是影响一些遍历系统进程的API，并不会影响程序执行。<br>对线程断链也是一样的，断链后在Windbg、任务管理器或者OD中无法看到被断掉的线程，但并不影响其执行（仍然再跑)。</p>
 
     </div>
 
