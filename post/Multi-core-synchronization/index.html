@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 多核同步">
+<meta property="og:url" content="https://directoree.github.io/post/Multi-core-synchronization/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/04/26/cXUCSzfnvjFPa53.png">
+<meta property="og:image" content="https://s2.loli.net/2022/04/26/yu9bSLtdi64NehB.png">
+<meta property="og:image" content="https://s2.loli.net/2022/05/03/Yo2gq9WdhzKFjZS.png">
+<meta property="article:published_time" content="2022-04-25T05:34:27.000Z">
+<meta property="article:modified_time" content="2022-05-04T11:51:10.979Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="多核同步">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/04/26/cXUCSzfnvjFPa53.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Multi-core-synchronization/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 多核同步 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%90%8C%E6%AD%A5%E4%B8%8E%E4%BA%92%E6%96%A5"><span class="nav-text">1 同步与互斥</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9CAPI"><span class="nav-text">1.1 原子操作API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%B8%B4%E7%95%8C%E5%8C%BA"><span class="nav-text">1.2 临界区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E8%87%AA%E6%97%8B%E9%94%81"><span class="nav-text">1.3 自旋锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%AB%98%E5%B9%B6%E5%8F%91HOOK"><span class="nav-text">1.4 高并发HOOK</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%BA%BF%E7%A8%8B%E7%AD%89%E5%BE%85%E4%B8%8E%E5%94%A4%E9%86%92"><span class="nav-text">2 线程等待与唤醒</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%8F%AF%E7%AD%89%E5%BE%85%E5%AF%B9%E8%B1%A1"><span class="nav-text">2.1 可等待对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%BA%BF%E7%A8%8B%E7%AD%89%E5%BE%85%E7%BD%91"><span class="nav-text">2.2 线程等待网</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E7%BB%83%E4%B9%A0%EF%BC%9A%E6%9F%A5%E7%9C%8B%E7%BA%BF%E7%A8%8B%E7%9A%84%E8%A2%AB%E7%AD%89%E5%BE%85%E5%AF%B9%E8%B1%A1"><span class="nav-text">2.3 练习：查看线程的被等待对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-WaitForSingleObject%E5%88%86%E6%9E%90"><span class="nav-text">3 WaitForSingleObject分析</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">112</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Multi-core-synchronization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 多核同步
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-25 13:34:27" itemprop="dateCreated datePublished" datetime="2022-04-25T13:34:27+08:00">2022-04-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-05-04 19:51:10" itemprop="dateModified" datetime="2022-05-04T19:51:10+08:00">2022-05-04</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E5%90%8C%E6%AD%A5/" itemprop="url" rel="index"><span itemprop="name">同步</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E5%90%8C%E6%AD%A5/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Multi-core-synchronization/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 多核同步" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Multi-core-synchronization/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Multi-core-synchronization/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>21k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>19 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="1-同步与互斥"><a href="#1-同步与互斥" class="headerlink" title="1 同步与互斥"></a>1 同步与互斥</h2><ul>
+<li><strong>并发</strong>：单核或多核下，在操作系统中，同个处理机上有多个程序同时运行即并发。并发可分为<strong>同步</strong>和<strong>互斥</strong>。<ul>
+<li><strong>同步</strong>：并发执行的环境中各个线程必须严格按照规定的某种先后次序来运行。</li>
+<li><strong>互斥</strong>：同一个资源同一时间只有一个访问者可以进行访问，其他访问者需要等前一个访问者访问结束才可以开始访问该资源。但互斥无法限制访问者对资源的访问顺序，即访问是无序的。</li>
+</ul>
+</li>
+<li><strong>并行</strong>：仅在多核下，两个及以上数量的线程同一时刻在执行。</li>
+</ul>
+<p>多核并发情况下，<strong>存在并行的情况</strong>。多线程同时处理某些资源就会存在出错的情况，而本文就主要探讨一下问题和解决。</p>
+<div class="note danger"><p><strong>注意⚠️</strong>：如果线程中的代码只对局部变量进行访问，就不存在并发的问题；只有当访问全局变量的时候，才需要关注并发的问题。这是因为局部变量每次访问都是在本次调用的堆栈里操作，不会产生互相影响。</p>
+</div>
+
+<p>例1：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DWORD  dwVal = <span class="number">0</span>;	<span class="comment">//全局变量</span></span><br><span class="line"></span><br><span class="line">线程中的代码：</span><br><span class="line">dwVal++;		<span class="comment">//只有一行，安全吗?</span></span><br></pre></td></tr></table></figure>
+
+<p>很明显是不安全的，这里涉及到多核同一时刻（并行）修改内存。实际这一行代码在汇编情况下处理涉及到读写操作（原子操作）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">mov	eax,[<span class="number">0x12345678</span>]</span><br><span class="line">add	eax,<span class="number">1</span>			<span class="comment">//当第一个线程执行到这里时，产生了线程切换的话</span></span><br><span class="line">				<span class="comment">//第二个线程也执行到这里时，将会出现逻辑错误</span></span><br><span class="line">mov	[<span class="number">0x12345678</span>],eax</span><br></pre></td></tr></table></figure>
+
+<p><strong>这里需要注意</strong>：读数据并不会产生并发问题，写内存的时候才会！</p>
+<p>改成下面的代码安全么？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INC DWORD PTR DS:[<span class="number">0x12345678</span>]	<span class="comment">//一行汇编代码，安全吗?</span></span><br></pre></td></tr></table></figure>
+
+<p>答案是：单核情况下是安全的，<strong>单核下CPU会保证一条汇编指令的原子性</strong>。多核下是不安全的，同样是因为存在多线程对内存的<mark class="label success">写操作</mark>。如果两个CPU同时执行该指令，[0x12345678] 的初始值是0，那么两个CPU执行后，本应该 [0x12345678] 是2，结果却有可能是1。</p>
+<p>为了解决这个问题，可以使用 LOCK 对某个内存地址“加锁”，将指令修改成如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0x40123456</span> LOCK INC DWORD PTR DS:[<span class="number">0x12345678</span>]</span><br></pre></td></tr></table></figure>
+
+<div class="note default"><p>⚠️ LOCK：不是把其他CPU锁住，而是将当前代码所在的内存<code>0x40123456</code>锁住，而不是<code>0x12345678</code>。也就是同时只允许一个CPU来<strong>读</strong><code>0x40123456</code>这块内存。</p>
+</div>
+
+<p>单核模式下，单条汇编指令一定是满足原子性的，所以根本用不到 LOCK ，我们可以验证一下这个说法，首先了解一下 WINDOWS 提供的原子性操作API。</p>
+<h3 id="1-1-原子操作API"><a href="#1-1-原子操作API" class="headerlink" title="1.1 原子操作API"></a>1.1 原子操作API</h3><p>本文涉及的内容都是基于多核情况下的。</p>
+<p>Windows XP 32bit内核版本区分：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ntoskrnl - 单处理器，不支持PAE</span><br><span class="line">ntkrnlpa - 单处理器，支持PAE</span><br><span class="line">ntkrnlmp - 多处理器，不支持PAE</span><br><span class="line">ntkrpamp - 多处理器，支持PAE</span><br></pre></td></tr></table></figure>
+
+<p>原子操作API例如一些如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">InterlockedIncrement</span><br><span class="line">InterlockedExchangeAdd</span><br><span class="line">InterlockedDecrement</span><br><span class="line">InterlockedFlushSList</span><br><span class="line">InterlockedExchange</span><br><span class="line">InterlockedPopEntrySList</span><br><span class="line">InterlockedCompareExchange</span><br><span class="line">InterlockedPushEntrySList</span><br></pre></td></tr></table></figure>
+
+<p>以<code>InterlockedIncrement</code>（实现对某个变量加1操作）举例：</p>
+<p>单核版本：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0046F</span>AB0 ; __fastcall __InterlockedIncrement(x)</span><br><span class="line">.text:<span class="number">0046F</span>AB0                 <span class="keyword">public</span> @__InterlockedIncrement@<span class="number">4</span></span><br><span class="line">.text:<span class="number">0046F</span>AB0 @__InterlockedIncrement@<span class="number">4</span> proc near</span><br><span class="line">.text:<span class="number">0046F</span>AB0                 mov     eax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0046F</span>AB5                 xadd [ecx], eax</span><br><span class="line">.text:<span class="number">0046F</span>AB9                 inc     eax</span><br><span class="line">.text:<span class="number">0046F</span>ABA                 retn</span><br><span class="line">.text:<span class="number">0046F</span>ABA @__InterlockedIncrement@<span class="number">4</span> endp</span><br></pre></td></tr></table></figure>
+
+<p>多核版本：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0046F</span>AB0 ; __fastcall __InterlockedIncrement(x)</span><br><span class="line">.text:<span class="number">0046F</span>AB0                 <span class="keyword">public</span> @__InterlockedIncrement@<span class="number">4</span></span><br><span class="line">.text:<span class="number">0046F</span>AB0 @__InterlockedIncrement@<span class="number">4</span> proc near</span><br><span class="line">.text:<span class="number">0046F</span>AB0                 mov     eax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0046F</span>AB5                 lock xadd [ecx], eax</span><br><span class="line">.text:<span class="number">0046F</span>AB9                 inc     eax</span><br><span class="line">.text:<span class="number">0046F</span>ABA                 retn</span><br><span class="line">.text:<span class="number">0046F</span>ABA @__InterlockedIncrement@<span class="number">4</span> endp</span><br></pre></td></tr></table></figure>
+
+<p>多核比单核多了使用<code>lock</code>，关于<code>xadd reg/mem， reg</code>汇编指令解释：</p>
+<ul>
+<li><code>xadd [ecx], eax</code>：<ol>
+<li>先交换值：<code>xchg [ecx], eax</code>；</li>
+<li>再将二者相加给目的操作数：<code>add [ecx], eax</code></li>
+</ol>
+</li>
+</ul>
+<h3 id="1-2-临界区"><a href="#1-2-临界区" class="headerlink" title="1.2 临界区"></a>1.2 临界区</h3><p>临界区用来解决<strong>互斥</strong>问题。</p>
+<p>如果是多行代码作为一个原子操作，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">关键代码A	<span class="comment">//N行代码要求原子操作</span></span><br><span class="line">关键代码B	<span class="comment">//单独加LOCK可以吗?</span></span><br><span class="line">关键代码C</span><br><span class="line">LOCK INC DWORD PTR DS:[<span class="number">0x12345678</span>]</span><br><span class="line">LOCK INC DWORD PTR DS:[<span class="number">0x12345678</span>]</span><br><span class="line">LOCK INC DWORD PTR DS:[<span class="number">0x12345678</span>]</span><br><span class="line">LOCK INC DWORD PTR DS:[<span class="number">0x12345678</span>]</span><br><span class="line">LOCK INC DWORD PTR DS:[<span class="number">0x12345678</span>]</span><br><span class="line">.......</span><br></pre></td></tr></table></figure>
+
+<p>这样虽然每一行都保证只能一个线程占有资源，但是会浪费资源，或者其它一些问题。</p>
+<p>解决这一问题的方法就是引入临界区，然后进入临界区前加锁，出临界区是解锁。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Lab：</span><br><span class="line">    mov eax,<span class="number">1</span></span><br><span class="line">    lock xadd [Flag],eax</span><br><span class="line">    cmp eax,<span class="number">0</span></span><br><span class="line">    jz endLab</span><br><span class="line">    dec [Flag]</span><br><span class="line">    <span class="comment">//调用线程等待Sleep ……</span></span><br><span class="line">    jmp Lab;</span><br><span class="line">endLab:</span><br><span class="line">    <span class="comment">//临界区，处理业务</span></span><br><span class="line">    lock dec [Flag]</span><br><span class="line">    ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>如下代码为不使用<code>xadd</code>实现的临界区：</p>
+<p>以下代码在单核情况下没问题，但是在多核情况下就会出问题了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> g_value = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> CriticalLock = <span class="number">1</span>; <span class="comment">// 1表示可以进入临界区</span></span><br><span class="line"></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">MyThread</span><span class="params">(LPVOID TID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">CriStart:</span><br><span class="line">	   Sleep(<span class="number">20</span>); <span class="comment">// 提高效率</span></span><br><span class="line">		__asm</span><br><span class="line">		&#123;</span><br><span class="line">			dec [CriticalLock];</span><br><span class="line">			jz CriEnd;</span><br><span class="line">			inc [CriticalLock];</span><br><span class="line">			jmp CriStart;</span><br><span class="line">		&#125;</span><br><span class="line">CriEnd:</span><br><span class="line">		<span class="comment">// 耗时业务</span></span><br><span class="line">		g_value+=<span class="number">3</span>;</span><br><span class="line">		Sleep(<span class="number">20</span>);</span><br><span class="line">		g_value-=<span class="number">2</span>;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, g_value);</span><br><span class="line"></span><br><span class="line">		__asm inc [CriticalLock];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		CreateThread(<span class="number">0</span>,<span class="number">0</span>,MyThread,(LPVOID)i,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;所有线程结束，g_value = %d\n&quot;</span>, g_value);</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>正确的操作如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> g_value = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">int</span> CriticalLock = <span class="number">0</span>; <span class="comment">// 0表示可以进入临界区</span></span><br><span class="line"></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">MyThread</span><span class="params">(LPVOID TID)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">CriStart:</span><br><span class="line">		__asm</span><br><span class="line">		&#123;</span><br><span class="line">			mov eax, <span class="number">1</span>;</span><br><span class="line">			lock xchg [CriticalLock], eax;</span><br><span class="line">			cmp eax, <span class="number">0</span>;</span><br><span class="line">			jz CriEnd;</span><br><span class="line">		&#125;</span><br><span class="line">		Sleep(<span class="number">20</span>); <span class="comment">// 提高效率</span></span><br><span class="line">		__asm jmp CriStart;</span><br><span class="line">CriEnd:</span><br><span class="line">		<span class="comment">// 耗时业务</span></span><br><span class="line">		g_value+=<span class="number">3</span>;</span><br><span class="line">		Sleep(<span class="number">20</span>);</span><br><span class="line">		g_value-=<span class="number">2</span>;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>, g_value);</span><br><span class="line"></span><br><span class="line">		__asm lock dec [CriticalLock];</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, _TCHAR* argv[])</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		CreateThread(<span class="number">0</span>,<span class="number">0</span>,MyThread,(LPVOID)i,<span class="number">0</span>,<span class="number">0</span>);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;所有线程结束，g_value = %d\n&quot;</span>, g_value);</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h3 id="1-3-自旋锁"><a href="#1-3-自旋锁" class="headerlink" title="1.3 自旋锁"></a>1.3 自旋锁</h3><p>Windows XP 32bit内核版本区分：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ntoskrnl - 单处理器，不支持PAE</span><br><span class="line">ntkrnlpa - 单处理器，支持PAE</span><br><span class="line">ntkrnlmp - 多处理器，不支持PAE</span><br><span class="line">ntkrpamp - 多处理器，支持PAE</span><br></pre></td></tr></table></figure>
+
+<p>Windows自旋锁：函数中如<code>KiAcquireSpinLock</code>只要包含<mark class="label danger">SpinLock</mark>都是自旋锁函数。</p>
+<p>分析一个看看：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">text:<span class="number">00469994</span> ; <span class="function">__stdcall <span class="title">KeAcquireSpinLockAtDpcLevel</span><span class="params">(x)</span></span></span><br><span class="line">.text:00469994                 public _KeAcquireSpinLockAtDpcLevel@4</span><br><span class="line">.text:<span class="number">00469994</span> _KeAcquireSpinLockAtDpcLevel@<span class="number">4</span> proc near</span><br><span class="line">.text:<span class="number">00469994</span></span><br><span class="line">.text:<span class="number">00469994</span> arg_0           = dword ptr  <span class="number">4</span></span><br><span class="line">.text:<span class="number">00469994</span></span><br><span class="line">.text:<span class="number">00469994</span>                 mov     ecx, [esp+arg_0]</span><br><span class="line">.text:<span class="number">00469998</span></span><br><span class="line">.text:<span class="number">00469998</span> loc_469998:                             ; CODE XREF: KeAcquireSpinLockAtDpcLevel(x)+<span class="number">14</span>↓j</span><br><span class="line">.text:<span class="number">00469998</span>                 lock bts dword ptr [ecx], <span class="number">0</span>	<span class="comment">//CF = 第0位，第0位 = 1</span></span><br><span class="line">.text:<span class="number">0046999</span>D                 jb      <span class="keyword">short</span> loc_4699A2		<span class="comment">//跳转：CF == 1</span></span><br><span class="line">.text:<span class="number">0046999F</span>                 retn    <span class="number">4</span>			<span class="comment">//返回：CF == 0，可以进入临界区。说明参数地址中的值只有两种状态，0/1</span></span><br><span class="line">  								<span class="comment">//0：没人在临界区，我可以进；1:有人在临界区，我旋转等待</span></span><br><span class="line">.text:<span class="number">004699</span>A2 ; ---------------------------------------------------------------------------</span><br><span class="line">.text:<span class="number">004699</span>A2</span><br><span class="line">.text:<span class="number">004699</span>A2 loc_4699A2:                             ; CODE XREF: KeAcquireSpinLockAtDpcLevel(x)+<span class="number">9</span>↑j</span><br><span class="line">.text:<span class="number">004699</span>A2                                         ; KeAcquireSpinLockAtDpcLevel(x)+<span class="number">18</span>↓j</span><br><span class="line">.text:<span class="number">004699</span>A2                 test    dword ptr [ecx], <span class="number">1</span></span><br><span class="line">.text:<span class="number">004699</span>A8                 jz      <span class="keyword">short</span> loc_469998</span><br><span class="line">.text:<span class="number">004699</span>AA                 pause		<span class="comment">//CPU降温指令，降低CPU功率</span></span><br><span class="line">.text:<span class="number">004699</span>AC                 jmp     <span class="keyword">short</span> loc_4699A2</span><br><span class="line">.text:<span class="number">004699</span>AC _KeAcquireSpinLockAtDpcLevel@<span class="number">4</span> endp</span><br></pre></td></tr></table></figure>
+
+<p>解释一下 bts 指令，它是把 [ecx] 的第 0 位的值放到 CF，然后给第0 位置1（说明我在用临界区了）。</p>
+<p> jb 指令看 CF&#x3D;1就跳转。也就是说，</p>
+<ul>
+<li><p>如果原来第0位是0，就retn，可以进入临界区了，说明该临界区还没有线程在用，那我用；</p>
+</li>
+<li><p>如果原来第0位是1，那么 jb 跳转，开始自旋，直到 [ecx] 0位变成0，重新执行 KiAcquireSpinLock 。</p>
+</li>
+</ul>
+<p>自旋锁只对于<strong>多核</strong>才有意义，如果是单核反而会造成大量的性能损失。</p>
+<p>关于X86的<code>BT</code>指令，经过本人测试，有以下结论。</p>
+<p><strong>BT系列指令</strong>：位测试和设置指令。</p>
+<ol>
+<li>按照源操作指定的位号（最低位下标为0），测试目的操作数指定的位，并将被测试位拷贝复制到EFLAG得CF。</li>
+<li>操作目的操作数指定的位。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>含义</th>
+<th>实例测试</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BT DEST，SRC</td>
+<td>将 SRC 指定的 DEST 中一位的数值复制到 CF。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>bt ax,0x7;</code><br />BT执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BT执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>bt ax,0x7;</code><br />BT执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BT执行后：EAX &#x3D; 0x101，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+<tr>
+<td>BTS DEST，SRC</td>
+<td>BTS 将 SRC 指定的 DEST 中一位的数值复制到 CF，且将 DEST 中该位置位。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>bts ax,0x7;</code><br />BTS执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTS执行后：EAX &#x3D; 0x1<strong>8</strong>1，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>bts ax,0x7;</code><br />BTS执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTS执行后：EAX &#x3D; 0x181，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+<tr>
+<td>BTC DEST，SRC</td>
+<td>BTC 将 SRC 指定的 DEST  中一位的数值复制到 CF，且将 DEST 中该位取反。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>btc ax,0x7;</code><br />BTC执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTC执行后：EAX &#x3D; 0x1<strong>8</strong>1，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>btc ax,0x7;</code><br />BTC执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTC执行后：EAX &#x3D; 0x1<strong>0</strong>1，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+<tr>
+<td>BTR DEST，SRC</td>
+<td>BTR将 SRC 指定的 DEST 中一位的数值复制到 CF，且将 DEST中该位复位。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>btr ax,0x7;</code><br />BTR执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTR执行后：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>btr ax,0x7;</code><br />BTR执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTR执行后：EAX &#x3D; 0x1<strong>0</strong>1，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+</tbody></table>
+<p>EFLAG寄存器（Intel 64 and IA-32 Architectures Software Developer’s Manual <strong>Volume 1:Basic Architecture 3.4.3</strong>），具体可参看该章节和文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/jn1158359135/article/details/7761011">x86—EFLAGS寄存器详解</a>。</p>
+<p><img data-src="https://s2.loli.net/2022/04/26/cXUCSzfnvjFPa53.png" alt="1.png"></p>
+<p><img data-src="https://s2.loli.net/2022/04/26/yu9bSLtdi64NehB.png" alt="2.png"></p>
+<div class="note info"><p>总结：</p>
+<ol>
+<li>自旋锁只对多核有意义。</li>
+<li>自旋锁与临界区、事件、互斥体一样，都是一种同步机制，都可以让当前线程处于等待状态，区别在于自旋锁不用切换线程。</li>
+</ol>
+</div>
+
+
+
+<h3 id="1-4-高并发HOOK"><a href="#1-4-高并发HOOK" class="headerlink" title="1.4 高并发HOOK"></a>1.4 高并发HOOK</h3><p>一、</p>
+<p>这个问题的关键是，hook 后一般是 e8 &#x2F; e9 后跟4字节，总共5字节，但没办法一次性改5个字节，可能改了第一个字节，正要改后4个字节时，别的线程进来访问这块内存了，就会出错。</p>
+<p>这里介绍三种办法：</p>
+<ul>
+<li><strong>短跳中转</strong>，短跳中转（2字节）是比较常用的，修改前2字节跳到某个方便HOOK的地方（长跳），不多做介绍。</li>
+<li><strong>中断门</strong>，中断门也是只用改两个字节，需要先构造中断门，也不介绍。</li>
+<li><strong>找一条一次性修改8字节的指令</strong>，这个指令就是<code>cmpxchg8b</code>。</li>
+</ul>
+<p><code>cmpxchg8b mem64</code>指令的工作如下：<br>比较 mem64 和 EDX:EAX<br>如果相等，那么把 ECX:EBX 存储到 mem64<br>如果不相等，那么把 mem64 存储到 EDX:EAX</p>
+<p>我们要一次性改8字节内存，用的是相等的情况，先把要写入的内容放到 ECX:EBX ，然后调用 cmpxchg8b 指令即可。</p>
+<p>以下参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/wingsummer/p/15884375.html">同步篇——事件等待与唤醒</a>代码，有时间再细品：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ntifs.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ntddk.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> HookAddr = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> OldThread = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">char</span> shellcode[<span class="number">8</span>] = &#123; <span class="number">0xE9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span> ,<span class="number">0x9c</span>,<span class="number">0x8b</span>,<span class="number">0x0b</span> &#125;;</span><br><span class="line"><span class="keyword">char</span> yshellcode[<span class="number">8</span>] = &#123; <span class="number">0x26</span>, <span class="number">0xC6</span>, <span class="number">0x46</span>, <span class="number">0x2D</span>,<span class="number">0x02</span>,<span class="number">0x9c</span>,<span class="number">0x8b</span>,<span class="number">0x0b</span> &#125;;</span><br><span class="line"></span><br><span class="line">KDPC dpc = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">KTIMER timer = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">LARGE_INTEGER duringtime = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">DPCRoutine</span><span class="params">(_In_ struct _KDPC* Dpc, _In_opt_ PVOID DeferredContext,</span></span></span><br><span class="line"><span class="function"><span class="params"> _In_opt_ PVOID SystemArgument1, _In_opt_ PVOID SystemArgument2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (OldThread)</span><br><span class="line">        DbgPrint(<span class="string">&quot;Report Per 2s : Calls Old Thread %x \n&quot;</span>, OldThread);</span><br><span class="line">    OldThread = <span class="number">0</span>;</span><br><span class="line">    KeSetTimer(&amp;timer, duringtime, &amp;dpc);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> __declspec(naked) HookSwapContext()</span><br><span class="line">&#123;</span><br><span class="line">    __asm</span><br><span class="line">    &#123;</span><br><span class="line">        mov byte ptr es : [esi + <span class="number">2</span>Dh] , <span class="number">2</span>;</span><br><span class="line">        mov [OldThread], edi;</span><br><span class="line">        mov eax, [HookAddr];</span><br><span class="line">        add eax, <span class="number">5</span>;</span><br><span class="line">        push eax;</span><br><span class="line">        ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;   </span><br><span class="line"></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span>  __declspec(naked) GetKernelBase()</span><br><span class="line">&#123;</span><br><span class="line">    __asm</span><br><span class="line">    &#123;</span><br><span class="line">        mov eax, fs: [<span class="number">34</span>h] ;</span><br><span class="line">        mov eax, [eax + <span class="number">18</span>h];</span><br><span class="line">        mov eax, [eax];</span><br><span class="line">        mov eax, [eax + <span class="number">18</span>h];</span><br><span class="line">        ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> __declspec(naked) HookProc()</span><br><span class="line">&#123;</span><br><span class="line">    _asm</span><br><span class="line">    &#123;</span><br><span class="line">        pushad;</span><br><span class="line">        pushfd;</span><br><span class="line">        <span class="keyword">xor</span> edx, edx;</span><br><span class="line">        lea esi, shellcode;</span><br><span class="line">        mov ebx, [esi];</span><br><span class="line">        mov ecx, [esi + <span class="number">4</span>];</span><br><span class="line">        </span><br><span class="line">        mov edi, [HookAddr];</span><br><span class="line">        mov eax, [edi];</span><br><span class="line">        mov edx, [edi + <span class="number">4</span>];</span><br><span class="line">        lock cmpxchg8b qword ptr[edi];</span><br><span class="line">        popfd;</span><br><span class="line">        popad;</span><br><span class="line">        ret;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> __declspec(naked) UnHookProc()</span><br><span class="line">&#123;</span><br><span class="line">    _asm</span><br><span class="line">    &#123;</span><br><span class="line">        pushad;</span><br><span class="line">        pushfd;</span><br><span class="line">        <span class="keyword">xor</span> edx, edx;</span><br><span class="line">        lea esi, yshellcode;</span><br><span class="line">        mov ebx, [esi];</span><br><span class="line">        mov ecx, [esi + <span class="number">4</span>];</span><br><span class="line"></span><br><span class="line">        mov edi, [HookAddr];</span><br><span class="line">        mov eax, [edi];</span><br><span class="line">        mov edx, [edi + <span class="number">4</span>];</span><br><span class="line">        lock cmpxchg8b qword ptr[edi];</span><br><span class="line">        popfd;</span><br><span class="line">        popad;</span><br><span class="line">        ret;</span><br><span class="line">        </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">UnloadDriver</span><span class="params">(PDRIVER_OBJECT DriverObject)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    UnHookProc();</span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        KeDelayExecutionThread(KernelMode, TRUE, &amp;  duringtime);</span><br><span class="line">        <span class="keyword">if</span> (!OldThread)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    KeCancelTimer(&amp;timer);</span><br><span class="line">    DbgPrint(<span class="string">&quot;Unloaded Successfully!&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">DriverEntry</span><span class="params">(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    DriverObject-&gt;DriverUnload = UnloadDriver;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> base = GetKernelBase();</span><br><span class="line">    </span><br><span class="line">    HookAddr = base + <span class="number">0x6A8E2</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//初始化 shellcode</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> jmpdes = (<span class="keyword">int</span>)HookSwapContext -    HookAddr - <span class="number">5</span>;</span><br><span class="line">    RtlCopyMemory(&amp;shellcode[<span class="number">1</span>], &amp;jmpdes, <span class="number">4</span>);</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    KeInitializeTimer(&amp;timer);</span><br><span class="line">    KeInitializeDpc(&amp;dpc, DPCRoutine, <span class="literal">NULL</span>);</span><br><span class="line">    duringtime.QuadPart = <span class="number">-20</span> * <span class="number">1000</span> * <span class="number">1000</span>;</span><br><span class="line">    </span><br><span class="line">    HookProc();</span><br><span class="line">    </span><br><span class="line">    KeSetTimer(&amp;timer, duringtime, &amp;dpc);</span><br><span class="line">    </span><br><span class="line">    DbgPrint(<span class="string">&quot;Loaded Successfully!&quot;</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 id="2-线程等待与唤醒"><a href="#2-线程等待与唤醒" class="headerlink" title="2 线程等待与唤醒"></a>2 线程等待与唤醒</h2><p>临界区和自旋锁，这两种同步方案在线程无法进入临界区时都会让当前线程进入等待状态。<br>一种是通过Sleep函数实现的，一种是通过让当前的CPU“空转”实现的，但这两种等待方式都有局限性：</p>
+<ol>
+<li>通过Sleep函数进行等待，等待时间该如何确定呢（怎么确认多长时间后自己可以进入临界区）？</li>
+<li>通过“空转”的方式进行等待，只有等待时间很短的情况下才有意义，否则对CPU资源是种浪费，<strong>并且自旋锁只能在多核的环境下才有意义</strong>。</li>
+</ol>
+<p>有没有更加合理的等待方式呢？只有在条件成熟的时候才将当前线程唤醒？Windows在<code>Ntdll!RtlEnterCriticalSection</code>函数中其实就给出了一种折中的方式（当前使用临界区的线程不是<code>CurrentThreadId</code>的话就会调用<code>RtlpWaitForCriticalSection.ZwWaitForSingleObject</code>挂起当前线程）。其他情况就会自旋（可参考base&#x2F;ntdll&#x2F;ia64&#x2F;critsect.s）。可参考：<a target="_blank" rel="noopener" href="http://www.cppblog.com/woaidongmao/archive/2011/05/20/146839.html">深入理解CRITICAL_SECTION</a>。</p>
+<h3 id="2-1-可等待对象"><a href="#2-1-可等待对象" class="headerlink" title="2.1 可等待对象"></a>2.1 可等待对象</h3><p>在Windows中，一个线程可以通过等待一个或者多个可等待对象，从而进入等待状态，另一个线程可以在某些时刻唤醒等待这些对象的其他线程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">线程A：					线程B：</span><br><span class="line">WaitForSingleObject	--&gt; 可等待对象	&lt;-- 唤醒可等待对象 SetEvent</span><br><span class="line">WaitForMultipleObjects	--&gt; 可等待对象	&lt;-- 唤醒可等待对象 ReleaseSemaphore</span><br><span class="line">					&lt;-- 唤醒可等待对象 ReleaseMutant</span><br></pre></td></tr></table></figure>
+
+<p>常见的可等待对象有如下这些：</p>
+<figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">_KPROCESS</span>(进程)	<span class="title">_KTHREAD</span>(线程)	<span class="title">_KTIMER</span>(定时器)	<span class="title">_KSEMAPHORE</span>(信号量)	<span class="title">_KEVENT</span>(事件)	<span class="title">_KMUTANT</span>(互斥体)</span></span><br><span class="line"><span class="variable">_FILE_OBJECT</span> (文件)</span><br></pre></td></tr></table></figure>
+
+<p>需要特别说明的是文件对<code>_FILE_OBJECT</code>，其他对象都是以<code>_DISPATCHER_HEADER</code>开头，而<code>_FILE_OBJECT</code>如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _FILE_OBJECT</span><br><span class="line">ntdll!_FILE_OBJECT</span><br><span class="line">   +<span class="number">0x000</span> Type             : Int2B</span><br><span class="line">   +<span class="number">0x002</span> Size             : Int2B</span><br><span class="line">   +<span class="number">0x004</span> DeviceObject     : Ptr32 _DEVICE_OBJECT</span><br><span class="line">   +<span class="number">0x008</span> Vpb              : Ptr32 _VPB</span><br><span class="line">   +<span class="number">0x00c</span> FsContext        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x010</span> FsContext2       : Ptr32 Void</span><br><span class="line">   +<span class="number">0x014</span> SectionObjectPointer : Ptr32 _SECTION_OBJECT_POINTERS</span><br><span class="line">   +<span class="number">0x018</span> PrivateCacheMap  : Ptr32 Void</span><br><span class="line">   +<span class="number">0x01c</span> FinalStatus      : Int4B</span><br><span class="line">   +<span class="number">0x020</span> RelatedFileObject : Ptr32 _FILE_OBJECT</span><br><span class="line">   +<span class="number">0x024</span> LockOperation    : UChar</span><br><span class="line">   +<span class="number">0x025</span> DeletePending    : UChar</span><br><span class="line">   +<span class="number">0x026</span> ReadAccess       : UChar</span><br><span class="line">   +<span class="number">0x027</span> WriteAccess      : UChar</span><br><span class="line">   +<span class="number">0x028</span> DeleteAccess     : UChar</span><br><span class="line">   +<span class="number">0x029</span> SharedRead       : UChar</span><br><span class="line">   +<span class="number">0x02a</span> SharedWrite      : UChar</span><br><span class="line">   +<span class="number">0x02b</span> SharedDelete     : UChar</span><br><span class="line">   +<span class="number">0x02c</span> Flags            : Uint4B</span><br><span class="line">   +<span class="number">0x030</span> FileName         : _UNICODE_STRING</span><br><span class="line">   +<span class="number">0x038</span> CurrentByteOffset : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x040</span> Waiters          : Uint4B</span><br><span class="line">   +<span class="number">0x044</span> Busy             : Uint4B</span><br><span class="line">   +<span class="number">0x048</span> LastLock         : Ptr32 Void</span><br><span class="line">   +<span class="number">0x04c</span> Lock             : _KEVENT</span><br><span class="line">   +<span class="number">0x05c</span> Event            : _KEVENT</span><br><span class="line">   +<span class="number">0x06c</span> CompletionContext : Ptr32 _IO_COMPLETION_CONTEXT</span><br></pre></td></tr></table></figure>
+
+<p>虽然该对象不是以<code>_DISPATCHER_HEADER</code>开头，但是在偏移<code>+0x04c</code>和<code>+0x05c</code>的成员是可等待对象<code>_KEVENT</code>，所以该对象也是可等待对象。</p>
+<p>可参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/jadeshu/p/10663611.html">Windows内核情景分析—内核对象</a>。</p>
+<h3 id="2-2-线程等待网"><a href="#2-2-线程等待网" class="headerlink" title="2.2 线程等待网"></a>2.2 线程等待网</h3><p><strong>一、一个线程下的所有被等待对象</strong></p>
+<p>每个线程<code>KTHREAD</code>偏移<code>0x5c</code>的成员<code>WaitBlockList(_KWAIT_BLOCK结构)</code>为该线程的对象等待块，记录了该线程正在等待的那些对象。<strong>每个等待块对应一个被等待对象</strong>。该线程所有被等待的对象都会被双向循环<strong>等待块链</strong>串起来，结构如下。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KWAIT_BLOCK</span><br><span class="line">ntdll!_KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x000</span> WaitListEntry    : _LIST_ENTRY	<span class="comment">//该线程下所有被等待对象链，双向循环链表</span></span><br><span class="line">     						<span class="comment">//指向被等待对象的 _DISPATCHER_HEADER + 0x8</span></span><br><span class="line">   +<span class="number">0x008</span> Thread           : Ptr32 _KTHREAD	<span class="comment">//当前等待块所属的线程对象（Body）</span></span><br><span class="line">   +<span class="number">0x00c</span> Object           : Ptr32 Void		<span class="comment">//当前等待块对应的等待对象（线程所等待对象Body）</span></span><br><span class="line">   +<span class="number">0x010</span> NextWaitBlock    : Ptr32 _KWAIT_BLOCK	<span class="comment">//指向下一个等待块（单向循环链表）</span></span><br><span class="line">   +<span class="number">0x014</span> WaitKey          : Uint2B		<span class="comment">//当前等待块的索引，0表示第一个</span></span><br><span class="line">   +<span class="number">0x016</span> WaitType         : Uint2B		<span class="comment">//0：只有所有等待对象都被激活才行，1：只要有一个等待对象被激活即可</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>二、一个被等待对象被哪些线程等待</strong></p>
+<p>每个可被等待的对象都有成员<code>_DISPATCHER_HEADER</code>，该成员的结构如下。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _DISPATCHER_HEADER</span><br><span class="line">ntdll!_DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x000</span> Type             : UChar		<span class="comment">//对象类型</span></span><br><span class="line">   +<span class="number">0x001</span> Absolute         : UChar</span><br><span class="line">   +<span class="number">0x002</span> Size             : UChar</span><br><span class="line">   +<span class="number">0x003</span> Inserted         : UChar</span><br><span class="line">   +<span class="number">0x004</span> SignalState      : Int4B		<span class="comment">//是否有信号，&gt; 0 表示有信号，即被激活</span></span><br><span class="line">   +<span class="number">0x008</span> WaitListHead     : _LIST_ENTRY	<span class="comment">//串着等待线程的_KWAIT_BLOCK</span></span><br></pre></td></tr></table></figure>
+
+<p>其中成员<code>WaitListHead</code>是一个双向的循环链表，串着当前被等待对象被哪些线程等待，串的是那些线程的<code>WaitBlockList(_KWAIT_BLOCK).WaitListEntry</code>。</p>
+<p>有如下关系：</p>
+<p><img data-src="https://s2.loli.net/2022/05/03/Yo2gq9WdhzKFjZS.png" alt="3.png"></p>
+<p><strong>三、<code>_KWAIT_BLOCK.WaitListEntry</code>与<code>_DISPATCHER_HEADER.WaitListHead</code>的关系</strong></p>
+<ol>
+<li><p>有如下代码。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">HANDLE hEvent[<span class="number">4</span>] = &#123;<span class="literal">NULL</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc</span><span class="params">(LPVOID lpParamter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	WaitForMultipleObjects(<span class="number">2</span>,hEvent,FALSE,<span class="number">-1</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Hello World!\n&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function">WORD WINAPI <span class="title">ThreadProc_2</span><span class="params">(LPVOID lpParamter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	WaitForSingleObject(hEvent[<span class="number">1</span>],<span class="number">-1</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Hello World!\n&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	hEvent[<span class="number">0</span>] = CreateEvent(<span class="literal">NULL</span>,TRUE,FALSE,<span class="literal">NULL</span>);</span><br><span class="line">	hEvent[<span class="number">1</span>] = CreateEvent(<span class="literal">NULL</span>,TRUE,FALSE,<span class="literal">NULL</span>);</span><br><span class="line">	CreateThread(<span class="literal">NULL</span>,<span class="number">0</span>,(LPTHREAD_START_ROUTINE)ThreadProc,<span class="literal">NULL</span>,<span class="number">0</span>,<span class="literal">NULL</span>);</span><br><span class="line">	CreateThread(<span class="literal">NULL</span>,<span class="number">0</span>,(LPTHREAD_START_ROUTINE)ThreadProc_2,<span class="literal">NULL</span>,<span class="number">0</span>,<span class="literal">NULL</span>);</span><br><span class="line">	</span><br><span class="line">	getchar();</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>线程<code>ThreadProc</code>共等待两个<code>Event</code>对象，两个线程都在等待<code>hEvent[1]</code>对象。</p>
+</li>
+<li><p>查看<code>ThreadProc</code>线程的被等待对象。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !process <span class="number">0</span> <span class="number">0</span></span><br><span class="line">**** NT ACTIVE PROCESS DUMP ****</span><br><span class="line">PROCESS <span class="number">866b</span>9020  SessionId: <span class="number">0</span>  Cid: <span class="number">0</span>a94    Peb: <span class="number">7f</span>fde000  ParentCid: <span class="number">0</span>a74</span><br><span class="line">    DirBase: <span class="number">06e403</span>e0  ObjectTable: e275ae68  HandleCount:  <span class="number">16.</span></span><br><span class="line">    Image: <span class="number">0430</span>_Dispatcher</span><br><span class="line">    ...</span><br><span class="line">kd&gt; !process <span class="number">0x866b9020</span></span><br><span class="line">    ...</span><br><span class="line">THREAD <span class="number">86288020</span>  Cid <span class="number">0</span>a94<span class="number">.0934</span>  Teb: <span class="number">7f</span>fdc000 Win32Thread: <span class="number">00000000</span> WAIT: (UserRequest) UserMode Non-Alertable</span><br><span class="line">    ...</span><br><span class="line">kd&gt; dt _KTHREAD <span class="number">0x86288020</span></span><br><span class="line">ntdll!_KTHREAD</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">    ...</span><br><span class="line">   +<span class="number">0x05c</span> WaitBlockList    : <span class="number">0x86288090</span> _KWAIT_BLOCK</span><br><span class="line">    ...</span><br><span class="line">kd&gt; dt _KWAIT_BLOCK <span class="number">0x86288090</span></span><br><span class="line">ntdll!_KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x000</span> WaitListEntry    : _LIST_ENTRY [ <span class="number">0x86706700</span> - <span class="number">0x86706700</span> ]</span><br><span class="line">   +<span class="number">0x008</span> Thread           : <span class="number">0x86288020</span> _KTHREAD</span><br><span class="line">   +<span class="number">0x00c</span> Object           : <span class="number">0x867066f8</span> Void</span><br><span class="line">   +<span class="number">0x010</span> NextWaitBlock    : <span class="number">0x862880a8</span> _KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x014</span> WaitKey          : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x016</span> WaitType         : <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到：</p>
+<ul>
+<li><p><code>WaitListEntry</code>：链上只有一个节点，说明该被等待对象只有一个线程在等待。只有被等待的对象能看到，不被等待的对象创建了也不在线程的等待块上。</p>
+</li>
+<li><p><code>NextWaitBlock</code>：单向循环链表，该线程在等待两个<code>Event</code>对象，所以后面串着的肯定是另一个对象，如下。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KWAIT_BLOCK <span class="number">0x862880a8</span></span><br><span class="line">ntdll!_KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x000</span> WaitListEntry    : _LIST_ENTRY [ <span class="number">0x860ef460</span> - <span class="number">0x86454508</span> ]</span><br><span class="line">   +<span class="number">0x008</span> Thread           : <span class="number">0x86288020</span> _KTHREAD</span><br><span class="line">   +<span class="number">0x00c</span> Object           : <span class="number">0x86454500</span> Void</span><br><span class="line">   +<span class="number">0x010</span> NextWaitBlock    : <span class="number">0x86288090</span> _KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x014</span> WaitKey          : <span class="number">1</span></span><br><span class="line">   +<span class="number">0x016</span> WaitType         : <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这里的<code>NextWaitBlock</code>又指回去第一个对象。</p>
+</li>
+</ul>
+</li>
+<li><p>分析<code>_DISPATCHER_HEADER.WaitListHead</code>与<code>_KWAIT_BLOCK.WaitListEntry</code>关系。</p>
+<p>这里被等待的对象是<code>Event</code>，查看一下第一个被等待对象。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KWAIT_BLOCK <span class="number">0x86288090</span></span><br><span class="line">ntdll!_KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x000</span> WaitListEntry    : _LIST_ENTRY [ <span class="number">0x86706700</span> - <span class="number">0x86706700</span> ]</span><br><span class="line">   +<span class="number">0x008</span> Thread           : <span class="number">0x86288020</span> _KTHREAD</span><br><span class="line">   +<span class="number">0x00c</span> Object           : <span class="number">0x867066f8</span> Void</span><br><span class="line">   +<span class="number">0x010</span> NextWaitBlock    : <span class="number">0x862880a8</span> _KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x014</span> WaitKey          : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x016</span> WaitType         : <span class="number">1</span></span><br><span class="line">   ...</span><br><span class="line">kd&gt; dt _KEVENT <span class="number">0x867066f8</span></span><br><span class="line">ntdll!_KEVENT</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   ...</span><br><span class="line">kd&gt; dt _DISPATCHER_HEADER <span class="number">0x867066f8</span></span><br><span class="line">ntdll!_DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x000</span> Type             : <span class="number">0</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">   +0x001 Absolute         : 0x40 &#x27;@&#x27;</span><br><span class="line">   +<span class="number">0x002</span> Size             : <span class="number">0x4</span> <span class="string">&#x27;&#x27;</span></span><br><span class="line">   +0x003 Inserted         : 0x86 &#x27;&#x27;</span><br><span class="line">   +<span class="number">0x004</span> SignalState      : <span class="number">0</span>n0</span><br><span class="line">   +<span class="number">0x008</span> WaitListHead     : _LIST_ENTRY [ <span class="number">0x86288090</span> - <span class="number">0x86288090</span> ]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，<code>WaitListHead</code>上挂着一个<code>_KWAIT_BLOCK</code>，即为第一个被等待对象。</p>
+<p>同时，有如下关系（仅对_DISPATCHER_HEADER为内核对象首成员时管用）：</p>
+<ul>
+<li><code>_KWAIT_BLOCK.WaitListEntry.FLINK - 0x8 == _KWAIT_BLOCK.WaitListEntry.Object == _DISPATCHER_HEADER</code>。</li>
+<li><code>_DISPATCHER_HEADER.WaitListHead.FLINK == _KWAIT_BLOCK == 0x86288090</code>。</li>
+</ul>
+<div class="note default"><p>即<code>_KWAIT_BLOCK.WaitListEntry.FLINK</code>指向<code>_DISPATCHER_HEADER +0x8</code>的位置。</p>
+</div></li>
+</ol>
+<p><strong>四、线程如何存储等待块？</strong></p>
+<p><code>KTHREAD +0x070 WaitBlock : [4] _KWAIT_BLOCK</code>是一个数组，当一个线程所等待的对象小于等于3个时并不会额外去申请内存存放等待块，会将被等待的对象的<code>_KWAIT_BLOCK</code>存到这个位置，其中第四个成员<code>WaitBlock[3]</code>只能用于存储计时器对象的等待块，其索引<code>WaitKey == 0x102</code>。</p>
+<p>当线程所等待的对象小于等于3个时，<code>WaitBlock[3]</code>有以下两种状态：</p>
+<ol>
+<li>如使用<code>WaitSingleObject(HANDLE x, -1)</code>，则<code>WaitBlock[3].NextWaitBlock = NULL</code>；</li>
+<li>如使用<code>WaitSingleObject(HANDLE x, y)，y &gt; 0</code>，则<code>WaitBlock[3].NextWaitBlock 指向 WaitBlock[0]</code>，然后<code>WaitBlock[0].NextWaitBlock 指向 WaitBlock[3]</code>。</li>
+</ol>
+<p>当线程所等待的对象大于3个时，将会分配新的空间来存储等待块，并不会使用<code>+0x070 WaitBlock</code>来进行存储。</p>
+<p><strong>五、总结：</strong><br>1、等待中的线程，一定在等待链表中（<code>KiWaitListHead</code>），同时也一定在这张网上（<code>KTHREAD +5C</code>的位置不为空）。<br>2、线程通过调用<code>WaitForSingleObject/WaitForMultipleObjects</code>函数将自己挂到这张网上。<br>3、线程什么时候会再次执行取决于其他线程何时调用相关函数，等待对象不同调用的函数也不同。</p>
+<h3 id="2-3-练习：查看线程的被等待对象"><a href="#2-3-练习：查看线程的被等待对象" class="headerlink" title="2.3 练习：查看线程的被等待对象"></a>2.3 练习：查看线程的被等待对象</h3><p>查看线程的被等待对象有哪些？</p>
+<ol>
+<li><p>在3环有如下代码。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">HANDLE hEvent = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc</span><span class="params">(LPVOID lpParamter)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	WaitForSingleObject(hEvent,<span class="number">-1</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Hello World!\n&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	hEvent = CreateEvent(<span class="literal">NULL</span>,TRUE,FALSE,<span class="literal">NULL</span>);</span><br><span class="line">	CreateThread(<span class="literal">NULL</span>,<span class="number">0</span>,(LPTHREAD_START_ROUTINE)ThreadProc,<span class="literal">NULL</span>,<span class="number">0</span>,<span class="literal">NULL</span>);</span><br><span class="line">	</span><br><span class="line">	getchar();</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>查看通过<code>CreateThread</code>创建的线程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !process <span class="number">0</span> <span class="number">0</span></span><br><span class="line">**** NT ACTIVE PROCESS DUMP ****</span><br><span class="line">PROCESS <span class="number">862029</span>a0  SessionId: <span class="number">0</span>  Cid: <span class="number">0f</span>98    Peb: <span class="number">7f</span>fd7000  ParentCid: <span class="number">0</span>a74</span><br><span class="line">    DirBase: <span class="number">06e40360</span>  ObjectTable: e1fcf0e0  HandleCount:  <span class="number">14.</span></span><br><span class="line">    Image: <span class="number">0430</span>_Dispatcher</span><br><span class="line"></span><br><span class="line">kd&gt; !process <span class="number">0x862029a0</span></span><br><span class="line">PROCESS <span class="number">862029</span>a0  SessionId: <span class="number">0</span>  Cid: <span class="number">0f</span>98    Peb: <span class="number">7f</span>fd7000  ParentCid: <span class="number">0</span>a74</span><br><span class="line">    DirBase: <span class="number">06e40360</span>  ObjectTable: e1fcf0e0  HandleCount:  <span class="number">14.</span></span><br><span class="line">    Image: <span class="number">0430</span>_Dispatcher</span><br><span class="line">    VadRoot <span class="number">86231610</span> Vads <span class="number">23</span> Clone <span class="number">0</span> Private <span class="number">39.</span> Modified <span class="number">0.</span> Locked <span class="number">0.</span></span><br><span class="line">    DeviceMap e1535598</span><br><span class="line">    Token                             e2c45d48</span><br><span class="line">    ElapsedTime                       <span class="number">00</span>:<span class="number">42</span>:<span class="number">37.909</span></span><br><span class="line">    UserTime                          <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.015</span></span><br><span class="line">    KernelTime                        <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.000</span></span><br><span class="line">    QuotaPoolUsage[PagedPool]         <span class="number">12436</span></span><br><span class="line">    QuotaPoolUsage[NonPagedPool]      <span class="number">920</span></span><br><span class="line">    <span class="function">Working Set <span class="title">Sizes</span> <span class="params">(now,min,max)</span>  <span class="params">(<span class="number">188</span>, <span class="number">50</span>, <span class="number">345</span>)</span> <span class="params">(<span class="number">752</span>KB, <span class="number">200</span>KB, <span class="number">1380</span>KB)</span></span></span><br><span class="line"><span class="function">    PeakWorkingSetSize                188</span></span><br><span class="line"><span class="function">    VirtualSize                       7 Mb</span></span><br><span class="line"><span class="function">    PeakVirtualSize                   7 Mb</span></span><br><span class="line"><span class="function">    PageFaultCount                    181</span></span><br><span class="line"><span class="function">    MemoryPriority                    BACKGROUND</span></span><br><span class="line"><span class="function">    BasePriority                      8</span></span><br><span class="line"><span class="function">    CommitCharge                      47</span></span><br><span class="line"><span class="function">    DebugPort                         8635ad20</span></span><br><span class="line"><span class="function"></span></span><br><span class="line">        THREAD 8624ab78  Cid 0f98.0f9c  Teb: 7ffdf000 Win32Thread: 00000000 WAIT: (WrLpcReply) UserMode Non-Alertable</span><br><span class="line">            <span class="number">8624</span>ad6c  Semaphore Limit <span class="number">0x1</span></span><br><span class="line">        Waiting <span class="keyword">for</span> reply to LPC MessageId <span class="number">000034</span>ad:</span><br><span class="line">        Current LPC port e216f380</span><br><span class="line">        Not impersonating</span><br><span class="line">        DeviceMap                 e1535598</span><br><span class="line">        Owning Process            <span class="number">0</span>       Image:         &lt;Unknown&gt;</span><br><span class="line">        Attached Process          <span class="number">862029</span>a0       Image:         <span class="number">0430</span>_Dispatcher</span><br><span class="line">        Wait Start TickCount      <span class="number">25326</span>          Ticks: <span class="number">10020</span> (<span class="number">0</span>:<span class="number">00</span>:<span class="number">02</span>:<span class="number">36.562</span>)</span><br><span class="line">        Context Switch Count      <span class="number">45</span>             </span><br><span class="line">        UserTime                  <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.000</span></span><br><span class="line">        KernelTime                <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.000</span></span><br><span class="line">        Win32 Start Address <span class="number">0x00401570</span></span><br><span class="line">        Start Address <span class="number">0x7c8106f5</span></span><br><span class="line">        Stack Init f7300000 Current f72ffc50 Base f7300000 Limit f72fd000 Call <span class="number">0</span></span><br><span class="line">        Priority <span class="number">10</span> BasePriority <span class="number">8</span> PriorityDecrement <span class="number">2</span> DecrementCount <span class="number">16</span></span><br><span class="line">        Kernel <span class="built_in">stack</span> <span class="keyword">not</span> resident.</span><br><span class="line">        ChildEBP RetAddr  </span><br><span class="line">        f72ffc68 <span class="number">80504836</span> nt!KiSwapContext+<span class="number">0x2f</span> (FPO: [Uses EBP] [<span class="number">0</span>,<span class="number">0</span>,<span class="number">4</span>])</span><br><span class="line">        f72ffc74 <span class="number">804f</span>c068 nt!KiSwapThread+<span class="number">0x8a</span> (FPO: [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>])</span><br><span class="line">        f72ffc9c <span class="number">805</span>a4397 nt!KeWaitForSingleObject+<span class="number">0x1c2</span> (FPO: [Non-Fpo])</span><br><span class="line">        f72ffd50 <span class="number">8054261</span>c nt!NtRequestWaitReplyPort+<span class="number">0x63d</span> (FPO: [Non-Fpo])</span><br><span class="line">        f72ffd50 <span class="number">7</span>c92e4f4 nt!KiFastCallEntry+<span class="number">0xfc</span> (FPO: [<span class="number">0</span>,<span class="number">0</span>] TrapFrame @ f72ffd64)</span><br><span class="line">        <span class="number">0012f</span>ce4 <span class="number">00000000</span> ntdll!KiFastSystemCallRet (FPO: [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        THREAD <span class="number">862b</span>9da8  Cid <span class="number">0f</span>98<span class="number">.0f</span>a0  Teb: <span class="number">7f</span>fde000 Win32Thread: <span class="number">00000000</span> WAIT: (UserRequest) UserMode Non-Alertable</span><br><span class="line">            <span class="number">862410f</span>8  NotificationEvent</span><br><span class="line">        Not impersonating</span><br><span class="line">        DeviceMap                 e1535598</span><br><span class="line">        Owning Process            <span class="number">0</span>       Image:         &lt;Unknown&gt;</span><br><span class="line">        Attached Process          <span class="number">862029</span>a0       Image:         <span class="number">0430</span>_Dispatcher</span><br><span class="line">        Wait Start TickCount      <span class="number">25326</span>          Ticks: <span class="number">10020</span> (<span class="number">0</span>:<span class="number">00</span>:<span class="number">02</span>:<span class="number">36.562</span>)</span><br><span class="line">        Context Switch Count      <span class="number">5</span>             </span><br><span class="line">        UserTime                  <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.000</span></span><br><span class="line">        KernelTime                <span class="number">00</span>:<span class="number">00</span>:<span class="number">00.000</span></span><br><span class="line">        Win32 Start Address <span class="number">0x00401005</span></span><br><span class="line">        Start Address <span class="number">0x7c8106e9</span></span><br><span class="line">        Stack Init aa147000 Current aa146ca0 Base aa147000 Limit aa144000 Call <span class="number">0</span></span><br><span class="line">        Priority <span class="number">12</span> BasePriority <span class="number">8</span> PriorityDecrement <span class="number">2</span> DecrementCount <span class="number">16</span></span><br><span class="line">        Kernel <span class="built_in">stack</span> <span class="keyword">not</span> resident.</span><br><span class="line">        ChildEBP RetAddr  </span><br><span class="line">        aa146cb8 <span class="number">80504836</span> nt!KiSwapContext+<span class="number">0x2f</span> (FPO: [Uses EBP] [<span class="number">0</span>,<span class="number">0</span>,<span class="number">4</span>])</span><br><span class="line">        aa146cc4 <span class="number">804f</span>c068 nt!KiSwapThread+<span class="number">0x8a</span> (FPO: [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>])</span><br><span class="line">        aa146cec <span class="number">805</span>c1750 nt!KeWaitForSingleObject+<span class="number">0x1c2</span> (FPO: [Non-Fpo])</span><br><span class="line">        aa146d50 <span class="number">8054261</span>c nt!NtWaitForSingleObject+<span class="number">0x9a</span> (FPO: [Non-Fpo])</span><br><span class="line">        aa146d50 <span class="number">7</span>c92e4f4 nt!KiFastCallEntry+<span class="number">0xfc</span> (FPO: [<span class="number">0</span>,<span class="number">0</span>] TrapFrame @ aa146d64)</span><br><span class="line">        <span class="number">0052f</span>f44 <span class="number">00000000</span> ntdll!KiFastSystemCallRet (FPO: [<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>])</span><br></pre></td></tr></table></figure>
+
+<p>如上第一个线程是主线程，通过<code>CreateThread</code>创建的线程应该是<code>THREAD 862b9da8</code>。</p>
+</li>
+<li><p>查看线程的等待块<code>WaitBlockList(+0x5c)</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KTHREAD <span class="number">0x862b9da8</span></span><br><span class="line">ntdll!_KTHREAD</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">     ...</span><br><span class="line">   +<span class="number">0x05c</span> WaitBlockList    : <span class="number">0x862b9e18</span> _KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x060</span> WaitListEntry    : _LIST_ENTRY [ <span class="number">0x0</span> - <span class="number">0x8055d4a8</span> ]</span><br><span class="line">   +<span class="number">0x060</span> SwapListEntry    : _SINGLE_LIST_ENTRY</span><br><span class="line">     ...</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>查看<code>_KWAIT_BLOCK</code>如下。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KWAIT_BLOCK <span class="number">0x862b9e18</span></span><br><span class="line">ntdll!_KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x000</span> WaitListEntry    : _LIST_ENTRY [ <span class="number">0x86241100</span> - <span class="number">0x86241100</span> ]</span><br><span class="line">   +<span class="number">0x008</span> Thread           : <span class="number">0x862b9da8</span> _KTHREAD	<span class="comment">//当前等待块所属的线程</span></span><br><span class="line">   +<span class="number">0x00c</span> Object           : <span class="number">0x862410f8</span> Void		<span class="comment">//当前等待块对应的等待对象（线程所等待对象Body）</span></span><br><span class="line">   +<span class="number">0x010</span> NextWaitBlock    : <span class="number">0x862b9e18</span> _KWAIT_BLOCK	<span class="comment">//指向下一个等待块（单向循环链表）</span></span><br><span class="line">   +<span class="number">0x014</span> WaitKey          : <span class="number">0</span>				<span class="comment">//当前等待块的索引，0表示第一个</span></span><br><span class="line">   +<span class="number">0x016</span> WaitType         : <span class="number">1</span>				<span class="comment">//0：只有所有等待对象都被激活才行，1：只要有一个等待对象被激活即可</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="3-WaitForSingleObject分析"><a href="#3-WaitForSingleObject分析" class="headerlink" title="3 WaitForSingleObject分析"></a>3 WaitForSingleObject分析</h2><p>先分析一下<code>WaitForSingleObject</code>调用过程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">kernel32.dll</span><br><span class="line">  <span class="function">DWORD __stdcall <span class="title">WaitForSingleObject</span><span class="params">(HANDLE hHandle, DWORD dwMilliseconds)</span></span></span><br><span class="line">                                  ↓       ↓			//hHandle：被等待对象，dwMilliseconds：超时时间</span><br><span class="line">  <span class="function">DWORD __stdcall <span class="title">WaitForSingleObjectEx</span><span class="params">(HANDLE hHandle, DWORD dwMilliseconds, BOOL bAlertable)</span></span></span><br><span class="line">                                  ↓       ↓			//bAlertable：对应KTHREAD结构体的Alertable属性</span><br><span class="line">                                  ↓       ↓			<span class="comment">//如果为1 在插入用户APC时，该线程将被吵醒  </span></span><br><span class="line">ntdll.dll</span><br><span class="line">  <span class="function">DWORD __stdcall <span class="title">NtWaitForSingleObject</span><span class="params">(HANDLE hHandle, BOOL bAlertable, DWORD dwMilliseconds)</span></span></span><br><span class="line">3环                               ↓       ↓		</span><br><span class="line">-----------------------------------------------------------------------------------------------------</span><br><span class="line"><span class="number">0</span>环</span><br><span class="line">ntkrpamp.exe</span><br><span class="line">  <span class="function">NTSTATUS __stdcall <span class="title">NtWaitForSingleObject</span><span class="params">(HANDLE Object, BOOLEAN Alertable, PLARGE_INTEGER Timeout)</span></span></span><br><span class="line">                                  ↓       ↓</span><br><span class="line">  <span class="function">NTSTATUS __stdcall <span class="title">KeWaitForSingleObject</span><span class="params">(PVOID Object, KWAIT_REASON WaitReason, KPROCESSOR_MODE WaitMode, </span></span></span><br><span class="line"><span class="function"><span class="params">                                           BOOLEAN Alertable, PLARGE_INTEGER Timeout)</span></span></span><br><span class="line"><span class="function">  					<span class="comment">//WaitReason：指定等待的原因。驱动：Executive，3环程序：UserRequest</span></span></span><br><span class="line"><span class="function">  					<span class="comment">//WaitMode：指定调用者是在KernelMode还是UserMode中等待</span></span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p><strong>NtWaitForSingleObject</strong><br>1）调用<code>ObReferenceObjectByHandle</code>函数，通过对象句柄找到等待对象结构体地址。<br>2）调用<code>KeWaitForSingleObject</code>函数，进入关键循环。</p>
+</li>
+<li><p><strong>KeWaitForSingleObject：上半部分</strong><br>1） 向<code>_KTHREAD(+70)</code>位置的等待块赋值。<br>2） 如果超时时间不为0，<code>KTHREAD(+70)</code>第四个等待块与第一个等待块关联起来：第一个等待块指向第四个等待块，第四个等待块指向第一个等待块。（<code>_KWAIT_BLOCK</code>第四个成员是给计时器用的）。<br>3）<code>KTHREAD(+5C)</code>指向第一个<code>_KWAIT_BLOCK</code>。<br>4） <strong>进入关键循环</strong>。</p>
+</li>
+<li><p>关键循环（源码：<code>base/ntos/ke/wait.c</code>）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>()</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">&#123;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(<span class="literal">true</span>)<span class="comment">//每次线程被其他线程唤醒，都要进入这个循环</span></span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span>(符合激活条件)<span class="comment">//1、超时   2、等待对象SignalState&gt;0 </span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="number">1</span>) 修改SignalState</span><br><span class="line">		<span class="number">2</span>) 退出循环</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span>(第一次执行)</span><br><span class="line">		      将当前线程的等待块挂到等待对象的链表(WaitListHead)中;</span><br><span class="line"></span><br><span class="line">		将自己挂入等待队列(KiWaitListHead)</span><br><span class="line">		切换线程KiSwapThread...再次获得CPU时，从这里开始执行</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="number">1</span>) 线程将自己+<span class="number">5</span>C位置清<span class="number">0</span></span><br><span class="line"><span class="number">2</span>) 释放_KWAIT_BLOCK所占内存</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><strong>总结：</strong><br>不同的等待对象，用不同的方法来修改<code>_DISPATCHER_HEADER（SignalState）</code>。<br>比如：如果可等待对象是<code>EVENT</code>，其他线程通常使用<code>SetEvent</code>来设置<code>SignalState = 1</code>。<br>并且，将正在等待该对象的其他线程唤醒，也就是从等待链表（<code>KiWaitListHead</code>）中摘出来。但是，<code>SetEvent</code>函数并不会将线程从等待网上摘下来，是否要下来，由当前线程自己来决定。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Multi-core-synchronization/" title="Windows XP 多核同步">https://directoree.github.io/post/Multi-core-synchronization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/%E5%A4%9A%E6%A0%B8%E5%90%8C%E6%AD%A5/" rel="tag"># 多核同步</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Handletable/" rel="prev" title="Windows XP 句柄表">
+                  <i class="fa fa-chevron-left"></i> Windows XP 句柄表
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">15:45</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Multi-core-synchronization/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
