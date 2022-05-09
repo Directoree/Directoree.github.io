@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/04/22/RVcMoS2EU15iGZs.png">
 <meta property="og:image" content="https://s2.loli.net/2022/04/23/gAVcQte1X65PTZD.png">
 <meta property="article:published_time" content="2022-04-16T09:12:20.000Z">
-<meta property="article:modified_time" content="2022-05-04T13:31:32.843Z">
+<meta property="article:modified_time" content="2022-05-07T03:30:23.659Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="句柄表">
@@ -360,7 +360,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-05-04 21:31:32" itemprop="dateModified" datetime="2022-05-04T21:31:32+08:00">2022-05-04</time>
+        <time title="修改时间：2022-05-07 11:30:23" itemprop="dateModified" datetime="2022-05-07T11:30:23+08:00">2022-05-07</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -409,7 +409,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>25k</span>
+      <span>26k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -465,15 +465,24 @@
 <h3 id="1-2-OBJECT-HEADER"><a href="#1-2-OBJECT-HEADER" class="headerlink" title="1.2 _OBJECT_HEADER"></a>1.2 _OBJECT_HEADER</h3><p><strong>关于<code>_OBJECT_HEADER.Type.DefaultObject</code>需要进行说明</strong>，主要参考《Windows内核情景分析第6.3章节》（《Windows内核原理与实现》没说清楚）：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _OBJECT_HEADER</span><br><span class="line">nt!_OBJECT_HEADER</span><br><span class="line">   +<span class="number">0x000</span> PointerCount     : Int4B</span><br><span class="line">   +<span class="number">0x004</span> HandleCount      : Int4B</span><br><span class="line">   +<span class="number">0x004</span> NextToFree       : Ptr32 Void</span><br><span class="line">   +<span class="number">0x008</span> Type             : Ptr32 _OBJECT_TYPE</span><br><span class="line">   +<span class="number">0x00c</span> NameInfoOffset   : UChar</span><br><span class="line">   +<span class="number">0x00d</span> HandleInfoOffset : UChar</span><br><span class="line">   +<span class="number">0x00e</span> QuotaInfoOffset  : UChar</span><br><span class="line">   +<span class="number">0x00f</span> Flags            : UChar</span><br><span class="line">   +<span class="number">0x010</span> ObjectCreateInfo : Ptr32 _OBJECT_CREATE_INFORMATION</span><br><span class="line">   +<span class="number">0x010</span> QuotaBlockCharged : Ptr32 Void</span><br><span class="line">   +<span class="number">0x014</span> SecurityDescriptor : Ptr32 Void</span><br><span class="line">   +<span class="number">0x018</span> Body             : _QUAD</span><br><span class="line">kd&gt; dt _OBJECT_TYPE</span><br><span class="line">ntdll!_OBJECT_TYPE</span><br><span class="line">   +<span class="number">0x000</span> Mutex            : _ERESOURCE</span><br><span class="line">   +<span class="number">0x038</span> TypeList         : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x040</span> Name             : _UNICODE_STRING</span><br><span class="line">   +<span class="number">0x048</span> DefaultObject    : Ptr32 Void</span><br><span class="line">   +<span class="number">0x04c</span> Index            : Uint4B</span><br><span class="line">   +<span class="number">0x050</span> TotalNumberOfObjects : Uint4B</span><br><span class="line">   +<span class="number">0x054</span> TotalNumberOfHandles : Uint4B</span><br><span class="line">   +<span class="number">0x058</span> HighWaterNumberOfObjects : Uint4B</span><br><span class="line">   +<span class="number">0x05c</span> HighWaterNumberOfHandles : Uint4B</span><br><span class="line">   +<span class="number">0x060</span> TypeInfo         : _OBJECT_TYPE_INITIALIZER</span><br><span class="line">   +<span class="number">0x0ac</span> Key              : Uint4B</span><br><span class="line">   +<span class="number">0x0b0</span> ObjectLocks      : [<span class="number">4</span>] _ERESOURCE</span><br></pre></td></tr></table></figure>
 
-<p>是因为其内部有嵌入的可等待对象（如事件），所以实际可等待的是嵌入于其内部的事件对象。我们在“对象管理”一章中看到，在对象类型的数据结构中有一个字段DefaultObject，.这个字段或者是指针， 指向一个默认的、全局的可等待对象ObpDefaultObject.：或者是位移量，指向该类对象（数据结构）内部的一个可等待对象（例如事件）。而（直接）可等待对象的DefaultObject则为O，说明就是目标对象</p>
-<h3 id="1-3-DISPATCHER-HEADER"><a href="#1-3-DISPATCHER-HEADER" class="headerlink" title="1.3 _DISPATCHER_HEADER"></a>1.3 _DISPATCHER_HEADER</h3><p>每个可被等待的对象都有成员<code>_DISPATCHER_HEADER</code>，如<code>_KEVENT(事件)，_KMUTANT(互斥体)</code>的第一个成员：</p>
+<p><code>_OBJECT_HEADER.Type.DefaultObject</code>这个字段或者是指针，或者是位移量：</p>
+<ul>
+<li><strong>指针</strong>： 指向一个默认的、全局的可等待对象<code>ObpDefaultObject</code>。直接可等待对象的<code>DefaultObject == 0</code>，说明就是目标对象本身。</li>
+<li><strong>位移量</strong>：指向该类对象（数据结构）内部的一个可等待对象（例如_FILE_OBJECT中的事件Event）。</li>
+</ul>
+<p>具体的请看《Windows XP 多核同步 3.2.1DefaultObject》</p>
+<h3 id="1-3-DISPATCHER-HEADER"><a href="#1-3-DISPATCHER-HEADER" class="headerlink" title="1.3 _DISPATCHER_HEADER"></a>1.3 _DISPATCHER_HEADER</h3><p>每个可被等待的对象都有成员<code>_DISPATCHER_HEADER</code>，如<code>_KEVENT(事件)、_KMUTANT(互斥体)</code>的第一个成员：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KEVENT</span><br><span class="line">ntdll!_KEVENT</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">kd&gt; dt _KMUTANT</span><br><span class="line">nt!_KMUTANT</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x010</span> MutantListEntry  : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x018</span> OwnerThread      : Ptr32 _KTHREAD</span><br><span class="line">   +<span class="number">0x01c</span> Abandoned        : UChar</span><br><span class="line">   +<span class="number">0x01d</span> ApcDisable       : UChar</span><br><span class="line">   ...</span><br><span class="line">kd&gt; dt _DISPATCHER_HEADER</span><br><span class="line">ntdll!_DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x000</span> Type             : UChar</span><br><span class="line">   +<span class="number">0x001</span> Absolute         : UChar</span><br><span class="line">   +<span class="number">0x002</span> Size             : UChar</span><br><span class="line">   +<span class="number">0x003</span> Inserted         : UChar</span><br><span class="line">   +<span class="number">0x004</span> SignalState      : Int4B</span><br><span class="line">   +<span class="number">0x008</span> WaitListHead     : _LIST_ENTRY</span><br></pre></td></tr></table></figure>
 
 <p><strong>可等待对象分为</strong>：<mark class="label danger">直接可等待对象</mark><mark class="label success">间接可等待对象</mark>。</p>
 <ul>
 <li><strong>直接可等待对象</strong>：<code>_DISPATCHER_HEADER</code>结构为内核对象的第一个成员。</li>
-<li>间接可等待对象：内核对象第一个成员不是<code>_DISPATCHER_HEADER</code>结构，而是往该内核对象内嵌入一个直接可等待对象。</li>
+<li>间接可等待对象：内核对象第一个成员不是<code>_DISPATCHER_HEADER</code>结构，而是往该内核对象内嵌入一个直接可等待对象，所以实际可等待的是嵌入于其内部的事件对象。</li>
 </ul>
+<p>⚠️注意：<code>_DISPATCHER_HEADER.Type</code>对应的枚举值如下（<code> \base\ntos\inc\ke.h</code>）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">KOBJECTS</span> &#123;</span></span><br><span class="line">    EventNotificationObject = <span class="number">0</span>,</span><br><span class="line">    EventSynchronizationObject = <span class="number">1</span>,</span><br><span class="line">    MutantObject = <span class="number">2</span>,</span><br><span class="line">    ProcessObject = <span class="number">3</span>,</span><br><span class="line">    QueueObject = <span class="number">4</span>,</span><br><span class="line">    SemaphoreObject = <span class="number">5</span>,</span><br><span class="line">    ThreadObject = <span class="number">6</span>,</span><br><span class="line">    Spare1Object = <span class="number">7</span>,</span><br><span class="line">    TimerNotificationObject = <span class="number">8</span>,</span><br><span class="line">    TimerSynchronizationObject = <span class="number">9</span>,</span><br><span class="line">    Spare2Object = <span class="number">10</span>,</span><br><span class="line">    Spare3Object = <span class="number">11</span>,</span><br><span class="line">    Spare4Object = <span class="number">12</span>,</span><br><span class="line">    Spare5Object = <span class="number">13</span>,</span><br><span class="line">    Spare6Object = <span class="number">14</span>,</span><br><span class="line">    Spare7Object = <span class="number">15</span>,</span><br><span class="line">    Spare8Object = <span class="number">16</span>,</span><br><span class="line">    Spare9Object = <span class="number">17</span>,</span><br><span class="line">    ApcObject,</span><br><span class="line">    DpcObject,</span><br><span class="line">    DeviceQueueObject,</span><br><span class="line">    EventPairObject,</span><br><span class="line">    InterruptObject,</span><br><span class="line">    ProfileObject</span><br><span class="line">    &#125; KOBJECTS;</span><br></pre></td></tr></table></figure>
+
+<p>在分析<code>KeWaitForSingleObject(0x00423F61)</code>时涉及。</p>
 <h2 id="2-进程句柄表"><a href="#2-进程句柄表" class="headerlink" title="2 进程句柄表"></a>2 进程句柄表</h2><h3 id="2-1-进程句柄表的含义"><a href="#2-1-进程句柄表的含义" class="headerlink" title="2.1 进程句柄表的含义"></a>2.1 进程句柄表的含义</h3><p><strong>只有进程这个内核对象才有句柄表</strong>，其他内核对象没有句柄表。</p>
 <p>进程内核对象A自己<strong>创建或者打开</strong>的内核对象的句柄在自己的句柄表里，但是A自己的句柄不在自己的句柄表里，在父进程的句柄表里，但是A主线程的句柄值在自己的句柄表里。</p>
 <ol>
@@ -953,7 +962,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">15:45</span>
+    <span title="站点阅读时长">15:54</span>
   </span>
 </div>
 <div class="busuanzi-count">
