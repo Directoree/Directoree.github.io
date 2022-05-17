@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 多核同步（二）">
+<meta property="og:url" content="https://directoree.github.io/post/Multi-core-synchronization2/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/05/17/BVJiIkwGx1YKySj.png">
+<meta property="article:published_time" content="2022-05-17T07:34:49.000Z">
+<meta property="article:modified_time" content="2022-05-17T10:06:36.355Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="多核同步">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/05/17/BVJiIkwGx1YKySj.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Multi-core-synchronization2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 多核同步（二） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-text">1 信号量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-3%E7%8E%AF%E5%AE%9E%E4%BE%8B"><span class="nav-text">1.1 3环实例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-CreateSemaphore%E5%88%86%E6%9E%90"><span class="nav-text">1.2 CreateSemaphore分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-NtCreateSemaphore%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-text">1.3 NtCreateSemaphore源码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-ReleaseSemaphore%E5%88%86%E6%9E%90"><span class="nav-text">1.4 ReleaseSemaphore分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-KeReleaseSemaphore%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-text">1.5 KeReleaseSemaphore源码分析</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">113</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">47</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Multi-core-synchronization2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 多核同步（二）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-05-17 15:34:49 / 修改时间：18:06:36" itemprop="dateCreated datePublished" datetime="2022-05-17T15:34:49+08:00">2022-05-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E5%90%8C%E6%AD%A5/" itemprop="url" rel="index"><span itemprop="name">同步</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/%E5%90%8C%E6%AD%A5/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Multi-core-synchronization2/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 多核同步（二）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Multi-core-synchronization2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Multi-core-synchronization2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>20k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="1-信号量"><a href="#1-信号量" class="headerlink" title="1 信号量"></a>1 信号量</h2><p>信号量（Semaphore）与事件（Event）的不同在于：信号量可以让<strong>多个线程</strong>同时进入自己的临界区执行代码，而事件只允许一个线程同一时刻进入自己的临界区执行代码。</p>
+<p>信号量结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KSEMAPHORE</span><br><span class="line">nt!_KSEMAPHORE</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x010</span> Limit            : Int4B</span><br></pre></td></tr></table></figure>
+
+
+
+<p>3环常用操作信号量相关函数：</p>
+<ul>
+<li>CreateSemaphore（创建一个信号量）</li>
+<li>OpenSemaphore（为现有的一个已命名信号量对象创建一个新句柄）</li>
+<li>ReleaseSemaphore（递增信号量的当前资源计数）</li>
+</ul>
+<h3 id="1-1-3环实例"><a href="#1-1-3环实例" class="headerlink" title="1.1 3环实例"></a>1.1 3环实例</h3><p>搞个3环例子看看。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span>		</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;resource.h&quot;</span>		</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span>		</span></span><br><span class="line">		</span><br><span class="line">HANDLE hSemaphore;				</span><br><span class="line">HANDLE hThread[<span class="number">3</span>];				</span><br><span class="line">HWND hEditSet,hEdit1,hEdit2,hEdit3;				</span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc1</span><span class="params">(LPVOID lpParameter)</span>				</span></span><br><span class="line"><span class="function"></span>&#123;				</span><br><span class="line">  TCHAR szBuffer[<span class="number">10</span>];			</span><br><span class="line">  DWORD dwTimmer=<span class="number">0</span>;			</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(dwTimmer&lt;<span class="number">100</span>)			</span><br><span class="line">  &#123;			</span><br><span class="line">    WaitForSingleObject(hSemaphore, INFINITE);</span><br><span class="line">    Sleep(<span class="number">1150</span>);		</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    GetWindowText(hEdit1,szBuffer,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sscanf</span>( szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwTimmer );		</span><br><span class="line">    dwTimmer++;		</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sprintf</span>(szBuffer,<span class="string">&quot;%d&quot;</span>,dwTimmer);		</span><br><span class="line">    SetWindowText(hEdit1,szBuffer);	</span><br><span class="line">    ReleaseSemaphore(hSemaphore, <span class="number">1</span>, <span class="literal">NULL</span>);	</span><br><span class="line">  &#125;			</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;			</span><br><span class="line">&#125;				</span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc2</span><span class="params">(LPVOID lpParameter)</span>				</span></span><br><span class="line"><span class="function"></span>&#123;				</span><br><span class="line">  TCHAR szBuffer[<span class="number">10</span>];			</span><br><span class="line">  DWORD dwTimmer=<span class="number">0</span>;	</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(dwTimmer&lt;<span class="number">100</span>)			</span><br><span class="line">  &#123;		</span><br><span class="line">    WaitForSingleObject(hSemaphore, INFINITE);</span><br><span class="line">    Sleep(<span class="number">1150</span>);		</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    GetWindowText(hEdit2,szBuffer,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sscanf</span>( szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwTimmer );	<span class="comment">//szBuffer -&gt; dwTimmer</span></span><br><span class="line">    dwTimmer++;		</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sprintf</span>(szBuffer,<span class="string">&quot;%d&quot;</span>,dwTimmer);		</span><br><span class="line">    SetWindowText(hEdit2,szBuffer);		</span><br><span class="line">    ReleaseSemaphore(hSemaphore, <span class="number">1</span>, <span class="literal">NULL</span>);		</span><br><span class="line">  &#125;			</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;			</span><br><span class="line">&#125;				</span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadProc3</span><span class="params">(LPVOID lpParameter)</span>				</span></span><br><span class="line"><span class="function"></span>&#123;				</span><br><span class="line">  TCHAR szBuffer[<span class="number">10</span>];			</span><br><span class="line">  DWORD dwTimmer=<span class="number">0</span>;	</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(dwTimmer&lt;<span class="number">100</span>)			</span><br><span class="line">  &#123;	</span><br><span class="line">    WaitForSingleObject(hSemaphore, INFINITE);	</span><br><span class="line">    Sleep(<span class="number">1150</span>);		</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    GetWindowText(hEdit3,szBuffer,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sscanf</span>( szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwTimmer );		</span><br><span class="line">    dwTimmer++;		</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sprintf</span>(szBuffer,<span class="string">&quot;%d&quot;</span>,dwTimmer);		</span><br><span class="line">    SetWindowText(hEdit3,szBuffer);		</span><br><span class="line">    ReleaseSemaphore(hSemaphore, <span class="number">1</span>, <span class="literal">NULL</span>);</span><br><span class="line">  &#125;			</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;			</span><br><span class="line">&#125;				</span><br><span class="line"><span class="function">DWORD WINAPI <span class="title">ThreadBegin</span><span class="params">(LPVOID lpParameter)</span>				</span></span><br><span class="line"><span class="function"></span>&#123;				</span><br><span class="line">  TCHAR szBuffer[<span class="number">10</span>];			</span><br><span class="line">  DWORD dwMoney=<span class="number">0</span>;			</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  hSemaphore = CreateSemaphore(<span class="literal">NULL</span>,<span class="number">0</span>,<span class="number">3</span>,<span class="literal">NULL</span>);			</span><br><span class="line"></span><br><span class="line">  hThread[<span class="number">0</span>] = ::CreateThread(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadProc1,<span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);			</span><br><span class="line">  hThread[<span class="number">1</span>] = ::CreateThread(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadProc2,<span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);			</span><br><span class="line">  hThread[<span class="number">2</span>] = ::CreateThread(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadProc3,<span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);			</span><br><span class="line"></span><br><span class="line">  <span class="comment">//开始准备红包			</span></span><br><span class="line">  <span class="keyword">while</span>(dwMoney&lt;<span class="number">2000</span>)			</span><br><span class="line">  &#123;			</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    GetWindowText(hEditSet,szBuffer,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sscanf</span>( szBuffer, <span class="string">&quot;%d&quot;</span>, &amp;dwMoney );		</span><br><span class="line">    dwMoney++;		</span><br><span class="line">    <span class="built_in">memset</span>(szBuffer,<span class="number">0</span>,<span class="number">10</span>);		</span><br><span class="line">    <span class="built_in">sprintf</span>(szBuffer,<span class="string">&quot;%d&quot;</span>,dwMoney);		</span><br><span class="line">    SetWindowText(hEditSet,szBuffer);		</span><br><span class="line">  &#125;			</span><br><span class="line">  ReleaseSemaphore(hSemaphore, <span class="number">2</span>, <span class="literal">NULL</span>);			</span><br><span class="line"></span><br><span class="line">  ::WaitForMultipleObjects(<span class="number">3</span>, hThread,TRUE,INFINITE);			</span><br><span class="line">  ::CloseHandle(hSemaphore);			</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;			</span><br><span class="line">&#125;				</span><br><span class="line"><span class="function">BOOL CALLBACK <span class="title">MainDlgProc</span><span class="params">(HWND hDlg,UINT uMsg,WPARAM wParam,LPARAM lParam)</span>				</span></span><br><span class="line"><span class="function"></span>&#123;				</span><br><span class="line">  BOOL bRet = FALSE;			</span><br><span class="line"></span><br><span class="line">  <span class="keyword">switch</span>(uMsg)			</span><br><span class="line">  &#123;			</span><br><span class="line">    <span class="keyword">case</span> WM_CLOSE:			</span><br><span class="line">      &#123;		</span><br><span class="line">        EndDialog(hDlg,<span class="number">0</span>);	</span><br><span class="line">        <span class="keyword">break</span>;	</span><br><span class="line">      &#125;		</span><br><span class="line">    <span class="keyword">case</span> WM_INITDIALOG:			</span><br><span class="line">      &#123;		</span><br><span class="line">        hEditSet = GetDlgItem(hDlg,IDC_EDIT_SET);	</span><br><span class="line">        hEdit1 = GetDlgItem(hDlg,IDC_EDIT_SET_1);	</span><br><span class="line">        hEdit2 = GetDlgItem(hDlg,IDC_EDIT_SET_2);	</span><br><span class="line">        hEdit3 = GetDlgItem(hDlg,IDC_EDIT_SET_3);	</span><br><span class="line"></span><br><span class="line">        SetWindowText(hEditSet,<span class="string">&quot;0&quot;</span>);	</span><br><span class="line">        SetWindowText(hEdit1,<span class="string">&quot;0&quot;</span>);	</span><br><span class="line">        SetWindowText(hEdit2,<span class="string">&quot;0&quot;</span>);	</span><br><span class="line">        SetWindowText(hEdit3,<span class="string">&quot;0&quot;</span>);	</span><br><span class="line"></span><br><span class="line">        <span class="keyword">break</span>;	</span><br><span class="line">      &#125;		</span><br><span class="line">    <span class="keyword">case</span> WM_COMMAND:							</span><br><span class="line">      <span class="keyword">switch</span> (LOWORD (wParam))		</span><br><span class="line">      &#123;		</span><br><span class="line">        <span class="keyword">case</span> IDC_BUTTON_BEGIN:		</span><br><span class="line">          &#123;	</span><br><span class="line">            CreateThread(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadBegin,<span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> TRUE;</span><br><span class="line">          &#125;	</span><br><span class="line">      &#125;		</span><br><span class="line">      <span class="keyword">break</span> ;		</span><br><span class="line">  &#125;			</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> bRet;			</span><br><span class="line">&#125;				</span><br><span class="line"><span class="function"><span class="keyword">int</span> APIENTRY <span class="title">WinMain</span><span class="params">(HINSTANCE hInstance,				</span></span></span><br><span class="line"><span class="function"><span class="params">                     HINSTANCE hPrevInstance,				</span></span></span><br><span class="line"><span class="function"><span class="params">                     LPSTR     lpCmdLine,				</span></span></span><br><span class="line"><span class="function"><span class="params">                     <span class="keyword">int</span>       nCmdShow)</span>				</span></span><br><span class="line"><span class="function"></span>&#123;				</span><br><span class="line">  <span class="comment">// <span class="doctag">TODO:</span> Place code here.			</span></span><br><span class="line">  DialogBox(hInstance,MAKEINTRESOURCE(IDD_DIALOG_MAIN),<span class="literal">NULL</span>,MainDlgProc);			</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;			</span><br><span class="line">&#125;				</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/05/17/BVJiIkwGx1YKySj.png" alt="4.png"></p>
+<h3 id="1-2-CreateSemaphore分析"><a href="#1-2-CreateSemaphore分析" class="headerlink" title="1.2 CreateSemaphore分析"></a>1.2 CreateSemaphore分析</h3><p><code>CreateSemaphore</code>函数：创建或打开命名或未命名信号量对象。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HANDLE WINAPI <span class="title">CreateSemaphore</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  __in_opt  LPSECURITY_ATTRIBUTES lpSemaphoreAttributes,<span class="comment">//如果此参数为NULL，则该句柄不能由子进程继承。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  __in      LONG lInitialCount,		<span class="comment">//创建信号量对象时允许同时访问自身临界区的线程个数。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  __in      LONG lMaximumCount,		<span class="comment">//信号量对象的最大计数。这个值必须大于零。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  __in_opt  LPCTSTR lpName		<span class="comment">//信号量对象的名称。该名称长度仅限于MAX_PATH字符。名称比较区分大小写。</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>上述参数对应内核结构体相关成员：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KSEMAPHORE</span><br><span class="line">nt!_KSEMAPHORE</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x010</span> Limit            : Int4B	<span class="comment">//lMaximumCount</span></span><br><span class="line">     </span><br><span class="line">kd&gt; dt _DISPATCHER_HEADER</span><br><span class="line">nt!_DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x000</span> Type             : UChar	<span class="comment">//5</span></span><br><span class="line">   +<span class="number">0x001</span> Absolute         : UChar</span><br><span class="line">   +<span class="number">0x002</span> Size             : UChar</span><br><span class="line">   +<span class="number">0x003</span> Inserted         : UChar</span><br><span class="line">   +<span class="number">0x004</span> SignalState      : Int4B	<span class="comment">//lInitialCount</span></span><br><span class="line">   +<span class="number">0x008</span> WaitListHead     : _LIST_ENTRY</span><br></pre></td></tr></table></figure>
+
+<p><code>CreateSemaphore</code>函数调用过程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">kernel32.dll</span><br><span class="line"><span class="function">HANDLE __stdcall <span class="title">CreateSemaphoreA</span><span class="params">(LPSECURITY_ATTRIBUTES lpSemaphoreAttributes, LONG lInitialCount, </span></span></span><br><span class="line"><span class="function"><span class="params">                                  LONG lMaximumCount, LPCSTR lpName)</span></span></span><br><span class="line">                                    ↓          ↓</span><br><span class="line"><span class="function">HANDLE __stdcall <span class="title">CreateSemaphoreW</span><span class="params">(LPSECURITY_ATTRIBUTES lpSemaphoreAttributes, LONG lInitialCount, </span></span></span><br><span class="line"><span class="function"><span class="params">                                  LONG lMaximumCount, LPCWSTR lpName)</span></span></span><br><span class="line">                                    ↓          ↓</span><br><span class="line">ntdll.dll</span><br><span class="line"><span class="function">__stdcall <span class="title">NtCreateSemaphore</span><span class="params">(x, x, x, x, x)</span></span></span><br><span class="line">                                    ↓          ↓  </span><br><span class="line">ntkrpamp.exe</span><br><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtCreateSemaphore</span><span class="params">(PHANDLE SemaphoreHandle, ACCESS_MASK DesiredAccess, </span></span></span><br><span class="line"><span class="function"><span class="params">                                     POBJECT_ATTRIBUTES ObjectAttributes, LONG InitialCount, LONG MaximumCount)</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-NtCreateSemaphore源码分析"><a href="#1-3-NtCreateSemaphore源码分析" class="headerlink" title="1.3 NtCreateSemaphore源码分析"></a>1.3 NtCreateSemaphore源码分析</h3><p>源码如下（base\ntos\ex\semphore.c）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtCreateSemaphore</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PHANDLE SemaphoreHandle,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN ACCESS_MASK DesiredAccess,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN POBJECT_ATTRIBUTES ObjectAttributes OPTIONAL,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LONG InitialCount,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LONG MaximumCount</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    HANDLE Handle;</span><br><span class="line">    KPROCESSOR_MODE PreviousMode;</span><br><span class="line">    PVOID Semaphore;</span><br><span class="line">    NTSTATUS Status;</span><br><span class="line"></span><br><span class="line">    PreviousMode = KeGetPreviousMode();</span><br><span class="line">    <span class="keyword">if</span> (PreviousMode != KernelMode) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            ProbeForWriteHandle(SemaphoreHandle);</span><br><span class="line">        &#125; except(ExSystemExceptionFilter()) &#123;</span><br><span class="line">            <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((MaximumCount &lt;= <span class="number">0</span>) || (InitialCount &lt; <span class="number">0</span>) ||</span><br><span class="line">       (InitialCount &gt; MaximumCount)) &#123;</span><br><span class="line">        <span class="keyword">return</span> STATUS_INVALID_PARAMETER;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Status = ObCreateObject(PreviousMode,</span><br><span class="line">                            ExSemaphoreObjectType,</span><br><span class="line">                            ObjectAttributes,</span><br><span class="line">                            PreviousMode,</span><br><span class="line">                            <span class="literal">NULL</span>,</span><br><span class="line">                            <span class="keyword">sizeof</span>(KSEMAPHORE),</span><br><span class="line">                            <span class="number">0</span>,</span><br><span class="line">                            <span class="number">0</span>,</span><br><span class="line">                            (PVOID *)&amp;Semaphore);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (NT_SUCCESS(Status)) &#123;</span><br><span class="line">        KeInitializeSemaphore((PKSEMAPHORE)Semaphore,</span><br><span class="line">                              InitialCount,</span><br><span class="line">                              MaximumCount);</span><br><span class="line"></span><br><span class="line">        Status = ObInsertObject(Semaphore,</span><br><span class="line">                                <span class="literal">NULL</span>,</span><br><span class="line">                                DesiredAccess,</span><br><span class="line">                                <span class="number">0</span>,</span><br><span class="line">                                (PVOID *)<span class="literal">NULL</span>,</span><br><span class="line">                                &amp;Handle);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (NT_SUCCESS(Status)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (PreviousMode != KernelMode) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    *SemaphoreHandle = Handle;</span><br><span class="line">                &#125; except(ExSystemExceptionFilter()) &#123;</span><br><span class="line">                    NOTHING;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span> &#123;</span><br><span class="line">                *SemaphoreHandle = Handle;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逆向分析代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br></pre></td><td class="code"><pre><span class="line">PAGE:<span class="number">0053</span>D702 ; =============== S U B R O U T I N E =======================================</span><br><span class="line">PAGE:<span class="number">0053</span>D702</span><br><span class="line">PAGE:<span class="number">0053</span>D702 ; Attributes: bp-based frame</span><br><span class="line">PAGE:<span class="number">0053</span>D702</span><br><span class="line">PAGE:<span class="number">0053</span>D702 ; <span class="function">NTSTATUS __stdcall <span class="title">NtCreateSemaphore</span><span class="params">(PHANDLE SemaphoreHandle, ACCESS_MASK DesiredAccess,</span></span></span><br><span class="line"><span class="function"><span class="params">                                    POBJECT_ATTRIBUTES ObjectAttributes, LONG InitialCount, LONG MaximumCount)</span></span></span><br><span class="line">PAGE:0053D702 _NtCreateSemaphore@20 proc near         ; DATA XREF: .text:0042D51C↑o</span><br><span class="line">PAGE:<span class="number">0053</span>D702</span><br><span class="line">PAGE:<span class="number">0053</span>D702 var_2C          = dword ptr <span class="number">-2</span>Ch</span><br><span class="line">PAGE:<span class="number">0053</span>D702 var_28          = dword ptr <span class="number">-28</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D702 Semaphore       = dword ptr <span class="number">-24</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D702 PreviousMode    = byte ptr <span class="number">-20</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D702 var_1C          = dword ptr <span class="number">-1</span>Ch</span><br><span class="line">PAGE:<span class="number">0053</span>D702 ms_exc          = CPPEH_RECORD ptr <span class="number">-18</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D702 SemaphoreHandle = dword ptr  <span class="number">8</span></span><br><span class="line">PAGE:<span class="number">0053</span>D702 DesiredAccess   = dword ptr  <span class="number">0</span>Ch</span><br><span class="line">PAGE:<span class="number">0053</span>D702 ObjectAttributes= dword ptr  <span class="number">10</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D702 InitialCount    = dword ptr  <span class="number">14</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D702 MaximumCount    = dword ptr  <span class="number">18</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D702</span><br><span class="line">PAGE:<span class="number">0053</span>D702 <span class="comment">//__unwind &#123; //__SEH_prolog</span></span><br><span class="line">PAGE:<span class="number">0053</span>D702                 push    <span class="number">1</span>Ch</span><br><span class="line">PAGE:<span class="number">0053</span>D704                 push    offset stru_406258</span><br><span class="line">PAGE:<span class="number">0053</span>D709                 call    __SEH_prolog</span><br><span class="line">PAGE:<span class="number">0053</span>D70E                 mov     eax, large fs:<span class="number">124</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D714                 mov     al, [eax+_KTHREAD.PreviousMode]</span><br><span class="line">PAGE:<span class="number">0053</span>D71A                 mov     [ebp+PreviousMode], al</span><br><span class="line">PAGE:<span class="number">0053</span>D71D                 <span class="keyword">xor</span>     ebx, ebx</span><br><span class="line">PAGE:<span class="number">0053</span>D71F                 cmp     al, bl</span><br><span class="line">PAGE:<span class="number">0053</span>D721                 jz      <span class="keyword">short</span> loc_53D75D <span class="comment">//如果函数从0环调用，则无需检查参数</span></span><br><span class="line">PAGE:<span class="number">0053</span>D723 <span class="comment">//  __try &#123; //__except at loc_53D74E</span></span><br><span class="line">PAGE:<span class="number">0053</span>D723                 mov     [ebp+ms_exc.registration.TryLevel], ebx <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D723                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D723                                         <span class="comment">//函数从3环调用，进行参数检查</span></span><br><span class="line">PAGE:<span class="number">0053</span>D723                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D726                 mov     esi, [ebp+SemaphoreHandle] <span class="comment">//esi是一个地址PHANDLE，用于保存返回的HANDLE</span></span><br><span class="line">PAGE:<span class="number">0053</span>D729                 mov     eax, _MmUserProbeAddress <span class="comment">//_MmUserProbeAddress：用户空间可访问的最大地址</span></span><br><span class="line">PAGE:<span class="number">0053</span>D72E                 cmp     esi, eax</span><br><span class="line">PAGE:<span class="number">0053</span>D730                 jb      <span class="keyword">short</span> loc_53D734 <span class="comment">//符合条件：PHANDLE &lt; MmUserProbeAddress</span></span><br><span class="line">PAGE:<span class="number">0053</span>D732                 mov     [eax], ebx      <span class="comment">//PHANDLE &gt;= MmUserProbeAddress</span></span><br><span class="line">PAGE:<span class="number">0053</span>D732                                         <span class="comment">//MmUserProbeAddress = NULL</span></span><br><span class="line">PAGE:<span class="number">0053</span>D734</span><br><span class="line">PAGE:<span class="number">0053</span>D734 loc_53D734:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+2E↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D734                 mov     eax, [esi]</span><br><span class="line">PAGE:<span class="number">0053</span>D736                 mov     [esi], eax</span><br><span class="line">PAGE:<span class="number">0053</span>D736 <span class="comment">//  &#125; //starts at 53D723</span></span><br><span class="line">PAGE:<span class="number">0053</span>D738                 <span class="keyword">or</span>      [ebp+ms_exc.registration.TryLevel], <span class="number">0F</span>FFFFFFFh</span><br><span class="line">PAGE:<span class="number">0053</span>D73C                 jmp     <span class="keyword">short</span> loc_53D760 <span class="comment">//ebx == 0</span></span><br><span class="line">PAGE:<span class="number">0053</span>D73C                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D73C                                         <span class="comment">//函数正式处理业务</span></span><br><span class="line">PAGE:<span class="number">0053</span>D73C                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D73E ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">0053</span>D73E</span><br><span class="line">PAGE:<span class="number">0053</span>D73E loc_53D73E:                             <span class="comment">//DATA XREF: .text:stru_406258↑o</span></span><br><span class="line">PAGE:<span class="number">0053</span>D73E <span class="comment">//  __except filter //owned by 53D723  //异常处理</span></span><br><span class="line">PAGE:<span class="number">0053</span>D73E                 mov     eax, [ebp+ms_exc.exc_ptr]</span><br><span class="line">PAGE:<span class="number">0053</span>D741                 mov     eax, [eax]</span><br><span class="line">PAGE:<span class="number">0053</span>D743                 mov     eax, [eax]</span><br><span class="line">PAGE:<span class="number">0053</span>D745                 mov     [ebp+var_2C], eax</span><br><span class="line">PAGE:<span class="number">0053</span>D748                 call    _ExSystemExceptionFilter@<span class="number">0</span> <span class="comment">//ExSystemExceptionFilter()</span></span><br><span class="line">PAGE:<span class="number">0053</span>D74D                 retn</span><br><span class="line">PAGE:<span class="number">0053</span>D74E ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">0053</span>D74E</span><br><span class="line">PAGE:<span class="number">0053</span>D74E loc_53D74E:                             <span class="comment">//DATA XREF: .text:stru_406258↑o</span></span><br><span class="line">PAGE:<span class="number">0053</span>D74E <span class="comment">//  __except(loc_53D73E) //owned by 53D723 //异常处理</span></span><br><span class="line">PAGE:<span class="number">0053</span>D74E                 mov     esp, [ebp+ms_exc.old_esp]</span><br><span class="line">PAGE:<span class="number">0053</span>D751                 <span class="keyword">or</span>      [ebp+ms_exc.registration.TryLevel], <span class="number">0F</span>FFFFFFFh</span><br><span class="line">PAGE:<span class="number">0053</span>D755                 mov     eax, [ebp+var_2C]</span><br><span class="line">PAGE:<span class="number">0053</span>D758                 jmp     loc_53D7EF</span><br><span class="line">PAGE:<span class="number">0053</span>D75D ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">0053</span>D75D</span><br><span class="line">PAGE:<span class="number">0053</span>D75D loc_53D75D:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+1F↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D75D                 mov     esi, [ebp+SemaphoreHandle] <span class="comment">//如果函数从0环调用，则无需检查参数</span></span><br><span class="line">PAGE:<span class="number">0053</span>D760</span><br><span class="line">PAGE:<span class="number">0053</span>D760 loc_53D760:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+3A↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D760                 cmp     [ebp+MaximumCount], ebx <span class="comment">//ebx == 0</span></span><br><span class="line">PAGE:<span class="number">0053</span>D760                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D760                                         <span class="comment">//函数正式处理业务</span></span><br><span class="line">PAGE:<span class="number">0053</span>D760                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D763                 jle     loc_53D7EA      <span class="comment">//返回 STATUS_INVALID_PARAMETER (ntstatus.h)</span></span><br><span class="line">PAGE:<span class="number">0053</span>D769                 mov     edi, [ebp+InitialCount]</span><br><span class="line">PAGE:<span class="number">0053</span>D76C                 cmp     edi, ebx</span><br><span class="line">PAGE:<span class="number">0053</span>D76E                 jl      <span class="keyword">short</span> loc_53D7EA <span class="comment">//返回 STATUS_INVALID_PARAMETER (ntstatus.h)</span></span><br><span class="line">PAGE:<span class="number">0053</span>D770                 cmp     edi, [ebp+MaximumCount]</span><br><span class="line">PAGE:<span class="number">0053</span>D773                 jg      <span class="keyword">short</span> loc_53D7EA <span class="comment">//返回 STATUS_INVALID_PARAMETER (ntstatus.h)</span></span><br><span class="line">PAGE:<span class="number">0053</span>D775                 lea     eax, [ebp+Semaphore] <span class="comment">//Semaphore局部变量</span></span><br><span class="line">PAGE:<span class="number">0053</span>D778                 push    eax             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D779                 push    ebx             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D77A                 push    ebx             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D77B                 push    <span class="number">14</span>h             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D77D                 push    ebx             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D77E                 push    dword ptr [ebp+PreviousMode] <span class="comment">//BackTraceHash</span></span><br><span class="line">PAGE:<span class="number">0053</span>D781                 push    [ebp+ObjectAttributes] <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D784                 push    _ExSemaphoreObjectType <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D78A                 push    dword ptr [ebp+PreviousMode] <span class="comment">//PreviousMode</span></span><br><span class="line">PAGE:<span class="number">0053</span>D78D                 call    _ObCreateObject@<span class="number">36</span> <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D78D                                         <span class="comment">//创建对象，创建的对象暂时存到局部变量PVOID Semaphore中</span></span><br><span class="line">PAGE:<span class="number">0053</span>D78D                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D792                 mov     [ebp+var_28], eax</span><br><span class="line">PAGE:<span class="number">0053</span>D795                 cmp     eax, ebx</span><br><span class="line">PAGE:<span class="number">0053</span>D797                 jl      <span class="keyword">short</span> loc_53D7E5 <span class="comment">//ObCreateObject创建对象失败</span></span><br><span class="line">PAGE:<span class="number">0053</span>D799                 push    [ebp+MaximumCount] <span class="comment">//Limit</span></span><br><span class="line">PAGE:<span class="number">0053</span>D79C                 push    edi             <span class="comment">//Count</span></span><br><span class="line">PAGE:<span class="number">0053</span>D79D                 push    [ebp+Semaphore] <span class="comment">//Semaphore</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A0                 call    _KeInitializeSemaphore@<span class="number">12</span> <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A0                                         <span class="comment">//对象虽然创建出来了，但是该对象的属性成员还没有赋值给对象自己</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A0                                         <span class="comment">//本函数对这些属性进行赋值</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A0                                         <span class="comment">//同时将对象插入到自己的等待链_KWAIT_BLOCK.WaitListEntry</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A0                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A5                 lea     eax, [ebp+var_1C] <span class="comment">//var_1C、eax保存返回的句柄值</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A8                 push    eax             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7A9                 push    ebx             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7AA                 push    ebx             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7AB                 push    [ebp+DesiredAccess] <span class="comment">//AccessMask</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7AE                 push    ebx             <span class="comment">//int</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7AF                 push    [ebp+Semaphore] <span class="comment">//Object</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7B2                 call    _ObInsertObject@<span class="number">24</span> <span class="comment">//将所创建的对象插入对象目录和本进程句柄表(或内核句柄表)，并返回句柄。</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7B2                                         <span class="comment">//https://pediy.com/kssd/pediy11/114734/820481/44303.pdf</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7B7                 mov     [ebp+var_28], eax</span><br><span class="line">PAGE:<span class="number">0053</span>D7BA                 cmp     eax, ebx        <span class="comment">//ebx == 0，eax保存返回的句柄值</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7BC                 jl      <span class="keyword">short</span> loc_53D7E5 <span class="comment">//ObCreateObject创建对象失败</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7BE                 cmp     [ebp+PreviousMode], bl</span><br><span class="line">PAGE:<span class="number">0053</span>D7C1                 jz      <span class="keyword">short</span> loc_53D7E0 <span class="comment">//var_1C保存返回的句柄值</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7C3 <span class="comment">//  __try &#123; //__except at loc_53D7DB</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7C3                 mov     [ebp+ms_exc.registration.TryLevel], <span class="number">1</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7CA                 mov     eax, [ebp+var_1C] <span class="comment">//var_1C保存返回的句柄值</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7CD                 mov     [esi], eax      <span class="comment">//esi指向参数SemaphoreHandle（PHANDLE）</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7CD <span class="comment">//  &#125; //starts at 53D7C3</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7CF</span><br><span class="line">PAGE:<span class="number">0053</span>D7CF loc_53D7CF:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+DC↓j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7CF                 <span class="keyword">or</span>      [ebp+ms_exc.registration.TryLevel], <span class="number">0F</span>FFFFFFFh</span><br><span class="line">PAGE:<span class="number">0053</span>D7D3                 jmp     <span class="keyword">short</span> loc_53D7E5 <span class="comment">//ObCreateObject创建对象失败</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7D5 ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">0053</span>D7D5</span><br><span class="line">PAGE:<span class="number">0053</span>D7D5 loc_53D7D5:                             <span class="comment">//DATA XREF: .text:stru_406258↑o</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7D5 <span class="comment">//  __except filter //owned by 53D7C3</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7D5                 call    _ExSystemExceptionFilter@<span class="number">0</span> <span class="comment">//ExSystemExceptionFilter()</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7DA                 retn</span><br><span class="line">PAGE:<span class="number">0053</span>D7DB ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">0053</span>D7DB</span><br><span class="line">PAGE:<span class="number">0053</span>D7DB loc_53D7DB:                             <span class="comment">//DATA XREF: .text:stru_406258↑o</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7DB <span class="comment">//  __except(loc_53D7D5) //owned by 53D7C3</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7DB                 mov     esp, [ebp+ms_exc.old_esp]</span><br><span class="line">PAGE:<span class="number">0053</span>D7DE                 jmp     <span class="keyword">short</span> loc_53D7CF</span><br><span class="line">PAGE:<span class="number">0053</span>D7E0 ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">0053</span>D7E0</span><br><span class="line">PAGE:<span class="number">0053</span>D7E0 loc_53D7E0:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+BF↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7E0                 mov     eax, [ebp+var_1C] <span class="comment">//var_1C保存返回的句柄值</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7E3                 mov     [esi], eax</span><br><span class="line">PAGE:<span class="number">0053</span>D7E5</span><br><span class="line">PAGE:<span class="number">0053</span>D7E5 loc_53D7E5:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+95↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7E5                                         <span class="comment">//NtCreateSemaphore(x,x,x,x,x)+BA↑j ...</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7E5                 mov     eax, [ebp+var_28] <span class="comment">//ObCreateObject创建对象失败</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7E8                 jmp     <span class="keyword">short</span> loc_53D7EF</span><br><span class="line">PAGE:<span class="number">0053</span>D7EA ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">0053</span>D7EA</span><br><span class="line">PAGE:<span class="number">0053</span>D7EA loc_53D7EA:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+61↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7EA                                         <span class="comment">//NtCreateSemaphore(x,x,x,x,x)+6C↑j ...</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7EA                 mov     eax, <span class="number">0</span>C000000Dh <span class="comment">//返回 STATUS_INVALID_PARAMETER (ntstatus.h)</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7EF</span><br><span class="line">PAGE:<span class="number">0053</span>D7EF loc_53D7EF:                             <span class="comment">//CODE XREF: NtCreateSemaphore(x,x,x,x,x)+56↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7EF                                         <span class="comment">//NtCreateSemaphore(x,x,x,x,x)+E6↑j</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7EF                 call    __SEH_epilog</span><br><span class="line">PAGE:<span class="number">0053</span>D7F4                 retn    <span class="number">14</span>h</span><br><span class="line">PAGE:<span class="number">0053</span>D7F4 <span class="comment">//&#125; //starts at 53D702</span></span><br><span class="line">PAGE:<span class="number">0053</span>D7F4 _NtCreateSemaphore@<span class="number">20</span> endp</span><br><span class="line">PAGE:<span class="number">0053</span>D7F4</span><br><span class="line">PAGE:<span class="number">0053</span>D7F4 ; ---------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-4-ReleaseSemaphore分析"><a href="#1-4-ReleaseSemaphore分析" class="headerlink" title="1.4 ReleaseSemaphore分析"></a>1.4 ReleaseSemaphore分析</h3><p><code>ReleaseSemaphore</code>函数将指定信号量对象的计数增加指定数量。</p>
+<div class="note primary"><p>设置$NewSignalState &#x3D; OldSignalState  + N(参数)$</p>
+</div>
+
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">ReleaseSemaphore</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  __in       HANDLE hSemaphore,</span></span></span><br><span class="line"><span class="function"><span class="params">  __in       LONG lReleaseCount,<span class="comment">//信号量对象当前计数的增加量。该值必须大于零。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  				<span class="comment">//如果指定的数量会导致信号量的计数超过创建信号量时指定的最大计数，则计数不会更改，函数返回FALSE。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  __out_opt  LPLONG lpPreviousCount<span class="comment">//保存OldSignalState，若不需要之前的计数，此参数可以为NULL。</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>ReleaseSemaphore</code>函数调用过程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kernel32.dll</span><br><span class="line"><span class="function">BOOL __stdcall <span class="title">ReleaseSemaphore</span><span class="params">(HANDLE hSemaphore, LONG lReleaseCount, LPLONG lpPreviousCount)</span></span></span><br><span class="line">                                    ↓          ↓</span><br><span class="line">ntdll.dll</span><br><span class="line">  <span class="function">__stdcall <span class="title">NtReleaseSemaphore</span><span class="params">(x, x, x)</span>	<span class="comment">//【0BDh】</span></span></span><br><span class="line">                                    ↓          ↓</span><br><span class="line">ntkrpamp.exe</span><br><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtReleaseSemaphore</span><span class="params">(HANDLE SemaphoreHandle, LONG ReleaseCount, PLONG PreviousCount)</span></span></span><br><span class="line">                                    ↓          ↓</span><br><span class="line"><span class="function">LONG __stdcall <span class="title">KeReleaseSemaphore</span><span class="params">(PRKSEMAPHORE Semaphore, KPRIORITY Increment, LONG Adjustment, BOOLEAN Wait)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>关于<code>KeReleaseSemaphore</code>的参数<code>Wait</code>：指定对<strong>KeReleaseSemaphore</strong>的调用后是否应立即调用<strong>KeWaitXxx</strong>例程之一。如果<strong>为真</strong>，<strong>KeReleaseSemaphore</strong>调用后必须调用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kewaitformultipleobjects">KeWaitForMultipleObjects</a>、<strong>KeWaitForMutexObject</strong>或<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kewaitforsingleobject">KeWaitForSingleObject</a>。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/nf-wdm-kereleasesemaphore"><strong>KeReleaseSemaphore</strong>例程可能会暂时提高IRQL。如果<em>Wait</em>参数为<strong>FALSE</strong>，则例程在返回之前，将IRQL恢复到调用开始时的原始值。</a></p>
+<p>如果<em>Wait</em> &#x3D; <strong>TRUE</strong>，则例程返回而不降低IRQL。在这种情况下，<strong>KeReleaseSemaphore</strong>调用后必须立即进行<strong>KeWaitXxx</strong>调用。通过设置<em>Wait</em> &#x3D; <strong>TRUE</strong>，调用者可以防止<strong>KeReleaseSemaphore</strong>调用和<strong>KeWaitXxx</strong>调用之间发生不必要的上下文切换。<strong>KeWaitXxx</strong>例程在返回之前，在<strong>KeReleaseSemaphore</strong>调用开始时将IRQL恢复到原始值。虽然IRQL禁用了两个调用之间的上下文切换，但这些调用不能可靠地用作原子操作的开始和结束。例如，在这两个调用之间，在另一个处理器上同时运行的线程可能会更改信号量对象或等待目标的状态。</p>
+</blockquote>
+<h3 id="1-5-KeReleaseSemaphore源码分析"><a href="#1-5-KeReleaseSemaphore源码分析" class="headerlink" title="1.5 KeReleaseSemaphore源码分析"></a>1.5 KeReleaseSemaphore源码分析</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LONG __stdcall <span class="title">KeReleaseSemaphore</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">      IN PRKSEMAPHORE  Semaphore,	<span class="comment">//信号量对象的指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">      IN KPRIORITY  Increment,		<span class="comment">//指定如果释放信号量导致等待得到满足，则要应用的优先级增量。</span></span></span></span><br><span class="line"><span class="function"><span class="params">      IN LONG  Adjustment,		<span class="comment">//指定要添加到当前信号量计数的值。必须大于0</span></span></span></span><br><span class="line"><span class="function"><span class="params">      IN BOOLEAN  Wait			<span class="comment">//指定对KeReleaseSemaphore的调用后是否应立即调用KeWaitXxx例程之一。</span></span></span></span><br><span class="line"><span class="function"><span class="params">      )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>函数作用：</p>
+<ol>
+<li>设置SignalState &#x3D; SignalState  + N(参数)</li>
+</ol>
+<ol start="2">
+<li>通过WaitListHead找到所有线程，并从等待链表中摘掉。</li>
+</ol>
+<div class="note default"><p>设置$NewSignalState &#x3D; OldSignalState  + N(参数)$</p>
+</div>
+
+<p>源代码如下（base\ntos\ke\semphobj.c）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LONG __stdcall <span class="title">KeReleaseSemaphore</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PRKSEMAPHORE Semaphore,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN KPRIORITY Increment,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LONG Adjustment,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN BOOLEAN Wait</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    LONG NewState;</span><br><span class="line">    KIRQL OldIrql;</span><br><span class="line">    LONG OldState;</span><br><span class="line">    PRKTHREAD Thread;</span><br><span class="line"></span><br><span class="line">    ASSERT_SEMAPHORE( Semaphore );</span><br><span class="line">    ASSERT(KeGetCurrentIrql() &lt;= DISPATCH_LEVEL);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Raise IRQL to dispatcher level and lock dispatcher database.</span></span><br><span class="line">    KiLockDispatcherDatabase(&amp;OldIrql);</span><br><span class="line"></span><br><span class="line">    OldState = Semaphore-&gt;Header.SignalState;</span><br><span class="line">    NewState = OldState + Adjustment;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((NewState &gt; Semaphore-&gt;Limit) || (NewState &lt; OldState)) &#123;</span><br><span class="line">        KiUnlockDispatcherDatabase(OldIrql);</span><br><span class="line">        ExRaiseStatus(STATUS_SEMAPHORE_LIMIT_EXCEEDED);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Set the new signal state of the semaphore object and set the wait</span></span><br><span class="line">    <span class="comment">// next value. If the previous signal state was Not-Signaled (i.e.</span></span><br><span class="line">    <span class="comment">// the count was zero), and the wait queue is not empty, then attempt</span></span><br><span class="line">    <span class="comment">// to satisfy as many Waits as possible.</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    Semaphore-&gt;Header.SignalState = NewState;</span><br><span class="line">    <span class="keyword">if</span> ((OldState == <span class="number">0</span>) &amp;&amp; (IsListEmpty(&amp;Semaphore-&gt;Header.WaitListHead) == FALSE)) &#123;</span><br><span class="line">        KiWaitTest(Semaphore, Increment);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">//OldState &gt; 0 说明当前信号量对象已经被用，直接返回</span></span><br><span class="line">    <span class="keyword">if</span> (Wait != FALSE) &#123;</span><br><span class="line">        Thread = KeGetCurrentThread();</span><br><span class="line">        Thread-&gt;WaitNext = Wait;</span><br><span class="line">        Thread-&gt;WaitIrql = OldIrql;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        KiUnlockDispatcherDatabase(OldIrql);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> OldState;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>逆向分析代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00425</span>EFA ============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">00425</span>EFA</span><br><span class="line">.text:<span class="number">00425</span>EFA <span class="comment">//Attributes: bp-based frame</span></span><br><span class="line">.text:<span class="number">00425</span>EFA</span><br><span class="line">.text:<span class="number">00425</span>EFA <span class="comment">//LONG __stdcall KeReleaseSemaphore(PRKSEMAPHORE Semaphore, KPRIORITY Increment, LONG Adjustment, </span></span><br><span class="line">  							<span class="comment">//BOOLEAN Wait)</span></span><br><span class="line">.text:<span class="number">00425</span>EFA                 <span class="keyword">public</span> _KeReleaseSemaphore@<span class="number">16</span></span><br><span class="line">.text:<span class="number">00425</span>EFA _KeReleaseSemaphore@<span class="number">16</span> proc near        <span class="comment">//CODE XREF: IoRaiseInformationalHardError(x,x,x)+205↑p</span></span><br><span class="line">.text:<span class="number">00425</span>EFA                                         <span class="comment">//MiCheckForControlAreaDeletion(x)+77↓p ...</span></span><br><span class="line">.text:<span class="number">00425</span>EFA</span><br><span class="line">.text:<span class="number">00425</span>EFA var_1           = byte ptr <span class="number">-1</span></span><br><span class="line">.text:<span class="number">00425</span>EFA Semaphore       = dword ptr  <span class="number">8</span></span><br><span class="line">.text:<span class="number">00425</span>EFA Increment       = dword ptr  <span class="number">0</span>Ch</span><br><span class="line">.text:<span class="number">00425</span>EFA Adjustment      = dword ptr  <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">00425</span>EFA Wait            = byte ptr  <span class="number">14</span>h</span><br><span class="line">.text:<span class="number">00425</span>EFA</span><br><span class="line">.text:<span class="number">00425</span>EFA                 mov     edi, edi</span><br><span class="line">.text:<span class="number">00425</span>EFC                 push    ebp</span><br><span class="line">.text:<span class="number">00425</span>EFD                 mov     ebp, esp</span><br><span class="line">.text:<span class="number">00425</span>EFF                 push    ecx</span><br><span class="line">.text:<span class="number">00425F</span>00                 push    ebx</span><br><span class="line">.text:<span class="number">00425F</span>01                 push    esi</span><br><span class="line">.text:<span class="number">00425F</span>02                 push    edi</span><br><span class="line">.text:<span class="number">00425F</span>03                 <span class="keyword">xor</span>     ecx, ecx</span><br><span class="line">.text:<span class="number">00425F</span>05                 call    ds:__imp_@KeAcquireQueuedSpinLockRaiseToSynch@<span class="number">4</span> </span><br><span class="line">.text:<span class="number">00425F</span>0B                 mov     esi, [ebp+Semaphore]</span><br><span class="line">.text:<span class="number">00425F</span>0E                 mov     ebx, [esi+_KSEMAPHORE.Header.SignalState] <span class="comment">//ebx = OldSignalState</span></span><br><span class="line">.text:<span class="number">00425F</span>11                 mov     cl, al</span><br><span class="line">.text:<span class="number">00425F</span>13                 mov     eax, [ebp+Adjustment]</span><br><span class="line">.text:<span class="number">00425F</span>16                 lea     edi, [ebx+eax]</span><br><span class="line">.text:<span class="number">00425F</span>19                 cmp     edi, [esi+_KSEMAPHORE.Limit]</span><br><span class="line">.text:<span class="number">00425F</span>1C                 mov     [ebp+var_1], cl <span class="comment">//var_1 = 当前 IRQL</span></span><br><span class="line">.text:<span class="number">00425F</span>1F                 jg      <span class="keyword">short</span> loc_425F25 <span class="comment">//--</span></span><br><span class="line">.text:<span class="number">00425F</span>1F                                         <span class="comment">//OldSignalState + Adjustment &gt; Limit</span></span><br><span class="line">.text:<span class="number">00425F</span>1F                                         <span class="comment">//错误处理，返回</span></span><br><span class="line">.text:<span class="number">00425F</span>1F                                         <span class="comment">//--</span></span><br><span class="line">.text:<span class="number">00425F</span>21                 cmp     edi, ebx        <span class="comment">//--</span></span><br><span class="line">.text:<span class="number">00425F</span>21                                         <span class="comment">//有可能加完之后溢出了，变得比加之前的SignalState还小</span></span><br><span class="line">.text:<span class="number">00425F</span>21                                         <span class="comment">//则产生异常</span></span><br><span class="line">.text:<span class="number">00425F</span>21                                         <span class="comment">//--</span></span><br><span class="line">.text:<span class="number">00425F</span>23                 jge     <span class="keyword">short</span> loc_425F34 <span class="comment">//正常处理业务</span></span><br><span class="line">.text:<span class="number">00425F</span>25</span><br><span class="line">.text:<span class="number">00425F</span>25 loc_425F25:                             <span class="comment">//CODE XREF: KeReleaseSemaphore(x,x,x,x)+25↑j</span></span><br><span class="line">.text:<span class="number">00425F</span>25                 call    @KiUnlockDispatcherDatabase@<span class="number">4</span> <span class="comment">//KiUnlockDispatcherDatabase(x)</span></span><br><span class="line">.text:<span class="number">00425F</span>2A                 push    <span class="number">0</span>C0000047h      <span class="comment">//STATUS_SEMAPHORE_LIMIT_EXCEEDED</span></span><br><span class="line">.text:<span class="number">00425F</span>2F                 call    _ExRaiseStatus@<span class="number">4</span> <span class="comment">//ExRaiseStatus(x)</span></span><br><span class="line">.text:<span class="number">00425F</span>34 --------------------------------------------------------------------------</span><br><span class="line">.text:<span class="number">00425F</span>34</span><br><span class="line">.text:<span class="number">00425F</span>34 loc_425F34:                             <span class="comment">//CODE XREF: KeReleaseSemaphore(x,x,x,x)+29↑j</span></span><br><span class="line">.text:<span class="number">00425F</span>34                 test    ebx, ebx        <span class="comment">//正常处理业务</span></span><br><span class="line">.text:<span class="number">00425F</span>36                 mov     [esi+_KSEMAPHORE.Header.SignalState], edi <span class="comment">//edi = OldSignalState + Adjustment</span></span><br><span class="line">.text:<span class="number">00425F</span>39                 jnz     <span class="keyword">short</span> loc_425F4C <span class="comment">//OldSignalState != 0，说明当前信号量对象已经被用，直接返回</span></span><br><span class="line">.text:<span class="number">00425F</span>3B                 lea     eax, [esi+_KSEMAPHORE.Header.WaitListHead.Flink] <span class="comment">//--</span></span><br><span class="line">.text:<span class="number">00425F</span>3B                                         <span class="comment">//--</span></span><br><span class="line">.text:<span class="number">00425F</span>3B                                         <span class="comment">//OldSignalState == 0</span></span><br><span class="line">.text:<span class="number">00425F</span>3B                                         <span class="comment">//--</span></span><br><span class="line">.text:<span class="number">00425F</span>3E                 cmp     [eax], eax      <span class="comment">//判断当前被等待对象是否有线程在等待</span></span><br><span class="line">.text:<span class="number">00425F</span>40                 jz      <span class="keyword">short</span> loc_425F4C <span class="comment">//还没有线程在等待该信号量对象，返回</span></span><br><span class="line">.text:<span class="number">00425F</span>42                 mov     edx, [ebp+Increment]</span><br><span class="line">.text:<span class="number">00425F</span>45                 mov     ecx, esi</span><br><span class="line">.text:<span class="number">00425F</span>47                 call    @KiWaitTest@<span class="number">8</span>   <span class="comment">//----</span></span><br><span class="line">.text:<span class="number">00425F</span>47                                         <span class="comment">//循环地将在该等待对象上的所有线程从等待网上摘掉，并且从线程等待链上摘掉，信号</span></span><br><span class="line">  							<span class="comment">//值也进行处理</span></span><br><span class="line">.text:<span class="number">00425F</span>47                                         <span class="comment">//ecx = 被等待对象</span></span><br><span class="line">.text:<span class="number">00425F</span>47                                         <span class="comment">//edx = Increment</span></span><br><span class="line">.text:<span class="number">00425F</span>47                                         <span class="comment">//SignalState == 1(Event),OldSignalState + Adjustment</span></span><br><span class="line">.text:<span class="number">00425F</span>47                                         <span class="comment">//----</span></span><br><span class="line">.text:<span class="number">00425F</span>4C</span><br><span class="line">.text:<span class="number">00425F</span>4C loc_425F4C:                             <span class="comment">//CODE XREF: KeReleaseSemaphore(x,x,x,x)+3F↑j</span></span><br><span class="line">.text:<span class="number">00425F</span>4C                                         <span class="comment">//KeReleaseSemaphore(x,x,x,x)+46↑j</span></span><br><span class="line">.text:<span class="number">00425F</span>4C                 mov     cl, [ebp+Wait]  <span class="comment">//还没有线程在等待该信号量对象，返回</span></span><br><span class="line">.text:<span class="number">00425F</span>4F                 test    cl, cl</span><br><span class="line">.text:<span class="number">00425F</span>51                 jz      <span class="keyword">short</span> loc_425F64</span><br><span class="line">.text:<span class="number">00425F</span>53                 mov     eax, large fs:<span class="number">124</span>h</span><br><span class="line">.text:<span class="number">00425F</span>59                 mov     [eax+_KTHREAD.WaitNext], cl</span><br><span class="line">.text:<span class="number">00425F</span>5C                 mov     cl, [ebp+var_1]</span><br><span class="line">.text:<span class="number">00425F</span>5F                 mov     [eax+_KTHREAD.WaitIrql], cl</span><br><span class="line">.text:<span class="number">00425F</span>62                 jmp     <span class="keyword">short</span> loc_425F6C</span><br><span class="line">.text:<span class="number">00425F</span>64 --------------------------------------------------------------------------</span><br><span class="line">.text:<span class="number">00425F</span>64</span><br><span class="line">.text:<span class="number">00425F</span>64 loc_425F64:                             <span class="comment">//CODE XREF: KeReleaseSemaphore(x,x,x,x)+57↑j</span></span><br><span class="line">.text:<span class="number">00425F</span>64                 mov     cl, [ebp+var_1]</span><br><span class="line">.text:<span class="number">00425F</span>67                 call    @KiUnlockDispatcherDatabase@<span class="number">4</span> <span class="comment">//KiUnlockDispatcherDatabase(x)</span></span><br><span class="line">.text:<span class="number">00425F</span>6C</span><br><span class="line">.text:<span class="number">00425F</span>6C loc_425F6C:                             <span class="comment">//CODE XREF: KeReleaseSemaphore(x,x,x,x)+68↑j</span></span><br><span class="line">.text:<span class="number">00425F</span>6C                 pop     edi</span><br><span class="line">.text:<span class="number">00425F</span>6D                 pop     esi</span><br><span class="line">.text:<span class="number">00425F</span>6E                 mov     eax, ebx</span><br><span class="line">.text:<span class="number">00425F</span>70                 pop     ebx</span><br><span class="line">.text:<span class="number">00425F</span>71                 leave</span><br><span class="line">.text:<span class="number">00425F</span>72                 retn    <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">00425F</span>72 _KeReleaseSemaphore@<span class="number">16</span> endp</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Multi-core-synchronization2/" title="Windows XP 多核同步（二）">https://directoree.github.io/post/Multi-core-synchronization2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/%E5%A4%9A%E6%A0%B8%E5%90%8C%E6%AD%A5/" rel="tag"># 多核同步</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Multi-core-synchronization/" rel="prev" title="Windows XP 多核同步（一）">
+                  <i class="fa fa-chevron-left"></i> Windows XP 多核同步（一）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">16:32</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Multi-core-synchronization2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
