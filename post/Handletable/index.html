@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/04/22/RVcMoS2EU15iGZs.png">
 <meta property="og:image" content="https://s2.loli.net/2022/04/23/gAVcQte1X65PTZD.png">
 <meta property="article:published_time" content="2022-04-16T09:12:20.000Z">
-<meta property="article:modified_time" content="2022-05-07T03:30:23.659Z">
+<meta property="article:modified_time" content="2022-05-27T12:31:33.592Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="句柄表">
@@ -252,7 +252,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -265,7 +265,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-count">62</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -360,7 +360,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-05-07 11:30:23" itemprop="dateModified" datetime="2022-05-07T11:30:23+08:00">2022-05-07</time>
+        <time title="修改时间：2022-05-27 20:31:33" itemprop="dateModified" datetime="2022-05-27T20:31:33+08:00">2022-05-27</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -416,7 +416,7 @@
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>23 分钟</span>
+      <span>24 分钟</span>
     </span>
 </div>
 
@@ -448,7 +448,7 @@
 
 <div class="note success"><p>对象的两种引用方式：</p>
 <ul>
-<li><p>在内核中直接通过<strong>对象地址</strong>来引用，<code>ObReferenceObjectByPointer</code>使<code>PointerCount</code>计数加1。</p>
+<li><p>在内核中直接通过<strong>对象地址</strong>来引用，<code>ObReferenceObjectByPointer</code>使<code>PointerCount</code>计数减1。</p>
 </li>
 <li><p><strong>通过句柄</strong>来引用对象。使用<code>ObpIncrementHandleCount</code>使<code>HandleCount</code>加1，使用<code>ObpDecrementHandleCount</code>使<code>HandleCount</code>减1。</p>
 <ul>
@@ -483,7 +483,36 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">KOBJECTS</span> &#123;</span></span><br><span class="line">    EventNotificationObject = <span class="number">0</span>,</span><br><span class="line">    EventSynchronizationObject = <span class="number">1</span>,</span><br><span class="line">    MutantObject = <span class="number">2</span>,</span><br><span class="line">    ProcessObject = <span class="number">3</span>,</span><br><span class="line">    QueueObject = <span class="number">4</span>,</span><br><span class="line">    SemaphoreObject = <span class="number">5</span>,</span><br><span class="line">    ThreadObject = <span class="number">6</span>,</span><br><span class="line">    Spare1Object = <span class="number">7</span>,</span><br><span class="line">    TimerNotificationObject = <span class="number">8</span>,</span><br><span class="line">    TimerSynchronizationObject = <span class="number">9</span>,</span><br><span class="line">    Spare2Object = <span class="number">10</span>,</span><br><span class="line">    Spare3Object = <span class="number">11</span>,</span><br><span class="line">    Spare4Object = <span class="number">12</span>,</span><br><span class="line">    Spare5Object = <span class="number">13</span>,</span><br><span class="line">    Spare6Object = <span class="number">14</span>,</span><br><span class="line">    Spare7Object = <span class="number">15</span>,</span><br><span class="line">    Spare8Object = <span class="number">16</span>,</span><br><span class="line">    Spare9Object = <span class="number">17</span>,</span><br><span class="line">    ApcObject,</span><br><span class="line">    DpcObject,</span><br><span class="line">    DeviceQueueObject,</span><br><span class="line">    EventPairObject,</span><br><span class="line">    InterruptObject,</span><br><span class="line">    ProfileObject</span><br><span class="line">    &#125; KOBJECTS;</span><br></pre></td></tr></table></figure>
 
 <p>在分析<code>KeWaitForSingleObject(0x00423F61)</code>时涉及。</p>
-<h2 id="2-进程句柄表"><a href="#2-进程句柄表" class="headerlink" title="2 进程句柄表"></a>2 进程句柄表</h2><h3 id="2-1-进程句柄表的含义"><a href="#2-1-进程句柄表的含义" class="headerlink" title="2.1 进程句柄表的含义"></a>2.1 进程句柄表的含义</h3><p><strong>只有进程这个内核对象才有句柄表</strong>，其他内核对象没有句柄表。</p>
+<h2 id="2-进程句柄表"><a href="#2-进程句柄表" class="headerlink" title="2 进程句柄表"></a>2 进程句柄表</h2><p>句柄值：</p>
+<table>
+<thead>
+<tr>
+<th align="left">句柄值</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>0</strong></td>
+<td align="left">ActiveThreads &#x3D; KTHREAD.ApcState.Process.ActiveThreads<br />- ActiveThreads !&#x3D; 1，结束当前线程。<br />- ActiveThreads &#x3D;&#x3D; 1，直接返回，也就是不能结束当前进程的最后一个线程。<br />在分析<code>NtTerminateThread(IN HANDLE ThreadHandle OPTIONAL,IN NTSTATUS ExitStatus)</code>时逆得的。</td>
+</tr>
+<tr>
+<td align="left"><strong>-1</strong></td>
+<td align="left"><mark class="label warning">代表当前进程</mark></td>
+</tr>
+<tr>
+<td align="left"><strong>-2</strong></td>
+<td align="left"><mark class="label success">代表当前线程</mark></td>
+</tr>
+<tr>
+<td align="left">一个为4倍数的正数</td>
+<td align="left">句柄表中的索引</td>
+</tr>
+<tr>
+<td align="left"><strong>负数</strong></td>
+<td align="left">其值的绝对值为<strong>System进程中的句柄值</strong>，ObpKernelHandleTable，仅限于内核模式的函数可以引用。</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-进程句柄表的含义"><a href="#2-1-进程句柄表的含义" class="headerlink" title="2.1 进程句柄表的含义"></a>2.1 进程句柄表的含义</h3><p><strong>只有进程这个内核对象才有句柄表</strong>，其他内核对象没有句柄表。</p>
 <p>进程内核对象A自己<strong>创建或者打开</strong>的内核对象的句柄在自己的句柄表里，但是A自己的句柄不在自己的句柄表里，在父进程的句柄表里，但是A主线程的句柄值在自己的句柄表里。</p>
 <ol>
 <li><p>每个进程对象都有一张属于自身进程的句柄表，当这个进程创建或者打开一个内核对象时，将获得一个句柄，通过这个句柄可以访问内核对象。</p>
@@ -591,6 +620,10 @@
 </tr>
 </thead>
 <tbody><tr>
+<td align="left"><strong>0</strong></td>
+<td align="left">ActiveThreads &#x3D; KTHREAD.ApcState.Process.ActiveThreads<br />- ActiveThreads !&#x3D; 1，结束当前线程。<br />- ActiveThreads &#x3D;&#x3D; 1，直接返回，也就是不能结束当前进程的最后一个线程。<br />在分析<code>NtTerminateThread(IN HANDLE ThreadHandle OPTIONAL,IN NTSTATUS ExitStatus)</code>时逆得的。</td>
+</tr>
+<tr>
 <td align="left"><strong>-1</strong></td>
 <td align="left"><mark class="label warning">代表当前进程</mark></td>
 </tr>
@@ -955,14 +988,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.1m</span>
+    <span title="站点总字数">1.2m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:02</span>
+    <span title="站点阅读时长">17:31</span>
   </span>
 </div>
 <div class="busuanzi-count">

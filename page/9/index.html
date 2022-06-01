@@ -240,7 +240,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">114</span>
+          <span class="site-state-item-count">115</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -253,7 +253,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">61</span>
+        <span class="site-state-item-count">62</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -308,6 +308,204 @@
       
 
       
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Java-Variable-InnerClass6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/Java-Variable-InnerClass6/" class="post-title-link" itemprop="url">Java变量及其传递、内部类(4.9-4.10)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-12-27 23:27:04" itemprop="dateCreated datePublished" datetime="2018-12-27T23:27:04+08:00">2018-12-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2019-07-17 00:50:18" itemprop="dateModified" datetime="2019-07-17T00:50:18+08:00">2019-07-17</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Java-Variable-InnerClass6/" class="post-meta-item leancloud_visitors" data-flag-title="Java变量及其传递、内部类(4.9-4.10)" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Java-Variable-InnerClass6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Java-Variable-InnerClass6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>12k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>11 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>&amp;emsp;<br>&amp;emsp;</p>
+<center><font color="#3CB371" face="Comic sans MS" size=5>变量及其传递 & 内部类</font></center>
+
+<p>&amp;emsp;</p>
+<h3 id="一、-Java变量及其传递"><a href="#一、-Java变量及其传递" class="headerlink" title="一、 Java变量及其传递"></a><font color="#FF6347" face="Comic sans MS">一、 Java变量及其传递</font></h3><h4 id="1-1-基本数据变量与引用型变量"><a href="#1-1-基本数据变量与引用型变量" class="headerlink" title="1.1  基本数据变量与引用型变量"></a><font color="#20B2AA" face="Comic sans MS">1.1  基本数据变量与引用型变量</font></h4><p><font face="Comic sans MS"><strong>1.  📒Java变量:</strong><br>&amp;emsp;<font color="red"><strong>(1). 基本型变量(8种)</strong></font><br>&amp;emsp;&amp;emsp; <strong>char,byte,short,int,long,float,double,boolean</strong><br>&amp;emsp;<font color="red"><strong>(2). 引用型变量：</strong></font><strong>对象,接口,数组</strong></font>            </p>
+<p><img data-src="https://i.loli.net/2018/12/27/5c24f23dc321f.png" alt="T2.png"><br><img data-src="https://i.loli.net/2018/12/27/5c24f4379eed2.png" alt="N.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">举例：</span><br><span class="line">    public class MyDate&#123;</span><br><span class="line">	private int day=12;</span><br><span class="line">	private int month=6;</span><br><span class="line">	private int year=1900;</span><br><span class="line">	public MyDate(int y,int m,int d)&#123;</span><br><span class="line">		year=y;</span><br><span class="line">		month=m;</span><br><span class="line">		day=d;&#125;</span><br><span class="line">          void addYear()</span><br><span class="line">	&#123;   year++;&#125;</span><br><span class="line">         public void <span class="function"><span class="title">display</span></span>()&#123;</span><br><span class="line">	System.out.println(year+<span class="string">&quot;-&quot;</span>+month</span><br><span class="line">             +<span class="string">&quot;-&quot;</span>+day);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">       MyDate m,n;</span><br><span class="line">       m=new MyDate(2003,9,22);</span><br><span class="line">       n=m;     <span class="string">&quot;//n和m指向同一个地址&quot;</span></span><br><span class="line">       n.addYear();</span><br><span class="line">       m.display();</span><br><span class="line">       n.display();</span><br><span class="line">       System.out.println(m.toString());</span><br><span class="line">       System.out.println(n.toString());	</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">      /*运行结果</span><br><span class="line">       2004-9-22</span><br><span class="line">       2004-9-22</span><br><span class="line">       MyDate@11a698a</span><br><span class="line">       MyDate@11a698a</span><br><span class="line">      */</span><br></pre></td></tr></table></figure>
+
+<p>&amp;emsp;<br>&amp;emsp;</p>
+<h4 id="1-2-成员变量与局部变量"><a href="#1-2-成员变量与局部变量" class="headerlink" title="1.2  成员变量与局部变量"></a><font color="#20B2AA" face="Comic sans MS">1.2  成员变量与局部变量</font></h4><table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS"><font color="red">**成员变量与局部变量有没有区别?**</font>
+  成员变量若为static的称为类变量，否则称为成员变量，而局部变量是在方法体内的变量。
+ (1) 📒从语法形式上看，成员变量是属于类或接口的，而局部变量是在方法中定义的变量或方法的参变量；
+ 成员变量可以被public，private，static等修饰，而局部变量则不能被访问控制符及static修饰；成员
+ 变量及局部变量都可以被final修饰。
+(2) 📒从变量在内存中的存储方式看，成员变量是对象的一部分，而对象是存在于堆中的，而局部变量是
+     存在于栈中的。
+(3) 📒从变量在内存中的存在时间上看，成员变量是对象的一部分，它随着对象的创建而存在，而局部变
+     量随着方法的调用而产生，随着方法调用结束而自动消失。
+(4) 📒成员变量如果没有赋初值，则会自动以该类型的默认值（0,false,null等）赋值；而局部变量则不会
+     自动赋值，必须显示地赋值后才能使用。 
+</font></td></tr></table>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class A&#123;</span><br><span class="line">         int a;</span><br><span class="line">         void <span class="function"><span class="title">m</span></span>()&#123;</span><br><span class="line">            int b;</span><br><span class="line">            System.out.println(a);  //合法的，a的值为0</span><br><span class="line">            System.out.println(b);  //不合法，编译不通过</span><br><span class="line">           &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>&amp;emsp;<br>&amp;emsp;</p>
+<h4 id="1-3-变量的传递"><a href="#1-3-变量的传递" class="headerlink" title="1.3  变量的传递"></a><font color="#20B2AA" face="Comic sans MS">1.3  变量的传递</font></h4><p><font face="Comic sans MS"><font color="red"><strong>1. 📒按值传递:</strong></font>当将一个参数传递给一个函数时，函数接收的是原始值的一个副本。因此，如果函数修改了该参数，仅改变副本，而原始值保持不变。(传递8种基本型变量)<br><font color="red"><strong>2. 📒按引用传递:</strong></font>当将一个参数传递给一个函数时，函数接收的原始值的内存地址，而不是值的副本，因此，如果修改了该参数，调用代码中的原始值也随之改变。(传递对象,接口,数组)<br><font color="#00B2EE"><em>Java中的参数传递比C++简单,按值传递所有参数,制作所有参数的副本,而不管它们的类型。</em></font><br></font></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">例1：</span><br><span class="line">class TestTransOfValue</span><br><span class="line">&#123;</span><br><span class="line">  public static void main(String args[])</span><br><span class="line">  &#123;</span><br><span class="line">    int val;</span><br><span class="line">    StringBuffer sb1, sb2;</span><br><span class="line">    val = 10;</span><br><span class="line">    sb1 = new StringBuffer(<span class="string">&quot;apples&quot;</span>);</span><br><span class="line">    sb2 = new StringBuffer(<span class="string">&quot;pears&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;val is &quot;</span> + val);</span><br><span class="line">    System.out.println(<span class="string">&quot;sb1 is &quot;</span> + sb1);</span><br><span class="line">    System.out.println(<span class="string">&quot;sb2 is &quot;</span> + sb2);</span><br><span class="line">    System.out.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line"></span><br><span class="line">System.out.println(<span class="string">&quot;calling modify&quot;</span>);</span><br><span class="line">    //按值传递所有参数</span><br><span class="line">    modify(val, sb1, sb2);</span><br><span class="line">    System.out.println(<span class="string">&quot;returned from modify&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;val is &quot;</span> + val);</span><br><span class="line">    System.out.println(<span class="string">&quot;sb1 is &quot;</span> + sb1);</span><br><span class="line">    System.out.println(<span class="string">&quot;sb2 is &quot;</span> + sb2);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">public static void modify(int a, StringBuffer r1,</span><br><span class="line">                         StringBuffer r2)</span><br><span class="line">  &#123;</span><br><span class="line">    System.out.println(<span class="string">&quot;in modify...&quot;</span>);</span><br><span class="line">    //在方法中修改基本类型变量的值</span><br><span class="line">    a = 0;  </span><br><span class="line">    //在方法中修改对象引用值的副本</span><br><span class="line">    r1 = null;  //1</span><br><span class="line">    //在方法中修改副本的对象实体值</span><br><span class="line">    r2.append(<span class="string">&quot; taste good&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;a is &quot;</span> + a);</span><br><span class="line">    System.out.println(<span class="string">&quot;r1 is &quot;</span> + r1);</span><br><span class="line">    System.out.println(<span class="string">&quot;r2 is &quot;</span> + r2);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">运行后输出：</span><br><span class="line">val is 10</span><br><span class="line">sb1 is apples</span><br><span class="line">sb2 is pears</span><br><span class="line">calling modify <span class="keyword">in</span> modify...</span><br><span class="line">a is 0</span><br><span class="line">r1 is null</span><br><span class="line">r2 is pears taste good </span><br><span class="line">returned from modify</span><br><span class="line">val is 10</span><br><span class="line">sb1 is apples</span><br><span class="line">sb2 is pears taste good </span><br><span class="line">/*关于这里的sb1和r1：</span><br><span class="line">当参数传到modify后，r1和sb1指向同一个地址，若改变了r1指向的地址，并不会更改sb1指向的地址。这个时候就</span><br><span class="line">相当于看作两个指针了。</span><br><span class="line">关于sb2和r2：</span><br><span class="line">sb2和r2指向同一个地址，这个地址指向的值(实体值)被改变了，则结束后sb2和r2的实体值也就相应的改变了。</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+<p><img data-src="https://i.loli.net/2018/12/28/5c2500f374fbd.png" alt="FX.png"></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">例2：</span><br><span class="line">class Swap</span><br><span class="line">&#123; </span><br><span class="line"> public static void main(String args[])</span><br><span class="line">  &#123;</span><br><span class="line">    Integer a, b;</span><br><span class="line">    a = new Integer(10);</span><br><span class="line">    b = new Integer(50);</span><br><span class="line">    System.out.println(<span class="string">&quot;before swap...&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;a is &quot;</span> + a);</span><br><span class="line">    System.out.println(<span class="string">&quot;b is &quot;</span> + b);</span><br><span class="line">    swap(a, b);</span><br><span class="line">    System.out.println(<span class="string">&quot;after swap...&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;a is &quot;</span> + a);</span><br><span class="line">    System.out.println(<span class="string">&quot;b is &quot;</span> + b);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"> public static void swap(Integer a, Integer b)</span><br><span class="line">  &#123;</span><br><span class="line">    Integer temp = a;</span><br><span class="line">    a = b;</span><br><span class="line">    b = temp;</span><br><span class="line">    System.out.println(<span class="string">&quot;in swap...&quot;</span>);</span><br><span class="line">    System.out.println(<span class="string">&quot;a is &quot;</span> + a);</span><br><span class="line">    System.out.println(<span class="string">&quot;b is &quot;</span> + b);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">/*</span><br><span class="line">运行后输出：</span><br><span class="line">before swap...</span><br><span class="line">a is 10</span><br><span class="line">b is 50</span><br><span class="line"><span class="keyword">in</span> swap…</span><br><span class="line">a is 50</span><br><span class="line">b is 10</span><br><span class="line">after swap...</span><br><span class="line">a is 10</span><br><span class="line">b is 50 </span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS"><font color="red">**参数传递总结：**</font>
+ (1) Java按值传递所有参数,制作所有参数的副本,而不管它们的类型
+ (2) 对于基本类型的变量形参修改了并不能反映到函数外面的实参
+ (3) 对于引用类型的变量，在形参中修改了对象实体值可以反映到实参，在形参中修改了对象引用值，
+     不能反映到实参
+</font></td></tr></table>
+
+
+<p>&amp;emsp;<br>&amp;emsp;</p>
+<h4 id="1-4-引用型变量的实体值、引用值比较"><a href="#1-4-引用型变量的实体值、引用值比较" class="headerlink" title="1.4  引用型变量的实体值、引用值比较"></a><font color="#20B2AA" face="Comic sans MS">1.4  引用型变量的实体值、引用值比较</font></h4><p><font face="Comic sans MS"><font color="red"><strong>1. 📒参数传递总结：</strong></font><br> (1) 比较基本类型的数据: &#x3D;&#x3D;和!&#x3D;<br> (2) 如果要比较引用型变量是否相同,可以直接用&#x3D;&#x3D;和!&#x3D;吗?<font color="red">  <strong>答：不能</strong></p>
+<p><strong>&#x3D;&#x3D;和!&#x3D;用来比较引用型变量时（只能比较引用值（地址）是不是相等）,只能判断运算符两边引用的是不是同一个对象,即对象的地址值（或对象引用值）！！！！！</strong></font><br><font color="#00B2EE"><strong>如何比较两个对象的内容(对象实体值)是否相同?<br>用equls()方法：</strong></font><br></font></p>
+<table><tr><td bgcolor=#ADD8E6><font face="Comic sans MS"><font color="red">**2. 📒引用型变量比较总结：**</font>
+ (1) 比较两个变量是否同一个对象（即对象引用值是否相同），用==和!=
+ (2) 比较两个变量的内容是否相同用equals方法
+ (3) **自己定义的类如果要支持equals方法必须重写从Object类继承来的equals方法(比如前面的String类
+ 是java自己的类就不需要重写equals，但是Employee类就是自己定义的类则需要重写equals)**
+
+<p><strong>Object类中的equals方法：</strong><br> <em>public boolean equals(Object obj){<br>   return (this&#x3D;&#x3D;obj);<br> }</em><br></font></td></tr></table></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">equals示例1:</span><br><span class="line">class EqualsTest&#123;</span><br><span class="line">  public static void main(String[] arguments)</span><br><span class="line">  &#123;</span><br><span class="line">     String str1,str2;</span><br><span class="line">     str1=<span class="string">&quot;Free the bound periodicals.&quot;</span>;</span><br><span class="line">     str2=str1;</span><br><span class="line">     System.out.println(<span class="string">&quot;String1: &quot;</span>+str1);</span><br><span class="line">     System.out.println(<span class="string">&quot;String2: &quot;</span>+str2);</span><br><span class="line">     System.out.println(<span class="string">&quot;Same object? &quot;</span>+(str1==str2));      //<span class="literal">true</span></span><br><span class="line">     str2=new String(str1);</span><br><span class="line">     System.out.println(<span class="string">&quot;String1: &quot;</span>+str1);</span><br><span class="line">     System.out.println(<span class="string">&quot;String2: &quot;</span>+str2);</span><br><span class="line">     System.out.println(<span class="string">&quot;Same object? &quot;</span>+(str1==str2));      //<span class="literal">false</span></span><br><span class="line">     System.out.println(<span class="string">&quot;Same value? &quot;</span>+str1.equals(str2));  //<span class="literal">true</span></span><br><span class="line">     String str3,str4;</span><br><span class="line">     str3=<span class="string">&quot;busy&quot;</span>;</span><br><span class="line">     str4=<span class="string">&quot;busy&quot;</span>; //str4=new String(<span class="string">&quot;busy&quot;</span>)或str4=new String(str3) </span><br><span class="line">     System.out.println(<span class="string">&quot;String3: &quot;</span>+str3);</span><br><span class="line">     System.out.println(<span class="string">&quot;String4: &quot;</span>+str4);</span><br><span class="line">     System.out.println(<span class="string">&quot;Same object? &quot;</span>+(str3==str4));       //<span class="literal">true</span></span><br><span class="line">     System.out.println(<span class="string">&quot;Same value? &quot;</span>+str3.equals(str4));   //<span class="literal">true</span> </span><br><span class="line">     String str5,str6;</span><br><span class="line">     str5=<span class="string">&quot;str5busy&quot;</span>;</span><br><span class="line">     str6=<span class="string">&quot;str6busy&quot;</span>;</span><br><span class="line">     System.out.println(<span class="string">&quot;String5: &quot;</span>+str5);</span><br><span class="line">     System.out.println(<span class="string">&quot;String6: &quot;</span>+str6);</span><br><span class="line">     System.out.println(<span class="string">&quot;Same object? &quot;</span>+(str5==str6));      //<span class="literal">false</span></span><br><span class="line">     System.out.println(<span class="string">&quot;Same value? &quot;</span>+str5.equals(str6));  //<span class="literal">false</span> 	</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">equals示例2：</span><br><span class="line">import java.util.*;</span><br><span class="line">public class EqualsTest &#123;</span><br><span class="line">     public <span class="function"><span class="title">EqualsTest</span></span>() &#123;    &#125;    </span><br><span class="line">     public static void main(String[] args)&#123;</span><br><span class="line">     Employee alice1=new Employee(<span class="string">&quot;Alice&quot;</span>,75000,1987,12,15);</span><br><span class="line">     Employee alice2=alice1;</span><br><span class="line">     Employee alice3=new Employee(<span class="string">&quot;Alice&quot;</span>,75000,1987,12,15);</span><br><span class="line">     Employee bob=new Employee(<span class="string">&quot;Bob&quot;</span>,50000,1989,10,1);</span><br><span class="line">     System.out.println(<span class="string">&quot;alice1==alice2: &quot;</span>+(alice1==alice2));    //<span class="literal">true</span></span><br><span class="line">     System.out.println(<span class="string">&quot;alice1==alice3: &quot;</span>+(alice1==alice3));    //<span class="literal">false</span> </span><br><span class="line">     System.out.println(<span class="string">&quot;alice1.equals(alice3): &quot;</span>+alice1.equals(alice3));  //<span class="literal">true</span></span><br><span class="line">     System.out.println(<span class="string">&quot;alice1.equals(bob): &quot;</span>+alice1.equals(bob));   //<span class="literal">false</span> </span><br><span class="line">     System.out.println(<span class="string">&quot;bob.toString(): &quot;</span>+bob);  </span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class Employee&#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private double salary;</span><br><span class="line">    private Date hireDay; </span><br><span class="line">    public Employee(String n,double s,int year,int month,int day)&#123;</span><br><span class="line">            name=n;</span><br><span class="line">            salary=s</span><br><span class="line">        hireDay=new Date(year,month,day);</span><br><span class="line">    &#125;</span><br><span class="line">    public String <span class="function"><span class="title">getName</span></span>()&#123;     <span class="built_in">return</span> name;     &#125;</span><br><span class="line">    public double <span class="function"><span class="title">getSalary</span></span>()&#123;   <span class="built_in">return</span> salary;    &#125;</span><br><span class="line">    public Date <span class="function"><span class="title">getHireDay</span></span>()&#123;   <span class="built_in">return</span> hireDay; &#125;</span><br><span class="line">    public void raiseSalary(double byPercent)&#123;</span><br><span class="line">            double raise=salary*byPercent/100;</span><br><span class="line">            salary+=raise;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">public boolean equals(Object otherObject)&#123;     //子类覆盖了Object的equals方法</span><br><span class="line">  <span class="keyword">if</span>(this==otherObject) <span class="built_in">return</span> <span class="literal">true</span>;</span><br><span class="line">  <span class="keyword">if</span>(otherObject==null) <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">  <span class="keyword">if</span>(getClass()!=otherObject.getClass())</span><br><span class="line">  <span class="built_in">return</span> <span class="literal">false</span>;</span><br><span class="line">  Employee other=(Employee)otherObject;</span><br><span class="line">  <span class="built_in">return</span> name.equals(other.name)&amp;&amp;</span><br><span class="line">              salary==other.salary&amp;&amp;hireDay.equals(other.hireDay); </span><br><span class="line">                        //子类覆盖了Object的toString方法</span><br><span class="line"> &#125;</span><br><span class="line"> public String <span class="function"><span class="title">toString</span></span>()&#123;</span><br><span class="line">  <span class="built_in">return</span> getClass().getName()+</span><br><span class="line">           <span class="string">&quot;[name=&quot;</span>+name+<span class="string">&quot;,salary=&quot;</span>+salary+<span class="string">&quot;,hireDay=&quot;</span>+hireDay+<span class="string">&quot;]&quot;</span>;</span><br><span class="line"> &#125;</span><br><span class="line"> private String name;</span><br><span class="line"> private double salary;</span><br><span class="line"> private Date hireDay;</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+
+<p>&amp;emsp;<br>&amp;emsp;</p>
+<h3 id="二、-内部类"><a href="#二、-内部类" class="headerlink" title="二、 内部类"></a><font color="#FF6347" face="Comic sans MS">二、 内部类</font></h3><h4 id="2-1-内部类的定义与使用"><a href="#2-1-内部类的定义与使用" class="headerlink" title="2.1  内部类的定义与使用"></a><font color="#20B2AA" face="Comic sans MS">2.1  内部类的定义与使用</font></h4><p><font face="Comic sans MS"><font color="red"><strong>1. 📒内部类的定义：</strong></font>将类的定义置入一个用于封装它的类（外部类）里。<br>    <font color="#00B2EE"><strong>注意：</strong></font><br>    内部类不能与外部类同名（否则，编译器无法区分内部类与外部类），如果内部类还有内部类，内部类的内部类不能与它的任何一层外部类同名。<br>    <font color="#00B2EE"><strong>作用：</strong></font><br>    逻辑分组, 隐藏细节<br></font></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">/*内部类结合多态可以很方便的隐藏类的细节(包括类名)</span><br><span class="line">*/</span><br><span class="line">interface Contents&#123;</span><br><span class="line">  int value();</span><br><span class="line">&#125;</span><br><span class="line">interface Destination &#123;</span><br><span class="line">  String readLabel();</span><br><span class="line">&#125;</span><br><span class="line">class Goods&#123;</span><br><span class="line">    private class Content implements Contents&#123;  //<span class="string">&quot;private class Contentimplements Contents&quot;</span> </span><br><span class="line">        private int i=11;</span><br><span class="line">        public int <span class="function"><span class="title">value</span></span>()&#123;</span><br><span class="line">  <span class="built_in">return</span> i;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">    protected class GDestination    //<span class="string">&quot;protected class GDestination implements Destination&quot;</span></span><br><span class="line">    implements Destination&#123;</span><br><span class="line">      private String label;</span><br><span class="line">  private GDestination(String whereTo)&#123;</span><br><span class="line">    label=whereTo;</span><br><span class="line">  &#125;</span><br><span class="line">public String <span class="function"><span class="title">readLabel</span></span>()&#123;</span><br><span class="line">    <span class="built_in">return</span> label;&#125;&#125;</span><br><span class="line">public Contents <span class="function"><span class="title">cont</span></span>()&#123;</span><br><span class="line">  <span class="built_in">return</span> new Content();</span><br><span class="line">  &#125;</span><br><span class="line">public Destination dest(String s)&#123;</span><br><span class="line">  <span class="built_in">return</span> new GDestination(s);</span><br><span class="line">  &#125;</span><br><span class="line">  &#125;</span><br><span class="line">public class TestGoods &#123;   //<span class="string">&quot;public class TestGoods&quot;</span></span><br><span class="line">    public static void main(String[] args)&#123;</span><br><span class="line">         Goods g=new Goods();</span><br><span class="line">         Contents c=g.cont();</span><br><span class="line">         Destination d=g.dest(<span class="string">&quot;Beijing&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><font face="Comic sans MS"><font color="red"><strong>2. 📒内部类对象的创建：</strong></font>创建非静态内部类的对象时一定要确保已经有一个外部类对象。<br>(1) 利用外部类的方法创建并返回，因为方法是由外部类对象调用的，那创建该内部类对象时，一定已经拥有了所属的外部类对象了<br>public Contents cont(){  &amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;       Goods g&#x3D;new Goods();<br>  return new Content();  &amp;emsp;&amp;emsp;&amp;emsp;&amp;emsp;&amp;ensp;        Contents c&#x3D;g.cont();<br>}</p>
+<p>(2) 创建内部类还可以在除外部类中的其它类中，但是要确保该类具有访问内部类的权限，并且已经创建了一个外部类对象。格式如下：<br></font></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">outerObject=new outerClass(Constructor Parameters);</span><br><span class="line">outerClass.innerClass innerObject = outerObject.new InnerClass(Constructor Parameters);</span><br><span class="line"></span><br><span class="line"> Goods g1=new Goods();</span><br><span class="line"> Goods.Content c1=g.new Content(); </span><br><span class="line">OR</span><br><span class="line"> Goods g1=new Goods();</span><br><span class="line"> Goods.GDestination d1=g1.new GDestionation(); </span><br></pre></td></tr></table></figure>
+
+<p>&amp;emsp;<br><font face="Comic sans MS"><font color="red"><strong>3. 📒内部类的修饰符：</strong></font><br>（1）<font color="red"><strong>public、protected、private和缺省：</strong></font>访问权限修饰符，用来限定内部类的访问权限，<br>  &amp;emsp;&amp;emsp;一般的外部类是不能用protected和private修饰的。访问权限修饰符的限定和成员变量的限定一样。<br>（2）<font color="red"><strong>final:</strong></font>表明内部类不能继承。<br>（3）<font color="red"><strong>abstract：</strong></font>抽象内部类，不能被实例化。<br>（4）<font color="red"><strong>static：</strong></font>表明一个静态内部类。</p>
+<p><font face="Comic sans MS"><font color="red"><strong>4. 📒静态内部类：</strong></font><br><strong>和普通的非静态内部类有较大的不同，使用时要遵循如下原则：</strong><br>（1）实例化static内部类时，在new前面不需要用对象变量；<br><font color="red"><strong>（2）static内部类中不能访问其外部类的非static属性及方法，即只能访问static成员；<br>（3）static方法中不能访问非static的属性及方法，也不能不带前缀地new一个非static的内部类。</strong></font><br></font></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">class A</span><br><span class="line">&#123;</span><br><span class="line">      private int x;</span><br><span class="line">      void <span class="function"><span class="title">m</span></span>()&#123;</span><br><span class="line">  new B();</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     static void <span class="function"><span class="title">sm</span></span>()&#123;</span><br><span class="line">      //在外部类的静态方法中</span><br><span class="line">     //不能直接创建内部类对象</span><br><span class="line">     //new B();//!!error</span><br><span class="line">    &#125;</span><br><span class="line">class B</span><br><span class="line">&#123;</span><br><span class="line">      <span class="function"><span class="title">B</span></span>()&#123;x=5;&#125;</span><br><span class="line">  &#125;//B类结束</span><br><span class="line">&#125;//A类结束</span><br><span class="line">class Outer</span><br><span class="line">&#123;</span><br><span class="line">  static class Inner</span><br><span class="line">  &#123;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class TestInnerStatic</span><br><span class="line">&#123;</span><br><span class="line">  public static void main(String[] args)  </span><br><span class="line">  &#123;</span><br><span class="line">    //创建非静态内部类B的对象a_b和ab</span><br><span class="line">    A.B a_b=new A().new B();</span><br><span class="line">    A a=new A();</span><br><span class="line">    A.B ab=a.new B();</span><br><span class="line">    </span><br><span class="line">    //创建静态内部类Inner的对象oi，不需要外部类Outer的对象</span><br><span class="line">    Outer.Inner oi=new Outer.Inner();</span><br><span class="line">    //Outer.Inner oi2=Outer.new Inner();//!!error</span><br><span class="line">    //Outer.Inner oi3=new Outer().new Inner();//!!error</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&amp;emsp;<br><font face="Comic sans MS"><font color="red"><strong>5. 📒内部类中访问外部类的成员：</strong></font><br>(1) 内部类中是可以直接访问外部类的其他属性与方法的，即使它们是private的。<br>(2) 如果内部类中有与外部类同名的属性与方法，可以使用下面的格式来表达外部类的引用，从而区分外部类和内部类的同名的属性与方法：<br>                       outerClass.this<br></font> </p>
+<p>&amp;emsp;<br>&amp;emsp;</p>
+<h4 id="2-2-方法和作用域中的内部类"><a href="#2-2-方法和作用域中的内部类" class="headerlink" title="2.2  方法和作用域中的内部类"></a><font color="#20B2AA" face="Comic sans MS">2.2  方法和作用域中的内部类</font></h4><p><font face="Comic sans MS"><font color="red"><strong>内部类也可以是局部的，它可以定义在一个方法甚至一个代码块之内。</strong></font><br>(1) 内部类中是可以直接访问外部类的其他属性与方法的，即使它们是private的。<br>(2) 如果内部类中有与外部类同名的属性与方法，可以使用下面的格式来表达外部类的引用，从而区分外部类和内部类的同名的属性与方法：<br>                       outerClass.this<br></font> </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">例1: 方法中的内部类:</span><br><span class="line">interface Destination &#123;</span><br><span class="line">  String readLabel();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Goods2 &#123;</span><br><span class="line">  String a=<span class="string">&quot;Goods2&quot;</span>;</span><br><span class="line">     public Destination dest(String s) &#123;</span><br><span class="line">          class GDestination implements Destination &#123;</span><br><span class="line">            private String label;</span><br><span class="line">            private GDestination(String whereTo) &#123;</span><br><span class="line">             label = whereTo;</span><br><span class="line">             System.out.println(<span class="string">&quot;access outer class:&quot;</span>+a);</span><br><span class="line">               &#125;</span><br><span class="line">               public String <span class="function"><span class="title">readLabel</span></span>() &#123; <span class="built_in">return</span> label; &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          <span class="built_in">return</span> new GDestination(s);</span><br><span class="line">     &#125;</span><br><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">          Goods2 g= new Goods2();</span><br><span class="line">          Destination d = g.dest(<span class="string">&quot;Beijing&quot;</span>);</span><br><span class="line">          &#125;</span><br><span class="line">&#125;</span><br><span class="line">/*在方法dest（）中定义了一个内部类，最后由这个方法返回这个内部类的对象。如果在用一个内部类的时候仅需要创建它的一个对象并传给外部，就可以这样做。</span><br><span class="line">*/</span><br></pre></td></tr></table></figure>
+
+<p>&amp;emsp;<br><font face="Comic sans MS"><font color="#00B2EE"><strong>方法中定义内部类的注意点:</strong></font><br> (1) 方法中定义的类，在其它地方使用时，没有类的名字，一般用其父类来引用这样的变量。<br> (2) 同局部变量一样，方法中的内部类前面不能用public，private，protected修饰，也不能用static修饰，但可以被final或abstract修饰。<br> (3) 方法中的内部类，可以访问其外部类的成员;若是static方法中的内部类，可以访问外部类的static成员。<br> (4) 方法中的内部类中，不能访问该方法的局部变量，除非是final的局部变量。<br></font></p>
+<p>&amp;emsp;</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">例2: 作用域中的内部类:</span><br><span class="line">public class Goods3&#123;</span><br><span class="line">     private void internalTracking(boolean b) &#123;</span><br><span class="line">          <span class="keyword">if</span>(b) &#123;</span><br><span class="line">               class TrackingSlip &#123;</span><br><span class="line">                    private String id;</span><br><span class="line">                    TrackingSlip(String s) &#123;</span><br><span class="line">                         id = s;</span><br><span class="line">                    &#125;</span><br><span class="line">                    String <span class="function"><span class="title">getSlip</span></span>() &#123; <span class="built_in">return</span> id; &#125;</span><br><span class="line">               &#125;</span><br><span class="line">              TrackingSlip ts = new TrackingSlip(<span class="string">&quot;slip&quot;</span>);</span><br><span class="line">               String s = ts.getSlip();</span><br><span class="line">          &#125; </span><br><span class="line">     &#125;</span><br><span class="line"> public void <span class="function"><span class="title">track</span></span>() &#123; internalTracking(<span class="literal">true</span>); &#125;</span><br><span class="line">     public static void main(String[] args) &#123;</span><br><span class="line">          Goods3 g= new Goods3();</span><br><span class="line">          g.track();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>&amp;emsp;<br>&amp;emsp;</p>
+<h4 id="2-3-匿名内部类"><a href="#2-3-匿名内部类" class="headerlink" title="2.3  匿名内部类 "></a><font color="#20B2AA" face="Comic sans MS">2.3  匿名内部类 </font></h4><p><font face="Comic sans MS"><font color="red"><strong>匿名类：</strong></font> 类或方法中定义的一种没有类名的特殊内部类。<br><font color="red"><strong>作用：</strong></font>当需要创建一个类的对象而且用不上它的名字时，使用内部类可以使代码看上去简洁清楚。<br><font color="red"><strong>语法规则如下：</strong></font><br>       new interfacename(){……};<br>      或new superclassname(){……};</p>
+<p><font color="red"><strong>注意：</strong></font><br> (1) 这种类不取名字，而直接用其父类的名字或者它所实现的接口的名字；<br> (2) 类的定义与创建该类的一个对象同时进行，即类的定义前面有一个new，没有类的首部，对象的创建和类体共同构成一个匿名类表达式，后面以“;”结束；<br> (3) 类中不能定义构造方法，因为它没有名字。<br></font></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">interface Contents&#123;</span><br><span class="line">  int value();</span><br><span class="line">&#125;</span><br><span class="line">public class Goods4 &#123;</span><br><span class="line">     public Contents <span class="function"><span class="title">cont</span></span>()&#123;</span><br><span class="line">          //返回匿名类对象，该匿名类继承了Contents接口</span><br><span class="line">          <span class="built_in">return</span> new <span class="function"><span class="title">Contents</span></span>()&#123;</span><br><span class="line">               private int i = 11;</span><br><span class="line">               public int <span class="function"><span class="title">value</span></span>() &#123; </span><br><span class="line">                    <span class="built_in">return</span> i; </span><br><span class="line">               &#125;</span><br><span class="line">          &#125;;</span><br><span class="line">     &#125;</span><br><span class="line"> public static void main(String[] args)</span><br><span class="line">     &#123;</span><br><span class="line">      Goods4 g=new Goods4();</span><br><span class="line">      Contents c=g.cont();</span><br><span class="line">     &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<hr>
+<p>&amp;emsp;<br>&amp;emsp;<br>&amp;emsp;<br>&amp;emsp;</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
     
 
 
@@ -1904,187 +2102,6 @@ double aDoubleVar;<font>
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Java-IO-1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Catecat">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Catecat">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/Java-IO-1/" class="post-title-link" itemprop="url">Java的输入输出</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-12-14 01:00:39" itemprop="dateCreated datePublished" datetime="2018-12-14T01:00:39+08:00">2018-12-14</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-01-08 19:36:33" itemprop="dateModified" datetime="2019-01-08T19:36:33+08:00">2019-01-08</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Java/" itemprop="url" rel="index"><span itemprop="name">Java</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/post/Java-IO-1/" class="post-meta-item leancloud_visitors" data-flag-title="Java的输入输出" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/Java-IO-1/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/Java-IO-1/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4.1k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h4 id="一、Java中的流的概念"><a href="#一、Java中的流的概念" class="headerlink" title="一、Java中的流的概念"></a><font color="#EE3A8C" face="楷体">一、Java中的流的概念</font></h4><h5 id="1-0-数据流的概念"><a href="#1-0-数据流的概念" class="headerlink" title="1.0 数据流的概念"></a><font color="#EE3A8C" face="楷体">1.0 数据流的概念</font></h5><blockquote>
-<blockquote>
-<p><font face="楷体">&amp;emsp;数据流是一串连续不断的数据的集合，就象水管里的水流，在水管的一端一点一点地供水，而在水管的另一端看到的是一股连续不断的水流。数据写入程序可以是一段、一段地向数据流管道中写入数据，这些数据段会按先后顺序形成一个长的数据流。对数据读取程序来说，看不到数据流在写入时的分段情况，每次可以读取其中的任意长度的数据，但只能先读取前面的数据后，再读取后面的数据。不管写入时是将数据分多次写入，还是作为一个整体一次写入，读取时的效果都是完全一样的。<br>&amp;emsp;“流是磁盘或其它外围设备中存储的数据的源点或终点。”<br>在电脑上的数据有三种存储方式，一种是外存，一种是内存，一种是缓存。比如电脑上的硬盘，磁盘，U盘等都是外存，在电脑上有内存条，缓存是在CPU里面的。外存的存储量最大，其次是内存，最后是缓存，但是外存的数据的读取最慢，其次是内存，缓存最快。这里总结从外存读取数据到内存以及将数据从内存写到外存中。对于内存和外存的理解，我们可以简单的理解为容器，即外存是一个容器，内存又是另外一个容器。那又怎样把放在外存这个容器内的数据读取到内存这个容器以及怎么把内存这个容器里的数据存到外存中呢？<br>&amp;emsp;在Java类库中，IO部分的内容是很庞大的，因为它涉及的领域很广泛:<br>标准输入输出，文件的操作，网络上的数据流，字符串流，对象流，zip文件流等等，java中将输入输出抽象称为流，就好像水管，将两个容器连接起来。将数据冲外存中读取到内存中的称为输入流，将数据从内存写入外存中的称为输出流。<br>流是一个很形象的概念，当程序需要读取数据的时候，就会开启一个通向数据源的流，这个数据源可以是文件，内存，或是网络连接。类似的，当程序需要写入数据的时候，就会开启一个通向目的地的流。</font></p>
-</blockquote>
-</blockquote>
-<pre><code>  以上总结的基本概念如下：
-</code></pre>
-<table><tr><td bgcolor=#F5FFFA><font face="楷体">🌸数据流：一组有序，有起点和终点的字节的数据序列。包括输入流和输出流;
-🌸输入流(Input  Stream)：程序从输入流读取数据源。数据源包括外界(键盘、文件、网络…)，即是将数据源读入到程序的通信通道;
-🌸输出流：程序向输出流写入数据。将程序中的数据输出到外界（显示器、打印机、文件、网络…）的通信通道。采用数据流的目的就是使得输出输入独立于设备。
-Input  Stream不关心数据源来自何种设备（键盘，文件，网络）
-Output  Stream不关心数据的目的是何种设备（键盘，文件，网络）
-🌸数据流分类：流序列中的数据既可以是未经加工的原始二进制数据，也可以是经一定编码处理后符合某种格式规定的特定数据。因此Java中的流分为两种：
- 1)  字节流：数据流中最小的数据单元是字节；
- 2)  字符流：数据流中最小的数据单元是字符，Java中的字符是Unicode编码，一个字符占用两个字节。
-🌸具体的字节流和字符流区分请看文章《Java:字节流和字符流（输入流和输出流）》和[《Java 字节流与字符流的区别》](https://blog.csdn.net/qq_25184739/article/details/51203733)、[《理解Java中字符流与字节流的区别》](https://www.cnblogs.com/absfree/p/5415092.html)、[《Java:字节流和字符流（输入流和输出流）》](https://www.cnblogs.com/progor/p/9357676.html).
-</font></td></tr></table>
-
-<p>&amp;nbsp;</p>
-<h4 id="二、System、in、out说明"><a href="#二、System、in、out说明" class="headerlink" title="二、System、in、out说明"></a><font color="#EE3A8C" face="楷体">二、System、in、out说明</font></h4><p><font face="楷体">Java系统自带的标准数据流：java.lang.System:</font></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java.lang.System     </span><br><span class="line">public final class System  extends Object&#123;     </span><br><span class="line">   static  PrintStream  err;//标准错误流（输出）、err是对象；  </span><br><span class="line">   static  InputStream  <span class="keyword">in</span>;//标准输入(键盘输入流)、<span class="keyword">in</span>是对象；   </span><br><span class="line">   static  PrintStream  out;//标准输出流(显示器输出流)、out是对象.</span><br><span class="line">&#125;    </span><br></pre></td></tr></table></figure>
-<table><tr><td bgcolor=#F5FFFA><font face="楷体">🌼 System类不能创建对象，只能直接使用它的三个静态成员;
-🌼 每当main方法被执行时,就自动生成上述三个对象;
-🌼 System是java.lang包里面的一个类；
-🌼 in是java.io.InputStream类的对象，也是System里面的一个数据成员(也称为字段)；
-🌼 read()是java.io.InputStream类里的方法，也就是in对象的方法;
-🌼 out是java.io.PrintStream类的对象，也是System里面的一个数据成员(也称为字段)；
-🌼 print()、println()是java.io.PrintStream类里的方法，也就是out对象的方法;
-</font></td></tr></table>
-
-<p>&amp;nbsp;</p>
-<h4 id="三、System-in-read-使用"><a href="#三、System-in-read-使用" class="headerlink" title="三、System.in.read()使用"></a><font color="#EE3A8C" face="楷体">三、System.in.read()使用</font></h4><table><tr><td bgcolor=#F5FFFA><font face="楷体">🌼 System.in.read()方法的作用是按每次读取一个字节（就是ASCII码），然后返回它的<font color="#FF4040">ASCII码十进制</font>;
-🌼 从第一次打开System.in输入流开始，以后输入的字节都存放起来，下次从这个里面依次按顺序读取;
-🌼 用System.in.read()时，我们在键盘上按下的任何一个键都会被当做是输入值，包括Enter键也会被当做是一个值！当我们按下Enter的时候，实际上发送两个键值：一个回车\t（13），一个是换行\n（10）;
-🌼 从键盘输入一个a，char是两个字节存储的，read()一个字节一个字节读取时，暂时把a看作是一个字节，后续深入学习了再来解释😫😂（哈，貌似想通了，当字节流读到字节为0的数据流时会舍去，相当于跳过该字节继续读下一个非0的字节.....后续更新中）----12.27与老师探讨后得知：在流中输入的字符是一个ASCII(即一个字节=8比特)，这个时候就是一个字节，而char存储的时候是按2个字节存储的，注意的是在流中并不是存储，存储一个字符是Unicode码共16位，而流中的ASCII是8位。
-建议去读[《java总结输入流输出流》](https://blog.csdn.net/liuxiaogangqq/article/details/25892667)！！！
-可参考[Scanner使用方法](https://www.cnblogs.com/ioveNature/p/6797024.html)</font></td></tr></table>
-
-<p><strong>注意事项：</strong></p>
-<table><tr><td bgcolor=#F5FFFA><font face="楷体">1、由于在控制台输入时，按下回车键才代表输入完成，输入的内容才会提交到read()方法，所以按下回车之前，程序是不知道你输入了什么的;
-2、输入"a"后按下回车，这时候read()方法读到了数据，此时buffer中的数据应该是97 13 10，也就是字符'a','\r','\n'，并且read()方法每次只能从缓冲区中读出一个字符，三次read()就刚好读出这3个字符，之后程序就结束了;
-3、只按下回车，此时从流中只读到了"\r"和"\n"，由于没有足够的输入，那么第三次调用read()时阻塞.
-参考：[《System.in.read()使用》](https://uule.iteye.com/blog/1128243)；[《System.in输入流深入理解》](https://blog.csdn.net/fengzijinliang/article/details/40741565?utm_source=blogxgwz0)
-推荐阅读：[《深入理解JAVA中的IO》](https://www.cnblogs.com/ylspace/p/8128112.html)</font></td></tr></table>
-
-<p>&amp;nbsp;</p>
-<h4 id="四、System-out-print-x2F-println"><a href="#四、System-out-print-x2F-println" class="headerlink" title="四、System.out.print()&#x2F;println()"></a><font color="#EE3A8C" face="楷体">四、System.out.print()&#x2F;println()</font></h4><table><tr><td bgcolor=#F5FFFA><font face="楷体">🌼 System.out.print()输出不换行，System.out.print()输出后换行.
-参考[《深入理解System.out.print》](https://blog.csdn.net/idealemail/article/details/47318813).</font></td></tr></table>
-
-<p>&amp;nbsp;</p>
-<h4 id="五、Java中System-out-print-函数与Python中print-函数的详解"><a href="#五、Java中System-out-print-函数与Python中print-函数的详解" class="headerlink" title="五、Java中System.out.print()函数与Python中print()函数的详解"></a><font color="#EE3A8C" face="楷体">五、Java中System.out.print()函数与Python中print()函数的详解</font></h4><table><tr><td bgcolor=#F5FFFA><font face="楷体">python中的print()函数和java中的System.out.print()函数都有着打印字符串的功能。
-(1). <font color="red">python中:</font> print("hello,world!")
-输出为：hello,world!
-<font color="red">Java中:</font> System.out.print("hello,world!");
-输出为：hello,world!
-说明这两个函数的用法是一样的.
-(2). <font color="red">python中:</font> print("1+1=",1+1)
-输出结果为：1+1= 2
-<font color="red">Java中:</font> System.out.print("1+1="+(1+1));
-输出结果为：1+1=2
-说明在使用print()函数的时候，我们用了一个“,”将“1+1=”和1+1的结果连接起来了，这个“,”起着连接的作用。同时，在使用System.out.print()函数的时候，我们用了一个“+”将“1+1=”和1+1的结果连接起来了，这个“+”也是起着连接作用;
-我们再来看他们的输出结果，print()输出的是1+1= 2，“=”与“2”之间有一个空格，而System.out.print()输出的是1+1=2，“=”与“2”之间没有空格。这里我们发现python中的print()函数中的“,”不仅起着连接字符串的作用，而且还表示一个空格.
-
-<p><strong>结论：</strong><br><font color="#FF0000">🌼 python中的print()函数的作用和java中的System.out.print()函数的作用是一样的;<br>🌼 print()函数中“,”和System.out.print()函数中“+”都有着连接字符串的作用;<br>🌼 print()函数中“,”还表示一个空格;<br>🌼 不同的语言都有着很多的相似点，不同的语言又有着不同的新特性.</font><br>参考：<a target="_blank" rel="noopener" href="https://m.jb51.net/article/128959.htm">《python中print()函数的“,”与java中System.out.print()函数中的“+”功能详解》</a>.<br></font></td></tr></table></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
 
   
   <nav class="pagination">
@@ -2141,14 +2158,14 @@ Output  Stream不关心数据的目的是何种设备（键盘，文件，网络
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.1m</span>
+    <span title="站点总字数">1.2m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:02</span>
+    <span title="站点阅读时长">17:31</span>
   </span>
 </div>
 <div class="busuanzi-count">

@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Terminate&#x2F;Suspend&#x2F;ResumeThread函数分析">
+<meta property="og:url" content="https://directoree.github.io/post/ThreadFuction-Analysis/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-05-26T10:23:00.000Z">
+<meta property="article:modified_time" content="2022-06-01T09:15:21.024Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="线程函数">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/ThreadFuction-Analysis/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Terminate/Suspend/ResumeThread函数分析 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-TerminateThread%E5%88%86%E6%9E%90"><span class="nav-text">1 TerminateThread分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-NtTerminateThread"><span class="nav-text">1.1 NtTerminateThread</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NULL%E5%8F%A5%E6%9F%84%E7%9A%84%E5%90%AB%E4%B9%89"><span class="nav-text">NULL句柄的含义</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-PspTerminateThreadByPointer"><span class="nav-text">1.2 PspTerminateThreadByPointer</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ETHREAD-CrossThreadFlags"><span class="nav-text">ETHREAD.CrossThreadFlags</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KeDelayExecutionThread"><span class="nav-text">KeDelayExecutionThread</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-PspExitThread"><span class="nav-text">1.3 PspExitThread</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-SuspendThread"><span class="nav-text">2 SuspendThread</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-NtSuspendThread"><span class="nav-text">2.1 NtSuspendThread</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MmUserProbeAddress"><span class="nav-text">MmUserProbeAddress</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile%E7%B1%BB%E5%9E%8B%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="nav-text">volatile类型修饰符</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-PsSuspendThread"><span class="nav-text">2.2 PsSuspendThread</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ExAcquireRundownProtection"><span class="nav-text">ExAcquireRundownProtection</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-KeSuspendThread"><span class="nav-text">2.3 KeSuspendThread</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#KTHREAD-SuspendCount"><span class="nav-text">KTHREAD.SuspendCount</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KTHREAD-FreezeCount"><span class="nav-text">KTHREAD.FreezeCount</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-ResumeThread"><span class="nav-text">3 ResumeThread</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-NtResumeThread"><span class="nav-text">3.1 NtResumeThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-PsResumeThread"><span class="nav-text">3.2 PsResumeThread</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-KeResumeThread"><span class="nav-text">3.3 KeResumeThread</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">49</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">62</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/ThreadFuction-Analysis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Terminate/Suspend/ResumeThread函数分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-05-26 18:23:00" itemprop="dateCreated datePublished" datetime="2022-05-26T18:23:00+08:00">2022-05-26</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-06-01 17:15:21" itemprop="dateModified" datetime="2022-06-01T17:15:21+08:00">2022-06-01</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/APC/" itemprop="url" rel="index"><span itemprop="name">APC</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/APC/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/ThreadFuction-Analysis/" class="post-meta-item leancloud_visitors" data-flag-title="Terminate/Suspend/ResumeThread函数分析" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/ThreadFuction-Analysis/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/ThreadFuction-Analysis/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>28k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>26 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<p>线程只能自杀，不能他杀。”他杀”只不过是“他”在目标线程上挂一个APC，然后让目标线程在适当的时候去执行这个APC。</p>
+<p>作业：</p>
+<p>1、分析TerminateThread&#x2F;SuspendThread是如何实现的（从3环开始分析）。<br>2、自己编写代码向某个线程插入一个用户APC。<br>3、自己分析APC的插入过程。</p>
+<h2 id="1-TerminateThread分析"><a href="#1-TerminateThread分析" class="headerlink" title="1 TerminateThread分析"></a>1 TerminateThread分析</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminatethread">TerminateThread函数</a>：终止一个线程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL __stdcall <span class="title">TerminateThread</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in, out] HANDLE hThread,	<span class="comment">//要终止线程的句柄。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]      DWORD  dwExitCode 	<span class="comment">//线程的退出代码。</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>dwExitCode：使用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-getexitcodethread">GetExitCodeThread</a>函数检索线程的退出值。</p>
+<p>函数调用过程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">TerminateThread --&gt; NtTerminateThread(<span class="number">102</span>h) --&gt; NtTerminateThread --&gt; PspTerminateThreadByPointer</span><br><span class="line">  --&gt;PspExitThread/KeInitializeApc</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-1-NtTerminateThread"><a href="#1-1-NtTerminateThread" class="headerlink" title="1.1 NtTerminateThread"></a>1.1 NtTerminateThread</h3><p><code>NtTerminateThread</code>函数：将指定的线程终止（This function causes the specified thread to terminate.）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtTerminateThread</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN HANDLE ThreadHandle OPTIONAL,	<span class="comment">//要结束线程的句柄</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN NTSTATUS ExitStatus		<span class="comment">//线程的退出代码</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(ThreadHandle == <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(EPROCESS.ActiveThreads != <span class="number">1</span>)	<span class="comment">//ActiveThreads：记录了当前进程有多少活动线程。当该值减为0时，所有的线程将退出，于是进程也退出。</span></span><br><span class="line">  &#123;</span><br><span class="line">    PspTerminateThreadByPointer(Thread, ExitStatus);	<span class="comment">//ActiveThreads &gt; 1，Kill当前线程（KPCR）</span></span><br><span class="line">  &#125;<span class="keyword">else</span>				<span class="comment">//Handle == 0，KTHREAD.ApcState.Process.ActiveThreads == 1时直接返回，不结束自己</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0xC00000DB</span>;		<span class="comment">//STATUS_CANT_TERMINATE_SELF，ActiveThreads == 1，说明当前线程是该进程最后一个线程了,不结束自己	</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(ThreadHandle != <span class="literal">NULL</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(ThreadHandle == <span class="number">-2</span>) 	<span class="comment">//结束当前线程</span></span><br><span class="line">  &#123;</span><br><span class="line">    PspTerminateThreadByPointer(Thread, ExitStatus);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//要结束的不是当前线程</span></span><br><span class="line">  ObReferenceObjectByHandle();	<span class="comment">//获取要结束线程对象地址</span></span><br><span class="line">  <span class="keyword">if</span>(Object != CurrentThread)	<span class="comment">//要结束的线程与当前线程 不属于同一个进程</span></span><br><span class="line">  &#123;</span><br><span class="line">    PspTerminateThreadByPointer(Thread, ExitStatus);</span><br><span class="line">    ObfDereferenceObject(Thread);</span><br><span class="line">  &#125;<span class="keyword">else</span>	<span class="comment">//要结束的线程与当前线程 属于同一个进程</span></span><br><span class="line">  &#123; </span><br><span class="line">    ObfDereferenceObject(Thread)	<span class="comment">//减少指定对象的对象引用计数(不同于句柄引用计数)，并在计数变为零时进行清理工作</span></span><br><span class="line">    PspTerminateThreadByPointer(Thread, ExitStatus);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>逆向分析如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br></pre></td><td class="code"><pre><span class="line">PAGE:<span class="number">004F</span>BB8F ; ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">004F</span>BB92                 align <span class="number">8</span></span><br><span class="line">PAGE:<span class="number">004F</span>BB98</span><br><span class="line">PAGE:<span class="number">004F</span>BB98 ; =============== S U B R O U T I N E =======================================</span><br><span class="line">PAGE:<span class="number">004F</span>BB98</span><br><span class="line">PAGE:<span class="number">004F</span>BB98 ; Attributes: bp-based frame</span><br><span class="line">PAGE:<span class="number">004F</span>BB98</span><br><span class="line">PAGE:<span class="number">004F</span>BB98 ; <span class="function">NTSTATUS __stdcall <span class="title">NtTerminateThread</span><span class="params">(HANDLE ThreadHandle, NTSTATUS ExitStatus)</span></span></span><br><span class="line">PAGE:004FBB98 _NtTerminateThread@8 proc near          //DATA XREF: .text:0042D858↑o</span><br><span class="line">PAGE:<span class="number">004F</span>BB98</span><br><span class="line">PAGE:<span class="number">004F</span>BB98 AccessMode      = byte ptr <span class="number">-4</span></span><br><span class="line">PAGE:<span class="number">004F</span>BB98 ThreadHandle    = dword ptr  <span class="number">8</span></span><br><span class="line">PAGE:<span class="number">004F</span>BB98 ExitStatus      = dword ptr  <span class="number">0</span>Ch</span><br><span class="line">PAGE:<span class="number">004F</span>BB98</span><br><span class="line">PAGE:<span class="number">004F</span>BB98                 mov     edi, edi</span><br><span class="line">PAGE:<span class="number">004F</span>BB9A                 push    ebp</span><br><span class="line">PAGE:<span class="number">004F</span>BB9B                 mov     ebp, esp</span><br><span class="line">PAGE:<span class="number">004F</span>BB9D                 push    ecx</span><br><span class="line">PAGE:<span class="number">004F</span>BB9E                 push    ebx</span><br><span class="line">PAGE:<span class="number">004F</span>BB9F                 push    esi</span><br><span class="line">PAGE:<span class="number">004F</span>BBA0                 push    edi</span><br><span class="line">PAGE:<span class="number">004F</span>BBA1                 <span class="keyword">xor</span>     edi, edi</span><br><span class="line">PAGE:<span class="number">004F</span>BBA3                 mov     eax, large fs:<span class="number">124</span>h</span><br><span class="line">PAGE:<span class="number">004F</span>BBA9                 cmp     [ebp+ThreadHandle], edi</span><br><span class="line">PAGE:<span class="number">004F</span>BBAC                 mov     esi, eax</span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                 jnz     <span class="keyword">short</span> loc_4FBBC3 <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//ThreadHandle != 0</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//判断 ThreadHandle == -2？</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         ;</span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//ThreadHandle句柄值：</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//1、 0：</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//    - ActiveThreads != 1，结束当前线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//    - ActiveThreads == 1，直接返回，也就是不能结束当前进程的最后一个线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//2、 -1 代表当前进程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//3、 -2 代表当前线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//4、 为4倍数的正数：句柄表中的索引</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//5、 负数：其值的绝对值为System进程中的句柄值，ObpKernelHandleTable，仅限于内核模式的函数可以引用。</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBAE                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                 mov     eax, [esi+_KTHREAD.ApcState.Process] <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                                         <span class="comment">//ThreadHandle == NULL，传入句柄值为NULL时有如下两种处理方式：</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                                         <span class="comment">//1. ActiveThreads != 1，结束当前线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                                         <span class="comment">//2. ActiveThreads == 1，直接返回，也就是不能结束当前进程的最后一个线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                                         ;</span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                                         <span class="comment">//eax：如果线程已经挂靠，则为养父母</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                                         <span class="comment">//     如果没有挂靠，则为亲生父母（创建者进程）</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB0                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB3                 cmp     [eax+_EPROCESS.ActiveThreads], <span class="number">1</span> <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB3                                         <span class="comment">//ActiveThreads：记录了当前进程有多少活动线程。</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB3                                         <span class="comment">//当该值减为0时，所有的线程将退出，于是进程也退出。</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBB3                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBA                 jnz     <span class="keyword">short</span> loc_4FBBFF <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBA                                         <span class="comment">//ActiveThreads != 1，说明ActiveThreads &gt; 1，不会 &lt;= 1不然进程应该结束了</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBA                                         <span class="comment">//ActiveThreads &gt; 1，Kill当前线程（KPCR）</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBA                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBC                 mov     eax, <span class="number">0</span>C00000DBh <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBC                                         <span class="comment">//STATUS_CANT_TERMINATE_SELF</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBC                                         <span class="comment">//ActiveThreads == 1，说明当前线程是该进程最后一个线程了</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBC                                         <span class="comment">//表示默认情况下，线程试图终止自己（称为NULL的NtTerminateThread），它是当前进程中的最后一个线程。</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBBC                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC1                 jmp     <span class="keyword">short</span> loc_4FBC1E <span class="comment">//返回，也就是说当传入的句柄值Handle == NULL ：</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC1                                         <span class="comment">//Handle == 0，KTHREAD.ApcState.Process.ActiveThreads == 1时直接返回，不结束自己</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3 ; ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">004F</span>BBC3</span><br><span class="line">PAGE:<span class="number">004F</span>BBC3 loc_4FBBC3:                             <span class="comment">//CODE XREF: NtTerminateThread(x,x)+16↑j</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                 cmp     [ebp+ThreadHandle], <span class="number">0F</span>FFFFFFEh <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//ThreadHandle != 0</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//判断 ThreadHandle == -2？</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         ;</span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//ThreadHandle句柄值：</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//1、 0：</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//    - ActiveThreads != 1，结束当前线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//    - ActiveThreads == 1，直接返回，也就是不能结束当前进程的最后一个线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//2、 -1 代表当前进程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//3、 -2 代表当前线程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//4、 为4倍数的正数：句柄表中的索引</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//5、 负数：其值的绝对值为System进程中的句柄值，ObpKernelHandleTable，仅限于内核模式的函数可以引用。</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC3                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC7                 jz      <span class="keyword">short</span> loc_4FBBFF <span class="comment">//调用 PspTerminateThreadByPointer 来Kill当前线程（KPCR）</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBC9                 mov     al, [esi+_KTHREAD.PreviousMode]</span><br><span class="line">PAGE:<span class="number">004F</span>BBCF                 push    <span class="number">0</span>               <span class="comment">//HandleInformation</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBD1                 mov     [ebp+AccessMode], al</span><br><span class="line">PAGE:<span class="number">004F</span>BBD4                 lea     eax, [ebp+ThreadHandle]</span><br><span class="line">PAGE:<span class="number">004F</span>BBD7                 push    eax             <span class="comment">//函数调用后ThreadHandle保存PVOID的对象地址，就不是句柄了</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBD8                 push    dword ptr [ebp+AccessMode] <span class="comment">//AccessMode</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBDB                 push    _PsThreadType   <span class="comment">//ObjectType</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE1                 push    <span class="number">1</span>               <span class="comment">//DesiredAccess</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE3                 push    [ebp+ThreadHandle] <span class="comment">//Handle</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                 call    _ObReferenceObjectByHandle@<span class="number">24</span> <span class="comment">//NTSTATUS ObReferenceObjectByHandle (</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                                         <span class="comment">//    IN HANDLE Handle,</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                                         <span class="comment">//    IN ACCESS_MASK DesiredAccess,</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                                         <span class="comment">//    IN POBJECT_TYPE ObjectType OPTIONAL,</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                                         <span class="comment">//    IN KPROCESSOR_MODE AccessMode,</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                                         <span class="comment">//    OUT PVOID *Object,</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                                         <span class="comment">//    OUT POBJECT_HANDLE_INFORMATION HandleInformation OPTIONAL</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBE6                                         <span class="comment">//    )</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBEB                 mov     edi, eax</span><br><span class="line">PAGE:<span class="number">004F</span>BBED                 test    edi, edi</span><br><span class="line">PAGE:<span class="number">004F</span>BBEF                 jl      <span class="keyword">short</span> loc_4FBC1C <span class="comment">//返回</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBF1                 mov     ebx, [ebp+ThreadHandle] <span class="comment">//参考PAGE:004FBBD4，ThreadHandle保存PVOID的对象地址</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBF4                 cmp     ebx, esi        <span class="comment">//esi：CurrentThread</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBF6                 jnz     <span class="keyword">short</span> loc_4FBC0A <span class="comment">//要结束的线程与当前线程 不属于同一个进程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBF8                 mov     ecx, ebx        <span class="comment">//要结束的线程与当前线程 属于同一个进程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBFA                 call    @ObfDereferenceObject@<span class="number">4</span> <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBFA                                         <span class="comment">//减少指定对象的对象引用计数，并在计数变为零时进行清理工作。</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBFA                                         <span class="comment">//不同于句柄引用计数</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBFA                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBFF</span><br><span class="line">PAGE:<span class="number">004F</span>BBFF loc_4FBBFF:                             <span class="comment">//CODE XREF: NtTerminateThread(x,x)+22↑j</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBFF                                         <span class="comment">//NtTerminateThread(x,x)+2F↑j</span></span><br><span class="line">PAGE:<span class="number">004F</span>BBFF                 push    [ebp+ExitStatus] <span class="comment">//调用 PspTerminateThreadByPointer 来Kill当前线程（KPCR）</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC02                 push    esi             <span class="comment">//Object</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                 call    _PspTerminateThreadByPointer@<span class="number">8</span> <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//NTSTATUS PspTerminateThreadByPointer(</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//    IN PETHREAD Thread,</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//    IN NTSTATUS ExitStatus</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//    )</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//typedef struct FARSTRUCT _LARGE_INTEGER &#123;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//    DWORD LowPart;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//    LONG  HighPart;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//&#125; LARGE_INTEGER, *PLARGE_INTEGER;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC03                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC08                 jmp     <span class="keyword">short</span> loc_4FBC1C <span class="comment">//返回</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0A ; ---------------------------------------------------------------------------</span><br><span class="line">PAGE:<span class="number">004F</span>BC0A</span><br><span class="line">PAGE:<span class="number">004F</span>BC0A loc_4FBC0A:                             <span class="comment">//CODE XREF: NtTerminateThread(x,x)+5E↑j</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0A                 push    [ebp+ExitStatus] <span class="comment">//要结束的线程与当前线程 不属于同一个进程</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0D                 push    ebx             <span class="comment">//Object</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                 call    _PspTerminateThreadByPointer@<span class="number">8</span> <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//NTSTATUS PspTerminateThreadByPointer(</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//    IN PETHREAD Thread,</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//    IN NTSTATUS ExitStatus</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//    )</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//typedef struct FARSTRUCT _LARGE_INTEGER &#123;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//    DWORD LowPart;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//    LONG  HighPart;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//&#125; LARGE_INTEGER, *PLARGE_INTEGER;</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC0E                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC13                 mov     ecx, ebx        <span class="comment">//Object</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC15                 mov     edi, eax</span><br><span class="line">PAGE:<span class="number">004F</span>BC17                 call    @ObfDereferenceObject@<span class="number">4</span> <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC17                                         <span class="comment">//减少指定对象的对象引用计数，并在计数变为零时进行清理工作。</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC17                                         <span class="comment">//不同于句柄引用计数</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC17                                         <span class="comment">//--</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC1C</span><br><span class="line">PAGE:<span class="number">004F</span>BC1C loc_4FBC1C:                             <span class="comment">//CODE XREF: NtTerminateThread(x,x)+57↑j</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC1C                                         <span class="comment">//NtTerminateThread(x,x)+70↑j</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC1C                 mov     eax, edi        <span class="comment">//返回</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC1E</span><br><span class="line">PAGE:<span class="number">004F</span>BC1E loc_4FBC1E:                             <span class="comment">//CODE XREF: NtTerminateThread(x,x)+29↑j</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC1E                 pop     edi</span><br><span class="line">PAGE:<span class="number">004F</span>BC1F                 pop     esi</span><br><span class="line">PAGE:<span class="number">004F</span>BC20                 pop     ebx</span><br><span class="line">PAGE:<span class="number">004F</span>BC21                 leave</span><br><span class="line">PAGE:<span class="number">004F</span>BC22                 retn    <span class="number">8</span></span><br><span class="line">PAGE:<span class="number">004F</span>BC22 _NtTerminateThread@<span class="number">8</span> endp</span><br><span class="line">PAGE:<span class="number">004F</span>BC22</span><br><span class="line">PAGE:<span class="number">004F</span>BC22 ; ---------------------------------------------------------------------------</span><br></pre></td></tr></table></figure>
+
+<h4 id="NULL句柄的含义"><a href="#NULL句柄的含义" class="headerlink" title="NULL句柄的含义"></a>NULL句柄的含义</h4><p>逆向分析得，句柄值的处理：</p>
+<table>
+<thead>
+<tr>
+<th align="left">句柄值</th>
+<th align="left">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left"><strong>0</strong></td>
+<td align="left">ActiveThreads &#x3D; KTHREAD.ApcState.Process.ActiveThreads<br />- ActiveThreads !&#x3D; 1，结束当前线程。<br />- ActiveThreads &#x3D;&#x3D; 1，直接返回，也就是不能结束当前进程的最后一个线程。<br />在分析<code>NtTerminateThread(IN HANDLE ThreadHandle OPTIONAL,IN NTSTATUS ExitStatus)</code>时逆得的。</td>
+</tr>
+<tr>
+<td align="left"><strong>-1</strong></td>
+<td align="left"><mark class="label warning">代表当前进程</mark></td>
+</tr>
+<tr>
+<td align="left"><strong>-2</strong></td>
+<td align="left"><mark class="label success">代表当前线程</mark></td>
+</tr>
+<tr>
+<td align="left">一个为4倍数的正数</td>
+<td align="left">句柄表中的索引</td>
+</tr>
+<tr>
+<td align="left"><strong>负数</strong></td>
+<td align="left">其值的绝对值为<strong>System进程中的句柄值</strong>，ObpKernelHandleTable，仅限于内核模式的函数可以引用。</td>
+</tr>
+</tbody></table>
+<div class="note primary"><p>还需要说说明的是：</p>
+<ul>
+<li>Handle &#x3D;&#x3D; -2，结束当前线程。</li>
+<li>Handle &#x3D;&#x3D; NULL<ul>
+<li>ActiveThreads !&#x3D; 1，结束当前线程。</li>
+<li>ActiveThreads &#x3D;&#x3D; 1，直接返回，<strong>不可</strong>结束当前线程</li>
+</ul>
+</li>
+</ul>
+</div>
+
+
+
+<h3 id="1-2-PspTerminateThreadByPointer"><a href="#1-2-PspTerminateThreadByPointer" class="headerlink" title="1.2 PspTerminateThreadByPointer"></a>1.2 PspTerminateThreadByPointer</h3><p><code>PspTerminateThreadByPointer</code>函数：将指定的线程终止（This function causes the specified thread to terminate.）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">PspTerminateThreadByPointer</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PETHREAD Thread,		<span class="comment">//要结束线程地址</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN NTSTATUS ExitStatus	<span class="comment">//线程的退出代码</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(ETHREAD.CrossThreadFlags == <span class="number">0x40</span>)<span class="comment">//PS_CROSS_THREAD_FLAGS_BREAK_ON_TERMINATION,要求退出线程时中断到调试器</span></span><br><span class="line">&#123;</span><br><span class="line">  PspCatchCriticalBreak();	<span class="comment">//中断到调试器，中断后继续执行结束线程的工作</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(Object == CurrentThread)	<span class="comment">//要kill当前线程</span></span><br><span class="line">&#123;</span><br><span class="line">  CrossThreadFlags.Terminated == <span class="number">1</span>;<span class="comment">//线程已执行终止操作</span></span><br><span class="line">  PspExitThread();		<span class="comment">//(thread has called PspExitThread itself)</span></span><br><span class="line">&#125;<span class="keyword">else</span>	<span class="comment">//要Kill的不是当前线程</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(ETHREAD.CrossThreadFlags == <span class="number">0x10</span>)<span class="comment">//PS_CROSS_THREAD_FLAGS_SYSTEM,判断是否是系统线程</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">//要Kill的线程不是当前线程，是系统线程，则无权限</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0xC0000022</span>;	<span class="comment">//STATUS_ACCESS_DENIED,没有权限结束系统线程</span></span><br><span class="line">    &#125;<span class="keyword">else</span>			<span class="comment">//要Kill的线程不是当前线程，也不是系统线程</span></span><br><span class="line">    &#123;</span><br><span class="line">      LPVOID pMem = <span class="literal">NULL</span>;</span><br><span class="line">      <span class="keyword">while</span>(<span class="number">1</span>)</span><br><span class="line">      &#123;</span><br><span class="line">        pMem = ExAllocatePoolWithTag();<span class="comment">//分配指定类型的池内存，并返回指向分配块的指针</span></span><br><span class="line">        <span class="keyword">if</span>(pMem != <span class="literal">NULL</span>)</span><br><span class="line">        &#123;</span><br><span class="line">          Old_CrossThreadFlags.Terminated = CrossThreadFlags.Terminated;</span><br><span class="line">          CrossThreadFlags.Terminated = <span class="number">1</span>;</span><br><span class="line">          <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        KeDelayExecutionThread();	<span class="comment">//将当前线程置于指定间隔内可被唤醒或不可吵醒的等待状态，然后继续申请内存</span></span><br><span class="line">      &#125;<span class="comment">//while</span></span><br><span class="line">      <span class="keyword">if</span>(Old_CrossThreadFlags.Terminated == <span class="number">1</span>)<span class="comment">//线程已经被终止过了</span></span><br><span class="line">      &#123;</span><br><span class="line">        ExFreePoolWithTag();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;<span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        KeInitializeApc();	<span class="comment">//插入APC</span></span><br><span class="line">        KeInsertQueueApc();</span><br><span class="line">        ExFreePoolWithTag();</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;<span class="comment">//要Kill的线程不是当前线程，也不是系统线程</span></span><br><span class="line"></span><br><span class="line">  &#125;<span class="comment">//要Kill的不是当前线程</span></span><br></pre></td></tr></table></figure>
+
+<p>逆向分析得这样的结论：<strong>如果要Kill自己，使用<code>PspExitThread</code>函数；如果要Kill其他线程，则需要插入APC去执行</strong>。</p>
+<p>源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">PspTerminateThreadByPointer</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PETHREAD Thread,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN NTSTATUS ExitStatus,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN BOOLEAN DirectTerminate</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"><span class="comment">//Routine Description: This function causes the specified thread to terminate.</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    NTSTATUS Status;</span><br><span class="line">    PKAPC    ExitApc=<span class="literal">NULL</span>;</span><br><span class="line">    ULONG    OldMask;</span><br><span class="line"></span><br><span class="line">    PAGED_CODE();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Thread-&gt;CrossThreadFlags</span><br><span class="line">    &amp; PS_CROSS_THREAD_FLAGS_BREAK_ON_TERMINATION) &#123;</span><br><span class="line">      PspCatchCriticalBreak(<span class="string">&quot;Terminating critical thread 0x%p (in %s)\n&quot;</span>,</span><br><span class="line">                Thread,</span><br><span class="line">                THREAD_TO_PROCESS(Thread)-&gt;ImageFileName);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (DirectTerminate &amp;&amp; Thread == PsGetCurrentThread()) &#123;</span><br><span class="line">        ASSERT (KeGetCurrentIrql() &lt; APC_LEVEL);</span><br><span class="line">        PS_SET_BITS (&amp;Thread-&gt;CrossThreadFlags, PS_CROSS_THREAD_FLAGS_TERMINATED);</span><br><span class="line">        PspExitThread (ExitStatus);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Never Returns</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Cross thread deletion of system threads won&#x27;t work.</span></span><br><span class="line">        <span class="keyword">if</span> (IS_SYSTEM_THREAD (Thread)) &#123;</span><br><span class="line">            <span class="keyword">return</span> STATUS_ACCESS_DENIED;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Status = STATUS_SUCCESS;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">            ExitApc = (PKAPC) ExAllocatePoolWithTag (NonPagedPool,</span><br><span class="line">                                                     <span class="keyword">sizeof</span>(KAPC),</span><br><span class="line">                                                     &#x27;xEsP&#x27;);</span><br><span class="line">            <span class="keyword">if</span> (ExitApc != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            KeDelayExecutionThread(KernelMode, FALSE, &amp;ShortTime);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Mark the thread as terminating and call the exit function.</span></span><br><span class="line">        OldMask = PS_TEST_SET_BITS (&amp;Thread-&gt;CrossThreadFlags, PS_CROSS_THREAD_FLAGS_TERMINATED);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// If we are the first to set the terminating flag then queue the APC</span></span><br><span class="line">        <span class="keyword">if</span> ((OldMask &amp; PS_CROSS_THREAD_FLAGS_TERMINATED) == <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">            KeInitializeApc (ExitApc,</span><br><span class="line">                             PsGetKernelThread (Thread),</span><br><span class="line">                             OriginalApcEnvironment,</span><br><span class="line">                             PsExitSpecialApc,</span><br><span class="line">                             PspExitApcRundown,</span><br><span class="line">                             PspExitNormalApc,</span><br><span class="line">                             KernelMode,</span><br><span class="line">                             ULongToPtr (ExitStatus));</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!KeInsertQueueApc (ExitApc, ExitApc, <span class="literal">NULL</span>, <span class="number">2</span>)) &#123;</span><br><span class="line">                <span class="comment">// If APC queuing is disabled then the thread is exiting anyway</span></span><br><span class="line">                ExFreePool (ExitApc);</span><br><span class="line">                Status = STATUS_UNSUCCESSFUL;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// We queued the APC to the thread. Wake up the thread if it was suspended.</span></span><br><span class="line">                KeForceResumeThread (&amp;Thread-&gt;Tcb);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            ExFreePool (ExitApc);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="ETHREAD-CrossThreadFlags"><a href="#ETHREAD-CrossThreadFlags" class="headerlink" title="ETHREAD.CrossThreadFlags"></a>ETHREAD.CrossThreadFlags</h4><p>CrossThreadFlags域是一些针对跨线程访问的标志位（《Windows内核原理与实现3.4 P128》），包括：</p>
+<ul>
+<li>Terminated（线程已执行终止操作）</li>
+<li>DeadThread（创建失败）</li>
+<li>HideFromDebugger（该线程对于调试器不可见）</li>
+<li>Activelmpersonationlnfo（线程正在模仿）</li>
+<li>SystemThread（是一个系统线程）</li>
+<li>HardErrorsAreDisabled（对于该线程，硬件错误无效）</li>
+<li>BreakOnTermination（调试器在线程终止时停下该线程，即要求退出进程时中断到调试器）</li>
+<li>SkipCreationMsg（不向调试器发送创建消息）</li>
+<li>SkipTerminationMsg（不向调试器发送终止消息）。</li>
+</ul>
+<p>在创建线程时，经常将CrossThreadFlags.SystemThread设置为1，来伪装成系统线程，这样普通线程就没有办法将自己Kill了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line"></span><br><span class="line">  ULONG CrossThreadFlags;</span><br><span class="line">  <span class="comment">// The following fields are for the debugger only. Do not use.</span></span><br><span class="line">  <span class="comment">// Use the bit definitions instead.以下字段仅适用于调试器。不使用。请改用位定义。</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    ULONG Terminated              : <span class="number">1</span>;</span><br><span class="line">    ULONG DeadThread              : <span class="number">1</span>;</span><br><span class="line">    ULONG HideFromDebugger        : <span class="number">1</span>;</span><br><span class="line">    ULONG ActiveImpersonationInfo : <span class="number">1</span>;</span><br><span class="line">    ULONG SystemThread            : <span class="number">1</span>;</span><br><span class="line">    ULONG HardErrorsAreDisabled   : <span class="number">1</span>;</span><br><span class="line">    ULONG BreakOnTermination      : <span class="number">1</span>;</span><br><span class="line">    ULONG SkipCreationMsg         : <span class="number">1</span>;</span><br><span class="line">    ULONG SkipTerminationMsg      : <span class="number">1</span>;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line">    ACCESS_MASK GrantedAccess;</span><br><span class="line">    <span class="comment">// Flags for cross thread access. Use interlocked operations</span></span><br><span class="line">    <span class="comment">// via PS_SET_BITS etc.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Used to signify that the delete APC has been queued or the</span></span><br><span class="line">    <span class="comment">// thread has called PspExitThread itself.</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_TERMINATED           0x00000001UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Thread create failed</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_DEADTHREAD           0x00000002UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Debugger isn&#x27;t shown this thread</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_HIDEFROMDBG          0x00000004UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Thread is impersonating</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_IMPERSONATING        0x00000008UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// This is a system thread</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SYSTEM               0x00000010UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Hard errors are disabled for this thread</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_HARD_ERRORS_DISABLED 0x00000020UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// We should break in when this thread is terminated</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_BREAK_ON_TERMINATION 0x00000040UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// This thread should skip sending its create thread message</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SKIP_CREATION_MSG    0x00000080UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// This thread should skip sending its final thread termination message</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SKIP_TERMINATION_MSG 0x00000100UL</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="KeDelayExecutionThread"><a href="#KeDelayExecutionThread" class="headerlink" title="KeDelayExecutionThread"></a>KeDelayExecutionThread</h4><p><code>KeDelayExecutionThread</code>函数：将当前线程置于指定间隔内可被唤醒或不可吵醒的等待状态。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">KeDelayExecutionThread</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] KPROCESSOR_MODE WaitMode, <span class="comment">//指定调用者等待的处理器模式，可以是KernelMode或UserMode。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in] BOOLEAN         Alertable,<span class="comment">//是否可被吵醒</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in] PLARGE_INTEGER  Interval  <span class="comment">//指定等待的绝对或相对时间，单位为100纳秒。负值表示相对时间。</span></span></span></span><br><span class="line"><span class="function"><span class="params">                                 <span class="comment">//绝对到期时间跟踪系统时间的任何变化；相对到期时间不受系统时间变化的影响。</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-3-PspExitThread"><a href="#1-3-PspExitThread" class="headerlink" title="1.3 PspExitThread"></a>1.3 PspExitThread</h3><p><code>PspExitThread</code>函数的功能：This function causes the <strong>currently executing thread to terminate</strong>.  This function is only called from within the process structure.  It is called either from mainline exit code to exit the current thread, or from PsExitSpecialApc (as a piggyback to user-mode PspExitNormalApc).</p>
+<p>函数原型：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID __stdcall <span class="title">PspExitThread</span><span class="params">(IN NTSTATUS ExitStatus)</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这个函数相当复杂，等我有时间，学到更多知识后再来逆😭。</p>
+<h2 id="2-SuspendThread"><a href="#2-SuspendThread" class="headerlink" title="2 SuspendThread"></a>2 SuspendThread</h2><p><code>SuspendThread</code>函数：挂起&#x2F;暂停指定的线程。</p>
+<div class="note default"><p>64位应用程序可以使用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/wow64apiset/nf-wow64apiset-wow64suspendthread">Wow64SuspendThread</a>函数挂起WOW64线程。</p>
+<ul>
+<li><strong>WOW64</strong>：WOW64（Windows-On-Windows 64bit）是X64 Windows操作系统的一个子系统，为32位应用程序提供运行环境。</li>
+<li><strong>WOW32</strong>：负责在32位Windows系统上运行16位应用程序。</li>
+<li><strong>Wow64SuspendThread</strong>：此功能适用于64位应用程序。32位Windows不支持它；此类调用失败，并将最后一个错误代码设置为<code>ERROR_INVALID_FUNCTION</code>。32位应用程序可以在WOW64线程上调用此函数；结果与调用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-suspendthread">SuspendThread</a>函数相同。在64位程序开发中，编译器识别本函数，可能无法识别SuspendThread。</li>
+</ul>
+</div>
+
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">DWORD __stdcall <span class="title">SuspendThread</span><span class="params">([in] HANDLE hThread)</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参数<code>hThread</code>：待挂起的线程的句柄。</li>
+<li>返回值：如果函数成功，返回值是<strong>线程之前的暂停计数</strong>；否则，它是<code>(DWORD) -1</code>。要获取扩展错误信息，请使用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/errhandlingapi/nf-errhandlingapi-getlasterror">GetLastError</a>函数。</li>
+</ul>
+<div class="note danger"><p><strong>暂停计数(<code>SuspendCount</code>)<strong>：也叫做<mark class="label primary">挂起计数</mark>，</strong>记录线程被挂起的次数</strong>。每个线程都有一个暂停计数（最大值为<strong>MAXIMUM_SUSPEND_COUNT</strong>）。</p>
+</div>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">KTHREAD.SuspendCount(+<span class="number">0x1b9</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXIMUM_SUSPEND_COUNT MAXCHAR</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXCHAR         255</span></span><br></pre></td></tr></table></figure>
+<p>如果挂起计数大于零，则线程将被挂起；否则，线程不会挂起，并且符合执行条件。调用&#96;&#96;SuspendThread&#96;导致目标线程的挂起计数增加。尝试超过最大挂起计数会导致错误而不增加计数。<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-resumethread">ResumeThread</a>函数会减去挂起线程的挂起计数。</p>
+<p>函数调用过程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SuspendThread --&gt; NtSuspendThread(<span class="number">0F</span>Eh) --&gt; NtSuspendThread --&gt; PsSuspendThread --&gt; KeSuspendThread</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-NtSuspendThread"><a href="#2-1-NtSuspendThread" class="headerlink" title="2.1 NtSuspendThread"></a>2.1 NtSuspendThread</h3><p><code>NtSuspendThread</code>函数：This function suspends the target thread, and <strong>optionally returns</strong> the previous suspend count.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtSuspendThread</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN HANDLE ThreadHandle,			<span class="comment">//Supplies a handle to the thread object to suspend.</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PULONG PreviousSuspendCount OPTIONAL	<span class="comment">//An optional parameter, that if specified points to a variable</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span>						<span class="comment">//that receives the thread&#x27;s previous suspend count.</span></span></span><br></pre></td></tr></table></figure>
+
+<p>注意这里的<code>PreviousSuspendCount</code>是一个地址，<strong>指向先前线程被挂起的次数</strong>。</p>
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(PreviousMode != <span class="number">0</span>)	<span class="comment">//调用来自3环，需要进行参数检查</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(PreviousSuspendCount == <span class="literal">NULL</span>) <span class="keyword">goto</span> StartOperations;<span class="comment">//传入参数为NULL，无需获取先前线程被挂起的次数</span></span><br><span class="line">  <span class="keyword">else</span>	<span class="comment">//PreviousSuspendCount != NULL</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(PreviousSuspendCount &gt;= MmUserProbeAddress)	<span class="comment">//MmUserProbeAddress == 7fff0000,划定用户空间和内核空间界限的地址</span></span><br><span class="line">    &#123;</span><br><span class="line">      MmUserProbeAddress = <span class="literal">NULL</span>;			<span class="comment">//用于抛出异常，因为NULL地址不可写</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">StartOperations:</span><br><span class="line">  Object = ObReferenceObjectByHandle();</span><br><span class="line">  PsSuspendThread(Thread,PreviousSuspendCount);		<span class="comment">//挂起线程</span></span><br><span class="line">  ObfDereferenceObject();	<span class="comment">//少指定对象的对象引用计数，并在计数变为零时进行清理工作。不同于句柄引用计数</span></span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (PreviousSuspendCount != <span class="literal">NULL</span>) &#123;</span><br><span class="line">            *PreviousSuspendCount = (DWORD)SuspendThread;<span class="comment">//写入错误就会触发异常</span></span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125; except (EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line"></span><br><span class="line">        st = GetExceptionCode();	<span class="comment">//PreviousSuspendCount == NULL，触发异常</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">return</span> st;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_EXECUTE_HANDLER       1	<span class="comment">//代码进入except块</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_CONTINUE_SEARCH       0	<span class="comment">//不处理异常，由上一层调用函数处理</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_CONTINUE_EXECUTION    -1	<span class="comment">//回去继续执行错误处的代码</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="MmUserProbeAddress"><a href="#MmUserProbeAddress" class="headerlink" title="MmUserProbeAddress"></a>MmUserProbeAddress</h4><p><code>MmUserProbeAddress</code>是一个全局变量，指向一个划定用户空间和内核空间界限的地址。</p>
+<p>与该值的比较用于确定地址是指向用户空间还是内核空间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dd MmUserProbeAddress</span><br><span class="line"><span class="number">80563134</span>  <span class="number">7f</span>ff0000 <span class="number">80000000</span> <span class="number">7f</span>feffff <span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>MmUserProbeAddress == 0x7fff0000</code>，则用户空间（3环）可以访问的最大地址是<code>0x7fff0000</code>。</p>
+<p>源码中有：<code>PreviousSuspendCount &gt;= MmUserProbeAddress</code>，就会<code>MmUserProbeAddress = NULL</code>。就会抛出异常，因为<code>NULL</code>地址不可写。实际上源码中用了<code>try-except</code>，源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        Mode = KeGetPreviousMode();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( Mode != KernelMode ) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ARGUMENT_PRESENT(PreviousSuspendCount)) &#123;</span><br><span class="line">                ProbeForWriteUlong(PreviousSuspendCount);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; except (EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ARGUMENT_PRESENT(p) ((p) != NULL)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ProbeForWriteUlong(Address) &#123;                                        </span></span><br><span class="line">    <span class="keyword">if</span> ((Address) &gt;= (ULONG * <span class="keyword">const</span>)MM_USER_PROBE_ADDRESS) &#123;                 </span><br><span class="line">        *(<span class="keyword">volatile</span> ULONG * <span class="keyword">const</span>)MM_USER_PROBE_ADDRESS = <span class="number">0</span>;                  </span><br><span class="line">    &#125;                                                                        </span><br><span class="line">                                                                             </span><br><span class="line">    *(<span class="keyword">volatile</span> ULONG *)(Address) = *(<span class="keyword">volatile</span> ULONG *)(Address);             </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，当<code>try</code>中的<code>ProbeForWriteUlong(PreviousSuspendCount)</code>执行到<code>*(volatile ULONG * const)MM_USER_PROBE_ADDRESS = 0</code>就会触发异常（因为NULL地址不可读写），然后执行<code>except</code>中的代码。</p>
+<div class="note success"><p>0环下大部分的<code>Nt-</code>函数都会对来自3环调用的参数进行检查，常用到<code>MmUserProbeAddress</code>。</p>
+</div>
+
+<h4 id="volatile类型修饰符"><a href="#volatile类型修饰符" class="headerlink" title="volatile类型修饰符"></a>volatile类型修饰符</h4><p>volatile关键字是一种类型修饰符。Volatile意思是“易变的”，应该解释为“直接存取原始内存地址”比较合适。这个关键词volatile总是与优化有关，多线程读取变量时也用到。</p>
+<p>使用<code>volatile</code>修饰的变量，在编译这样的变量时，编译器一般都会作减少存取内存的优化，但有可能会读脏数据。<strong>遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问</strong>。</p>
+<p>但是也不能频繁的使用<code>volatile</code>，否则会影响程序运行的性能。具体可以参考<a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/c-volatile-keyword.html">C&#x2F;C++ 中 volatile 关键字详解</a>。</p>
+<p>以下举个例子说明一下：</p>
+<ol>
+<li><p>不使用<code>volatile</code>时编译Release版本（vc6编译器）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> TestNum = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> temp = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">	TestNum = <span class="number">2</span>;</span><br><span class="line">	temp = TestNum;</span><br><span class="line">	TestNum = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Release版本编译代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00401000</span>	mov eax,dword ptr ds:[<span class="number">0x407034</span>]</span><br><span class="line"><span class="number">00401005</span>	mov dword ptr ds:[<span class="number">0x4098A8</span>],<span class="number">0x5</span></span><br><span class="line"><span class="number">0040100F</span>	dec eax                                  </span><br><span class="line"><span class="number">00401010</span>	mov dword ptr ds:[<span class="number">0x407034</span>],eax         </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>0x4098A8</code>即为变量TestNum的地址，由于源代码最后一次赋值是<code>TestNum = 5</code>，则代码<code>TestNum = 2</code>是无用的被优化了。</li>
+<li>代码<code>temp = TestNum</code>中，赋值后<code>temp</code>没有被用到，在代码中也被优化了。</li>
+</ul>
+</li>
+<li><p>使用<code>volatile</code>修饰变量时编译Release版本（vc6编译器）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">volatile</span> <span class="keyword">int</span> TestNum = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> temp = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">	TestNum = <span class="number">2</span>;</span><br><span class="line">	temp = TestNum;</span><br><span class="line">	TestNum = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Release版本编译代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00401000</span>	mov dword ptr ds:[<span class="number">0x4098A8</span>],<span class="number">0x2</span></span><br><span class="line"><span class="number">0040100</span>A	mov eax,dword ptr ds:[<span class="number">0x4098A8</span>]</span><br><span class="line"><span class="number">0040100F</span>	mov dword ptr ds:[<span class="number">0x4098A8</span>],<span class="number">0x5</span></span><br><span class="line"><span class="number">00401019</span>	mov eax,dword ptr ds:[<span class="number">0x407034</span>]</span><br><span class="line"><span class="number">0040101</span>E	dec eax                                  </span><br><span class="line"><span class="number">0040101F</span>	mov dword ptr ds:[<span class="number">0x407034</span>],eax         </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，两次对<code>TestNum</code>的赋值都没有被优化，对于取地址<code>0x4098A8</code>中的值给<code>temp</code>赋值的代码也没有优化。</p>
+</li>
+</ol>
+<p>家宇花园</p>
+<h3 id="2-2-PsSuspendThread"><a href="#2-2-PsSuspendThread" class="headerlink" title="2.2 PsSuspendThread"></a>2.2 PsSuspendThread</h3><p><code>PsSuspendThread</code>函数：This function suspends the target thread, and optionally returns the previous suspend count.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">PsSuspendThread</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PETHREAD Thread,				<span class="comment">//要挂起的线程</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PULONG PreviousSuspendCount OPTIONAL	<span class="comment">//线程先前被挂起的次数</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(Object == CurrentThread)	<span class="comment">//要挂起当前线程</span></span><br><span class="line">&#123;</span><br><span class="line">  KeSuspendThread(Thread);	<span class="comment">//挂起线程</span></span><br><span class="line">  Status = STATUS_SUCCESS;</span><br><span class="line">&#125;<span class="keyword">else</span>	<span class="comment">//要挂起的不是当前线程</span></span><br><span class="line">&#123;</span><br><span class="line">  bRet = ExAcquireRundownProtectio(RunRef);<span class="comment">//开启运行保护，保证在访问Thread线程完成之前不会删除该对象</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">//返回值，TRUE：已获取运行保护，FALSE：运行保护处于活动状态或已完成,必须将对象视为无效。</span></span><br><span class="line">  <span class="keyword">if</span>(bRet == FALSE)</span><br><span class="line">  &#123;</span><br><span class="line">    Status = <span class="number">0xC000004B</span>;		<span class="comment">//STATUS_THREAD_IS_TERMINATING,试图暂停已经开始终止的线程</span></span><br><span class="line">  &#125;<span class="keyword">else</span>	<span class="comment">//bRet == TRUE</span></span><br><span class="line">  &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>(CrossThreadFlags.Terminated == <span class="number">1</span>)<span class="comment">//线程已执行终止操作</span></span><br><span class="line">    &#123;</span><br><span class="line">      Status = <span class="number">0xC000004B</span>;		<span class="comment">//STATUS_THREAD_IS_TERMINATING,试图暂停已经开始终止的线程</span></span><br><span class="line">    &#125;<span class="keyword">else</span>				<span class="comment">//CrossThreadFlags.Terminated == 0,线程未执行终止操作</span></span><br><span class="line">    &#123;</span><br><span class="line">      KeSuspendThread(Thread);		<span class="comment">//挂起线程</span></span><br><span class="line">      Status = STATUS_SUCCESS;</span><br><span class="line">      <span class="keyword">if</span>(CrossThreadFlags.Terminated == <span class="number">1</span>)</span><br><span class="line">      &#123;</span><br><span class="line">        KeForceResumeThread();</span><br><span class="line">        SuspendCount = <span class="number">0</span>;</span><br><span class="line">        Status = <span class="number">0xC000004B</span>;		<span class="comment">//STATUS_THREAD_IS_TERMINATING,试图暂停已经开始终止的线程</span></span><br><span class="line">      &#125; </span><br><span class="line">    &#125;<span class="comment">//CrossThreadFlags.Terminated == 0,线程未执行终止操作</span></span><br><span class="line">    </span><br><span class="line">    ExReleaseRundownProtection();</span><br><span class="line">  &#125;<span class="comment">//bRet == TRUE</span></span><br><span class="line">  </span><br><span class="line">&#125;<span class="comment">//要挂起的不是当前线程</span></span><br><span class="line"><span class="keyword">if</span>(PreviousSuspendCount != <span class="number">0</span>) </span><br><span class="line">&#123;</span><br><span class="line">  PreviousSuspendCount = SuspendCount;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> Status;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="ExAcquireRundownProtection"><a href="#ExAcquireRundownProtection" class="headerlink" title="ExAcquireRundownProtection"></a>ExAcquireRundownProtection</h4><p><code>ExAcquireRundownProtection</code>函数：尝试获取共享对象的运行保护，以便调用方可以安全地访问该对象。</p>
+<p><strong>当运行保护生效时，驱动程序可以安全地访问对象，而不会有在访问完成之前删除该对象的风险。</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTKERNELAPI BOOLEAN FASTCALL <span class="title">ExAcquireRundownProtection</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     IN PEX_RUNDOWN_REF RunRef	<span class="comment">//跟踪关联的共享对象的运行状态</span></span></span></span><br><span class="line"><span class="function"><span class="params">     )</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参数<code>RunRef</code>：指向先前对 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-exinitializerundownprotection">ExInitializeRundownProtection</a> 例程的调用初始化<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/kernel/eprocess">的EX_RUNDOWN_REF</a>结构的指针。 运行保护例程使用此结构来跟踪关联的共享对象的运行状态。 此结构对驱动程序不透明。</li>
+<li>返回值：如果例程成功获取调用方的运行保护，<strong>ExAcquireRundownProtection</strong> 将返回 <strong>TRUE</strong>。 否则，它将返回 <strong>FALSE</strong>。 <strong>FALSE</strong> 的返回值指示对象的运行已启动，并且该对象必须被视为无效，不可再访问该对象。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/kernel/run-down-protection"><strong>停止运行保护</strong></a>（Run-Down Protection）：从 Windows XP 开始，内核驱动就支持停运保护机制。驱动通过停运机制可以<strong>安全地</strong>访问在系统内存中的对象，通常这些对象是由其他内核驱动创建和销毁的。</p>
+<div class="note info"><p>拥有共享对象的驱动程序可以允许其他驱动程序获取和释放对象的运行时保护。 <strong>当停运保护生效时，除对象的所有者外，其他驱动可以访问该对象而不用担心在访问结束前该对象会被其所有者删除</strong>。在访问开始之前，要访问的驱动会提出对目标对象实施停运保护的请求。对于一个存活周期较长的对象来说，这类请求几乎都是被允许的。当访问结束时，执行访问的驱动会卸除之前对对象实施的停运保护。</p>
+</div>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/liaoguifa/p/9670868.html">同步下的资源互斥：停运保护（Run-Down Protection）机制</a>。</p>
+<h3 id="2-3-KeSuspendThread"><a href="#2-3-KeSuspendThread" class="headerlink" title="2.3 KeSuspendThread"></a>2.3 KeSuspendThread</h3><p><code>KeSuspendThread</code>函数：将线程挂起。如果挂起计数溢出最大挂起计数，则会引发一个条件。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ULONG __stdcall <span class="title">KeSuspendThread</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PKTHREAD Thread	<span class="comment">//要挂起的线程</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span>			<span class="comment">//返回值：线程原先被挂起的次数</span></span></span><br></pre></td></tr></table></figure>
+
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXIMUM_SUSPEND_COUNT 255</span></span><br><span class="line"><span class="keyword">if</span>(SuspendCount == MAXIMUM_SUSPEND_COUNT)	<span class="comment">//线程被挂起的次数达到最大值</span></span><br><span class="line">&#123;</span><br><span class="line">  Status = <span class="number">0xC000004A</span>;	<span class="comment">//STATUS_SUSPEND_COUNT_EXCEEDED,试图暂停计数达到最大值的线程</span></span><br><span class="line">  ExRaiseStatus();	<span class="comment">//异常处理，直接就退出本函数了，后面的代码不会执行了</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span>(ApcQueueable == <span class="number">1</span>)	<span class="comment">//表示可以向线程的APC队列中插入APC</span></span><br><span class="line">&#123;</span><br><span class="line">  Old_SuspendCount = SuspendCount;</span><br><span class="line">  SuspendCount++;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(Old_SuspendCount != <span class="number">0</span>)<span class="comment">//非首次挂起该线程</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">return</span> Old_SuspendCount;	<span class="comment">//该线程已经被挂起过，非首次挂起，SuspendCount++后直接返回</span></span><br><span class="line">  &#125;<span class="keyword">else</span>	<span class="comment">//Old_SuspendCount == 0，线程第一次被挂起</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(FreezeCount == <span class="number">0</span>)	<span class="comment">//当首次挂起和恢复时，FreezeCount必须为0</span></span><br><span class="line">    &#123;</span><br><span class="line">      bRet = (BOOLEAN)KiInsertQueueApc();<span class="comment">//插入APC去挂起线程</span></span><br><span class="line">      <span class="keyword">if</span>(bRet == FALSE)		<span class="comment">//APC插入失败</span></span><br><span class="line">        Thread-&gt;SuspendSemaphore.Header.SignalState--;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="comment">//Old_SuspendCount == 0</span></span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> Old_SuspendCount;</span><br></pre></td></tr></table></figure>
+
+<p>在调用SuspendThread时，SuspendCount 自加1；如果大于0表示挂起了。调用ResumeThread时，SuspendCount 自减1；如果等于0，系统会恢复线程。 </p>
+<p>当挂起和恢复时，FreezeCount必须为0，否则挂起和恢复操作都直接pass了。所以，可以修改 SuspendCount 和  FreezeCount来达到反挂起的目的。</p>
+<p>源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ULONG <span class="title">KeSuspendThread</span> <span class="params">( IN PKTHREAD Thread )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    KLOCK_QUEUE_HANDLE LockHandle;</span><br><span class="line">    ULONG OldCount;</span><br><span class="line"></span><br><span class="line">    ASSERT_THREAD(Thread);</span><br><span class="line">    ASSERT(KeGetCurrentIrql() &lt;= DISPATCH_LEVEL);</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Raise IRQL to SYNCH_LEVEL, acquire the thread APC queue lock, and lock</span></span><br><span class="line">    <span class="comment">// the dispatcher database.</span></span><br><span class="line">    KeAcquireInStackQueuedSpinLockRaiseToSynch(&amp;Thread-&gt;ApcQueueLock, &amp;LockHandle);</span><br><span class="line">    KiLockDispatcherDatabaseAtSynchLevel();</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Capture the current suspend count.</span></span><br><span class="line">    <span class="comment">// If the suspend count is at its maximum value, then unlock the</span></span><br><span class="line">    <span class="comment">// dispatcher database, unlock the thread APC queue lock, lower IRQL</span></span><br><span class="line">    <span class="comment">// to its previous value, and raise an error condition.</span></span><br><span class="line">    OldCount = Thread-&gt;SuspendCount;</span><br><span class="line">    <span class="keyword">if</span> (OldCount == MAXIMUM_SUSPEND_COUNT) &#123;</span><br><span class="line">        KiUnlockDispatcherDatabaseFromSynchLevel();</span><br><span class="line">        KeReleaseInStackQueuedSpinLock(&amp;LockHandle);</span><br><span class="line">        ExRaiseStatus(STATUS_SUSPEND_COUNT_EXCEEDED);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Don&#x27;t suspend the thread if APC queuing is disabled. In this case the</span></span><br><span class="line">    <span class="comment">// thread is being deleted.</span></span><br><span class="line">    <span class="keyword">if</span> (Thread-&gt;ApcQueueable == TRUE) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Increment the suspend count. If the thread was not previously</span></span><br><span class="line">        <span class="comment">// suspended, then queue the thread&#x27;s suspend APC.</span></span><br><span class="line">        Thread-&gt;SuspendCount += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> ((OldCount == <span class="number">0</span>) &amp;&amp; (Thread-&gt;FreezeCount == <span class="number">0</span>)) &#123;</span><br><span class="line">            <span class="keyword">if</span> (KiInsertQueueApc(&amp;Thread-&gt;SuspendApc, RESUME_INCREMENT) == FALSE) &#123;</span><br><span class="line">                Thread-&gt;SuspendSemaphore.Header.SignalState -= <span class="number">1</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Unlock the dispatcher database from SYNCH_LEVEL, unlock the thread APC</span></span><br><span class="line">    <span class="comment">// queue lock and lower IRQL to its previous value, and return the old</span></span><br><span class="line">    <span class="comment">// count.</span></span><br><span class="line"></span><br><span class="line">    KiUnlockDispatcherDatabaseFromSynchLevel();</span><br><span class="line">    KeReleaseInStackQueuedSpinLock(&amp;LockHandle);</span><br><span class="line">    <span class="keyword">return</span> OldCount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="KTHREAD-SuspendCount"><a href="#KTHREAD-SuspendCount" class="headerlink" title="KTHREAD.SuspendCount"></a>KTHREAD.SuspendCount</h4><mark class="label danger">SuspendCount</mark>：记录线程被挂起的次数。
+
+<ul>
+<li>在调用SuspendThread时，SuspendCount 自加1；如果大于0表示挂起了。</li>
+<li>调用ResumeThread时，SuspendCount 自减1；如果等于0，系统会恢复线程。</li>
+</ul>
+<p><code>SuspendCount</code>的最大值为<code>MAXIMUM_SUSPEND_COUNT</code>源码的定义为（线程能够被挂起的最大次数）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXIMUM_SUSPEND_COUNT MAXCHAR</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAXCHAR         255</span></span><br></pre></td></tr></table></figure>
+<p>源码是：<code>0xFF</code>，这里逆向分析的是<code>0x7F</code>，为一半，不知道为啥 。</p>
+<p>当挂起和恢复时，FreezeCount必须为0。</p>
+<h4 id="KTHREAD-FreezeCount"><a href="#KTHREAD-FreezeCount" class="headerlink" title="KTHREAD.FreezeCount"></a>KTHREAD.FreezeCount</h4><p>互联网上没有查到这个字段的详细解释，《Windows内核原理与实现》和《Windows内核情景分析》也没有解释，不过经过你想分析有这样的结论：</p>
+<div class="note default"><p><strong>当线程首次<mark class="label default">挂起</mark>和<mark class="label warning">恢复</mark>运行时，必须有<code>FreezeCount == 0</code>才会继续执行。</strong></p>
+</div>
+
+<p>所以，可以修改 SuspendCount 和  FreezeCount来达到反挂起的目的。</p>
+<h2 id="3-ResumeThread"><a href="#3-ResumeThread" class="headerlink" title="3 ResumeThread"></a>3 ResumeThread</h2><p><code>ResumeThread</code>函数：减少线程的挂起计数。当挂起计数降至零时，线程的执行将恢复。</p>
+<div class="note danger"><p>⚠️<strong>注意</strong>：该函数并不是直接将线程恢复，而只是减少线程的挂起计数。当挂起计数降至零时，线程的执行将恢复。</p>
+</div>
+
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">DWORD __stdcall <span class="title">ResumeThread</span><span class="params">([in] HANDLE hThread)</span>	<span class="comment">//hThread：要重新启动的线程的句柄</span></span></span><br></pre></td></tr></table></figure>
+
+<p><strong>返回值</strong>：如果函数成功，返回值是线程之前的暂停计数。如果函数失败，返回值为（DWORD）-1。要获取扩展错误信息，请调用<a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/desktop/api/errhandlingapi/nf-errhandlingapi-getlasterror">GetLastError</a>。</p>
+<p>函数调用过程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ResumeThread --&gt; NtResumeThread(<span class="number">0</span>CEh) --&gt; NtResumeThread --&gt; PsResumeThread --&gt; KeResumeThread</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-1-NtResumeThread"><a href="#3-1-NtResumeThread" class="headerlink" title="3.1 NtResumeThread"></a>3.1 NtResumeThread</h3><p><code>NtResumeThread</code>函数：This function resumes a thread that was previously suspened.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtResumeThread</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN HANDLE ThreadHandle,			<span class="comment">//线程句柄</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PULONG PreviousSuspendCount OPTIONAL	<span class="comment">//指向线程原先被挂起次数</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">NtResumeThread(HANDLE ThreadHandle, PULONG SuspendCount)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(PreviousMode != <span class="number">0</span>)	<span class="comment">//调用来自3环，需要进行参数检查</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">try</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(SuspendCount &gt;= MmUserProbeAddress)</span><br><span class="line">    &#123;</span><br><span class="line">      MmUserProbeAddress = <span class="number">0</span>;	<span class="comment">//抛出异常，因为该NULL地址不可写</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;except (EXCEPTION_EXECUTE_HANDLER) </span><br><span class="line">  &#123;</span><br><span class="line">      <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Object = ObReferenceObjectByHandle();	<span class="comment">//句柄转对象地址</span></span><br><span class="line">PsResumeThread();	<span class="comment">//恢复挂起的线程</span></span><br><span class="line">ObfDereferenceObject();	<span class="comment">//减少指定对象的对象引用计数，并在计数变为零时进行清理工作。不同于句柄引用计数</span></span><br><span class="line"><span class="keyword">try</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>( ((PULONG))SuspendCount )  *(PULONG)SuspendCount = OUT_SuspendCount;</span><br><span class="line">&#125;except (EXCEPTION_EXECUTE_HANDLER) </span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">return</span> GetExceptionCode ();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> STATUS_SUCCESS;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>⚠️注意：该函数只是简单的对参数进行了检查，然后将句柄转换为对象地址，最后调用函数<code>PsResumeThread</code>。</p>
+<p><strong>并没有看到怎么处理</strong>：减少线程的挂起计数。当挂起计数降至零时，线程的执行将恢复。</p>
+<p>源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Routine Description: This function resumes a thread that was previously suspened</span></span><br><span class="line"><span class="function">NTSTATUS <span class="title">NtResumeThread</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN HANDLE ThreadHandle,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PULONG PreviousSuspendCount OPTIONAL</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PETHREAD Thread;</span><br><span class="line">    NTSTATUS st;</span><br><span class="line">    KPROCESSOR_MODE Mode;</span><br><span class="line">    ULONG LocalPreviousSuspendCount;</span><br><span class="line"></span><br><span class="line">    PAGED_CODE();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        Mode = KeGetPreviousMode();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( Mode != KernelMode ) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ARGUMENT_PRESENT(PreviousSuspendCount))</span><br><span class="line">                ProbeForWriteUlong(PreviousSuspendCount);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; except (EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    st = ObReferenceObjectByHandle(</span><br><span class="line">            ThreadHandle,</span><br><span class="line">            THREAD_SUSPEND_RESUME,</span><br><span class="line">            PsThreadType,</span><br><span class="line">            Mode,</span><br><span class="line">            (PVOID *)&amp;Thread,</span><br><span class="line">            <span class="literal">NULL</span></span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ( !NT_SUCCESS(st) ) &#123;</span><br><span class="line">        <span class="keyword">return</span> st;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    PsResumeThread (Thread, &amp;LocalPreviousSuspendCount);</span><br><span class="line"></span><br><span class="line">    ObDereferenceObject (Thread);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (ARGUMENT_PRESENT (PreviousSuspendCount)) &#123;</span><br><span class="line">            *PreviousSuspendCount = LocalPreviousSuspendCount;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125; except (EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> GetExceptionCode ();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="3-2-PsResumeThread"><a href="#3-2-PsResumeThread" class="headerlink" title="3.2 PsResumeThread"></a>3.2 PsResumeThread</h3><p><code>PsResumeThread</code>函数：This function resumes a thread that was previously suspened.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcal <span class="title">PsResumeThread</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PETHREAD Thread,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PULONG PreviousSuspendCount OPTIONAL</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ulRet = (ULONG)KeResumeThread();</span><br><span class="line"><span class="keyword">if</span>(PreviousSuspendCount) *PreviousSuspendCount = ulRet;</span><br></pre></td></tr></table></figure>
+
+<p>函数太简单了，下面看一下源码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Routine Description: This function resumes a thread that was previously suspened</span></span><br><span class="line"><span class="function">NTSTATUS <span class="title">PsResumeThread</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PETHREAD Thread,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PULONG PreviousSuspendCount OPTIONAL</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ULONG LocalPreviousSuspendCount;</span><br><span class="line"></span><br><span class="line">    LocalPreviousSuspendCount = (ULONG) KeResumeThread(&amp;Thread-&gt;Tcb);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (ARGUMENT_PRESENT (PreviousSuspendCount)) &#123;</span><br><span class="line">        *PreviousSuspendCount = LocalPreviousSuspendCount;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>⚠️注意：</p>
+<p><strong>并没有看到怎么处理</strong>：减少线程的挂起计数。当挂起计数降至零时，线程的执行将恢复。</p>
+<h3 id="3-3-KeResumeThread"><a href="#3-3-KeResumeThread" class="headerlink" title="3.3 KeResumeThread"></a>3.3 KeResumeThread</h3><p><code>KeResumeThread</code>函数：此函数恢复挂起线程的执行。如果指定的线程未挂起，则不执行任何操作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ULONG __stdcall <span class="title">KeResumeThread</span> <span class="params">( IN PKTHREAD Thread )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>返回值：The previous suspend count.</p>
+<p>逆向分析函数流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(SuspendCount != <span class="number">0</span>)	<span class="comment">//线程被挂起了</span></span><br><span class="line">&#123;</span><br><span class="line">  </span><br><span class="line">  SuspendCount -= <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">if</span>(SuspendCount != <span class="number">0</span>) <span class="keyword">return</span> SuspendCount;	<span class="comment">//说明还有其他人把这个线程挂起，还不能恢复</span></span><br><span class="line">  <span class="keyword">else</span>	<span class="comment">//SuspendCount == 0，线程可以恢复</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span>(FreezeCount == <span class="number">0</span>)	<span class="comment">//执行恢复线程</span></span><br><span class="line">    &#123;</span><br><span class="line">      SuspendSemaphore.Header.SignalState += <span class="number">1</span>;</span><br><span class="line">      KiWaitTest();	<span class="comment">//循环地将在该等待对象上的所有线程从等待网上摘掉，并且从线程等待链上摘掉，信号值也进行处理</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> SuspendCount;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>在这里我们看到了怎么处理</strong>：减少线程的挂起计数。当挂起计数降至零时，线程的执行将恢复。</p>
+<p>源代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">ULONG <span class="title">KeResumeThread</span> <span class="params">( IN PKTHREAD Thread )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function resumes the execution of a suspended thread. If the</span></span></span><br><span class="line"><span class="function"><span class="comment">    specified thread is not suspended, then no operation is performed.</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: The previous suspend count.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    ULONG OldCount;</span><br><span class="line">    KIRQL OldIrql;</span><br><span class="line"></span><br><span class="line">    ASSERT_THREAD(Thread);</span><br><span class="line">    ASSERT(KeGetCurrentIrql() &lt;= DISPATCH_LEVEL);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Raise IRQL to dispatcher level and lock dispatcher database.</span></span><br><span class="line">    KiLockDispatcherDatabase(&amp;OldIrql);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Capture the current suspend count.</span></span><br><span class="line">    OldCount = Thread-&gt;SuspendCount;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If the thread is currently suspended, then decrement its suspend count.</span></span><br><span class="line">    <span class="keyword">if</span> (OldCount != <span class="number">0</span>) &#123;	<span class="comment">//线程被挂起了</span></span><br><span class="line">        Thread-&gt;SuspendCount -= <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// If the resultant suspend count is zero and the freeze count is</span></span><br><span class="line">        <span class="comment">// zero, then resume the thread by releasing its suspend semaphore.</span></span><br><span class="line">        <span class="keyword">if</span> ((Thread-&gt;SuspendCount == <span class="number">0</span>) &amp;&amp; (Thread-&gt;FreezeCount == <span class="number">0</span>)) &#123;</span><br><span class="line">            Thread-&gt;SuspendSemaphore.Header.SignalState += <span class="number">1</span>;</span><br><span class="line">            KiWaitTest(&amp;Thread-&gt;SuspendSemaphore, RESUME_INCREMENT);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Unlock dispatcher database and lower IRQL to its previous value.</span></span><br><span class="line">    KiUnlockDispatcherDatabase(OldIrql);</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Return the previous suspend count.</span></span><br><span class="line">    <span class="keyword">return</span> OldCount;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/ThreadFuction-Analysis/" title="Terminate&#x2F;Suspend&#x2F;ResumeThread函数分析">https://directoree.github.io/post/ThreadFuction-Analysis/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/%E7%BA%BF%E7%A8%8B%E5%87%BD%E6%95%B0/" rel="tag"># 线程函数</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Multi-core-synchronization2/" rel="prev" title="Windows XP 多核同步（二）">
+                  <i class="fa fa-chevron-left"></i> Windows XP 多核同步（二）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-APC/" rel="next" title="Windows XP APC（一）">
+                  Windows XP APC（一） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">17:31</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/ThreadFuction-Analysis/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
