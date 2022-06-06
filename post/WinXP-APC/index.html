@@ -29,8 +29,8 @@
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-05-26T10:23:17.000Z">
-<meta property="article:modified_time" content="2022-05-30T11:34:17.962Z">
+<meta property="article:published_time" content="2022-06-01T10:23:17.000Z">
+<meta property="article:modified_time" content="2022-06-04T12:07:06.301Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="APC">
@@ -231,7 +231,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-APC"><span class="nav-text">1 APC</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-APC"><span class="nav-text">1 APC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-APC%E9%98%9F%E5%88%97"><span class="nav-text">1.1 APC队列</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -348,14 +348,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-05-26 18:23:17" itemprop="dateCreated datePublished" datetime="2022-05-26T18:23:17+08:00">2022-05-26</time>
+      <time title="创建时间：2022-06-01 18:23:17" itemprop="dateCreated datePublished" datetime="2022-06-01T18:23:17+08:00">2022-06-01</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-05-30 19:34:17" itemprop="dateModified" datetime="2022-05-30T19:34:17+08:00">2022-05-30</time>
+        <time title="修改时间：2022-06-04 20:07:06" itemprop="dateModified" datetime="2022-06-04T20:07:06+08:00">2022-06-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -404,7 +404,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.4k</span>
+      <span>1.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -425,28 +425,41 @@
         <p>ʕ •ᴥ•ʔ  ɔ: </p>
 <a id="more"></a>
 
-<h2 id="1-APC"><a href="#1-APC" class="headerlink" title="1 APC"></a>1 APC</h2><p>控制其他线程，就给他插入APC。</p>
-<p>想要<strong>改变另外一个线程的行为</strong>，就给它提供一个函数，让他某个时候去执行，这个函数称为APC函数。</p>
-<p>线程只能自杀，不能他杀。</p>
-<p>作业：</p>
-<p>1、分析TerminateThread&#x2F;SuspendThread是如何实现的（从3环开始分析）。<br>2、自己编写代码向某个线程插入一个用户APC。1、分析TerminateThread&#x2F;，SuspendThread是如何实现的（从3环开始分析）。<br>3、自己分析APC的插入过程。</p>
-<p>TerminateThread –&gt; NtTerminateThread(102h) –&gt; NtTerminateThread –&gt; PspTerminateThreadByPointer –&gt;PspExitThread&#x2F;KeInitializeApc</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">    ACCESS_MASK GrantedAccess;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Flags for cross thread access. Use interlocked operations</span></span><br><span class="line">    <span class="comment">// via PS_SET_BITS etc.</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Used to signify that the delete APC has been queued or the</span></span><br><span class="line">    <span class="comment">// thread has called PspExitThread itself.</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_TERMINATED           0x00000001UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Thread create failed</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_DEADTHREAD           0x00000002UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Debugger isn&#x27;t shown this thread</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_HIDEFROMDBG          0x00000004UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Thread is impersonating</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_IMPERSONATING        0x00000008UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// This is a system thread</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SYSTEM               0x00000010UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Hard errors are disabled for this thread</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_HARD_ERRORS_DISABLED 0x00000020UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// We should break in when this thread is terminated</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_BREAK_ON_TERMINATION 0x00000040UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// This thread should skip sending its create thread message</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SKIP_CREATION_MSG    0x00000080UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// This thread should skip sending its final thread termination message</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SKIP_TERMINATION_MSG 0x00000100UL</span></span><br><span class="line"><span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line"></span><br><span class="line">  ULONG CrossThreadFlags;</span><br><span class="line">  <span class="comment">// The following fields are for the debugger only. Do not use.</span></span><br><span class="line">  <span class="comment">// Use the bit definitions instead.以下字段仅适用于调试器。不使用。请改用位定义。</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    ULONG Terminated              : <span class="number">1</span>;</span><br><span class="line">    ULONG DeadThread              : <span class="number">1</span>;</span><br><span class="line">    ULONG HideFromDebugger        : <span class="number">1</span>;</span><br><span class="line">    ULONG ActiveImpersonationInfo : <span class="number">1</span>;</span><br><span class="line">    ULONG SystemThread            : <span class="number">1</span>;</span><br><span class="line">    ULONG HardErrorsAreDisabled   : <span class="number">1</span>;</span><br><span class="line">    ULONG BreakOnTermination      : <span class="number">1</span>;</span><br><span class="line">    ULONG SkipCreationMsg         : <span class="number">1</span>;</span><br><span class="line">    ULONG SkipTerminationMsg      : <span class="number">1</span>;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>CrossThreadFlags域是一些针对跨线程访问的标志位，包括（《Windows内核原理与实现3.4 P128》）：</p>
-<ul>
-<li>Terminated（线程已执行终止操作）</li>
-<li>DeadThread（创建失败）</li>
-<li>HideFromDebugger（该线程对于调试器不可见）</li>
-<li>Activelmpersonationlnfo（线程正在模仿）</li>
-<li>SystemThread（是一个系统线程）</li>
-<li>HardErrorsAreDisabled（对于该线程，硬件错误无效）</li>
-<li>BreakOnTermination（调试器在线程终止时停下该线程，即要求退出进程时中断到调试器）</li>
-<li>SkipCreationMsg（不向调试器发送创建消息）</li>
-<li>SkipTerminationMsg（不向调试器发送终止消息）。</li>
+<h2 id="1-APC"><a href="#1-APC" class="headerlink" title="1 APC"></a>1 APC</h2><p>线程是自己结束的，线程不能被其他线程杀死，考虑一种极端情况，线程屏蔽了时钟中断，不发生异常，那么它就能一直执行下去。</p>
+<p>前面分析过，<code>PspTerminateThreadByPointer</code>、<code>KeSuspendThread</code>函数改变其他线程行为的方式是向线程APC队列添加一个APC结构，线程执行到某个时刻，会检查自己的APC队列，判断要做什么工作，包括结束自己。</p>
+<div class="note danger"><ul>
+<li>控制其他线程，就给他插入APC。</li>
+<li>想要<strong>改变另外一个线程的行为</strong>，就给它提供一个函数，让他某个时候去执行，这个函数称为APC函数。</li>
+<li>线程只能自杀，不能他杀。控制别的线程，就是通过APC实现的。</li>
 </ul>
-<p>SuspendThread –&gt; NtSuspendThread(0FEh) –&gt; NtSuspendThread –&gt; PsSuspendThread –&gt; KeSuspendThread</p>
-<p>ResumeThread –&gt; NtResumeThread(0CEh) –&gt; NtResumeThread –&gt; PsResumeThread –&gt; KeResumeThread</p>
+</div>
+
+<p>那如果想改变一个线程的行为该怎么办呢?<br>可以给他提供一个函数，让它自己去调用，这个函数就是<mark class="label primary">APC</mark>(Asyncroneus Procedure Call)，即<mark class="label success">异步过程调用</mark>。</p>
+<p>海哥说，从0环回去执行3环API的过程是最难理解的。理解了就基本学会调试了。</p>
+<h3 id="1-1-APC队列"><a href="#1-1-APC队列" class="headerlink" title="1.1 APC队列"></a>1.1 APC队列</h3><p>APC队列：<code>_KAPC</code>。</p>
+<p>APC状态是挂在线程结构体<code>KTHREAD</code>上的，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KTHREAD</span><br><span class="line">ntdll!_KTHREAD</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   ...</span><br><span class="line">   +<span class="number">0x034</span> ApcState         : _KAPC_STATE</span><br><span class="line">   ...</span><br></pre></td></tr></table></figure>
+
+<p>APC状态的结构为<code>_KAPC_STATE</code>，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KAPC_STATE</span><br><span class="line">ntdll!_KAPC_STATE</span><br><span class="line">   +<span class="number">0x000</span> ApcListHead      : [<span class="number">2</span>] _LIST_ENTRY	<span class="comment">//2个APC队列，内核APC和用户APC。每个队列8字节，共16字节</span></span><br><span class="line">   +<span class="number">0x010</span> Process          : Ptr32 _KPROCESS	<span class="comment">//线程所属或者所挂靠的进程</span></span><br><span class="line">   +<span class="number">0x014</span> KernelApcInProgress : UChar		<span class="comment">//内核APC是否正在执行，1：正在执行，0:不在执行</span></span><br><span class="line">   +<span class="number">0x015</span> KernelApcPending : UChar		<span class="comment">//是否有正在等待执行的内核APC，1：有，0：没有</span></span><br><span class="line">   +<span class="number">0x016</span> UserApcPending   : UChar		<span class="comment">//是否有正在等待执行的用户APC，1：有，0：没有</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><mark class="label warning">用户APC</mark>：APC函数地址位于用户空间，在用户空间执行。
+</li>
+<li><mark class="label success">内核APC</mark>：APC函数地址位于内核空间，在内核空间执行。</li>
+</ul>
+<p>用户APC，从0环回去执行3环API的过程是最难理解的。</p>
+<p>APC队列的结构<code>_KAPC</code>如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KAPC</span><br><span class="line">ntdll!_KAPC</span><br><span class="line">   +<span class="number">0x000</span> Type             : Int2B		<span class="comment">//类型  APC类型为18</span></span><br><span class="line">   +<span class="number">0x002</span> Size             : Int2B		<span class="comment">//本结构体的大小  0x30</span></span><br><span class="line">   +<span class="number">0x004</span> Spare0           : Uint4B		<span class="comment">//未使用</span></span><br><span class="line">   +<span class="number">0x008</span> Thread           : Ptr32 _KTHREAD	<span class="comment">//目标线程  </span></span><br><span class="line">   +<span class="number">0x00c</span> ApcListEntry     : _LIST_ENTRY	<span class="comment">//APC队列挂的位置</span></span><br><span class="line">   +<span class="number">0x014</span> KernelRoutine    : Ptr32     <span class="keyword">void</span> 	<span class="comment">//指向一个函数(调用ExFreePoolWithTag 释放APC)</span></span><br><span class="line">   +<span class="number">0x018</span> RundownRoutine   : Ptr32     <span class="keyword">void</span> 	<span class="comment">//用于找到其他线程提供的APC函数，但并不完全等于APC函数地址 </span></span><br><span class="line">   +<span class="number">0x01c</span> NormalRoutine    : Ptr32     <span class="keyword">void</span> 	<span class="comment">//用户APC总入口  或者 真正的内核apc函数</span></span><br><span class="line">   +<span class="number">0x020</span> NormalContext    : Ptr32 Void		<span class="comment">//内核APC：NULL  用户APC：真正的APC函数</span></span><br><span class="line">   +<span class="number">0x024</span> SystemArgument1  : Ptr32 Void		<span class="comment">//APC函数的参数	</span></span><br><span class="line">   +<span class="number">0x028</span> SystemArgument2  : Ptr32 Void		<span class="comment">//APC函数的参数</span></span><br><span class="line">   +<span class="number">0x02c</span> ApcStateIndex    : Char		<span class="comment">//挂哪个队列，有四个值：0 1 2 3</span></span><br><span class="line">   +<span class="number">0x02d</span> ApcMode          : Char		<span class="comment">//内核APC 用户APC</span></span><br><span class="line">   +<span class="number">0x02e</span> Inserted         : UChar		<span class="comment">//表示本apc是否已挂入队列 挂入前：0  挂入后  1</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p> <strong>APC函数何时被执行？</strong></p>
+<p><code>KiServiceExit</code>函数： 这个函数是<mark class="label default">系统调用</mark>、<mark class="label warning">异常</mark>或<mark class="label success">中断</mark>返回用户空间的必经之路。</p>
+<p><code>KiDeliverApc</code>函数：负责执行APC函数。</p>
+<p>练习：</p>
+<p>从KiDeliverApc开始将0环和返回三环的栈画出来.（想学好调试这道题必做）</p>
+<p>1、分析TerminateThread&#x2F;.SuspendThread是如何实现的（从3环开始分析）.<br>控制别的线程，就是通过APC实现的<br>2、自己编写代码向某个线程插入一个用户APC.<br>使用现成的API就可以  体会什么是APC<br>3、自己分析APC的插入过程</p>
 
     </div>
 
@@ -574,7 +587,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:31</span>
+    <span title="站点阅读时长">17:34</span>
   </span>
 </div>
 <div class="busuanzi-count">
