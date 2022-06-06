@@ -30,7 +30,7 @@
 <meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-26T10:23:00.000Z">
-<meta property="article:modified_time" content="2022-06-06T06:30:46.412Z">
+<meta property="article:modified_time" content="2022-06-06T11:30:25.458Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="线程函数">
@@ -355,7 +355,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-06-06 14:30:46" itemprop="dateModified" datetime="2022-06-06T14:30:46+08:00">2022-06-06</time>
+        <time title="修改时间：2022-06-06 19:30:25" itemprop="dateModified" datetime="2022-06-06T19:30:25+08:00">2022-06-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -426,8 +426,9 @@
 <a id="more"></a>
 
 <p>线程只能自杀，不能他杀。”他杀”只不过是“他”在目标线程上挂一个APC，然后让目标线程在适当的时候去执行这个APC。</p>
-<p>作业：</p>
-<p>1、分析TerminateThread&#x2F;SuspendThread是如何实现的（从3环开始分析）。<br>2、自己编写代码向某个线程插入一个用户APC。<br>3、自己分析APC的插入过程。</p>
+<p>练习：</p>
+<p>从KiDeliverApc开始将0环和返回三环的栈画出来.（想学好调试这道题必做）</p>
+<p>1、分析TerminateThread&#x2F;SuspendThread&#x2F;ResumeThread是如何实现的（从3环开始分析）.<br>控制别的线程，就是通过APC实现的<br>2、自己编写代码向某个线程插入一个用户APC.<br>使用现成的API就可以  体会什么是APC<br>3、自己分析APC的插入过程</p>
 <h2 id="1-TerminateThread分析"><a href="#1-TerminateThread分析" class="headerlink" title="1 TerminateThread分析"></a>1 TerminateThread分析</h2><p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminatethread">TerminateThread函数</a>：终止一个线程。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL __stdcall <span class="title">TerminateThread</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in, out] HANDLE hThread,	<span class="comment">//要终止线程的句柄。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]      DWORD  dwExitCode 	<span class="comment">//线程的退出代码。</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
 
@@ -851,7 +852,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:34</span>
+    <span title="站点阅读时长">17:35</span>
   </span>
 </div>
 <div class="busuanzi-count">

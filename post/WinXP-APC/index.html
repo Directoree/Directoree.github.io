@@ -30,7 +30,7 @@
 <meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-06-01T10:23:17.000Z">
-<meta property="article:modified_time" content="2022-06-04T12:07:06.301Z">
+<meta property="article:modified_time" content="2022-06-06T15:57:28.215Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="APC">
@@ -231,7 +231,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-APC"><span class="nav-text">1 APC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-APC%E9%98%9F%E5%88%97"><span class="nav-text">1.1 APC队列</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-APC"><span class="nav-text">1 APC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-APC%E9%98%9F%E5%88%97"><span class="nav-text">1.1 APC队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%A4%87%E7%94%A8APC%E9%98%9F%E5%88%97"><span class="nav-text">1.2 备用APC队列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SavedApcState"><span class="nav-text">SavedApcState</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApcStatePointer"><span class="nav-text">ApcStatePointer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApcStateIndex"><span class="nav-text">ApcStateIndex</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApcQueueable"><span class="nav-text">ApcQueueable</span></a></li></ol></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -355,7 +355,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-06-04 20:07:06" itemprop="dateModified" datetime="2022-06-04T20:07:06+08:00">2022-06-04</time>
+        <time title="修改时间：2022-06-06 23:57:28" itemprop="dateModified" datetime="2022-06-06T23:57:28+08:00">2022-06-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -404,14 +404,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.9k</span>
+      <span>3.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -457,9 +457,57 @@
 <p> <strong>APC函数何时被执行？</strong></p>
 <p><code>KiServiceExit</code>函数： 这个函数是<mark class="label default">系统调用</mark>、<mark class="label warning">异常</mark>或<mark class="label success">中断</mark>返回用户空间的必经之路。</p>
 <p><code>KiDeliverApc</code>函数：负责执行APC函数。</p>
-<p>练习：</p>
-<p>从KiDeliverApc开始将0环和返回三环的栈画出来.（想学好调试这道题必做）</p>
-<p>1、分析TerminateThread&#x2F;.SuspendThread是如何实现的（从3环开始分析）.<br>控制别的线程，就是通过APC实现的<br>2、自己编写代码向某个线程插入一个用户APC.<br>使用现成的API就可以  体会什么是APC<br>3、自己分析APC的插入过程</p>
+<h3 id="1-2-备用APC队列"><a href="#1-2-备用APC队列" class="headerlink" title="1.2 备用APC队列"></a>1.2 备用APC队列</h3><p><code>KTHREAD</code>中和APC相关的几个属性如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KTHREAD</span><br><span class="line">ntdll!_KTHREAD</span><br><span class="line">   ...</span><br><span class="line">   +<span class="number">0x034</span> ApcState         : _KAPC_STATE		<span class="comment">//APC队列所属结构</span></span><br><span class="line">   ...</span><br><span class="line">   +<span class="number">0x138</span> ApcStatePointer  : [<span class="number">2</span>] Ptr32 _KAPC_STATE	<span class="comment">//指针数组</span></span><br><span class="line">   ...</span><br><span class="line">   +<span class="number">0x14c</span> SavedApcState    : _KAPC_STATE		<span class="comment">//APC 备用队列所属结构</span></span><br><span class="line">   ...</span><br><span class="line">   +<span class="number">0x165</span> ApcStateIndex    : UChar			<span class="comment">//ApcStatePointer 的指针索引</span></span><br><span class="line">   +<span class="number">0x166</span> ApcQueueable     : UChar			<span class="comment">//表示是否可以向线程的APC队列中插入APC</span></span><br><span class="line">   ...</span><br></pre></td></tr></table></figure>
+
+<p><code>ApcState</code>在上一节已经进行说明。</p>
+<h4 id="SavedApcState"><a href="#SavedApcState" class="headerlink" title="SavedApcState"></a>SavedApcState</h4><p><code>SavedApcState</code>的结构也是<code>_KAPC_STATE</code>，第一个成员称为APC备用队列。成员<code>SavedApcState</code>与线程<mark class="label danger">挂靠</mark>相关。</p>
+<p><strong>为什么需要备用队列？</strong></p>
+<p>假设A进程有x、y两个线程，x线程有一个APC队列，当x线程挂靠B进程后，APC队列中存储的却仍然是原来的APC！具体点说，比如某个APC函数要读取一个地址为0x12345678的数据，如果此时进行读取，读到的将是B进程的地址空间，这样逻辑就错误了!</p>
+<p>为了避免混乱，在x线程挂靠B进程时，会将<code>ApcState</code>中的值暂时存储到<code>SavedApcState</code>中，等回到原进程A时，再将APC队列恢复。</p>
+<p>所以，<code>SavedApcState</code>中的<code>ApcListHead</code>又称为<strong>备用APC队列</strong>。    </p>
+<div class="note success"><p>A进程的T线程挂靠B进程：<strong>A</strong>是T的<strong>所属进程</strong>，<strong>B</strong>是T的<strong>挂靠进程</strong>。</p>
+<ul>
+<li><mark class="label primary">ApcState</mark>：挂靠进程相关的APC函数。</li>
+<li><mark class="label default">SavedApcState</mark>：所属进程相关的APC函数。</li>
+</ul>
+</div>
+
+<p>在正常情况下，当前进程就是所属进程A，如果是挂靠情况下，当前进程就是挂靠进程B。</p>
+<h4 id="ApcStatePointer"><a href="#ApcStatePointer" class="headerlink" title="ApcStatePointer"></a>ApcStatePointer</h4><p>为了操作方便，<code>_KTHREAD</code>结构体中定义了一个指针数组<code>ApcStatePointer</code>，长度为2。可以方便直接找到<code>ApcState</code>和<code>SavedApcState</code>。</p>
+<p><strong>正常情况下</strong>：</p>
+<ul>
+<li><code>ApcStatePointer[0]</code> 指向 <code>ApcState</code>   。</li>
+<li><code>ApcStatePointer[1]</code>  指向 <code>SavedApcState</code></li>
+</ul>
+<p><strong>挂靠情况下</strong>：</p>
+<ul>
+<li><code>ApcStatePointer[0]</code>  指向 <code>SavedApcState</code>。</li>
+<li><code>ApcStatePointer[1]</code>  指向 <code>ApcState</code>。</li>
+</ul>
+<h4 id="ApcStateIndex"><a href="#ApcStateIndex" class="headerlink" title="ApcStateIndex"></a>ApcStateIndex</h4><p><code>ApcStateIndex</code>用来标识当前线程处于什么状态：</p>
+<ul>
+<li>0 正常状态 </li>
+<li>1 挂靠状态</li>
+</ul>
+<p><code>ApcStatePointer</code> 与 <code>ApcStateIndex</code> 组合寻址：</p>
+<ul>
+<li><p><strong>正常情况下</strong>，向<code>ApcState</code>队列中插入APC时：<br><code>ApcStatePointer[0]</code>  指向 <code>ApcState</code>，此时<code>ApcStateIndex</code>的值为<code>0</code>：<code>ApcStatePointer[ApcStateIndex]</code>  指向 <code>ApcState</code>。</p>
+</li>
+<li><p><strong>挂靠情况下</strong>，向<code>ApcState</code>队列中插入APC时：<br><code>ApcStatePointer[1]</code>  指向 <code>ApcState</code>，此时<code>ApcStateIndex</code>的值为<code>1</code>：<code>ApcStatePointer[ApcStateIndex]</code>  指向 <code>ApcState</code>。</p>
+</li>
+</ul>
+<div class="note info"><p><strong>总结：</strong></p>
+<ul>
+<li>无论什么环境下，<code>ApcStatePointer[ApcStateIndex]</code> 指向的都是<code>ApcState</code></li>
+<li><code>ApcState</code>则总是表示线程当前使用的APC状态。</li>
+</ul>
+</div>
+
+<h4 id="ApcQueueable"><a href="#ApcQueueable" class="headerlink" title="ApcQueueable"></a>ApcQueueable</h4><p><code>ApcQueueable</code>用于表示是否可以向线程的APC队列中插入APC。</p>
+<blockquote>
+<p>当线程正在执行退出的代码时，会将这个值设置为0 ，如果此时执行插入APC的代码(KeInsertQueueApc 后面会讲)，在插入函数中会判断这个值的状态，如果为0，则插入失败。</p>
+</blockquote>
 
     </div>
 
@@ -587,7 +635,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:34</span>
+    <span title="站点阅读时长">17:35</span>
   </span>
 </div>
 <div class="busuanzi-count">
