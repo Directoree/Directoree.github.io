@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NtReadVirtulMemoery 函数分析">
+<meta property="og:url" content="https://directoree.github.io/post/NtReadVirtulMemoery/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •ᴥ•ʔ  ɔ:">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-13T01:25:43.000Z">
+<meta property="article:modified_time" content="2022-06-17T16:51:11.441Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="NtReadVirtulMemoery">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/NtReadVirtulMemoery/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>NtReadVirtulMemoery 函数分析 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE"><span class="nav-text">题目</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-ReadProcessMemory"><span class="nav-text">1 ReadProcessMemory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-NtReadVirtualMemory%EF%BC%88%E5%86%85%E6%A0%B8%EF%BC%89"><span class="nav-text">2 NtReadVirtualMemory（内核）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MmUserProbeAddress%E3%80%81MmHighestUserAddress"><span class="nav-text">MmUserProbeAddress、MmHighestUserAddress</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-MmCopyVirtualMemory"><span class="nav-text">3 MmCopyVirtualMemory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-MiDoMappedCopy"><span class="nav-text">4 MiDoMappedCopy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-MiDoPoolCopy"><span class="nav-text">5 MiDoPoolCopy</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-KeStackAttachProcess"><span class="nav-text">6 KeStackAttachProcess</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-KiAttachProcess"><span class="nav-text">7 KiAttachProcess</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">116</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">50</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/NtReadVirtulMemoery/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NtReadVirtulMemoery 函数分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-06-13 09:25:43" itemprop="dateCreated datePublished" datetime="2022-06-13T09:25:43+08:00">2022-06-13</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-06-18 00:51:11" itemprop="dateModified" datetime="2022-06-18T00:51:11+08:00">2022-06-18</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/APC/" itemprop="url" rel="index"><span itemprop="name">APC</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/APC/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AC%94%E8%AE%B0/APC/Windows%E5%86%85%E6%A0%B8/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">内存管理</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/NtReadVirtulMemoery/" class="post-meta-item leancloud_visitors" data-flag-title="NtReadVirtulMemoery 函数分析" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/NtReadVirtulMemoery/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/NtReadVirtulMemoery/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>ʕ •ᴥ•ʔ  ɔ: </p>
+<a id="more"></a>
+
+<h2 id="题目"><a href="#题目" class="headerlink" title="题目"></a>题目</h2><ol>
+<li>分析3环函数 ReadProcessMemory ，GetCurrentThread&#x2F;Process ，在挂靠情况下怎么获取，不挂靠情况下怎么获取。</li>
+<li>了解进程（线程）挂靠、怎么挂靠、挂靠前后APC队列和备用APC队列怎么处理等？</li>
+<li>0x44还是0x220？应该是前者</li>
+<li>分析NtReadVirtulMemoery（内核函数）在挂靠时如何备份和恢复APC队列的。</li>
+</ol>
+<h2 id="1-ReadProcessMemory"><a href="#1-ReadProcessMemory" class="headerlink" title="1 ReadProcessMemory"></a>1 ReadProcessMemory</h2><p>3环函数<code>ReadProcessMemory</code>：从指定进程读取指定大小内存。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">ReadProcessMemory</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  HANDLE  hProcess,		<span class="comment">//从该进程读取内存</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  LPCVOID lpBaseAddress,		<span class="comment">//指向指定进程中要读取的基本地址的指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] LPVOID  lpBuffer,		<span class="comment">//接收从指定进程的地址空间读取的内容</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  SIZE_T  nSize,			<span class="comment">//从指定进程中读取的字节数</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] SIZE_T  *lpNumberOfBytesRead	<span class="comment">//指向变量的指针，该变量接收实际传输到指定缓冲区的字节数</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>该函数的调用过程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ReadProcessMemory --&gt; NtReadVirtualMemory(<span class="number">0B</span>Ah) --&gt; NtReadVirtualMemory --&gt; MmCopyVirtualMemory --&gt; </span><br><span class="line">MiDoPoolCopy --&gt; KeStackAttachProcess --&gt; KiAttachProcess</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-NtReadVirtualMemory（内核）"><a href="#2-NtReadVirtualMemory（内核）" class="headerlink" title="2 NtReadVirtualMemory（内核）"></a>2 NtReadVirtualMemory（内核）</h2><p>函数<code>NtReadVirtualMemory</code>：该函数从指定进程的指定地址空间读取指定大小的内存 到 当前进程。（This function copies the specified address range from the specified process into the specified address range of the current process.）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtReadVirtualMemory</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     IN HANDLE ProcessHandle,			<span class="comment">//从该进程读取内存</span></span></span></span><br><span class="line"><span class="function"><span class="params">     IN PVOID BaseAddress,			<span class="comment">//指向指定进程中要读取的基本地址的指针	</span></span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PVOID Buffer,				<span class="comment">//接收从指定进程的地址空间读取的内容</span></span></span></span><br><span class="line"><span class="function"><span class="params">     IN SIZE_T BufferSize,			<span class="comment">//从指定进程中读取的字节数</span></span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PSIZE_T NumberOfBytesRead OPTIONAL	<span class="comment">//指向一个接收实际读取字节数的变量</span></span></span></span><br><span class="line"><span class="function"><span class="params">     )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数分析处理流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//从3环调用，进行参数校验检查处理</span></span><br><span class="line"><span class="keyword">if</span>(PreviousMode != <span class="number">0</span>)	</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(BufferSize &lt; <span class="number">0</span> || BaseAddress + BufferSize &gt; MmHighestUserAddress</span><br><span class="line">    	|| BaseAddress + BufferSize &gt; MmHighestUserAddress)</span><br><span class="line">  &#123;</span><br><span class="line">    status = <span class="number">0xC0000005</span>;	<span class="comment">//STATUS_ACCESS_VIOLATION</span></span><br><span class="line">    <span class="keyword">return</span> status;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(NumberOfBytesRead == <span class="literal">NULL</span>)	<span class="comment">//不需要实际读了多少字节</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">goto</span> StartBusiness;</span><br><span class="line">  &#125;<span class="keyword">else</span>		<span class="comment">//验证指针NumberOfBytesRead的合法性</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">try</span> </span><br><span class="line">    &#123; </span><br><span class="line">      <span class="keyword">if</span>(NumberOfBytesRead &gt;= MmUserProbeAddress) </span><br><span class="line">        MmUserProbeAddress = <span class="number">0</span>;	<span class="comment">//触发异常</span></span><br><span class="line">    &#125;except(EXCEPTION_EXECUTE_HANDLER)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line">StartBusiness:</span><br><span class="line">  <span class="keyword">if</span>(BufferSize == <span class="number">0</span>) 异常处理;</span><br><span class="line">  Process = ObReferenceObjectByHandle();</span><br><span class="line">  MmCopyVirtualMemory();</span><br><span class="line">  ObfDereferenceObject();</span><br><span class="line">  NumberOfBytesRead赋值;</span><br><span class="line"><span class="keyword">return</span> status;</span><br></pre></td></tr></table></figure>
+
+<div class="note default"><p>以上分析过程可以知道：</p>
+<ol>
+<li>如果是从3环调用函数<code>NtReadVirtualMemory</code>，会进行参数校验检查处理。</li>
+<li>然后调用函数<code>MmCopyVirtualMemory</code>。</li>
+</ol>
+</div>
+
+<p>函数源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">NtReadVirtualMemory</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     IN HANDLE ProcessHandle,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN PVOID BaseAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PVOID Buffer,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN SIZE_T BufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PSIZE_T NumberOfBytesRead OPTIONAL</span></span></span><br><span class="line"><span class="function"><span class="params">     )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function copies the specified address range from the specified</span></span></span><br><span class="line"><span class="function"><span class="comment">    process into the specified address range of the current process.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments:</span></span></span><br><span class="line"><span class="function"><span class="comment">     ProcessHandle - Supplies an open handle to a process object.</span></span></span><br><span class="line"><span class="function"><span class="comment">     BaseAddress - Supplies the base address in the specified process to be read.</span></span></span><br><span class="line"><span class="function"><span class="comment">     Buffer - Supplies the address of a buffer which receives the contents from the specified process address space.</span></span></span><br><span class="line"><span class="function"><span class="comment">     BufferSize - Supplies the requested number of bytes to read from the specified process.</span></span></span><br><span class="line"><span class="function"><span class="comment">     NumberOfBytesRead - Receives the actual number of bytes transferred into the specified buffer.</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: NTSTATUS.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    SIZE_T BytesCopied;</span><br><span class="line">    KPROCESSOR_MODE PreviousMode;</span><br><span class="line">    PEPROCESS Process;</span><br><span class="line">    NTSTATUS Status;</span><br><span class="line">    PETHREAD CurrentThread;</span><br><span class="line"></span><br><span class="line">    PAGED_CODE();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get the previous mode and probe output argument if necessary.</span></span><br><span class="line">    CurrentThread = PsGetCurrentThread ();</span><br><span class="line">    PreviousMode = KeGetPreviousModeByThread(&amp;CurrentThread-&gt;Tcb);</span><br><span class="line">    <span class="keyword">if</span> (PreviousMode != KernelMode) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (((PCHAR)BaseAddress + BufferSize &lt; (PCHAR)BaseAddress) ||</span><br><span class="line">            ((PCHAR)Buffer + BufferSize &lt; (PCHAR)Buffer) ||</span><br><span class="line">            ((PVOID)((PCHAR)BaseAddress + BufferSize) &gt; MM_HIGHEST_USER_ADDRESS) ||</span><br><span class="line">            ((PVOID)((PCHAR)Buffer + BufferSize) &gt; MM_HIGHEST_USER_ADDRESS)) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> STATUS_ACCESS_VIOLATION;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (ARGUMENT_PRESENT(NumberOfBytesRead)) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ProbeForWriteUlong_ptr (NumberOfBytesRead);</span><br><span class="line"></span><br><span class="line">            &#125; except(EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line">                <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If the buffer size is not zero, then attempt to read data from the</span></span><br><span class="line">    <span class="comment">// specified process address space into the current process address</span></span><br><span class="line">    <span class="comment">// space.</span></span><br><span class="line">    BytesCopied = <span class="number">0</span>;</span><br><span class="line">    Status = STATUS_SUCCESS;</span><br><span class="line">    <span class="keyword">if</span> (BufferSize != <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Reference the target process.</span></span><br><span class="line">        Status = ObReferenceObjectByHandle(ProcessHandle,</span><br><span class="line">                                           PROCESS_VM_READ,</span><br><span class="line">                                           PsProcessType,</span><br><span class="line">                                           PreviousMode,</span><br><span class="line">                                           (PVOID *)&amp;Process,</span><br><span class="line">                                           <span class="literal">NULL</span>);</span><br><span class="line">        <span class="comment">// If the process was successfully referenced, then attempt to</span></span><br><span class="line">        <span class="comment">// read the specified memory either by direct mapping or copying</span></span><br><span class="line">        <span class="comment">// through nonpaged pool.</span></span><br><span class="line">        <span class="keyword">if</span> (Status == STATUS_SUCCESS) &#123;</span><br><span class="line"></span><br><span class="line">            Status = MmCopyVirtualMemory (Process,</span><br><span class="line">                                          BaseAddress,</span><br><span class="line">                                          PsGetCurrentProcessByThread(CurrentThread),</span><br><span class="line">                                          Buffer,</span><br><span class="line">                                          BufferSize,</span><br><span class="line">                                          PreviousMode,</span><br><span class="line">                                          &amp;BytesCopied);</span><br><span class="line">            <span class="comment">// Dereference the target process.</span></span><br><span class="line">            ObDereferenceObject(Process);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If requested, return the number of bytes read.</span></span><br><span class="line">    <span class="keyword">if</span> (ARGUMENT_PRESENT(NumberOfBytesRead)) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            *NumberOfBytesRead = BytesCopied;</span><br><span class="line"></span><br><span class="line">        &#125; except(EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line">            NOTHING;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="MmUserProbeAddress、MmHighestUserAddress"><a href="#MmUserProbeAddress、MmHighestUserAddress" class="headerlink" title="MmUserProbeAddress、MmHighestUserAddress"></a>MmUserProbeAddress、MmHighestUserAddress</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_HIGHEST_USER_ADDRESS *MmHighestUserAddress</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_SYSTEM_RANGE_START *MmSystemRangeStart</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_USER_PROBE_ADDRESS *MmUserProbeAddress</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTE_BASE 0xc0000000</span></span><br><span class="line"></span><br><span class="line">MmHighestUserAddress = <span class="number">0x7ffeffff</span></span><br><span class="line">MmUserProbeAddress = <span class="number">0x7fff0000</span></span><br><span class="line">MmSystemRangeStart = <span class="number">0x80000000</span></span><br><span class="line">MmUserProbeAddress = MmHighestUserAddress + <span class="number">1</span>	</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>用户空间可以访问的最高地址是<code>MmHighestUserAddress</code>（<code>0x7ffeffff</code>），从<code>MmUserProbeAddress</code>（<code>0x7fff0000</code>）开始就不能访问了。一般文献中讲Windows系统中用户空间与系统空间的分界线是<code>0x80000000</code>，而这里之所以是<code>0x7fff0000</code>而不是<code>0x80000000</code>，是因为在分界下面留了64KB的空间不让访问，以此作为隔离区。（<code>64KB = 2^6*2^10</code>共16位）</p>
+</li>
+<li><p><code>MmUserProbeAddress</code>是一个界限，<strong>该地址不可用</strong>。</p>
+<ul>
+<li><mark class="label success">3环可用地址</mark><mark class="label danger"><=</mark><mark class="label success">MmHighestUserAddress</mark></li>
+<li><mark class="label success">3环可用地址</mark><mark class="label primary"><</mark><mark class="label success">MmUserProbeAddress</mark></li>
+</ul>
+</li>
+</ul>
+<p>这部分内容的讲解在《Windows内核情景分析5.2 P253》有、《Windows内核原理与实现4.2 P207》。</p>
+<h2 id="3-MmCopyVirtualMemory"><a href="#3-MmCopyVirtualMemory" class="headerlink" title="3 MmCopyVirtualMemory"></a>3 MmCopyVirtualMemory</h2><p><code>MmCopyVirtualMemory</code>函数：该函数将指定大小的数据 从指定进程的指定地址空间 拷贝至指定进程的指定地址中去。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">MmCopyVirtualMemory</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS FromProcess,		<span class="comment">//从该进程复制数据到ToProcess进程</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN CONST VOID *FromAddress,		<span class="comment">//从该地址开始复制数据</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS ToProcess,		<span class="comment">//从FromProcess进程复制数据到该进程</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PVOID ToAddress,		<span class="comment">//将数据复制到该地址</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T BufferSize,		<span class="comment">//要复制的数据大小字节</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN KPROCESSOR_MODE PreviousMode,	<span class="comment">//函数调用的先前模式</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PSIZE_T NumberOfBytesCopied	<span class="comment">//指向一个变量，该变量保存实际复制的数据大小</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>通过逆向分析，将函数<code>NtReadVirtualMemory</code>压栈的顺序为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">NtReadVirtualMemory</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     IN HANDLE ProcessHandle,			<span class="comment">//从该进程读取内存</span></span></span></span><br><span class="line"><span class="function"><span class="params">     IN PVOID BaseAddress,			<span class="comment">//指向指定进程中要读取的基本地址的指针	</span></span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PVOID Buffer,				<span class="comment">//接收从指定进程的地址空间读取的内容</span></span></span></span><br><span class="line"><span class="function"><span class="params">     IN SIZE_T BufferSize,			<span class="comment">//从指定进程中读取的字节数</span></span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PSIZE_T NumberOfBytesRead OPTIONAL	<span class="comment">//指向一个接收实际读取字节数的变量</span></span></span></span><br><span class="line"><span class="function"><span class="params">     )</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">  push NumberOfBytesRead</span>;	<span class="comment">//NumberOfBytesCopied</span></span><br><span class="line">  push PreviousMode;		<span class="comment">//PreviousMode</span></span><br><span class="line">  push BufferSize;		<span class="comment">//BufferSize</span></span><br><span class="line">  push Buffer;			<span class="comment">//ToAddress</span></span><br><span class="line">  push KTHREAD.ApcState.Process;<span class="comment">//ToProcess</span></span><br><span class="line">  push BaseAddress;		<span class="comment">//FromAddress</span></span><br><span class="line">  push ProcessHandle-&gt;Object;	<span class="comment">//FromProcess</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，实际上是将目标进程的数据<strong>复制到当前线程所属的进程</strong>中。</p>
+<p>函数分析处理流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(BufferSize == <span class="number">0</span>) <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(FromProcess == KTHREAD.ApcState.Process)</span><br><span class="line">&#123;</span><br><span class="line">  ecx = KTHREAD.ApcState.Process.RundownProtect;</span><br><span class="line">&#125;<span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  ecx = FromProcess.RundownProtect;</span><br><span class="line">&#125;</span><br><span class="line">eax = (BOOLEAN)ExAcquireRundownProtection(ecx);</span><br><span class="line"><span class="keyword">if</span>(eax != TRUE) <span class="keyword">return</span> <span class="number">0xC000010A</span>;	<span class="comment">//STATUS_PROCESS_IS_TERMINATING，尝试将对象句柄复制到退出进程中或退出进程</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(BufferSize &gt; <span class="number">0x1FF</span>)	<span class="comment">//#define POOL_MOVE_THRESHOLD 511  如果要复制的字节数大于511，采用内存映射方式</span></span><br><span class="line">&#123;</span><br><span class="line">  eax = (NTSTATUS)MiDoMappedCopy();	<span class="comment">//从指定进程的指定地址复制指定大小的数据 到 当前进程的指定地址</span></span><br><span class="line">  <span class="keyword">if</span>(eax != <span class="number">0xC00000A1</span>)			<span class="comment">//STATUS_WORKING_SET_QUOTA,工作集不够大，无法锁定请求的页面	</span></span><br><span class="line">  &#123;</span><br><span class="line">    ExReleaseRundownProtection();</span><br><span class="line">    <span class="keyword">return</span> eax;				<span class="comment">//内存拷贝成功，直接返回</span></span><br><span class="line">  &#125;</span><br><span class="line">  *NumberOfBytesRead = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">goto</span> CompleteService;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">eax = (NTSTATUS)MiDoPoolCopy();</span><br><span class="line"></span><br><span class="line">CompleteService:</span><br><span class="line">	<span class="keyword">return</span> eax;</span><br></pre></td></tr></table></figure>
+
+<div class="note info"><p>通过分析，函数<code>MmCopyVirtualMemory</code>主要做了两件事：</p>
+<ol>
+<li>将<code>FromProcess</code>对象开启运行保护，防止在拷贝内存的时候其进程退出（销毁）。</li>
+<li>如果<code>BufferSize &gt; 0x1FF</code>将调用<code>MiDoMappedCopy</code>，否则调用<code>MiDoPoolCopy</code>。</li>
+</ol>
+</div>
+
+<p>函数<code>MiDoMappedCopy</code>和<code>MiDoPoolCopy</code>函数功能、参数及返回值都是一样的，只是实现的细节不太一样，将会在下面进行详细的分析。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">MiDoMappedCopy</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS FromProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN CONST VOID *FromAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS ToProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PVOID ToAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T BufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN KPROCESSOR_MODE PreviousMode,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PSIZE_T NumberOfBytesRead</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数<code>MmCopyVirtualMemory</code>源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">MmCopyVirtualMemory</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS FromProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN CONST VOID *FromAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS ToProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PVOID ToAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T BufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN KPROCESSOR_MODE PreviousMode,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PSIZE_T NumberOfBytesCopied</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    NTSTATUS Status;</span><br><span class="line">    PEPROCESS ProcessToLock;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 断言 BufferSize != 0</span></span><br><span class="line">    <span class="keyword">if</span> (BufferSize == <span class="number">0</span>) &#123;</span><br><span class="line">        ASSERT (FALSE);         <span class="comment">// No one should call with a zero size.</span></span><br><span class="line">        <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 锁定要读取数据的进程</span></span><br><span class="line">    ProcessToLock = FromProcess;</span><br><span class="line">    <span class="keyword">if</span> (FromProcess == PsGetCurrentProcess()) &#123;</span><br><span class="line">        ProcessToLock = ToProcess;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Make sure the process still has an address space.</span></span><br><span class="line">    <span class="comment">// 确保进程还活着</span></span><br><span class="line">    <span class="keyword">if</span> (ExAcquireRundownProtection (&amp;ProcessToLock-&gt;RundownProtect) == FALSE) &#123;</span><br><span class="line">        <span class="keyword">return</span> STATUS_PROCESS_IS_TERMINATING;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// If the buffer size is greater than the pool move threshold,</span></span><br><span class="line">    <span class="comment">// then attempt to write the memory via direct mapping.</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// #define POOL_MOVE_THRESHOLD 511</span></span><br><span class="line">	<span class="comment">// 如果要复制的字节数大于511，采用内存映射方式</span></span><br><span class="line">    <span class="keyword">if</span> (BufferSize &gt; POOL_MOVE_THRESHOLD) &#123;</span><br><span class="line">        Status = MiDoMappedCopy(FromProcess,</span><br><span class="line">                                FromAddress,</span><br><span class="line">                                ToProcess,</span><br><span class="line">                                ToAddress,</span><br><span class="line">                                BufferSize,</span><br><span class="line">                                PreviousMode,</span><br><span class="line">                                NumberOfBytesCopied);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// If the completion status is not a working quota problem,</span></span><br><span class="line">        <span class="comment">// then finish the service. Otherwise, attempt to write the memory through nonpaged pool.</span></span><br><span class="line">        <span class="keyword">if</span> (Status != STATUS_WORKING_SET_QUOTA) &#123;</span><br><span class="line">            <span class="keyword">goto</span> CompleteService;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        *NumberOfBytesCopied = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// There was not enough working set quota to write the memory via</span></span><br><span class="line">    <span class="comment">// direct mapping or the size of the write was below the pool move</span></span><br><span class="line">    <span class="comment">// threshold. Attempt to write the specified memory through nonpaged pool.</span></span><br><span class="line">    Status = MiDoPoolCopy(FromProcess,</span><br><span class="line">                          FromAddress,</span><br><span class="line">                          ToProcess,</span><br><span class="line">                          ToAddress,</span><br><span class="line">                          BufferSize,</span><br><span class="line">                          PreviousMode,</span><br><span class="line">                          NumberOfBytesCopied);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Dereference the target process.</span></span><br><span class="line">CompleteService:</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Indicate that the vm operation is complete.</span></span><br><span class="line">    ExReleaseRundownProtection (&amp;ProcessToLock-&gt;RundownProtect);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> Status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="4-MiDoMappedCopy"><a href="#4-MiDoMappedCopy" class="headerlink" title="4 MiDoMappedCopy"></a>4 MiDoMappedCopy</h2><p>函数<code>MiDoMappedCopy</code>：该函数将指定大小的数据 从指定进程的指定地址空间 拷贝至指定进程的指定地址中去。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">MiDoMappedCopy</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS FromProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN CONST VOID *FromAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS ToProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PVOID ToAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T BufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN KPROCESSOR_MODE PreviousMode,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PSIZE_T NumberOfBytesRead</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在函数<code>MmCopyVirtualMemory</code>调用本函数前，将参数的压栈顺序如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">push NumberOfBytesRead;</span><br><span class="line">push PreviousMode;</span><br><span class="line">push BufferSize;</span><br><span class="line">push ToAddress;</span><br><span class="line">push ToProcess;</span><br><span class="line">push FromAddress;</span><br><span class="line">push FromProcess;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，实际上参数跟<code>MmCopyVirtualMemory</code>一摸一样。</p>
+<div class="note danger"><p>⚠️<strong>需要注意的是</strong>：<code>ToProcess</code>实际上是<code>CurreThread.ApcState.Process</code>，即将数据从<code>FromProcess</code>复制到当前线程所属进程空间。</p>
+</div>
+
+<p>函数分析处理流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">MaximumMoved = MAX_LOCK_SIZE;		<span class="comment">//#define MAX_LOCK_SIZE ((ULONG)(14 * PAGE_SIZE))</span></span><br><span class="line"><span class="keyword">if</span>(BufferSize &lt;= MAX_LOCK_SIZE)		<span class="comment">//#define PAGE_SIZE 4096   4096 == 4KB == 0x1000 == 1页</span></span><br><span class="line">&#123;					<span class="comment">//0xE000 == 0xE * 1000 == 14页，14页 内存大小（0xE000）</span></span><br><span class="line">  MaximumMoved = BufferSize;		<span class="comment">//说明每一次可以拷贝的内存大小为 MAX_LOCK_SIZE，但可以循环进行拷贝</span></span><br><span class="line">&#125;					<span class="comment">//BufferSize &lt;=	MaximumMoved</span></span><br><span class="line"></span><br><span class="line">InVa = FromAddress;</span><br><span class="line">OutVa = ToAddress;</span><br><span class="line">LeftToMove = BufferSize;</span><br><span class="line">AmountToMove = MaximumMoved;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(LeftToMove)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(LeftToMove &lt; AmountToMove)</span><br><span class="line">    &#123;</span><br><span class="line">      AmountToMove = LeftToMove;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//将当前进程挂靠到 FromProcess 进程</span></span><br><span class="line">    KeStackAttachProcess(IN FromProcess, OUT ApcState);	</span><br><span class="line"></span><br><span class="line">    <span class="comment">//检查用户地址FromAddress是否可读</span></span><br><span class="line">    <span class="keyword">if</span>(InVa == FromAddress &amp;&amp; PreviousMode == UserMode)	<span class="comment">//UserMode == 1</span></span><br><span class="line">    &#123; </span><br><span class="line">      <span class="comment">//此处是宏 ProbeForRead(FromAddress, BufferSize, sizeof(CHAR));</span></span><br><span class="line">      <span class="comment">//对 BufferSize 进行校验，保证其在 FromProcess 中可访问</span></span><br><span class="line">      <span class="keyword">if</span>(BufferSize != <span class="number">0</span>)</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span>(FromAddress + BufferSize &lt; FromAddress ｜｜ FromAddress + BufferSize &gt; MmUserProbeAddress);</span><br><span class="line">        &#123;</span><br><span class="line">          ExRaiseAccessViolation();	<span class="comment">//抛出异常，退出函数</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//Initialize MDL for request</span></span><br><span class="line">    <span class="comment">//宏初始化MDL的标头</span></span><br><span class="line">    MmInitializeMdl(Mdl, (PVOID)InVa, AmountToMove);	<span class="comment">//FromAddress &amp;= 0xFFF;  取 FromAddress 的低12位  FromAddress &gt;&gt; 12;</span></span><br><span class="line">    MmProbeAndLockPages();	<span class="comment">//探测指定的虚拟内存页面，使其常驻，并将其锁定在内存中（例如DMA传输）。</span></span><br><span class="line">          			<span class="comment">//这确保了当设备驱动程序（或硬件）仍在使用页面时，页面无法释放和重新分配。</span></span><br><span class="line">    <span class="comment">//将 MDL 描述的物理页映射到虚拟地址，并使调用方能够指定用于创建映射的缓存属性。</span></span><br><span class="line">    <span class="comment">//将 MDL 映射到的起始用户虚拟地址</span></span><br><span class="line">    MappedAddress = MmMapLockedPagesSpecifyCache();	<span class="comment">//将物理内存映射到虚拟内存，MappedAddress为起始地址</span></span><br><span class="line"></span><br><span class="line">    KeUnstackDetachProcess(ApcState);</span><br><span class="line">    <span class="comment">//将当前进程挂靠到 ToProcess 进程</span></span><br><span class="line">    KeStackAttachProcess(IN ToProcess, OUT ApcState);	<span class="comment">//上面是附加到FromProcess，这里是附加到ToProcess</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">//检查用户地址ToAddress是否可写</span></span><br><span class="line">    <span class="keyword">if</span>(InVa == FromAddress &amp;&amp; PreviousMode == UserMode)	<span class="comment">//UserMode == 1</span></span><br><span class="line">    &#123; </span><br><span class="line">      <span class="comment">//检查用户模式缓冲区是否实际驻留在地址空间的用户模式部分，是否可写，并且是否正确对齐。</span></span><br><span class="line">      <span class="comment">//参数一：指定用户模式缓冲区的开头；参数二：指定用户模式缓冲区的长度（以字节为单位）；参数三：指定用户模式缓冲区开头所需的对齐（以字节为单位）</span></span><br><span class="line">      ProbeForWrite(ToAddress,BufferSize,<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    RtlCopyMemory (OutVa, MappedAddress, AmountToMove);	<span class="comment">//数据拷贝到ToAddress</span></span><br><span class="line"></span><br><span class="line">    KeUnstackDetachProcess(ApcState);</span><br><span class="line">    MmUnmapLockedPages();	<span class="comment">//释放由之前对MmMapLockedPages或MmMapLockedPagesSpecifyCache例程的调用设置的映射</span></span><br><span class="line">    MmUnlockPages();		<span class="comment">//解锁指定内存描述符列表（MDL）描述的物理页面</span></span><br><span class="line">  </span><br><span class="line">    LeftToMove -= AmountToMove;</span><br><span class="line">    InVa = (PVOID)((ULONG_PTR)InVa + AmountToMove);</span><br><span class="line">    OutVa = (PVOID)((ULONG_PTR)OutVa + AmountToMove);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(LeftToMove &lt;= <span class="number">0</span>)</span><br><span class="line">&#123;</span><br><span class="line">  *NumberOfBytesRead = BufferSize;</span><br><span class="line">  <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<div class="note primary"><p>本函数是实际的数据拷贝的函数，主要做了以下几件事：</p>
+<ol>
+<li>要拷贝的数据大小先和<code>MAX_LOCK_SIZE</code>比较一下大小，是因为函数<code>MmInitializeMdl</code>每次初始化的内存大小最大只能为<code>MAX_LOCK_SIZE</code>，如果要拷贝的数据<code>BufferSize</code>大于<code>MAX_LOCK_SIZE</code>，则就要多初始化几次，所有会有一个<code>while</code>循环。</li>
+<li>调用了两次<code>KeStackAttachProcess</code>：<ul>
+<li>第一次：将当前线程所属的进程附加到<code>FromProcess</code>进程，然后将<code>FromAddress</code>(InVa)绑定MDL，然后将MDL映射到虚拟地址<code>MappedAddress</code>。</li>
+<li>第二次：将当前线程所属的进程附加到<code>ToProcess</code>进程，然后将<code>MappedAddress</code>中的数据拷贝<code>RtlCopyMemory</code>到<code>ToAddress</code>(OutVa)地址。</li>
+</ul>
+</li>
+<li>关于内存映射MDL的知识，后续学习火哥之前的内容，或者后面海哥关于内存那块的讲解有涉及的话再学习。</li>
+</ol>
+</div>
+
+<p>函数<code>MiDoMappedCopy</code>源代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">MiDoMappedCopy</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS FromProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN CONST VOID *FromAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS ToProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PVOID ToAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T BufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN KPROCESSOR_MODE PreviousMode,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PSIZE_T NumberOfBytesRead</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function copies the specified address range from the specified</span></span></span><br><span class="line"><span class="function"><span class="comment">    process into the specified address range of the current process.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments:</span></span></span><br><span class="line"><span class="function"><span class="comment">     FromProcess - Supplies an open handle to a process object.</span></span></span><br><span class="line"><span class="function"><span class="comment">     FromAddress - Supplies the base address in the specified process to be read.</span></span></span><br><span class="line"><span class="function"><span class="comment">     ToProcess - Supplies an open handle to a process object.</span></span></span><br><span class="line"><span class="function"><span class="comment">     ToAddress - Supplies the address of a buffer which receives the</span></span></span><br><span class="line"><span class="function"><span class="comment">                 contents from the specified process address space.</span></span></span><br><span class="line"><span class="function"><span class="comment">     BufferSize - Supplies the requested number of bytes to read from the specified process.</span></span></span><br><span class="line"><span class="function"><span class="comment">     PreviousMode - Supplies the previous processor mode.</span></span></span><br><span class="line"><span class="function"><span class="comment">     NumberOfBytesRead - Receives the actual number of bytes transferred into the specified buffer.</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: NTSTATUS.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    KAPC_STATE ApcState;</span><br><span class="line">    SIZE_T AmountToMove;</span><br><span class="line">    ULONG_PTR BadVa;</span><br><span class="line">    LOGICAL Moving;</span><br><span class="line">    LOGICAL Probing;</span><br><span class="line">    LOGICAL LockedMdlPages;</span><br><span class="line">    CONST VOID *InVa;</span><br><span class="line">    SIZE_T LeftToMove;</span><br><span class="line">    PSIZE_T MappedAddress;</span><br><span class="line">    SIZE_T MaximumMoved;</span><br><span class="line">    PMDL Mdl;</span><br><span class="line">    PFN_NUMBER MdlHack[(<span class="keyword">sizeof</span>(MDL)/<span class="keyword">sizeof</span>(PFN_NUMBER)) + (MAX_LOCK_SIZE &gt;&gt; PAGE_SHIFT) + <span class="number">1</span>];</span><br><span class="line">    PVOID OutVa;</span><br><span class="line">    LOGICAL MappingFailed;</span><br><span class="line">    LOGICAL ExceptionAddressConfirmed;</span><br><span class="line"></span><br><span class="line">    PAGED_CODE();</span><br><span class="line"></span><br><span class="line">    MappingFailed = FALSE;</span><br><span class="line"></span><br><span class="line">    InVa = FromAddress;</span><br><span class="line">    OutVa = ToAddress;</span><br><span class="line"></span><br><span class="line">	  <span class="comment">//#define MAX_LOCK_SIZE ((ULONG)(14 * PAGE_SIZE))</span></span><br><span class="line">    MaximumMoved = MAX_LOCK_SIZE;</span><br><span class="line">    <span class="keyword">if</span> (BufferSize &lt;= MAX_LOCK_SIZE) &#123;</span><br><span class="line">        MaximumMoved = BufferSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Mdl = (PMDL)&amp;MdlHack[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Map the data into the system part of the address space, then copy it.</span></span><br><span class="line">    LeftToMove = BufferSize;</span><br><span class="line">    AmountToMove = MaximumMoved;</span><br><span class="line"></span><br><span class="line">    Probing = FALSE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initializing BadVa &amp; ExceptionAddressConfirmed is not needed for</span></span><br><span class="line">    <span class="comment">// correctness but without it the compiler cannot compile this code</span></span><br><span class="line">    <span class="comment">// W4 to check for use of uninitialized variables.</span></span><br><span class="line"></span><br><span class="line">    BadVa = <span class="number">0</span>;</span><br><span class="line">    ExceptionAddressConfirmed = FALSE;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// It is unfortunate that Windows 2000 and all the releases of NT always</span></span><br><span class="line">    <span class="comment">// inadvertently returned from this routine detached, as we must maintain this behavior even now.</span></span><br><span class="line"> </span><br><span class="line">    KeDetachProcess();</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (LeftToMove &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (LeftToMove &lt; AmountToMove) &#123;</span><br><span class="line">            <span class="comment">// Set to move the remaining bytes.</span></span><br><span class="line">            AmountToMove = LeftToMove;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">		   <span class="comment">// attach 到目标进程，返回 attach 前的进程的 APC 队列，即 SavedApcState </span></span><br><span class="line">        KeStackAttachProcess (&amp;FromProcess-&gt;Pcb, &amp;ApcState);</span><br><span class="line"></span><br><span class="line">        MappedAddress = <span class="literal">NULL</span>;</span><br><span class="line">        LockedMdlPages = FALSE;</span><br><span class="line">        Moving = FALSE;</span><br><span class="line">        ASSERT (Probing == FALSE);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// We may be touching a user&#x27;s memory which could be invalid, declare an exception handler.</span></span><br><span class="line">        <span class="comment">// 读3环内存，确保可读，设置异常处理</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Probe to make sure that the specified buffer is accessible in the target process.</span></span><br><span class="line">            <span class="keyword">if</span> ((InVa == FromAddress) &amp;&amp; (PreviousMode != KernelMode))&#123;</span><br><span class="line">                Probing = TRUE;</span><br><span class="line">                ProbeForRead (FromAddress, BufferSize, <span class="keyword">sizeof</span>(CHAR));</span><br><span class="line">                Probing = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Initialize MDL for request.</span></span><br><span class="line">            MmInitializeMdl (Mdl, (PVOID)InVa, AmountToMove);</span><br><span class="line"></span><br><span class="line">            MmProbeAndLockPages (Mdl, PreviousMode, IoReadAccess);</span><br><span class="line"></span><br><span class="line">            LockedMdlPages = TRUE;</span><br><span class="line"></span><br><span class="line">            MappedAddress = MmMapLockedPagesSpecifyCache (Mdl,</span><br><span class="line">                                                          KernelMode,</span><br><span class="line">                                                          MmCached,</span><br><span class="line">                                                          <span class="literal">NULL</span>,</span><br><span class="line">                                                          FALSE,</span><br><span class="line">                                                          HighPagePriority);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (MappedAddress == <span class="literal">NULL</span>) &#123;</span><br><span class="line">                MappingFailed = TRUE;</span><br><span class="line">                ExRaiseStatus(STATUS_INSUFFICIENT_RESOURCES);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Deattach from the FromProcess and attach to the ToProcess.</span></span><br><span class="line">            <span class="comment">// deattach  即分离，已经读好了</span></span><br><span class="line">            KeUnstackDetachProcess (&amp;ApcState);</span><br><span class="line">            KeStackAttachProcess (&amp;ToProcess-&gt;Pcb, &amp;ApcState);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Now operating in the context of the ToProcess.</span></span><br><span class="line">            <span class="keyword">if</span> ((InVa == FromAddress) &amp;&amp; (PreviousMode != KernelMode))&#123;</span><br><span class="line">                Probing = TRUE;</span><br><span class="line">                ProbeForWrite (ToAddress, BufferSize, <span class="keyword">sizeof</span>(CHAR));</span><br><span class="line">                Probing = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Moving = TRUE;</span><br><span class="line">            RtlCopyMemory (OutVa, MappedAddress, AmountToMove);</span><br><span class="line"></span><br><span class="line">        &#125; except (MiGetExceptionInfo (GetExceptionInformation(),</span><br><span class="line">                                      &amp;ExceptionAddressConfirmed,</span><br><span class="line">                                      &amp;BadVa)) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// If an exception occurs during the move operation or probe,</span></span><br><span class="line">            <span class="comment">// return the exception code as the status value.</span></span><br><span class="line">            KeUnstackDetachProcess (&amp;ApcState);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (MappedAddress != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                MmUnmapLockedPages (MappedAddress, Mdl);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (LockedMdlPages == TRUE) &#123;</span><br><span class="line">                MmUnlockPages (Mdl);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (GetExceptionCode() == STATUS_WORKING_SET_QUOTA) &#123;</span><br><span class="line">                <span class="keyword">return</span> STATUS_WORKING_SET_QUOTA;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> ((Probing == TRUE) || (MappingFailed == TRUE)) &#123;</span><br><span class="line">                <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// If the failure occurred during the move operation, determine</span></span><br><span class="line">            <span class="comment">// which move failed, and calculate the number of bytes</span></span><br><span class="line">            <span class="comment">// actually moved.</span></span><br><span class="line">            *NumberOfBytesRead = BufferSize - LeftToMove;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (Moving == TRUE) &#123;</span><br><span class="line">                <span class="keyword">if</span> (ExceptionAddressConfirmed == TRUE) &#123;</span><br><span class="line">                    *NumberOfBytesRead = (SIZE_T)((ULONG_PTR)BadVa - (ULONG_PTR)FromAddress);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> STATUS_PARTIAL_COPY;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        KeUnstackDetachProcess (&amp;ApcState);</span><br><span class="line"></span><br><span class="line">        MmUnmapLockedPages (MappedAddress, Mdl);</span><br><span class="line">        MmUnlockPages (Mdl);</span><br><span class="line"></span><br><span class="line">        LeftToMove -= AmountToMove;</span><br><span class="line">        InVa = (PVOID)((ULONG_PTR)InVa + AmountToMove);</span><br><span class="line">        OutVa = (PVOID)((ULONG_PTR)OutVa + AmountToMove);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set number of bytes moved.</span></span><br><span class="line">    *NumberOfBytesRead = BufferSize;</span><br><span class="line">    <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="5-MiDoPoolCopy"><a href="#5-MiDoPoolCopy" class="headerlink" title="5 MiDoPoolCopy"></a>5 MiDoPoolCopy</h2><p>在函数<code>MmCopyVirtualMemory</code>中，有个条件判断：<code>BufferSize &gt; 0x1FF</code>时调用<code>MiDoMappedCopy</code>，否则调用<code>MiDoPoolCopy</code>。</p>
+<p>函数<code>MiDoPoolCopy</code>：该函数将指定大小的数据 从指定进程的指定地址空间 拷贝至指定进程的指定地址中去。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS __stdcall <span class="title">MiDoPoolCopy</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     IN PEPROCESS FromProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN CONST VOID *FromAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN PEPROCESS ToProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PVOID ToAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN SIZE_T BufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN KPROCESSOR_MODE PreviousMode,</span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PSIZE_T NumberOfBytesRead</span></span></span><br><span class="line"><span class="function"><span class="params">     )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>在函数<code>MmCopyVirtualMemory</code>调用本函数前，将参数的压栈顺序如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">push NumberOfBytesRead;</span><br><span class="line">push PreviousMode;</span><br><span class="line">push BufferSize;</span><br><span class="line">push ToAddress;</span><br><span class="line">push ToProcess;</span><br><span class="line">push FromAddress;</span><br><span class="line">push FromProcess;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，实际上参数跟<code>MmCopyVirtualMemory</code>一摸一样。</p>
+<div class="note danger"><p>⚠️<strong>需要注意的是</strong>：<code>ToProcess</code>实际上是<code>CurreThread.ApcState.Process</code>，即将数据从<code>FromProcess</code>复制到当前线程所属进程空间。</p>
+<p>实际上，在进入函数<code>MiDoPoolCopy</code>，所有的处理细节和<code>MiDoMappedCopy</code>类似。</p>
+</div>
+
+
+
+<p>函数分析处理流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line">LONGLONG StackArray[COPY_STACK_SIZE];</span><br><span class="line"></span><br><span class="line"><span class="comment">//申请非分页内存（非分页内存，不会被换页，当全局变量用）</span></span><br><span class="line"><span class="comment">//每一次可以申请的内存大小为10页，0x10000</span></span><br><span class="line">MaximumMoved = MAX_MOVE_SIZE;		<span class="comment">//#define MAX_MOVE_SIZE (LONG)0x10000，10页</span></span><br><span class="line"><span class="keyword">if</span>(BufferSize &lt;= MAX_MOVE_SIZE)</span><br><span class="line">&#123;</span><br><span class="line">  MaximumMoved = BufferSize;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(BufferSize &gt; <span class="number">0x200</span>)	<span class="comment">//ntkrpamp.exe中是0x200，源代码中是8*COPY_STACK_SIZE = 0x800 #define COPY_STACK_SIZE 256</span></span><br><span class="line">&#123;			<span class="comment">//实际上这里可以看到，系统默认已经分配好一个sizeof(StackArray)大小的空间（这里大小是0x200）</span></span><br><span class="line">  <span class="keyword">do</span>			<span class="comment">//如果要申请的内存大小(BufferSize)小于sizeof(StackArray)，则直接使用StackArray[0]的地址来接收待复制的数据</span></span><br><span class="line">  &#123;			<span class="comment">//如果要申请的内存大小(BufferSize)大于sizeof(StackArray)，则会调用ExAllocatePoolWithTag重新分配空间</span></span><br><span class="line">    PoolArea = (PVOID)ExAllocatePoolWithTag(NonPagedPool, MaximumMoved, &#x27;wRmM&#x27;);</span><br><span class="line">    <span class="keyword">if</span>(PoolArea == <span class="literal">NULL</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      MaximumMoved = MaximumMoved &gt;&gt; <span class="number">1</span>;</span><br><span class="line">      <span class="keyword">if</span>(MaximumMoved &lt;= <span class="number">0x200</span>)</span><br><span class="line">      &#123;</span><br><span class="line">        PoolArea = (PVOID)&amp;StackArray[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">break</span>;</span><br><span class="line">  &#125;<span class="keyword">while</span>(TRUE)</span><br><span class="line">&#125;<span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  PoolArea = (PVOID)&amp;StackArray[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">InVa = FromAddress;</span><br><span class="line">OutVa = ToAddress;</span><br><span class="line">LeftToMove = BufferSize;</span><br><span class="line">AmountToMove = MaximumMoved;</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>(LeftToMove)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(LeftToMove &lt; AmountToMove)</span><br><span class="line">  &#123;</span><br><span class="line">    AmountToMove = LeftToMove;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  KeStackAttachProcess(FromProcess,ApcState);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//检查用户地址FromAddress是否可读</span></span><br><span class="line">  <span class="keyword">if</span>(InVa == FromAddress &amp;&amp; PreviousMode == UserMode)	<span class="comment">//UserMode == 1</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//AmountToMove = 1;</span></span><br><span class="line">    <span class="comment">//ProbeForRead (FromAddress, BufferSize, sizeof(CHAR));</span></span><br><span class="line">    <span class="keyword">if</span>(BufferSize != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      BufferSize += FromAddress;</span><br><span class="line">      <span class="keyword">if</span>(BufferSize &lt; FromAddress || BufferSize &gt; MmUserProbeAddress)</span><br><span class="line">        ExRaiseAccessViolation();	<span class="comment">//抛出异常，退出函数</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//AmountToMove = 0;</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  RtlCopyMemory (PoolArea, InVa, AmountToMove);</span><br><span class="line">  KeUnstackDetachProcess(ApcState);</span><br><span class="line">  KeStackAttachProcess(ToProcess,ApcState);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//检查用户地址ToAddress是否可</span></span><br><span class="line">  <span class="keyword">if</span>(Inva == FromAddress &amp;&amp; PreviousMode == UserMode)	<span class="comment">//UserMode == 1</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//用户模式缓冲区是否实际驻留在地址空间的用户模式部分，是否可写，并且是否正确对齐。</span></span><br><span class="line">    ProbeForWrite (ToAddress, BufferSize, <span class="keyword">sizeof</span>(CHAR));</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  RtlCopyMemory (OutVa, PoolArea, AmountToMove);</span><br><span class="line">  KeUnstackDetachProcess(ApcState);</span><br><span class="line">  </span><br><span class="line">  LeftToMove -= AmountToMove;</span><br><span class="line">  InVa = (PVOID)((ULONG_PTR)InVa + AmountToMove);</span><br><span class="line">  OutVa = (PVOID)((ULONG_PTR)OutVa + AmountToMove);</span><br><span class="line">&#125;<span class="comment">//while</span></span><br><span class="line"></span><br><span class="line">ExFreePoolWithTag();</span><br><span class="line">*NumberOfBytesRead = BufferSize;</span><br><span class="line"><span class="keyword">return</span> STATUS_SUCCESS;</span><br></pre></td></tr></table></figure>
+
+<div class="note success"><p>本函数<code>MiDoPoolCopy</code>是实际的数据拷贝的函数，作用实际上和<code>MiDoMappedCopy</code>一样，主要做了以下几件事：</p>
+<ol>
+<li>首先会将要拷贝的数据大小<code>BufferSize</code>同<code>MAX_MOVE_SIZE（0x10000）</code>比较大小，这是因为函数<code>ExAllocatePoolWithTag</code>每次申请的非分页内存大小最大为10页。如果<code>BufferSize &gt; MAX_MOVE_SIZE</code>也没关系，因为通过<code>ExAllocatePoolWithTag</code>申请来的首地址<code>PoolArea</code>可以在<code>while</code>里重复使用。</li>
+<li>在使用<code>ExAllocatePoolWithTag</code>申请内存时，实际上系统已经预先分配好一个数组空间<code>LONGLONG StackArray[COPY_STACK_SIZE]</code>，<code>COPY_STACK_SIZE == 256</code>，实际大小<code>sizeof(StackArray) == 8*256 == 0x800</code>，但是<code>ntkrpamp.exe</code>中是<code>0x200</code>。当<code>BufferSize &lt; sizeof(StackArray)</code>时是不需要调用函数<code>ExAllocatePoolWithTag</code>去分配空间的，直接使用<code>&amp;StackArray[0]</code>首地址即可。</li>
+<li>然后就是两次使用函数<code>KeStackAttachProcess</code>将当前进程附加到进程<code>FromProcess</code>和<code>ToProcess</code>中，目的和<code>MiDoMappedCopy</code>函数一样，这里就不多解释了。</li>
+</ol>
+</div>
+
+
+
+<p>函数<code>MiDoMappedCopy</code>源代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">MiDoPoolCopy</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     IN PEPROCESS FromProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN CONST VOID *FromAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN PEPROCESS ToProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PVOID ToAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN SIZE_T BufferSize,</span></span></span><br><span class="line"><span class="function"><span class="params">     IN KPROCESSOR_MODE PreviousMode,</span></span></span><br><span class="line"><span class="function"><span class="params">     OUT PSIZE_T NumberOfBytesRead</span></span></span><br><span class="line"><span class="function"><span class="params">     )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function copies the specified address range from the specified</span></span></span><br><span class="line"><span class="function"><span class="comment">    process into the specified address range of the current process.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments:</span></span></span><br><span class="line"><span class="function"><span class="comment">     ProcessHandle - Supplies an open handle to a process object.</span></span></span><br><span class="line"><span class="function"><span class="comment">     BaseAddress - Supplies the base address in the specified process to be read.</span></span></span><br><span class="line"><span class="function"><span class="comment">     Buffer - Supplies the address of a buffer which receives the</span></span></span><br><span class="line"><span class="function"><span class="comment">              contents from the specified process address space.</span></span></span><br><span class="line"><span class="function"><span class="comment">     BufferSize - Supplies the requested number of bytes to read from the specified process.</span></span></span><br><span class="line"><span class="function"><span class="comment">     PreviousMode - Supplies the previous processor mode.</span></span></span><br><span class="line"><span class="function"><span class="comment">     NumberOfBytesRead - Receives the actual number of bytes transferred into the specified buffer.</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: NTSTATUS.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    KAPC_STATE ApcState;</span><br><span class="line">    SIZE_T AmountToMove;</span><br><span class="line">    LOGICAL ExceptionAddressConfirmed;</span><br><span class="line">    ULONG_PTR BadVa;</span><br><span class="line">    PEPROCESS CurrentProcess;</span><br><span class="line">    LOGICAL Moving;</span><br><span class="line">    LOGICAL Probing;</span><br><span class="line">    CONST VOID *InVa;</span><br><span class="line">    SIZE_T LeftToMove;</span><br><span class="line">    SIZE_T MaximumMoved;</span><br><span class="line">    PVOID OutVa;</span><br><span class="line">    PVOID PoolArea;</span><br><span class="line">    LONGLONG StackArray[COPY_STACK_SIZE];</span><br><span class="line">    ULONG FreePool;</span><br><span class="line"></span><br><span class="line">    PAGED_CODE();</span><br><span class="line"></span><br><span class="line">    ASSERT (BufferSize != <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get the address of the current process object and initialize copy</span></span><br><span class="line">    <span class="comment">// parameters.</span></span><br><span class="line">    CurrentProcess = PsGetCurrentProcess();</span><br><span class="line"></span><br><span class="line">    InVa = FromAddress;</span><br><span class="line">    OutVa = ToAddress;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Allocate non-paged memory to copy in and out of.</span></span><br><span class="line">    MaximumMoved = MAX_MOVE_SIZE;</span><br><span class="line">    <span class="keyword">if</span> (BufferSize &lt;= MAX_MOVE_SIZE) &#123;</span><br><span class="line">        MaximumMoved = BufferSize;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    FreePool = FALSE;</span><br><span class="line">    <span class="keyword">if</span> (BufferSize &lt;= <span class="keyword">sizeof</span>(StackArray)) &#123;</span><br><span class="line">        PoolArea = (PVOID)&amp;StackArray[<span class="number">0</span>];</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="keyword">do</span> &#123;</span><br><span class="line">            PoolArea = ExAllocatePoolWithTag (NonPagedPool, MaximumMoved, &#x27;wRmM&#x27;);</span><br><span class="line">            <span class="keyword">if</span> (PoolArea != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                FreePool = TRUE;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            MaximumMoved = MaximumMoved &gt;&gt; <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (MaximumMoved &lt;= <span class="keyword">sizeof</span>(StackArray)) &#123;</span><br><span class="line">                PoolArea = (PVOID)&amp;StackArray[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">while</span> (TRUE);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Initializing BadVa &amp; ExceptionAddressConfirmed is not needed for</span></span><br><span class="line">    <span class="comment">// correctness but without it the compiler cannot compile this code</span></span><br><span class="line">    <span class="comment">// W4 to check for use of uninitialized variables.</span></span><br><span class="line">    BadVa = <span class="number">0</span>;</span><br><span class="line">    ExceptionAddressConfirmed = FALSE;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Copy the data into pool, then copy back into the ToProcess.</span></span><br><span class="line">    LeftToMove = BufferSize;</span><br><span class="line">    AmountToMove = MaximumMoved;</span><br><span class="line">    Probing = FALSE;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// It is unfortunate that Windows 2000 and all the releases of NT always</span></span><br><span class="line">    <span class="comment">// inadvertently returned from this routine detached, as we must maintain</span></span><br><span class="line">    <span class="comment">// this behavior even now.</span></span><br><span class="line">    KeDetachProcess();</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (LeftToMove &gt; <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (LeftToMove &lt; AmountToMove) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Set to move the remaining bytes.</span></span><br><span class="line">            AmountToMove = LeftToMove;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        KeStackAttachProcess (&amp;FromProcess-&gt;Pcb, &amp;ApcState);</span><br><span class="line"></span><br><span class="line">        Moving = FALSE;</span><br><span class="line">        ASSERT (Probing == FALSE);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// We may be touching a user&#x27;s memory which could be invalid,</span></span><br><span class="line">        <span class="comment">// declare an exception handler.</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Probe to make sure that the specified buffer is accessible in</span></span><br><span class="line">            <span class="comment">// the target process.</span></span><br><span class="line">            <span class="keyword">if</span> ((InVa == FromAddress) &amp;&amp; (PreviousMode != KernelMode))&#123;</span><br><span class="line">                Probing = TRUE;</span><br><span class="line">                ProbeForRead (FromAddress, BufferSize, <span class="keyword">sizeof</span>(CHAR));</span><br><span class="line">                Probing = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            RtlCopyMemory (PoolArea, InVa, AmountToMove);</span><br><span class="line"></span><br><span class="line">            KeUnstackDetachProcess (&amp;ApcState);</span><br><span class="line"></span><br><span class="line">            KeStackAttachProcess (&amp;ToProcess-&gt;Pcb, &amp;ApcState);</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Now operating in the context of the ToProcess.</span></span><br><span class="line">            <span class="keyword">if</span> ((InVa == FromAddress) &amp;&amp; (PreviousMode != KernelMode))&#123;</span><br><span class="line">                Probing = TRUE;</span><br><span class="line">                ProbeForWrite (ToAddress, BufferSize, <span class="keyword">sizeof</span>(CHAR));</span><br><span class="line">                Probing = FALSE;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            Moving = TRUE;</span><br><span class="line"></span><br><span class="line">            RtlCopyMemory (OutVa, PoolArea, AmountToMove);</span><br><span class="line"></span><br><span class="line">        &#125; except (MiGetExceptionInfo (GetExceptionInformation(),</span><br><span class="line">                                      &amp;ExceptionAddressConfirmed,</span><br><span class="line">                                      &amp;BadVa)) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// If an exception occurs during the move operation or probe,</span></span><br><span class="line">            <span class="comment">// return the exception code as the status value.</span></span><br><span class="line">            KeUnstackDetachProcess (&amp;ApcState);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (FreePool) &#123;</span><br><span class="line">                ExFreePool (PoolArea);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (Probing == TRUE) &#123;</span><br><span class="line">                <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// If the failure occurred during the move operation, determine</span></span><br><span class="line">            <span class="comment">// which move failed, and calculate the number of bytes</span></span><br><span class="line">            <span class="comment">// actually moved.</span></span><br><span class="line">            *NumberOfBytesRead = BufferSize - LeftToMove;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (Moving == TRUE) &#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// The failure occurred writing the data.</span></span><br><span class="line">                <span class="keyword">if</span> (ExceptionAddressConfirmed == TRUE) &#123;</span><br><span class="line">                    *NumberOfBytesRead = (SIZE_T)((ULONG_PTR)(BadVa - (ULONG_PTR)FromAddress));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> STATUS_PARTIAL_COPY;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        KeUnstackDetachProcess (&amp;ApcState);</span><br><span class="line"></span><br><span class="line">        LeftToMove -= AmountToMove;</span><br><span class="line">        InVa = (PVOID)((ULONG_PTR)InVa + AmountToMove);</span><br><span class="line">        OutVa = (PVOID)((ULONG_PTR)OutVa + AmountToMove);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (FreePool) &#123;</span><br><span class="line">        ExFreePool (PoolArea);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Set number of bytes moved.</span></span><br><span class="line">    *NumberOfBytesRead = BufferSize;</span><br><span class="line">    <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="6-KeStackAttachProcess"><a href="#6-KeStackAttachProcess" class="headerlink" title="6 KeStackAttachProcess"></a>6 KeStackAttachProcess</h2><p>虽然数据的拷贝已经在函数<code>MiDoMappedCopy/MiDoPoolCopy</code>中完成，但是有一个非常重要的环节，就是将当前线程附加到目的进程中，然后进行数据的拷贝。</p>
+<p>实现将当前线程附加到目的进程中的函数就是：<code>KeStackAttachProcess</code>。</p>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/ddi/ntifs/nf-ntifs-kestackattachprocess"><code>KeStackAttachProcess</code>函数</a>：将<mark class="label danger">当前线程</mark>附加到<mark class="label success">目标进程的地址空间</mark>。（This function attaches a thread to a target process’ address space     and returns information about a previous attached process.）</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID __stdcall <span class="title">KeStackAttachProcess</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PRKPROCESS Process,	<span class="comment">//指向目标进程对象的指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PRKAPC_STATE ApcState	<span class="comment">//指向 KAPC_STATE 结构的不透明指针。调用方必须从非分页池或从调用方的线程堆栈中为此结构分配存储空间。</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>实际上，分析本函数主要是看一下，线程挂靠前，APC队列（<code>ApcState.KAPC</code>）和备用APC队列（<code>SaveApcState.KAPC</code>）是怎么处理的。</p>
+<p>函数分析处理流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//如果 DpcRoutineActive != 0，说明当前线程正在执行DPC，就会蓝屏</span></span><br><span class="line"><span class="comment">//If the current thread is executing a DPC, then bug check.</span></span><br><span class="line"><span class="keyword">if</span>(_KPCR.PrcbData.DpcRoutineActive != FALSE)</span><br><span class="line">&#123;	<span class="comment">//BugCheckCode  #define INVALID_PROCESS_ATTACH_ATTEMPT   ((ULONG)0x00000005L)</span></span><br><span class="line">  KeBugCheckEx(INVALID_PROCESS_ATTACH_ATTEMPT,(ULONG_PTR)Process,(ULONG_PTR)Thread-&gt;ApcState.Process,</span><br><span class="line">                     (ULONG)Thread-&gt;ApcStateIndex,(ULONG)_KPCR.PrcbData.DpcRoutineActive);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(KTHREAD.ApcState.Process == Process)</span><br><span class="line">&#123;</span><br><span class="line">  ApcState.Process = (PRKPROCESS)<span class="number">1</span>;	<span class="comment">//直接返回当前线程已经所属目标进程地址空间</span></span><br><span class="line">&#125;<span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// Raise IRQL to dispatcher level and lock dispatcher database.</span></span><br><span class="line">  <span class="comment">//通过提高运行优先级达到禁止线程调度《Windows内核情景分析5.12 P436》</span></span><br><span class="line">  KeAcquireQueuedSpinLockRaiseToSynch();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//以下处理传入KiAttachProcess的最后一个参数不同，一个传本函数的参数ApcState，一个传CurrentThread.SavedApcState</span></span><br><span class="line">  <span class="comment">//如果当前线程已经挂靠过其他进程</span></span><br><span class="line">  <span class="keyword">if</span>(KTHREAD.ApcStateIndex != <span class="number">0</span>)	<span class="comment">//0：正常状态，1：挂靠状态</span></span><br><span class="line">  &#123;</span><br><span class="line">    KiAttachProcess(CurrentThread,Process,OldIrql,ApcState);</span><br><span class="line">  &#125;<span class="keyword">else</span>	<span class="comment">//当前线程 还未 挂靠过其他进程</span></span><br><span class="line">  &#123;</span><br><span class="line">    KiAttachProcess(CurrentThread,Process,OldIrql,CurrentThread.SavedApcState);</span><br><span class="line">    ApcState-&gt;Process = <span class="literal">NULL</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line"><span class="keyword">return</span>;</span><br></pre></td></tr></table></figure>
+
+<div class="note danger"><p>本函数的功能很简单：</p>
+<ol>
+<li><p>如果当前线程正在执行DPC，就会蓝屏。然后将当前的IRQL提升至DPC Level。</p>
+</li>
+<li><p>调用函数<code>KiAttachProcess</code>，分两种情况：</p>
+<ul>
+<li>当前线程<strong>已经</strong>挂靠过其他线程：传入最后一个参数是本函数的实参<code>ApcState</code>。</li>
+<li>当前线程<strong>还未</strong>挂靠过其他进程：传入最后一个参数是当前线程的备用APC<code>CurrentThread.SavedApcState</code>。</li>
+</ul>
+</li>
+<li><p>请注意：<code>KiAttachProcess</code>的最后一个参数，用来保存线程附加到目标进程后的备用APC队列，对<code>KiAttachProcess</code>来说是<code>OUT PRKAPC_STATE SavedApcState</code>。</p>
+<p>但是对于当前函数<code>KeStackAttachProcess</code>的参数<code>OUT PRKAPC_STATE ApcState</code>来说：<strong>如果当前线程已经挂靠过其他进程才会输出</strong><code>OUT ApcState</code>（作用在<code>KiAttachProcess</code>最后一个参数）。</p>
+</li>
+</ol>
+</div>
+
+
+
+<p>举例说明函数<code>KeStackAttachProcess</code>的返回值：</p>
+<ul>
+<li>当前线程 T 已经attach到进程A，返回值<code>ApcState == A.</code></li>
+<li>当前线程 T 未attach到进程，属于当前进程B，返回值<code>ApcState</code>没有先前信息。</li>
+</ul>
+<p>函数的源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">KeStackAttachProcess</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PRKPROCESS Process,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PRKAPC_STATE ApcState</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function attaches a thread to a target process&#x27; address space</span></span></span><br><span class="line"><span class="function"><span class="comment">    and returns information about a previous attached process.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments: Process - Supplies a pointer to a dispatcher object of type process.</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: None.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line"></span><br><span class="line">    KIRQL OldIrql;</span><br><span class="line">    PRKTHREAD Thread;</span><br><span class="line"></span><br><span class="line">    ASSERT_PROCESS(Process);</span><br><span class="line">    ASSERT(KeGetCurrentIrql() &lt;= DISPATCH_LEVEL);</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// If the current thread is executing a DPC, then bug check.</span></span><br><span class="line">    <span class="comment">// 如果当前线程正在执行 DPC，则蓝屏。</span></span><br><span class="line"></span><br><span class="line">    Thread = KeGetCurrentThread();</span><br><span class="line">    <span class="keyword">if</span> (KeIsExecutingDpc() != FALSE) &#123;</span><br><span class="line">        KeBugCheckEx(INVALID_PROCESS_ATTACH_ATTEMPT,</span><br><span class="line">                     (ULONG_PTR)Process,</span><br><span class="line">                     (ULONG_PTR)Thread-&gt;ApcState.Process,</span><br><span class="line">                     (ULONG)Thread-&gt;ApcStateIndex,</span><br><span class="line">                     (ULONG)KeIsExecutingDpc());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// If the target process is not the current process, then attach the</span></span><br><span class="line">    <span class="comment">// target process. Otherwise, return a distinguished process value to</span></span><br><span class="line">    <span class="comment">// indicate that an attach was not performed.</span></span><br><span class="line">    <span class="comment">// 如果尝试 attach 自己，那么设置ApcState-&gt;Process 等于1</span></span><br><span class="line">    <span class="comment">// 否则就正常 attach</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Thread-&gt;ApcState.Process == Process) &#123;</span><br><span class="line">        ApcState-&gt;Process = (PRKPROCESS)<span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// Raise IRQL to dispatcher level and lock dispatcher database.</span></span><br><span class="line">        <span class="comment">// 提升 IRQL 等级到 dispatcher level 并锁定 dispatcher database。</span></span><br><span class="line">        <span class="comment">// If the current thread is attached to a process, then save the</span></span><br><span class="line">        <span class="comment">// current APC state in the callers APC state structure. Otherwise,</span></span><br><span class="line">        <span class="comment">// save the current APC state in the saved APC state structure, and</span></span><br><span class="line">        <span class="comment">// return a NULL process pointer.</span></span><br><span class="line">        <span class="comment">// 如果当前线程已经 attach 了别的进程，那么保存当前 APC state 到调用者的 APC state 结构</span></span><br><span class="line">        <span class="comment">// 否则，保存当前 APC state 到 SavedApcState 结构，并设置 ApcState-&gt;Process = NULL</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// N.B. The dispatcher lock is released ay the attach routine.</span></span><br><span class="line">        <span class="comment">// dispatcher lock 在 attach 函数中释放</span></span><br><span class="line"></span><br><span class="line">        KiLockDispatcherDatabase(&amp;OldIrql);</span><br><span class="line">        <span class="keyword">if</span> (Thread-&gt;ApcStateIndex != <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="comment">// 当前线程已经 attach 了一个进程</span></span><br><span class="line">            KiAttachProcess(Thread, Process, OldIrql, ApcState);</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">           <span class="comment">// 当前线程的所属进程就是创建线程的进程</span></span><br><span class="line">            KiAttachProcess(Thread, Process, OldIrql, &amp;Thread-&gt;SavedApcState);</span><br><span class="line">            ApcState-&gt;Process = <span class="literal">NULL</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="7-KiAttachProcess"><a href="#7-KiAttachProcess" class="headerlink" title="7 KiAttachProcess"></a>7 KiAttachProcess</h2><p>函数<code>KiAttachProcess</code>：This function attaches a thread to a target process’ address space. The dispatcher database lock must be held when this routine is called.（调用该函数时必须保持调度程序数据库锁起来）</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID __stdcall <span class="title">KiAttachProcess</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PRKTHREAD Thread,		<span class="comment">//指向当前线程的指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PKPROCESS Process,		<span class="comment">//指向要附加的进程</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN KIRQL OldIrql,			<span class="comment">//先前的IRQL</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PRKAPC_STATE SavedApcState	<span class="comment">//输出值，保存备用APC状态</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>从函数<code>KeStackAttachProcess</code>调用该函数时，传入的形参不同：</p>
+<ul>
+<li><code>CurrentThread.ApcStateIndex == 0</code>：传入<code>CurrentThread.SavedApcState</code>。</li>
+<li><code>CurrentThread.ApcStateIndex == 1</code>：传入KeStackAttachProcess的实参<code>ApcState</code>。</li>
+</ul>
+<p>函数分析处理流程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br></pre></td><td class="code"><pre><span class="line">Process.StackCount++;		<span class="comment">//StackCount：记录当前进程有多少个线程栈位于内存中</span></span><br><span class="line">KiMoveApcState(CurrentThread-&gt;ApcState,SavedApcState);	<span class="comment">//APC队列备份</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//将当前线程的APC队列置空</span></span><br><span class="line">CurrentThread-&gt;ApcState-&gt;ApcListHead[<span class="number">0</span>].Blink = CurrentThread.ApcState[<span class="number">0</span>];</span><br><span class="line">CurrentThread-&gt;ApcState-&gt;ApcListHead[<span class="number">0</span>].Flink = CurrentThread.ApcState[<span class="number">0</span>];</span><br><span class="line">CurrentThread-&gt;ApcState-&gt;ApcListHead[<span class="number">1</span>].Blink = CurrentThread.ApcState[<span class="number">1</span>];</span><br><span class="line">CurrentThread-&gt;ApcState-&gt;ApcListHead[<span class="number">1</span>].Flink = CurrentThread.ApcState[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line"><span class="comment">//进程挂靠</span></span><br><span class="line">CurrentThread-&gt;ApcState-&gt;Process = Process;</span><br><span class="line">CurrentThread-&gt;ApcState-&gt;KernelApcInProgress = <span class="number">0</span>;	<span class="comment">//内核APC是否正在执行，0:不在执，1：正在执行</span></span><br><span class="line">CurrentThread-&gt;ApcState-&gt;KernelApcPending = <span class="number">0</span>;	<span class="comment">//是否有正在等待执行的内核APC，0：没有，1：有</span></span><br><span class="line">CurrentThread-&gt;ApcState-&gt;UserApcPending = <span class="number">0</span>;	<span class="comment">//是否有正在等待执行的用户APC，0：没有，1：有</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(&amp;CurrentThread-&gt;SavedApcState == SavedApcState);<span class="comment">//SavedApcState为空</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//已经挂靠，ApcStatePointer[0] 指向 SavedApcState</span></span><br><span class="line">  <span class="comment">//        ApcStatePointer[1] 指向 ApcState</span></span><br><span class="line">  CurrentThread-&gt;ApcStatePointer[<span class="number">0</span>] = &amp;CurrentThread-&gt;SavedApcState;</span><br><span class="line">  CurrentThread-&gt;ApcStatePointer[<span class="number">1</span>] = &amp;CurrentThread-&gt;.ApcState;</span><br><span class="line">  CurrentThread-&gt;ApcStateIndex = <span class="number">1</span>;		<span class="comment">//ApcStateIndex = 1  挂靠状态</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//#define ProcessInMemory 0x0</span></span><br><span class="line"><span class="comment">//0：表示进程的虚拟地址空间内容在物理内存中（虚拟内存已经映射到物理内存页中）</span></span><br><span class="line"><span class="keyword">if</span>(Process.State == <span class="number">0</span>)	<span class="comment">//0x00421A50</span></span><br><span class="line">&#123;</span><br><span class="line">  NextEntry = Process-&gt;ReadyListHead.Flink;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">//该链表记录了这个进程中处于&quot;就绪状态&quot;但尚未被加入&quot;全局就绪链表&quot;的&quot;线程&quot;</span></span><br><span class="line">  <span class="comment">//只要ReadyListHead双向循环链表 非空 就会一直摘链</span></span><br><span class="line">  <span class="comment">//每一个摘除来的链对应的线程都会调用KiReadyThread使之成为就绪状态</span></span><br><span class="line">  <span class="keyword">while</span>(NextEntry != &amp;Process-&gt;ReadyListHead)	<span class="comment">//非空表</span></span><br><span class="line">  &#123;</span><br><span class="line">    OutThread = (PKTHREAD)(NextEntry - <span class="number">0x60</span>);</span><br><span class="line">    <span class="comment">//将NextEntry从Process-&gt;ReadyListHead里摘除</span></span><br><span class="line">    NextEntry-&gt;Blink-&gt;Flink = NextEntry-&gt;Flink;</span><br><span class="line">    NextEntry-&gt;Flink-&gt;blink = NextEntry-&gt;Blink;</span><br><span class="line">    <span class="comment">//说明线程是否在所属进程的KPROCESS对象的ReadyListEntry链表中</span></span><br><span class="line">    OutThread-&gt;ProcessReadyQueue = <span class="number">0</span>;		<span class="comment">//TRUE：在此链表中，FALSE：不在此链表中</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//将线程OutThread等待的所有对象从被等待对象网上摘掉，并将OutThread从线程等待链上摘掉使其就绪</span></span><br><span class="line">    KiReadyThread(OutThread);</span><br><span class="line">    NextEntry = Process-&gt;ReadyListHead-&gt;Flink;</span><br><span class="line">  &#125;</span><br><span class="line">  KiSwapProcess(Process,SavedApcState-&gt;Process);</span><br><span class="line">  KiUnlockDispatcherDatabase();</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">  </span><br><span class="line">&#125;<span class="keyword">else</span>	<span class="comment">//进程的虚拟内存还没有映射到物理内存页中</span></span><br><span class="line">&#123;</span><br><span class="line">  CurrentThread-&gt;State = <span class="number">1</span>;		<span class="comment">//1：Ready</span></span><br><span class="line">  CurrentThread-&gt;ProcessReadyQueue = <span class="number">1</span>;	<span class="comment">//说明线程在所属进程的KPROCESS对象的ReadyListEntry链表中</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">//WaitListEntry指向ReadyListHead头节点，然后将CurrentThread.WaitListEntry加到Process.ReadyListHead尾节点后面</span></span><br><span class="line">  CurrentThread-&gt;WaitListEntry.Flink = &amp;Process-&gt;ReadyListHead;</span><br><span class="line">  CurrentThread-&gt;WaitListEntry.Blink = Process-&gt;ReadyListHead.Blink;	</span><br><span class="line">  Process-&gt;ReadyListHead.Blink.Flink = &amp;CurrentThread-&gt;WaitListEntry;</span><br><span class="line">  Process-&gt;ReadyListHead.Blink = &amp;CurrentThread-&gt;WaitListEntry;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(CurrentThread-&gt;State = <span class="number">1</span>)	<span class="comment">//ProcessOutOfMemory,进程的虚拟地址空间内容已被换出物理内存</span></span><br><span class="line">  &#123;</span><br><span class="line">    CurrentThread-&gt;State = <span class="number">2</span>;	<span class="comment">//ProcessInTransition,进程的虚拟地址空间内容不在物理内存中，但已请求换入</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//SwapListEntry、KiProcessInSwapListHead都是单向链表</span></span><br><span class="line">    <span class="comment">//将Process-&gt;SwapListEntry的地址插入到全局KiProcessInSwapListHead链表中</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//这里需要解释一下，这个KiProcessInSwapListHead单向链表挂着一串不同进程的&amp;Process-&gt;SwapListEntry</span></span><br><span class="line">    <span class="comment">//然后Process = &amp;Process-&gt;SwapListEntry - 0x60，可以找到对应的进程是谁</span></span><br><span class="line">    <span class="comment">//SwapListEntry作为单向链表的意义是其在KiProcessInSwapListHead中需要用到Next</span></span><br><span class="line">    <span class="comment">//但是在Process-&gt;SwapListEntry中使用不到Next的</span></span><br><span class="line">    <span class="comment">//也可以理解成KiProcessInSwapListHead串的是一个个进程</span></span><br><span class="line">    eax = KiProcessInSwapListHead-&gt;Next;</span><br><span class="line">    ecx = &amp;Process-&gt;SwapListEntry;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      Process-&gt;SwapListEntry-&gt;Next = eax;</span><br><span class="line">      Process = eax;</span><br><span class="line">      edx = &amp;Process-&gt;SwapListEntry;</span><br><span class="line">      ebx = &amp;KiProcessInSwapListHead;</span><br><span class="line">      lock cmpxchg [ebx], edx;	<span class="comment">//将Process-&gt;SwapListEntry的地址插入到全局KiProcessInSwapListHead链表中</span></span><br><span class="line">      <span class="comment">//如果[ebx] == eax,[ebx] = edx; [ebx] != eax,eax = [ebx];</span></span><br><span class="line">    &#125;<span class="keyword">while</span>(eax != Process)</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">InterlockedPushEntrySingleList(&amp;KiProcessInSwapListHead, &amp;Process-&gt;SwapListEntry);</span><br><span class="line"><span class="comment">//This function pushes an entry onto the front of a singly linked list.</span></span><br><span class="line"><span class="comment">//将Entry插到ListHead的前面</span></span><br><span class="line">InterlockedPushEntrySingleList(PSINGLE_LIST_ENTRY ListHead,PSINGLE_LIST_ENTRY Entry)</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    PSINGLE_LIST_ENTRY FirstEntry;</span><br><span class="line">    PSINGLE_LIST_ENTRY NextEntry;</span><br><span class="line"></span><br><span class="line">    FirstEntry = ListHead-&gt;Next;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        Entry-&gt;Next = FirstEntry;</span><br><span class="line">        NextEntry = FirstEntry;</span><br><span class="line">        FirstEntry = (PSINGLE_LIST_ENTRY)InterlockedCompareExchangePointer((PVOID *)ListHead,</span><br><span class="line">                                                                  Entry,</span><br><span class="line">                                                                  FirstEntry);</span><br><span class="line">    &#125; <span class="keyword">while</span> (FirstEntry != NextEntry);</span><br><span class="line">    <span class="keyword">return</span> FirstEntry;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">LONG <span class="title">InterlockedCompareExchange</span><span class="params">(IN OUT LONG* Destination,IN LONG ExChange,IN LONG Comperand)</span></span></span><br><span class="line"><span class="function">  </span>&#123;</span><br><span class="line">    LONG temp = *Destination;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (Comperand == *Destination) &#123;</span><br><span class="line">        *Destination = ExChange;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> temp;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(FirstEntry == ListHead-&gt;Next) </span><br><span class="line">&#123;</span><br><span class="line">  ListHead-&gt;Next = &amp;Process-&gt;SwapListEntry;</span><br><span class="line">&#125;</span><br><span class="line">FirstEntry = ListHead-&gt;Next;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><a target="_blank" rel="noopener" href="https://www.felixcloutier.com/x86/cmpxchg">关于指令<code>cmpxchg</code></a>：</p>
+<table>
+<thead>
+<tr>
+<th>Opcode&#x2F;Instruction</th>
+<th>Op&#x2F;En</th>
+<th>64-Bit Mode</th>
+<th>Compat&#x2F;Leg Mode</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0F B1&#x2F;<em>r</em> CMPXCHG <em>r&#x2F;m32, r32</em></td>
+<td>MR</td>
+<td>Valid</td>
+<td>Valid*</td>
+<td align="left"><strong>CMPXCHG <em>r&#x2F;m32, r32</em></strong><br />Compare EAX with <em>r&#x2F;m32</em>. If equal, ZF is set and <em>r32</em> is loaded into <em>r&#x2F;m32</em>. Else, clear ZF and load <em>r&#x2F;m32</em> into EAX.</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/NtReadVirtulMemoery/" title="NtReadVirtulMemoery 函数分析">https://directoree.github.io/post/NtReadVirtulMemoery/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/NtReadVirtulMemoery/" rel="tag"># NtReadVirtulMemoery</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXP-APC/" rel="prev" title="Windows XP APC（一）">
+                  <i class="fa fa-chevron-left"></i> Windows XP APC（一）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">17:35</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/NtReadVirtulMemoery/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
