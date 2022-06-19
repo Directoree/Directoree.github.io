@@ -39,7 +39,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png">
 <meta property="og:image" content="https://s2.loli.net/2022/03/23/uP6oG8V9tH5ibYM.png">
 <meta property="article:published_time" content="2022-03-10T14:08:32.000Z">
-<meta property="article:modified_time" content="2022-06-17T07:41:50.206Z">
+<meta property="article:modified_time" content="2022-06-18T09:57:30.885Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="进程线程">
@@ -365,7 +365,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-06-17 15:41:50" itemprop="dateModified" datetime="2022-06-17T15:41:50+08:00">2022-06-17</time>
+        <time title="修改时间：2022-06-18 17:57:30" itemprop="dateModified" datetime="2022-06-18T17:57:30+08:00">2022-06-18</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -514,7 +514,7 @@
 <tr>
 <td align="center">0x40</td>
 <td align="left">ReadListHead</td>
-<td>是一个双向链表头，记录了进程中处于就绪状态但尚未被加入全局就绪链表的线程，这个域的意义在于，当一个进程被换出内存后，它所属的线程一旦就绪，则被挂到此链表中，并要求换入该进程。此后，当该进程被换入内存时，ReadyListHead中的所有线程被加入到系统全局的就绪线程链表中。《Windows内核原理与实现3.3.1 P108》</td>
+<td>是一个双向链表头，记录了进程中处于就绪状态但尚未被加入全局就绪链表的线程，这个域的意义在于，当一个进程被换出内存后，它所属的线程一旦就绪，则被挂到此链表中，并要求换入该进程。此后，当该进程被换入内存时，ReadyListHead中的所有线程被加入到系统全局的就绪线程链表中。<br />链表中的每一项都是一个指向KTHREAD对象的WaitListEntry域的地址，所以，从链表中的每一项都可以定位到对应的线程对象。<code>OutThread = (PKTHREAD)(Process-&gt;ReadyListHead.Flink - 0x60);</code><br />《Windows内核原理与实现3.3.1 P108》</td>
 </tr>
 <tr>
 <td align="center">0x048</td>
