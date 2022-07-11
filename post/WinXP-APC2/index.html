@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/07/11/dSNnXgorJvMw4Bj.png">
 <meta property="og:image" content="https://s2.loli.net/2022/07/11/y7tn4f6AN9bTUYr.png">
 <meta property="article:published_time" content="2022-06-26T06:13:29.000Z">
-<meta property="article:modified_time" content="2022-07-10T17:01:26.832Z">
+<meta property="article:modified_time" content="2022-07-11T17:11:05.090Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="APC">
@@ -237,7 +237,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-APC%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C"><span class="nav-text">1 APC函数执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-APC%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="nav-text">1.1 APC函数执行的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%86%85%E6%A0%B8APC%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-text">1.2 内核APC执行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%94%A8%E6%88%B7APC%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-text">1.3 用户APC执行过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-KiDeliverApc"><span class="nav-text">2 KiDeliverApc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-KeTestAlertThread"><span class="nav-text">3 KeTestAlertThread</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-CONTEXT"><span class="nav-text">4 _CONTEXT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-KiInitializeUserApc"><span class="nav-text">5 KiInitializeUserApc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-KeContextFromKframes"><span class="nav-text">6 KeContextFromKframes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KiUserApcDispatcher"><span class="nav-text">KiUserApcDispatcher</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R3-ZwContinue"><span class="nav-text">R3 ZwContinue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R0-NtContinue"><span class="nav-text">R0 NtContinue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KiSwapThread"><span class="nav-text">KiSwapThread</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KiFastCallEntry"><span class="nav-text">KiFastCallEntry</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-APC%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C"><span class="nav-text">1 APC函数执行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-APC%E5%87%BD%E6%95%B0%E6%89%A7%E8%A1%8C%E7%9A%84%E6%9D%A1%E4%BB%B6"><span class="nav-text">1.1 APC函数执行的条件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%86%85%E6%A0%B8APC%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-text">1.2 内核APC执行过程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%94%A8%E6%88%B7APC%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-text">1.3 用户APC执行过程</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-KiDeliverApc"><span class="nav-text">2 KiDeliverApc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-KeTestAlertThread"><span class="nav-text">3 KeTestAlertThread</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-CONTEXT"><span class="nav-text">4 _CONTEXT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-KiInitializeUserApc"><span class="nav-text">5 KiInitializeUserApc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-KeContextFromKframes"><span class="nav-text">6 KeContextFromKframes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KiUserApcDispatcher"><span class="nav-text">KiUserApcDispatcher</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R3-ZwContinue"><span class="nav-text">R3 ZwContinue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R0-NtContinue"><span class="nav-text">R0 NtContinue</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KiSwapThread"><span class="nav-text">KiSwapThread</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#KiFastCallEntry"><span class="nav-text">KiFastCallEntry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%80%BB%E7%BB%93"><span class="nav-text">7 总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-%E5%85%B3%E4%BA%8E%E7%94%A8%E6%88%B7APC%E7%9A%84%E6%89%A7%E8%A1%8C"><span class="nav-text">7.1 关于用户APC的执行</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -361,7 +361,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-07-11 01:01:26" itemprop="dateModified" datetime="2022-07-11T01:01:26+08:00">2022-07-11</time>
+        <time title="修改时间：2022-07-12 01:11:05" itemprop="dateModified" datetime="2022-07-12T01:11:05+08:00">2022-07-12</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -410,14 +410,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>74k</span>
+      <span>76k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1:07</span>
+      <span>1:09</span>
     </span>
 </div>
 
@@ -694,6 +694,25 @@
 
 
 <p><img data-src="https://s2.loli.net/2022/07/11/y7tn4f6AN9bTUYr.png" alt="666.png"></p>
+<h2 id="7-总结"><a href="#7-总结" class="headerlink" title="7 总结"></a>7 总结</h2><h3 id="7-1-关于用户APC的执行"><a href="#7-1-关于用户APC的执行" class="headerlink" title="7.1 关于用户APC的执行"></a>7.1 关于用户APC的执行</h3><p>在函数<code>KiInsertQueueApc</code>，最后处理用户APC时有如下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(Thread.State == Waiting &amp;&amp; Thread.WaitMode == <span class="number">1</span> &amp;&amp; (Thread.Alertable == <span class="number">1</span> || </span><br><span class="line">                                                       Thread.ApcState[UserMode].UserApcPending == <span class="number">1</span>))</span><br><span class="line">    &#123;</span><br><span class="line">      Thread.ApcState[UserMode].UserApcPending = <span class="number">1</span>;</span><br><span class="line">      KiUnwaitThread();	<span class="comment">//修改线程状态为就绪，并提升优先级</span></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>需要说明是，如果要让一个刚才插入的用户APC的<code>UserApcPending = 1</code>，最重要的两件事：</p>
+<ol>
+<li><p><strong>在APC插入前</strong>：目标线程的<code>Thread.Alertable == 1 || Thread.ApcState[UserMode].UserApcPending == 1</code>，<strong>在APC对象插入目标线程前</strong>。</p>
+</li>
+<li><p><strong>在APC插入后</strong>：除了上述的那两种情况可以使刚插入的<strong>用户APC</strong>获得执行机会之外，还有一种可以让用户APC可执行的方法。在函数<code>KiDeliverApc</code>中对于非空的用户APC队列有如下的判断，如果条件符合就会执行用户APC函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">PreviousMode == <span class="number">1</span> &amp;&amp; CurrentThread-&gt;ApcState-&gt;UserApcPending == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>所以当一个<strong>用户APC对象插入APC队列之后</strong>，在目标线程3环调用函数<code>NtTestAlert</code>也是可以的，因为：</p>
+<p>R3 NtTestAlert：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//R3 NtTestAlert</span></span><br><span class="line">.text:<span class="number">7</span>C92DE70 ; <span class="function">_DWORD __stdcall <span class="title">NtTestAlert</span><span class="params">()</span></span></span><br><span class="line">.text:7C92DE70                 public _NtTestAlert@0</span><br><span class="line">.text:<span class="number">7</span>C92DE70 _NtTestAlert@<span class="number">0</span>  proc near               <span class="comment">// CODE XREF: _LdrpInitialize(x,x,x):loc_7C93AFF7↓p</span></span><br><span class="line">.text:<span class="number">7</span>C92DE70                                         <span class="comment">// DATA XREF: .text:off_7C923428↑o</span></span><br><span class="line">.text:<span class="number">7</span>C92DE70                 mov     eax, <span class="number">103</span>h       <span class="comment">// NtTestAlert</span></span><br><span class="line">.text:<span class="number">7</span>C92DE75                 mov     edx, <span class="number">7F</span>FE0300h</span><br><span class="line">.text:<span class="number">7</span>C92DE7A                 call    dword ptr [edx]</span><br><span class="line">.text:<span class="number">7</span>C92DE7C                 retn</span><br><span class="line">.text:<span class="number">7</span>C92DE7C _NtTestAlert@<span class="number">0</span>  endp</span><br></pre></td></tr></table></figure>
+
+<p>R0 NtTestAlert：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">PAGE:<span class="number">004F</span>DBFE ; =============== S U B R O U T I N E =======================================</span><br><span class="line">PAGE:<span class="number">004F</span>DBFE</span><br><span class="line">PAGE:<span class="number">004F</span>DBFE</span><br><span class="line">PAGE:<span class="number">004F</span>DBFE ; <span class="function">NTSTATUS __stdcall <span class="title">NtTestAlert</span><span class="params">()</span></span></span><br><span class="line">PAGE:004FDBFE _NtTestAlert@0  proc near               // DATA XREF: .text:0042D85C↑o</span><br><span class="line">PAGE:<span class="number">004F</span>DBFE                 mov     eax, large fs:<span class="number">124</span>h</span><br><span class="line">PAGE:<span class="number">004F</span>DC04                 movsx   eax, [eax+_KTHREAD.PreviousMode]</span><br><span class="line">PAGE:<span class="number">004F</span>DC0B                 push    eax</span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                 call    _KeTestAlertThread@<span class="number">4</span> <span class="comment">// ---</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">// BOOLEAN __stdcall KeTestAlertThread (</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">//     IN KPROCESSOR_MODE AlertMode</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">//     )</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">//</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">// 如果吵醒模式AlertMode == 1，并且用户APC队列不为空，</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">// 那就设置 Thread-&gt;ApcState.UserApcPending = TRUE 然后交付</span></span><br><span class="line">  						      <span class="comment">//下一个用户APC</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">// 【检查该线程是否可以交付另一个用户模式的APC】</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC0C                                         <span class="comment">// ---</span></span><br><span class="line">PAGE:<span class="number">004F</span>DC11                 neg     al</span><br><span class="line">PAGE:<span class="number">004F</span>DC13                 sbb     eax, eax</span><br><span class="line">PAGE:<span class="number">004F</span>DC15                 <span class="keyword">and</span>     eax, <span class="number">101</span>h</span><br><span class="line">PAGE:<span class="number">004F</span>DC1A                 retn</span><br><span class="line">PAGE:<span class="number">004F</span>DC1A _NtTestAlert@<span class="number">0</span>  endp</span><br><span class="line">PAGE:<span class="number">004F</span>DC1A</span><br><span class="line">PAGE:<span class="number">004F</span>DC1A ; ---------------------------------------------------------------------------</span><br></pre></td></tr></table></figure></li>
+</ol>
 
     </div>
 
@@ -821,7 +840,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19:28</span>
+    <span title="站点阅读时长">19:30</span>
   </span>
 </div>
 <div class="busuanzi-count">
