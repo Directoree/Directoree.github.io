@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 中断与异常（段内容补充二）">
+<meta property="og:url" content="https://directoree.github.io/post/WinXp-InterruptAndException2/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/07/14/k4Kz7sP8cyopFWh.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/14/rIlAfydQLxuEqi9.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/14/gqPna34UQG2HZLc.png">
+<meta property="article:published_time" content="2022-07-16T18:06:33.000Z">
+<meta property="article:modified_time" content="2022-07-16T18:07:58.532Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="中断与异常">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/07/14/k4Kz7sP8cyopFWh.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXp-InterruptAndException2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 中断与异常（段内容补充二） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%97%B6%E9%92%9F%E4%B8%AD%E6%96%AD%E4%B8%8E%E5%AE%9A%E6%97%B6%E5%99%A8"><span class="nav-text">6 时钟中断与定时器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E6%97%B6%E9%99%90%E7%BB%93%E6%9D%9F%E5%A4%84%E7%90%86"><span class="nav-text">6.1 时限结束处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%AE%9A%E6%97%B6%E5%99%A8%E5%A4%84%E7%90%86"><span class="nav-text">6.2 定时器处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E5%AE%9A%E6%97%B6%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="nav-text">6.3 定时器对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E6%BA%90%E7%A0%81KeUpdateSystemTime"><span class="nav-text">6.4 源码KeUpdateSystemTime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-ia64%E7%89%88%E6%9C%ACKeUpdateSystemTime"><span class="nav-text">6.5  ia64版本KeUpdateSystemTime</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-6-ROS%EF%BC%9AKeUpdateSystemTime"><span class="nav-text">6.6 ROS：KeUpdateSystemTime</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">7 异常分发</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E7%BA%BF%E7%A8%8B%E8%B0%83%E5%BA%A6"><span class="nav-text">8 线程调度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E6%B3%A8%E5%86%8C%E8%A1%A8"><span class="nav-text">9 注册表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F"><span class="nav-text">10 文件系统</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#11-%E5%86%85%E6%A0%B8%E6%A8%A1%E5%BC%8F%E5%9B%9E%E7%94%A8%E6%88%B7%E6%A8%A1%E5%BC%8F"><span class="nav-text">11 内核模式回用户模式</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">53</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">64</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXp-InterruptAndException2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 中断与异常（段内容补充二）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-07-17 02:06:33 / 修改时间：02:07:58" itemprop="dateCreated datePublished" datetime="2022-07-17T02:06:33+08:00">2022-07-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%82%E5%B8%B8/" itemprop="url" rel="index"><span itemprop="name">异常</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%82%E5%B8%B8/%E4%B8%AD%E6%96%AD/" itemprop="url" rel="index"><span itemprop="name">中断</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%82%E5%B8%B8/%E4%B8%AD%E6%96%AD/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXp-InterruptAndException2/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 中断与异常（段内容补充二）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXp-InterruptAndException2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXp-InterruptAndException2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>20k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>18 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
+<a id="more"></a>
+
+
+
+<h2 id="6-时钟中断与定时器"><a href="#6-时钟中断与定时器" class="headerlink" title="6 时钟中断与定时器"></a>6 时钟中断与定时器</h2><p>定时器（timer）是一种被广泛使用的软件机制，应用软件可以用定时器来实现动画和其他各种周期性任务等，设备驱动程序利用定时器来控制超时，操作系统利用定时器来执行线程调度、时间计最等。Windows 提供了一种定时器内核对象，本章后面5.4.2 节将会介绍内核提供的各种同步对象，其中就包括定时器对象。这一节我们先讨论 Windows 如何管理定时器和实现定时任务。</p>
+<h3 id="6-1-时限结束处理"><a href="#6-1-时限结束处理" class="headerlink" title="6.1 时限结束处理"></a>6.1 时限结束处理</h3><p><strong>Windows 中最底层的定时器机制是通过时钟中断加上DPC对象来实现的</strong>。我们首先从时钟中断入手来检查最原始的时间控制点。时钟中断是由本地 APIC 来控制的，HAL模块负责设置时钟中断向量、中断发生的频率，具体的时钟间隔与 HAL 模块有关，通常为 <strong>10~15 ms</strong>。在 Intel x86 处理器的 Windows 系统中，时钟中断的 IRQL为28。时钟中断的服务例程由 HAL 提供，它调用了内核模块的 <code>KeUpdateSystemTime</code> 函数。</p>
+<p><img data-src="https://s2.loli.net/2022/07/14/k4Kz7sP8cyopFWh.png" alt="5.png"></p>
+<p><img data-src="https://s2.loli.net/2022/07/14/rIlAfydQLxuEqi9.png" alt="6.png"></p>
+<p><strong><code>KeUpdateSystemTime</code>功能</strong>：</p>
+<ol>
+<li>它首先更新中断时间和系统时间(位于用户共享数据区一个用户模式和内核模式代码均可访问的内存页面），以及滴答计数（全局变量_KeTickCount）。</li>
+<li>然后，<code>KeUpdateSystemTime</code> 判断定时器数组中是否有定时器到期，如果有，则设置 KPRCB 的 <code>TimerRequest</code> 标志，并通过调用 <code>HalRequestSoftwarelnterrupt</code> 函数请求  <code>DISPATCH_LEVEL</code> 软件中断。最后，<code>KeupdateSystemTime</code> 调用 <code>KeUpdateRunTime</code> 函数，更新线程和进程的运行时间。</li>
+</ol>
+<p><strong><code>KeUpdateRunTime</code> 函数功能</strong>：</p>
+<ol>
+<li>它首先更新内核模式的总时间、中断所花的时间（如果当前在中断例程中），然后更新当前线程和进程的内核模式时间或用户模式时间。</li>
+<li>接着，<code>KeUpdateRunTime</code> 函数刷新 DPC 请求率，如果当前 DPC 链表不为空，则有必要的话调用 <code>HalRequestSofiwarelnterrupt</code> 函数请求 <code>DISPATCH_LEVEL</code> 软件中断。</li>
+<li>最后，<code>KeUpdateRunTime</code> 扣除当前线程的时限，扣除的单位为 3（<code>CLOCK_QUANTUM_DECREMENT</code>），参考 3.5.3 节中关于线程时限管理的介绍。</li>
+<li>如果扣除以后线程的时限仍大于0，则函数返回，否则设置 KPRCB 的 <code>QuantumEnd</code> 标志（若<code>QuantumEnd != 0</code>表示时限用完），并请求一个<code> DISPAT_CHLEVEL</code> 的软件中断。</li>
+</ol>
+<p>值得一提的是，在多处理器系统中，第一个处理器（即 P0）上的时钟中断例程调用 <code>KeUpdateSystemTime</code> 函数，而其他处理器上的时钟中断例程调用 <code>KeUpdateRunTime</code> 函数。从上述两个函数的功能不难理解，<strong>系统全局的时间信息由第一个处理器来维护，而其他的处理器只负责处理该处理器上的 DPC 以及与线程调度有关的事项</strong>。</p>
+<div class="note success"><p>在 <code>KeUpdateSystemTime</code> 和 <code>KeUpdateRunTime</code> 两数中，有三件事情可以导致立即请求一个 <code>DISPATCH_LEVEL</code> 的软件中断：<strong>有 DPC 需要处理</strong>、<strong>定时器到期</strong>，以及<strong>当前线程的时限已结束</strong>。</p>
+<p>根据上一节的介绍，<code>DISPATCH_LEVEL</code> 软件中断的处理函数 <code>KiDispatchInterrupt</code>，以及它所调用的函数 <code>KiRetireDpcList</code>，正好可以完成这些事情。</p>
+</div>
+
+<h3 id="6-2-定时器处理"><a href="#6-2-定时器处理" class="headerlink" title="6.2 定时器处理"></a>6.2 定时器处理</h3><p>系统中所有的定时器构成了一个链表数组，他们都将会挂入全局数组 <code>KiTimerTableListHlead</code> 包含的 256 个定时器链表中，链表串着定时器 KTIMER 对象的 <code>TimerListEntry</code> 成员。相关的C定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> TIMER_TABLE_SIZE 256</span></span><br><span class="line"></span><br><span class="line">LIST_ENTRY KiTimerTableListHead[TIMER_TABLE_SIZE];</span><br><span class="line">                                                            </span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KTIMER</span> &#123;</span></span><br><span class="line">    DISPATCHER_HEADER Header;	<span class="comment">//可等待对象</span></span><br><span class="line">    ULARGE_INTEGER DueTime;	<span class="comment">//指定的到期时间</span></span><br><span class="line">    LIST_ENTRY TimerListEntry;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">KDPC</span> *<span class="title">Dpc</span>;</span></span><br><span class="line">    LONG Period;</span><br><span class="line">&#125; KTIMER, *PKTIMER, *RESTRICTED_POINTER PRKTIMER;</span><br><span class="line"></span><br><span class="line">kd&gt; dt _KTIMER</span><br><span class="line">nt!_KTIMER</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x010</span> DueTime          : _ULARGE_INTEGER</span><br><span class="line">   +<span class="number">0x018</span> TimerListEntry   : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x020</span> Dpc              : Ptr32 _KDPC</span><br><span class="line">   +<span class="number">0x024</span> Period           : Int4B</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong><code>DueTime</code><strong>：任何一个定时器都有一个指定的到期时间，即 KTIMER 结构中的 DueTime 值。当一个定时器被插入到 <code>KiTimerTableListHead</code> 中时，它被插入到哪个链表是由 <code>DueTime</code> 决定的，即</strong>根据 <code>DueTime</code> 的值，计算得到一个下标 <code>Index</code> 值</strong>。<code>KiComputeTimerTableIndex</code> 函数完成这一计算。此计算式的基本思路是，**将 <code>DueTime</code> 除以每个滴答（tick）的最大间隔时间，即把 <code>DueTime</code> 转换成以滴答为单位，然后模上<code>TIMER_TABLE_SIZE</code>**（在代码中使用了 <code>and</code> 指令，对于2的幂次来说，这是等价的）。</p>
+<p>因此，每次时钟中断经过一个滴答，它只需检查 <code>KiTimerTableListHead</code> 数组中的一个链表，即符合当前滴答时间值作为到期时间的定时器链表，同时也判断属于下一个滴答的定时器链表。我们在 <code>KeUpdateSystemTime</code> 函数中可以看到，如果检测到当前滴答计数（全局变量 <code>KeTickCount</code>）或下一个滴答计数所对应的链表中的 <code>Time</code> 域已经小于等于当前中断时间值，则设置当前处理器的 KPRCB 中的 <code>TimerRequest</code>标志，并且设置 KPRCB 的 <code>TimerHand</code> 域指向刚刚到期的定时器链表的数组下标，然后调用 <code>HalRequestSoftwarelInterrupt</code> 函数请求 <code>DISPATCH_LEVEL</code> 软件中断。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dd KeTickCount</span><br><span class="line"><span class="number">80555000</span>  <span class="number">000f</span>11b6 <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">0002625</span>a</span><br><span class="line"><span class="number">80555010</span>  <span class="number">0002625</span>a ffff8d8f <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line"><span class="number">80555020</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line"><span class="number">80555030</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line"><span class="number">80555040</span>  <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span></span><br><span class="line">  </span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KSYSTEM_TIME</span> &#123;</span></span><br><span class="line">    ULONG LowPart;</span><br><span class="line">    LONG High1Time;</span><br><span class="line">    LONG High2Time;</span><br><span class="line">&#125; KSYSTEM_TIME, *PKSYSTEM_TIME;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(_NTDRIVER_) || defined(_NTDDK_) || defined(_NTIFS_)</span></span><br><span class="line"><span class="comment">// begin_wdm</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KeQueryTickCount(CurrentCount ) &#123; </span></span><br><span class="line">    <span class="keyword">volatile</span> PKSYSTEM_TIME _TickCount = *((PKSYSTEM_TIME *)(&amp;KeTickCount)); </span><br><span class="line">    <span class="keyword">while</span> (TRUE) &#123;                                                          </span><br><span class="line">        (CurrentCount)-&gt;HighPart = _TickCount-&gt;High1Time;                   </span><br><span class="line">        (CurrentCount)-&gt;LowPart = _TickCount-&gt;LowPart;                      </span><br><span class="line">        <span class="keyword">if</span> ((CurrentCount)-&gt;HighPart == _TickCount-&gt;High2Time) <span class="keyword">break</span>;       </span><br><span class="line">        _asm &#123; rep nop &#125;                                                    </span><br><span class="line">    &#125;                                                                       </span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// end_wdm</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line"><span class="comment">// end_ntddk end_nthal end_ntosp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> KiQueryTickCount(CurrentCount) </span></span><br><span class="line">    <span class="keyword">while</span> (TRUE) &#123;                                                      </span><br><span class="line">        (CurrentCount)-&gt;HighPart = KeTickCount.High1Time;               </span><br><span class="line">        (CurrentCount)-&gt;LowPart = KeTickCount.LowPart;                  </span><br><span class="line">        <span class="keyword">if</span> ((CurrentCount)-&gt;HighPart == KeTickCount.High2Time) <span class="keyword">break</span>;   </span><br><span class="line">        _asm &#123; rep nop &#125;                                                </span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// begin_ntddk begin_nthal begin_ntosp</span></span><br></pre></td></tr></table></figure>
+
+<p>⚠️<strong>注意</strong>：Windows XP中的没有 WRK 关于定时器这部分的变化：</p>
+<ol>
+<li>WRK 中说的数组<code>KiTimerTableListHead</code>的每一项是一个<code>_KTIMER_TABLE_ENTRY</code>结构，XP中直接就是一个<code>KTIMER</code>对象。</li>
+<li>数组长度不同<ul>
+<li>XP：<code>#define TIMER_TABLE_SIZE 256</code></li>
+<li>WRK：<code>#define TIMER_TABLE_SIZE 512</code></li>
+</ul>
+</li>
+<li><code>Index</code>计算方法不同<ul>
+<li>XP：没有<code>hand</code>，<code>Index = KiComputeTimerTableIndex(IN LARGE_INTEGER Interval,IN LARGE_INTEGER CurrentTime,     IN PKTIMER Timer)</code>。</li>
+<li>WRK：<code>KiInsertTimerTable</code>数组中的每一个链表都有一个<code>Hand</code>值，然后<code>Index = Hand = KiComputeTimerTableIndex(DueTime) </code>。</li>
+</ul>
+</li>
+<li>关于 <code>KiTimerExpiration</code> 函数<ul>
+<li>XP： <code>KiTimerExpiration</code> 函数是在<code>KiInitSystem</code>系统初始化时调用。</li>
+<li>WRK：如果 KPRCB 中的 <code>TimerRequest</code> 标志已被置上，则 <code>KiRetireDpcList</code> 调用 <code>KiTimerExpiration</code> 函数，并且将 KPRCB 中的 <code>TimerHand</code> 传递给它。所以，<code>KiTimerExpiration</code> 函数知道该从 <code>KiTimerTableListHead</code> 数组的哪个定时器链表开始处理。</li>
+</ul>
+</li>
+</ol>
+<p>现在我们来看定时器被插入链表的做法。<code>KiInsertTimerTable</code> 函数定位到待插入的定时器链表，依据定时器的 <code>DueTime</code> 值的先后顺序，插入到链表中合适的位置上。</p>
+<p>综上所述，我们可以知道，如果将定时器的到期时间 <code>DueTime</code> 换算成滴答计数，则 <code>KiTimerTableListHlead</code>数组的每个链表中的定时器对模 <code>TIMER_TABLE_SIZE</code> 同余。</p>
+<p>Windows 之所以使用一个二维数组来维护系统中所有的定时器对象，是从效率的角度考虑的，<code>KiComputeTimerTableIndex</code>  计算得到一个下标或索引，相当于做了一个优雅的散列处理。不同索引对应的链表的到期时间不一样。</p>
+<p>与单个长链表相比，定时器的插入和到期处理都可以在相对较短的链表上进行，而且，在 <code>KeUpdateSystemTime</code> 函数中判断是否有到期定时器也可以非常快捷地实现。</p>
+<p><img data-src="https://s2.loli.net/2022/07/14/gqPna34UQG2HZLc.png" alt="7.png"></p>
+<p>从以上的介绍可以看出，定时器对象既具有普通同步对象的特征，也具有 DPC 对象的特征。本节仅仅介绍了定时器对象的到期处理，后面5.4.2 节还将进一步从同步对象的角度介绍定时器对象。</p>
+<h3 id="6-3-定时器对象"><a href="#6-3-定时器对象" class="headerlink" title="6.3 定时器对象"></a>6.3 定时器对象</h3><p>定时器对象既是一个像 DPC 这样的例程的包裝对象，也是一个分发器对象，并且分为定时器通知对象和定时器同步对象。<br>在前面5.2.5 节介绍定时器管理时，我们看到定时器数据结构 KTIMER 的第一个成员是 DISPATCHER_ HEADER 结构，因此，KTIMER 对象也可被用于等待函数，换句话说，一个线程可以等待一个定时器对象。有关定时器的操作的实现代码位于 baseintostketimerobj.c 和 timersup.c 文件中。下面是主要的定时器操作：</p>
+<ul>
+<li>KelnitializeTimer&#x2F;KeInitializeTimerEx，初始化一个定时器对象。KelnitializeTimer 调用 KelnitializeTimerEx 函数来初始化一个通知类型的定时器。</li>
+<li>KeClearTimer，清除一个定时器对象的信号状态。</li>
+<li>KeCancelTimer，取消一个已经设定的定时器。如果该定时器对象尚未被设定，即DISPATCHER_ HEADER 中的 Inserted 域为 FALSE，则什么也不做，否则将它从系统的定时器链表中移除。</li>
+<li>KeSetTimer&#x2F;KeSetTimerEx，设定一个定时器。若它已经被插人到了系统的定时器链表中，则首先将它从定时器链表中移除。然后，计算定时器的到期时间，若当前已到调用 KiSignalTimer，以唤醒那些正在等待该定时器的线程，并且以 DPC 方式交付定时器中的到期例程。若当前尚未到期，则设定定时器为无信号状态，并调用KilnsertOrSignalTimer 函数将它插人到系统的定时器链表中。</li>
+<li>KiSignalTimer，定时器对象变为有信号状态。对于定时器通知对象，调用KiWaitTestWithoutSideEffeets 函数唤醒所有的等待线程；对于定时器同步对象，则调用 KiWait TestSynchronizationObject，唤醒一个正在等待该对象的线程。对于周期性的定时器，即 KTIMER 的 Period 域不为0，则再次插入该定时器对象到系统的定时器链表中。最后，若定时器对象关联了一个 DPC 例程，则调用 KelnsertQueueDpc 函数，将其转化成一个真正的 DPC 对象。</li>
+<li>KilnsertOrSignalTimer，如果定时器对象尚未到期，则将它插入到系统的定时器链表中，否则，调用 KiComplete Timer 函数，KiCompleteTimer 进一步调用 KiSignalTimer函数完成定时器对象的到期处理。</li>
+<li>KiTimerExpiration，该函数是系统的定时器到期处理函数，如图 5.9 所示。它遍历特定的定时器链表，对于每个到期的定时器，使之变成有信号状态，并调用KiWaitTestWithoutSideEffects（针对定时器通知对象）或 KiWaitTestSynchronizationObject 函数（针对定时器同步对象）。</li>
+</ul>
+<p>定时器对象是-种常用的分发器对象，内核和设备驱动程序都可以使用定时器对象来实现超时和定时处理。Windows 提供的定时器对象非常灵活：既可以通过到期例程来通知使用者，也允许使用者通过等待函数获得通知；既可以是一次性的，也可以是周期性的；既可以是通知类型，也可以是同步类型。值得指出的一点是，定时器对象的精度受限于系统处理器时钟中断的精度，根据 5.2.5 节的介绍，Windows仅在时钟中断或 DISPATCH_ LEVEL软件中断发生时，才会处理定时器链表中的到期定时器对象。</p>
+<p>最后，我们注意到，每当由于一个分发器对象导致其他的线程被解除等待时，被唤醒的线程都会获得优先级的提升，不同的分发器对象带给等待线程的优先级提升值可能有所不同，事件、信号量和突变体对象的优先级提升值为1，定时器对象不会提升等待线程的优先级。有关线程的优先级和优先级提升的情形，参见 3.5.1节的介绍。</p>
+<p>由于分发器对象的状态变化会直接影响到系统的线程调度，所以，在以上这些分发器对象的操作函数的代码中，我们常常会看到 RQL 提升至 DISPATCHL LEVEL 或 SYNCH LEVEL，并且要锁住调度器数据库，这表明，当一个线程调用这些操作时，它实际上将控制权暂时交给了线程调度器。事实上，系统的线程调度器也正是通过这种方式来工作的，它不仅从代码位置上散布在内核模块各处，而且从运行时间上，也插人在各个线程、中断或异常的执行过程中。绝大多数情况下，进出线程调度器是在同一个函数中完成的，也就是说，如果一个丽数进人了调度器，则该函数在返回以前，还会退出调度器。但也有例外，比如 KeSetEvent、 KeReleaseMutant、 KeReleaseSemaphore 等函数的 Wait 参数就指明了该函数调用以后是否要紧接着调用一个等待函数，若如此，则不退出调度器，而是把这一信息记录在线程对象 KTHREAD 的 WaitNext 和 Waitlrql 成员中，然后在等待函数中再判断线程的状态。</p>
+<h3 id="6-4-源码KeUpdateSystemTime"><a href="#6-4-源码KeUpdateSystemTime" class="headerlink" title="6.4 源码KeUpdateSystemTime"></a>6.4 源码KeUpdateSystemTime</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0046</span>DFA4 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">0046</span>DFA4</span><br><span class="line">.text:<span class="number">0046</span>DFA4 <span class="comment">// _KUSER_SHARED_DATA：FFDF0000</span></span><br><span class="line">.text:<span class="number">0046</span>DFA4</span><br><span class="line">.text:<span class="number">0046</span>DFA4 <span class="comment">// _DWORD __stdcall KeUpdateSystemTime()</span></span><br><span class="line">.text:<span class="number">0046</span>DFA4                 <span class="keyword">public</span> _KeUpdateSystemTime@<span class="number">0</span></span><br><span class="line">.text:<span class="number">0046</span>DFA4 _KeUpdateSystemTime@<span class="number">0</span> proc near</span><br><span class="line">.text:<span class="number">0046</span>DFA4                 mov     ecx, <span class="number">0F</span>FDF0000h</span><br><span class="line">.text:<span class="number">0046</span>DFA9                 mov     edi, [ecx+_KUSER_SHARED_DATA.InterruptTime.LowPart]</span><br><span class="line">.text:<span class="number">0046</span>DFAC                 mov     esi, [ecx+_KUSER_SHARED_DATA.InterruptTime.High1Time]</span><br><span class="line">.text:<span class="number">0046</span>DFAF                 add     edi, eax</span><br><span class="line">.text:<span class="number">0046</span>DFB1                 adc     esi, <span class="number">0</span></span><br><span class="line">.text:<span class="number">0046</span>DFB4                 mov     [ecx+_KUSER_SHARED_DATA.InterruptTime.High2Time], esi</span><br><span class="line">.text:<span class="number">0046</span>DFB7                 mov     [ecx+_KUSER_SHARED_DATA.InterruptTime.LowPart], edi</span><br><span class="line">.text:<span class="number">0046</span>DFBA                 mov     [ecx+_KUSER_SHARED_DATA.InterruptTime.High1Time], esi</span><br><span class="line">.text:<span class="number">0046</span>DFBD                 sub     ds:_KiTickOffset, eax</span><br><span class="line">.text:<span class="number">0046</span>DFC3                 mov     eax, ds:_KeTickCount.LowPart</span><br><span class="line">.text:<span class="number">0046</span>DFC8                 mov     ebx, eax</span><br><span class="line">.text:<span class="number">0046</span>DFCA                 jg      loc_46E054</span><br><span class="line">.text:<span class="number">0046</span>DFD0                 mov     ebx, <span class="number">0F</span>FDF0000h</span><br><span class="line">.text:<span class="number">0046</span>DFD5                 mov     ecx, [ebx+_KUSER_SHARED_DATA.SystemTime.LowPart]</span><br><span class="line">.text:<span class="number">0046</span>DFD8                 mov     edx, [ebx+_KUSER_SHARED_DATA.SystemTime.High1Time]</span><br><span class="line">.text:<span class="number">0046</span>DFDB                 add     ecx, ds:_KeTimeAdjustment</span><br><span class="line">.text:<span class="number">0046</span>DFE1                 adc     edx, <span class="number">0</span></span><br><span class="line">.text:<span class="number">0046</span>DFE4                 mov     [ebx+_KUSER_SHARED_DATA.SystemTime.High2Time], edx</span><br><span class="line">.text:<span class="number">0046</span>DFE7                 mov     [ebx+_KUSER_SHARED_DATA.SystemTime.LowPart], ecx</span><br><span class="line">.text:<span class="number">0046</span>DFEA                 mov     [ebx+_KUSER_SHARED_DATA.SystemTime.High1Time], edx</span><br><span class="line">.text:<span class="number">0046</span>DFED                 mov     ebx, eax</span><br><span class="line">.text:<span class="number">0046</span>DFEF                 mov     ecx, eax</span><br><span class="line">.text:<span class="number">0046</span>DFF1                 mov     edx, ds:_KeTickCount.High1Time</span><br><span class="line">.text:<span class="number">0046</span>DFF7                 add     ecx, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0046</span>DFFA                 adc     edx, <span class="number">0</span></span><br><span class="line">.text:<span class="number">0046</span>DFFD                 mov     ds:_KeTickCount.High2Time, edx</span><br><span class="line">.text:<span class="number">0046E003</span>                 mov     ds:_KeTickCount.LowPart, ecx</span><br><span class="line">.text:<span class="number">0046E009</span>                 mov     ds:_KeTickCount.High1Time, edx</span><br><span class="line">.text:<span class="number">0046E00</span>F                 push    eax</span><br><span class="line">.text:<span class="number">0046E010</span>                 mov     eax, ds:<span class="number">0F</span>FDF0000h</span><br><span class="line">.text:<span class="number">0046E015</span>                 add     eax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0046E018</span>                 jnb     <span class="keyword">short</span> loc_46E020</span><br><span class="line">.text:<span class="number">0046E01</span>A                 inc     ds:_ExpTickCountAdjustmentCount</span><br><span class="line">.text:<span class="number">0046E020</span></span><br><span class="line">.text:<span class="number">0046E020</span> loc_46E020:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+74↑j</span></span><br><span class="line">.text:<span class="number">0046E020</span>                 mov     eax, ds:_ExpTickCountAdjustment</span><br><span class="line">.text:<span class="number">0046E025</span>                 imul    eax, ds:_ExpTickCountAdjustmentCount</span><br><span class="line">.text:<span class="number">0046E02</span>C                 add     eax, ecx</span><br><span class="line">.text:<span class="number">0046E02</span>E                 mov     ds:<span class="number">0F</span>FDF0000h, eax</span><br><span class="line">.text:<span class="number">0046E033</span>                 pop     eax</span><br><span class="line">.text:<span class="number">0046E034</span>                 <span class="keyword">and</span>     eax, <span class="number">0F</span>Fh</span><br><span class="line">.text:<span class="number">0046E039</span>                 lea     ecx, _KiTimerTableListHead[eax*<span class="number">8</span>]</span><br><span class="line">.text:<span class="number">0046E040</span>                 mov     edx, [ecx]</span><br><span class="line">.text:<span class="number">0046E042</span>                 cmp     ecx, edx</span><br><span class="line">.text:<span class="number">0046E044</span>                 jz      <span class="keyword">short</span> loc_46E052</span><br><span class="line">.text:<span class="number">0046E046</span>                 cmp     esi, [edx<span class="number">-4</span>]</span><br><span class="line">.text:<span class="number">0046E049</span>                 jb      <span class="keyword">short</span> loc_46E052</span><br><span class="line">.text:<span class="number">0046E04</span>B                 ja      <span class="keyword">short</span> loc_46E072</span><br><span class="line">.text:<span class="number">0046E04</span>D                 cmp     edi, [edx<span class="number">-8</span>]</span><br><span class="line">.text:<span class="number">0046E050</span>                 jnb     <span class="keyword">short</span> loc_46E072</span><br><span class="line">.text:<span class="number">0046E052</span></span><br><span class="line">.text:<span class="number">0046E052</span> loc_46E052:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+A0↑j</span></span><br><span class="line">.text:<span class="number">0046E052</span>                                         <span class="comment">// KeUpdateSystemTime()+A5↑j</span></span><br><span class="line">.text:<span class="number">0046E052</span>                 inc     eax</span><br><span class="line">.text:<span class="number">0046E053</span>                 inc     ebx</span><br><span class="line">.text:<span class="number">0046E054</span></span><br><span class="line">.text:<span class="number">0046E054</span> loc_46E054:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+26↑j</span></span><br><span class="line">.text:<span class="number">0046E054</span>                 <span class="keyword">and</span>     eax, <span class="number">0F</span>Fh</span><br><span class="line">.text:<span class="number">0046E059</span>                 lea     ecx, _KiTimerTableListHead[eax*<span class="number">8</span>]</span><br><span class="line">.text:<span class="number">0046E060</span>                 mov     edx, [ecx]</span><br><span class="line">.text:<span class="number">0046E062</span>                 cmp     ecx, edx</span><br><span class="line">.text:<span class="number">0046E064</span>                 jz      <span class="keyword">short</span> loc_46E0C5</span><br><span class="line">.text:<span class="number">0046E066</span>                 cmp     esi, [edx<span class="number">-4</span>]</span><br><span class="line">.text:<span class="number">0046E069</span>                 jb      <span class="keyword">short</span> loc_46E0C5</span><br><span class="line">.text:<span class="number">0046E06</span>B                 ja      <span class="keyword">short</span> loc_46E072</span><br><span class="line">.text:<span class="number">0046E06</span>D                 cmp     edi, [edx<span class="number">-8</span>]</span><br><span class="line">.text:<span class="number">0046E070</span>                 jb      <span class="keyword">short</span> loc_46E0C5</span><br><span class="line">.text:<span class="number">0046E072</span></span><br><span class="line">.text:<span class="number">0046E072</span> loc_46E072:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+A7↑j</span></span><br><span class="line">.text:<span class="number">0046E072</span>                                         <span class="comment">// KeUpdateSystemTime()+AC↑j ...</span></span><br><span class="line">.text:<span class="number">0046E072</span>                 mov     ecx, large fs:_KPCR.Prcb</span><br><span class="line">.text:<span class="number">0046E079</span>                 lea     eax, _KiTimerExpireDpc.DpcListEntry <span class="comment">// -----</span></span><br><span class="line">.text:<span class="number">0046E079</span>                                         <span class="comment">// KiTimerExpireDpc - This is the Deferred Procedure Call (DPC) object that</span></span><br><span class="line">.text:<span class="number">0046E079</span>                                         <span class="comment">// is used to process the timer queue when a timer has expired.</span></span><br><span class="line">.text:<span class="number">0046E079</span>                                         <span class="comment">//</span></span><br><span class="line">.text:<span class="number">0046E079</span>                                         <span class="comment">// KDPC KiTimerExpireDpc;</span></span><br><span class="line">.text:<span class="number">0046E079</span>                                         <span class="comment">// ----</span></span><br><span class="line">.text:<span class="number">0046E07</span>F                 lea     edx, [ecx+_KPRCB.DpcLock]</span><br><span class="line">.text:<span class="number">0046E085</span>                 cmp     dword ptr [eax+<span class="number">18</span>h], <span class="number">0</span> <span class="comment">// KDPC-&gt;Lock</span></span><br><span class="line">.text:<span class="number">0046E089</span>                 jnz     <span class="keyword">short</span> loc_46E0C5</span><br><span class="line">.text:<span class="number">0046E08</span>B</span><br><span class="line">.text:<span class="number">0046E08</span>B loc_46E08B:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+17F↓j</span></span><br><span class="line">.text:<span class="number">0046E08</span>B                 cli</span><br><span class="line">.text:<span class="number">0046E08</span>C                 lock bts dword ptr [edx], <span class="number">0</span></span><br><span class="line">.text:<span class="number">0046E091</span>                 jb      loc_46E11C</span><br><span class="line">.text:<span class="number">0046E097</span>                 inc     [ecx+_KPRCB.DpcQueueDepth]</span><br><span class="line">.text:<span class="number">0046E09</span>D                 mov     [eax+<span class="number">18</span>h], edx  <span class="comment">// Lock</span></span><br><span class="line">.text:<span class="number">0046E0</span>A0                 mov     [eax+<span class="number">10</span>h], ebx  <span class="comment">// SystemArgument1</span></span><br><span class="line">.text:<span class="number">0046E0</span>A3                 add     ecx, _KPRCB.DpcListHead</span><br><span class="line">.text:<span class="number">0046E0</span>A9                 mov     ebx, [ecx+<span class="number">4</span>]</span><br><span class="line">.text:<span class="number">0046E0</span>AC                 mov     [ecx+<span class="number">4</span>], eax</span><br><span class="line">.text:<span class="number">0046E0</span>AF                 mov     [ebx], eax</span><br><span class="line">.text:<span class="number">0046E0</span>B1                 mov     [eax], ecx</span><br><span class="line">.text:<span class="number">0046E0</span>B3                 mov     [eax+<span class="number">4</span>], ebx</span><br><span class="line">.text:<span class="number">0046E0</span>B6                 mov     byte ptr [edx], <span class="number">0</span></span><br><span class="line">.text:<span class="number">0046E0</span>B9                 sti</span><br><span class="line">.text:<span class="number">0046E0</span>BA                 mov     ecx, <span class="number">2</span></span><br><span class="line">.text:<span class="number">0046E0</span>BF                 call    ds:__imp_@HalRequestSoftwareInterrupt@<span class="number">4</span> <span class="comment">// HalRequestSoftwareInterrupt(x)</span></span><br><span class="line">.text:<span class="number">0046E0</span>C5</span><br><span class="line">.text:<span class="number">0046E0</span>C5 loc_46E0C5:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+C0↑j</span></span><br><span class="line">.text:<span class="number">0046E0</span>C5                                         <span class="comment">// KeUpdateSystemTime()+C5↑j ...</span></span><br><span class="line">.text:<span class="number">0046E0</span>C5                 cmp     ds:_KdDebuggerEnabled, <span class="number">0</span></span><br><span class="line">.text:<span class="number">0046E0</span>CC                 jnz     <span class="keyword">short</span> loc_46E109</span><br><span class="line">.text:<span class="number">0046E0</span>CE</span><br><span class="line">.text:<span class="number">0046E0</span>CE loc_46E0CE:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+16C↓j</span></span><br><span class="line">.text:<span class="number">0046E0</span>CE                                         <span class="comment">// KeUpdateSystemTime()+175↓j</span></span><br><span class="line">.text:<span class="number">0046E0</span>CE                 cmp     ds:_KiTickOffset, <span class="number">0</span></span><br><span class="line">.text:<span class="number">0046E0</span>D5                 jg      <span class="keyword">short</span> loc_46E0F6</span><br><span class="line">.text:<span class="number">0046E0</span>D7                 mov     eax, ds:_KeMaximumIncrement</span><br><span class="line">.text:<span class="number">0046E0</span>DC                 add     ds:_KiTickOffset, eax</span><br><span class="line">.text:<span class="number">0046E0</span>E2                 push    dword ptr [esp+<span class="number">0</span>]</span><br><span class="line">.text:<span class="number">0046E0</span>E5                 call    _KeUpdateRunTime@<span class="number">4</span> <span class="comment">// KeUpdateRunTime(x)</span></span><br><span class="line">.text:<span class="number">0046E0</span>EA                 cli</span><br><span class="line">.text:<span class="number">0046E0</span>EB                 call    ds:__imp__HalEndSystemInterrupt@<span class="number">8</span> <span class="comment">// HalEndSystemInterrupt(x,x)</span></span><br><span class="line">.text:<span class="number">0046E0</span>F1                 jmp     Kei386EoiHelper@<span class="number">0</span> <span class="comment">// Kei386EoiHelper()</span></span><br><span class="line">.text:<span class="number">0046E0</span>F6 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">0046E0</span>F6</span><br><span class="line">.text:<span class="number">0046E0</span>F6 loc_46E0F6:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+131↑j</span></span><br><span class="line">.text:<span class="number">0046E0</span>F6                 inc     large dword ptr fs:<span class="number">5</span>C4h</span><br><span class="line">.text:<span class="number">0046E0</span>FD                 cli</span><br><span class="line">.text:<span class="number">0046E0</span>FE                 call    ds:__imp__HalEndSystemInterrupt@<span class="number">8</span> <span class="comment">// HalEndSystemInterrupt(x,x)</span></span><br><span class="line">.text:<span class="number">0046E104</span>                 jmp     Kei386EoiHelper@<span class="number">0</span> <span class="comment">// Kei386EoiHelper()</span></span><br><span class="line">.text:<span class="number">0046E109</span> <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">0046E109</span></span><br><span class="line">.text:<span class="number">0046E109</span> loc_46E109:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+128↑j</span></span><br><span class="line">.text:<span class="number">0046E109</span>                 call    _KdPollBreakIn@<span class="number">0</span> <span class="comment">// KdPollBreakIn()</span></span><br><span class="line">.text:<span class="number">0046E10</span>E                 <span class="keyword">or</span>      al, al</span><br><span class="line">.text:<span class="number">0046E110</span>                 jz      <span class="keyword">short</span> loc_46E0CE</span><br><span class="line">.text:<span class="number">0046E112</span>                 push    <span class="number">1</span>               <span class="comment">// Status</span></span><br><span class="line">.text:<span class="number">0046E114</span>                 call    _DbgBreakPointWithStatus@<span class="number">4</span> <span class="comment">// DbgBreakPointWithStatus(x)</span></span><br><span class="line">.text:<span class="number">0046E119</span>                 jmp     <span class="keyword">short</span> loc_46E0CE</span><br><span class="line">.text:<span class="number">0046E119</span> <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">0046E11</span>B                 align <span class="number">4</span></span><br><span class="line">.text:<span class="number">0046E11</span>C</span><br><span class="line">.text:<span class="number">0046E11</span>C loc_46E11C:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+ED↑j</span></span><br><span class="line">.text:<span class="number">0046E11</span>C                 sti</span><br><span class="line">.text:<span class="number">0046E11</span>D</span><br><span class="line">.text:<span class="number">0046E11</span>D loc_46E11D:                             <span class="comment">// CODE XREF: KeUpdateSystemTime()+187↓j</span></span><br><span class="line">.text:<span class="number">0046E11</span>D                 test    dword ptr [edx], <span class="number">1</span></span><br><span class="line">.text:<span class="number">0046E123</span>                 jz      loc_46E08B</span><br><span class="line">.text:<span class="number">0046E129</span>                 pause</span><br><span class="line">.text:<span class="number">0046E12</span>B                 jmp     <span class="keyword">short</span> loc_46E11D</span><br><span class="line">.text:<span class="number">0046E12</span>B _KeUpdateSystemTime@<span class="number">0</span> endp <span class="comment">// sp-analysis failed</span></span><br><span class="line">.text:<span class="number">0046E12</span>B</span><br><span class="line">.text:<span class="number">0046E12</span>B <span class="comment">// ---------------------------------------------------------------------------</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="6-5-ia64版本KeUpdateSystemTime"><a href="#6-5-ia64版本KeUpdateSystemTime" class="headerlink" title="6.5  ia64版本KeUpdateSystemTime"></a>6.5  ia64版本KeUpdateSystemTime</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">KeUpdateSystemTime</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PKTRAP_FRAME TrFrame,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN ULONG        Increment</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This routine is executed on a single processor in the processor complex.</span></span></span><br><span class="line"><span class="function"><span class="comment">    It&#x27;s function is to update the system time and to check to determine if a</span></span></span><br><span class="line"><span class="function"><span class="comment">    timer has expired.</span></span></span><br><span class="line"><span class="function"><span class="comment">    N.B. This routine is executed on a single processor in a multiprocess system.</span></span></span><br><span class="line"><span class="function"><span class="comment">    The remainder of the processors in the complex execute the quantum end and</span></span></span><br><span class="line"><span class="function"><span class="comment">    runtime update code.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments:</span></span></span><br><span class="line"><span class="function"><span class="comment">    TrFrame   - Supplies a pointer to a trap frame.</span></span></span><br><span class="line"><span class="function"><span class="comment">    Increment - The time increment to be used to adjust the time slice for the next</span></span></span><br><span class="line"><span class="function"><span class="comment">                tick. The value is supplied in 100ns units.</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: None.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ULONG LowTime;</span><br><span class="line">    LONG HighTime;</span><br><span class="line">    LONG SaveTickOffset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line">    <span class="comment">// Update the interrupt time in the shared region.</span></span><br><span class="line">    <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">    LowTime = SharedUserData-&gt;InterruptTime.LowPart + Increment;</span><br><span class="line">    HighTime = SharedUserData-&gt;InterruptTime.High1Time + (LowTime &lt; Increment);</span><br><span class="line">    SharedUserData-&gt;InterruptTime.High2Time = HighTime;</span><br><span class="line">    SharedUserData-&gt;InterruptTime.LowPart = LowTime;</span><br><span class="line">    SharedUserData-&gt;InterruptTime.High1Time = HighTime;</span><br><span class="line"></span><br><span class="line">    KiTickOffset                  -= Increment;</span><br><span class="line"></span><br><span class="line">    SaveTickOffset = KiTickOffset;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((LONG)KiTickOffset &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// Tick has not completed (100ns time units remain).</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// Determine if a timer has expired at the current hand value.</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">        KiChkTimerExpireSysDpc(KeTickCount.QuadPart);</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// Tick has completed, tick count set to maximum increase plus any</span></span><br><span class="line">        <span class="comment">// residue and system time is updated.</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// Compute next tick offset.</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">        KiTickOffset += KeMaximumIncrement;</span><br><span class="line">        LowTime = SharedUserData-&gt;SystemTime.LowPart + KeTimeAdjustment;</span><br><span class="line">        HighTime = SharedUserData-&gt;SystemTime.High1Time + (LowTime &lt; KeTimeAdjustment);</span><br><span class="line">        SharedUserData-&gt;SystemTime.High2Time = HighTime;</span><br><span class="line">        SharedUserData-&gt;SystemTime.LowPart = LowTime;</span><br><span class="line">        SharedUserData-&gt;SystemTime.High1Time = HighTime;</span><br><span class="line">        ++KeTickCount.QuadPart;</span><br><span class="line">        SharedUserData-&gt;TickCountLow = (ULONG)KeTickCount.QuadPart;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        <span class="comment">// Determine if a timer has expired at either the current hand value or</span></span><br><span class="line">        <span class="comment">// the next hand value.</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!KiChkTimerExpireSysDpc(KeTickCount.QuadPart - <span class="number">1</span>))</span><br><span class="line">            KiChkTimerExpireSysDpc(KeTickCount.QuadPart);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (SaveTickOffset &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">        KeUpdateRunTime(TrFrame);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h3 id="6-6-ROS：KeUpdateSystemTime"><a href="#6-6-ROS：KeUpdateSystemTime" class="headerlink" title="6.6 ROS：KeUpdateSystemTime"></a>6.6 ROS：KeUpdateSystemTime</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * <span class="doctag">NOTE:</span> On Windows this function takes exactly zero parameters and EBP is</span></span><br><span class="line"><span class="comment"> *       guaranteed to point to KTRAP_FRAME. Also [esp+0] contains an IRQL.</span></span><br><span class="line"><span class="comment"> *       The function is used only by HAL, so there&#x27;s no point in keeping</span></span><br><span class="line"><span class="comment"> *       that prototype.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @implemented</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">VOID NTAPI <span class="title">KeUpdateSystemTime</span><span class="params">(IN PKTRAP_FRAME TrapFrame,</span></span></span><br><span class="line"><span class="function"><span class="params">                   IN KIRQL Irql,</span></span></span><br><span class="line"><span class="function"><span class="params">                   IN ULONG Increment)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    LONG OldOffset;</span><br><span class="line">    LARGE_INTEGER Time;</span><br><span class="line">    ASSERT(KeGetCurrentIrql() == PROFILE_LEVEL);</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Update interrupt time */</span></span><br><span class="line">    Time.LowPart = SharedUserData-&gt;InterruptTime.LowPart;</span><br><span class="line">    Time.HighPart = SharedUserData-&gt;InterruptTime.High1Time;</span><br><span class="line">    Time.QuadPart += Increment;</span><br><span class="line">    SharedUserData-&gt;InterruptTime.High2Time = Time.u.HighPart;</span><br><span class="line">    SharedUserData-&gt;InterruptTime.LowPart = Time.u.LowPart;</span><br><span class="line">    SharedUserData-&gt;InterruptTime.High1Time = Time.u.HighPart;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Increase the tick offset */</span></span><br><span class="line">    KiTickOffset -= Increment;</span><br><span class="line">    OldOffset = KiTickOffset;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check if this isn&#x27;t a tick yet */</span></span><br><span class="line">    <span class="keyword">if</span> (KiTickOffset &gt; <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* Expire timers */</span></span><br><span class="line">        KeInsertQueueDpc(&amp;KiExpireTimerDpc, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* Setup time structure for system time */</span></span><br><span class="line">        Time.LowPart = SharedUserData-&gt;SystemTime.LowPart;</span><br><span class="line">        Time.HighPart = SharedUserData-&gt;SystemTime.High1Time;</span><br><span class="line">        Time.QuadPart += KeTimeAdjustment;</span><br><span class="line">        SharedUserData-&gt;SystemTime.High2Time = Time.HighPart;</span><br><span class="line">        SharedUserData-&gt;SystemTime.LowPart = Time.LowPart;</span><br><span class="line">        SharedUserData-&gt;SystemTime.High1Time = Time.HighPart;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Setup time structure for tick time */</span></span><br><span class="line">        Time.LowPart = KeTickCount.LowPart;</span><br><span class="line">        Time.HighPart = KeTickCount.High1Time;</span><br><span class="line">        Time.QuadPart += <span class="number">1</span>;</span><br><span class="line">        KeTickCount.High2Time = Time.HighPart;</span><br><span class="line">        KeTickCount.LowPart = Time.LowPart;</span><br><span class="line">        KeTickCount.High1Time = Time.HighPart;</span><br><span class="line">        SharedUserData-&gt;TickCount.High2Time = Time.HighPart;</span><br><span class="line">        SharedUserData-&gt;TickCount.LowPart = Time.LowPart;</span><br><span class="line">        SharedUserData-&gt;TickCount.High1Time = Time.HighPart;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Queue a DPC that will expire timers */</span></span><br><span class="line">        KeInsertQueueDpc(&amp;KiExpireTimerDpc, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Update process and thread times */</span></span><br><span class="line">    <span class="keyword">if</span> (OldOffset &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* This was a tick, calculate the next one */</span></span><br><span class="line">        KiTickOffset += KeMaximumIncrement;</span><br><span class="line">        KeUpdateRunTime(TrapFrame, Irql);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * <span class="doctag">NOTE:</span> On Windows this function takes exactly one parameter and EBP is</span></span><br><span class="line"><span class="comment"> *       guaranteed to point to KTRAP_FRAME. The function is used only</span></span><br><span class="line"><span class="comment"> *       by HAL, so there&#x27;s no point in keeping that prototype.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * @implemented</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="function">VOID NTAPI <span class="title">KeUpdateRunTime</span><span class="params">(IN PKTRAP_FRAME  TrapFrame,</span></span></span><br><span class="line"><span class="function"><span class="params">                IN KIRQL  Irql)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PKPRCB Prcb = KeGetCurrentPrcb();</span><br><span class="line">    PKTHREAD CurrentThread;</span><br><span class="line">    PKPROCESS CurrentProcess;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Make sure we don&#x27;t go further if we&#x27;re in early boot phase. */</span></span><br><span class="line">    <span class="keyword">if</span> (!(Prcb) || !(Prcb-&gt;CurrentThread)) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Get the current thread and process */</span></span><br><span class="line">    CurrentThread = Prcb-&gt;CurrentThread;</span><br><span class="line">    CurrentProcess = CurrentThread-&gt;ApcState.Process;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check if we came from user mode */</span></span><br><span class="line">    <span class="keyword">if</span> (TrapFrame-&gt;PreviousMode != KernelMode)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* Update user times */</span></span><br><span class="line">        CurrentThread-&gt;UserTime++;</span><br><span class="line">        InterlockedIncrement((PLONG)&amp;CurrentProcess-&gt;UserTime);</span><br><span class="line">        Prcb-&gt;UserTime++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* Check IRQ */</span></span><br><span class="line">        <span class="keyword">if</span> (Irql &gt; DISPATCH_LEVEL)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">/* This was an interrupt */</span></span><br><span class="line">            Prcb-&gt;InterruptTime++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> ((Irql &lt; DISPATCH_LEVEL) || !(Prcb-&gt;DpcRoutineActive))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">/* This was normal kernel time */</span></span><br><span class="line">            CurrentThread-&gt;KernelTime++;</span><br><span class="line">            InterlockedIncrement((PLONG)&amp;CurrentProcess-&gt;KernelTime);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (Irql == DISPATCH_LEVEL)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">/* This was DPC time */</span></span><br><span class="line">            Prcb-&gt;DpcTime++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Update CPU kernel time in all cases */</span></span><br><span class="line">        Prcb-&gt;KernelTime++;</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Set the last DPC Count and request rate */</span></span><br><span class="line">    Prcb-&gt;DpcLastCount = Prcb-&gt;DpcData[<span class="number">0</span>].DpcCount;</span><br><span class="line">    Prcb-&gt;DpcRequestRate = ((Prcb-&gt;DpcData[<span class="number">0</span>].DpcCount - Prcb-&gt;DpcLastCount) +</span><br><span class="line">                             Prcb-&gt;DpcRequestRate) / <span class="number">2</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/* Check if we should request a DPC */</span></span><br><span class="line">    <span class="keyword">if</span> ((Prcb-&gt;DpcData[<span class="number">0</span>].DpcQueueDepth) &amp;&amp; !(Prcb-&gt;DpcRoutineActive))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* Request one */</span></span><br><span class="line">        HalRequestSoftwareInterrupt(DISPATCH_LEVEL);</span><br><span class="line"></span><br><span class="line">        <span class="comment">/* Update the depth if needed */</span></span><br><span class="line">        <span class="keyword">if</span> ((Prcb-&gt;DpcRequestRate &lt; KiIdealDpcRate) &amp;&amp;</span><br><span class="line">            (Prcb-&gt;MaximumDpcQueueDepth &gt; <span class="number">1</span>))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">/* Decrease the maximum depth by one */</span></span><br><span class="line">            Prcb-&gt;MaximumDpcQueueDepth--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">/* Decrease the adjustment threshold */</span></span><br><span class="line">        <span class="keyword">if</span> (!(--Prcb-&gt;AdjustDpcThreshold))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">/* We&#x27;ve hit 0, reset it */</span></span><br><span class="line">            Prcb-&gt;AdjustDpcThreshold = KiAdjustDpcThreshold;</span><br><span class="line"></span><br><span class="line">            <span class="comment">/* Check if we&#x27;ve hit queue maximum */</span></span><br><span class="line">            <span class="keyword">if</span> (KiMaximumDpcQueueDepth != Prcb-&gt;MaximumDpcQueueDepth)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="comment">/* Increase maximum by one */</span></span><br><span class="line">                Prcb-&gt;MaximumDpcQueueDepth++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">   <span class="comment">/*</span></span><br><span class="line"><span class="comment">    * If we&#x27;re at end of quantum request software interrupt. The rest</span></span><br><span class="line"><span class="comment">    * is handled in KiDispatchInterrupt.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">NOTE:</span> If one stays at DISPATCH_LEVEL for a long time the DPC routine</span></span><br><span class="line"><span class="comment">    * which checks for quantum end will not be executed and decrementing</span></span><br><span class="line"><span class="comment">    * the quantum here can result in overflow. This is not a problem since</span></span><br><span class="line"><span class="comment">    * we don&#x27;t care about the quantum value anymore after the QuantumEnd</span></span><br><span class="line"><span class="comment">    * flag is set.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="keyword">if</span> ((CurrentThread-&gt;Quantum -= <span class="number">3</span>) &lt;= <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        Prcb-&gt;QuantumEnd = TRUE;</span><br><span class="line">        HalRequestSoftwareInterrupt(DISPATCH_LEVEL);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="7-异常分发"><a href="#7-异常分发" class="headerlink" title="7 异常分发"></a>7 异常分发</h2><h2 id="8-线程调度"><a href="#8-线程调度" class="headerlink" title="8 线程调度"></a>8 线程调度</h2><h2 id="9-注册表"><a href="#9-注册表" class="headerlink" title="9 注册表"></a>9 注册表</h2><h2 id="10-文件系统"><a href="#10-文件系统" class="headerlink" title="10 文件系统"></a>10 文件系统</h2><h2 id="11-内核模式回用户模式"><a href="#11-内核模式回用户模式" class="headerlink" title="11 内核模式回用户模式"></a>11 内核模式回用户模式</h2><p>Windows内核原理与实现 8.1.2 P550</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXp-InterruptAndException2/" title="Windows XP 中断与异常（段内容补充二）">https://directoree.github.io/post/WinXp-InterruptAndException2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/%E4%B8%AD%E6%96%AD%E4%B8%8E%E5%BC%82%E5%B8%B8/" rel="tag"># 中断与异常</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXp-InterruptAndException/" rel="prev" title="Windows XP 中断与异常（段内容补充一）">
+                  <i class="fa fa-chevron-left"></i> Windows XP 中断与异常（段内容补充一）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:35</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXp-InterruptAndException2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
