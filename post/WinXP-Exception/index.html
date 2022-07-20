@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 异常处理（一）">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-Exception/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/20/wHi3jGQ9lgvMfza.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/20/Am4kPME5LUBJCYv.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/20/YhDVEoPksXfZlMi.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/20/wyZCGJHSgxlpTnA.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/20/5qfFrUVZpBO1Th8.png">
+<meta property="og:image" content="https://s2.loli.net/2022/04/05/XvoBtC7yVIJOS6Q.png">
+<meta property="article:published_time" content="2022-07-20T10:57:13.000Z">
+<meta property="article:modified_time" content="2022-07-20T16:32:07.968Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="异常处理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-Exception/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 异常处理（一） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%8D%E8%B0%88%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8"><span class="nav-text">1 再谈中断异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%B8%AD%E6%96%AD%E5%BC%82%E5%B8%B8%E5%8C%BA%E5%88%AB"><span class="nav-text">1.1 中断异常区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%BC%82%E5%B8%B8%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-text">1.2 异常的分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%B8%AD%E6%96%AD%E5%92%8C%E5%BC%82%E5%B8%B8%E5%88%97%E8%A1%A8"><span class="nav-text">1.3 中断和异常列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%94%99%E8%AF%AF%E7%A0%81ErrCode"><span class="nav-text">1.4 错误码ErrCode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E4%B8%AD%E6%96%AD-x2F-%E5%BC%82%E5%B8%B8%E7%9A%84%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-text">1.5 中断&#x2F;异常的优先级</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%BC%82%E5%B8%B8%E8%AE%B0%E5%BD%95"><span class="nav-text">2 异常记录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-CPU%E4%BA%A7%E7%94%9F%E7%9A%84%E5%BC%82%E5%B8%B8"><span class="nav-text">2.1 CPU产生的异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-KiTrap00%E5%88%86%E6%9E%90"><span class="nav-text">2.2 _KiTrap00分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-EXCEPTION-RECORD%E7%BB%93%E6%9E%84"><span class="nav-text">2.3 _EXCEPTION_RECORD结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-CommonDispatchException"><span class="nav-text">2.4 CommonDispatchException</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-Exception/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 异常处理（一）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-07-20 18:57:13" itemprop="dateCreated datePublished" datetime="2022-07-20T18:57:13+08:00">2022-07-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-07-21 00:32:07" itemprop="dateModified" datetime="2022-07-21T00:32:07+08:00">2022-07-21</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%82%E5%B8%B8/" itemprop="url" rel="index"><span itemprop="name">异常</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%82%E5%B8%B8/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-Exception/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 异常处理（一）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-Exception/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-Exception/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
+<a id="more"></a>
+
+<h2 id="1-再谈中断异常"><a href="#1-再谈中断异常" class="headerlink" title="1 再谈中断异常"></a>1 再谈中断异常</h2><h3 id="1-1-中断异常区别"><a href="#1-1-中断异常区别" class="headerlink" title="1.1 中断异常区别"></a>1.1 中断异常区别</h3><p>Intel 提供的<code>cli</code>与<code>sti</code>指令：</p>
+<p><code>cli</code>：将EFLAGS寄存器的<code>IF = 0</code>，屏蔽可屏蔽的<strong>硬件中断</strong>。</p>
+<p><code>sti</code>：将EFLAGS寄存器的<code>IF = 1</code>，响应可屏蔽的<strong>硬件中断。</strong></p>
+<p>Intel手册3A 2.3：控制寄存器CR4中的CPL、IOPL和VME标志决定着IF标志是可否可以由指令CLI、STTI、POPF、POPFD和IRET修改（可修改IF位的指令）。</p>
+<p><img data-src="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png" alt="58.png"></p>
+<div class="note danger"><p><strong>中断和异常的根本差异</strong>：异常来自于 CPU 本身，是 <mark class="label warning">CPU 主动产生的</mark>。而中断来自于外部设备，是中断源发起的，<mark class="label success">CPU 是被动的</mark>。</p>
+</div>
+
+
+
+<p>《Windows内核原理与实现》中说硬件也会产生异常，但是我们还是说异常都是CPU产生的，在《软件调试2 卷1-3.1.2》有这样的说明：</p>
+<blockquote>
+<p>对于机器检查异常，虽然有时是因为外部设备通过设置 CPU 的特殊管脚(BUSCHK#或BINIT#和 MCERR#）触发的，但是从产生角度来看，仍然是 CPU 检测到管脚信号然后产生异常的，所以<strong>机器检查异常仍然是在 CPU 内部产生的</strong>。</p>
+</blockquote>
+<div class="note primary"><p>由<mark class="label danger">INT N</mark>指令产生的是<strong>异常</strong>不是中断（不叫软件中断）。</p>
+</div>
+
+
+
+<h3 id="1-2-异常的分类"><a href="#1-2-异常的分类" class="headerlink" title="1.2 异常的分类"></a>1.2 异常的分类</h3><table>
+<thead>
+<tr>
+<th>异常分类</th>
+<th>是否可恢复</th>
+<th>进入异常时保存的地址</th>
+<th>举例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>错误类</td>
+<td>导致错误类异常的情况通常可以被纠正，而且一旦纠正后，<strong>程序可以无损失地恢复执行</strong>。</td>
+<td><strong>产生错误异常的地址</strong>，异常处理后急促执行该地址的指令。</td>
+<td>缺页异常</td>
+</tr>
+<tr>
+<td>陷井类</td>
+<td><strong>异常处理后可恢复</strong>，CPU报告异常时，<strong>导致异常的指令已经执行完毕</strong>。</td>
+<td><strong>产生异常的一下条即将要执行的指令</strong></td>
+<td>int 3</td>
+</tr>
+<tr>
+<td>中止类</td>
+<td>不允许恢复</td>
+<td>不确定</td>
+<td>蓝屏</td>
+</tr>
+</tbody></table>
+<p><img data-src="https://s2.loli.net/2022/07/20/wHi3jGQ9lgvMfza.png" alt="1.png"></p>
+<p>手册2A，int 3指令可为：0xcc&#x2F;0xcd 3</p>
+<p><img data-src="https://s2.loli.net/2022/07/20/Am4kPME5LUBJCYv.png" alt="2.png"></p>
+<h3 id="1-3-中断和异常列表"><a href="#1-3-中断和异常列表" class="headerlink" title="1.3 中断和异常列表"></a>1.3 中断和异常列表</h3><table>
+<thead>
+<tr>
+<th>向量号</th>
+<th>助记符</th>
+<th>类型</th>
+<th>描述</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>#DE</td>
+<td>错误</td>
+<td>除零错误</td>
+<td>DIV 和 IDIV指令</td>
+</tr>
+<tr>
+<td>1</td>
+<td>#DB</td>
+<td>错误&#x2F;陷阱</td>
+<td>调试异常，用于软件调试</td>
+<td>任何代码或数据引用</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&#x2F;</td>
+<td>中断</td>
+<td>NMI中断</td>
+<td>不可屏蔽的外部中断</td>
+</tr>
+<tr>
+<td>3</td>
+<td>#BP</td>
+<td>陷阱</td>
+<td>断点</td>
+<td><code>INT 3</code> 指令</td>
+</tr>
+<tr>
+<td>4</td>
+<td>#OF</td>
+<td>陷阱</td>
+<td>溢出</td>
+<td><code>INTO</code> 指令</td>
+</tr>
+<tr>
+<td>5</td>
+<td>#BR</td>
+<td>错误</td>
+<td>数组越界</td>
+<td><code>BOUND</code> 指令</td>
+</tr>
+<tr>
+<td>6</td>
+<td>#UD</td>
+<td>错误</td>
+<td>无效指令（没有定义的指令）</td>
+<td>UD2 指令（奔腾 Pro CPU 引入此指令）或任何保留的指令</td>
+</tr>
+<tr>
+<td>7</td>
+<td>#NM</td>
+<td>错误</td>
+<td>数学协处理器不存在或不可用</td>
+<td>浮点或 <code>WAIT/FWAIT</code> 指令</td>
+</tr>
+<tr>
+<td>8</td>
+<td>#DF</td>
+<td>中止</td>
+<td>双重错误 (Double Fault)</td>
+<td>任何可能产生异常的指令、不可屏蔽中断或可屏蔽中断</td>
+</tr>
+<tr>
+<td>9</td>
+<td>#MF</td>
+<td>错误</td>
+<td>向协处理器传送操作数时检测到页错误(Page Faults）或段不存在，自从 486 把数学协处理器集成到 CPU 内部后，<strong>本异常便保留不用</strong></td>
+<td>浮点指令</td>
+</tr>
+<tr>
+<td>10</td>
+<td>#TS</td>
+<td>错误</td>
+<td>无效 TSS</td>
+<td>任务切换或访问 TSS</td>
+</tr>
+<tr>
+<td>11</td>
+<td>#NP</td>
+<td>错误</td>
+<td>段不存在</td>
+<td>加载段寄存器或访问系统段</td>
+</tr>
+<tr>
+<td>12</td>
+<td>#SS</td>
+<td>错误</td>
+<td>栈段错误</td>
+<td>栈操作或加载 SS 寄存器</td>
+</tr>
+<tr>
+<td>13</td>
+<td>#GP</td>
+<td>错误</td>
+<td>通用保护（GP）异常，如果一个操作违反了保护模式下的规定，而且该情况不属于其他异常，则 CPU 便产生通用保护异常，很多时候也被翻译为一般保护异常</td>
+<td>任何内存引用和保护性检查</td>
+</tr>
+<tr>
+<td>14</td>
+<td>#PF</td>
+<td>错误</td>
+<td>页错误</td>
+<td>任何内存引用</td>
+</tr>
+<tr>
+<td>15</td>
+<td>保留</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>16</td>
+<td>#MF</td>
+<td>错误</td>
+<td>浮点错误</td>
+<td>浮点或 <code>WAIT/FWAIT </code>指令</td>
+</tr>
+<tr>
+<td>17</td>
+<td>#AC</td>
+<td>错误</td>
+<td>对齐检查</td>
+<td>对内存中数据的引用（486CPU 引入）</td>
+</tr>
+<tr>
+<td>18</td>
+<td>#MC</td>
+<td>中止</td>
+<td>机器检查(Machine Check)</td>
+<td>错误代码和来源与型号有关（奔腾CPU 引入）</td>
+</tr>
+<tr>
+<td>19</td>
+<td>#XF</td>
+<td>错误</td>
+<td>SIMD 浮点异常</td>
+<td>SIMD 浮点指令（奔腾I CPU 引入）</td>
+</tr>
+<tr>
+<td>20~31</td>
+<td>保留</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>32~255</td>
+<td>用户定义中断</td>
+<td>中断</td>
+<td>可屏蔽中断</td>
+<td>来自<code>INTR</code>的外部中断或 <code>INT n</code>指令</td>
+</tr>
+</tbody></table>
+<h3 id="1-4-错误码ErrCode"><a href="#1-4-错误码ErrCode" class="headerlink" title="1.4 错误码ErrCode"></a>1.4 错误码ErrCode</h3><p>除了缺页异常（《软件调试2 卷1-第二章》）的错误码外，其余错误码（32位）格式如下。</p>
+<p><img data-src="https://s2.loli.net/2022/07/20/YhDVEoPksXfZlMi.png" alt="3.png"></p>
+<p>其各个位域的含义如下：</p>
+<ul>
+<li><strong>EXT</strong>（External Event）[位0]：<ul>
+<li>1，外部事件导致该异常。</li>
+</ul>
+</li>
+<li><strong>IDT</strong>（Descriptor Location）[位1]：描述符位置。<ul>
+<li>1，索引指向的是 <strong>IDT 表</strong>中的门描述符；</li>
+<li>0，索引指向的是 <strong>LDT 或 GDT</strong>中的描述符。</li>
+</ul>
+</li>
+<li><strong>TI</strong>（GDT&#x2F;LDT）[位2]：仅当 IDT 位为0时有效。<ul>
+<li>0，素引部分指向的 <strong>GDT</strong> 中的描述符。</li>
+<li>1，索引部分指向的LDT 中的段或门描述符。</li>
+</ul>
+</li>
+<li><strong>段选择子索引域</strong>：表示与该错误有关的描述符在 IDT、LDT 或 GDT 表中的索引。</li>
+</ul>
+<p>函数<code>Ki386CheckDivideByZeroTrap</code>？？？</p>
+<h3 id="1-5-中断-x2F-异常的优先级"><a href="#1-5-中断-x2F-异常的优先级" class="headerlink" title="1.5 中断&#x2F;异常的优先级"></a>1.5 中断&#x2F;异常的优先级</h3><h2 id="2-异常记录"><a href="#2-异常记录" class="headerlink" title="2 异常记录"></a>2 异常记录</h2><p>异常产生后，首先是要 <mark class="label danger">记录异常信息</mark>（异常的类型、异常发生的位置等），然后要寻找异常的处理函数，我们称为 <mark class="label primary">异常的分发</mark>,最后找到异常处理函数并调用，我们称为<mark class="label success">异常处理</mark>。</p>
+<div class="note default"><p><strong>处理异常的顺序</strong>：异常记录 --&gt; 异常分发 --&gt; 异常处理。</p>
+</div>
+
+<div class="note warning"><p><strong>异常的分类</strong>：</p>
+<ul>
+<li>CPU产生的异常</li>
+<li>软件模拟产生的异常</li>
+</ul>
+<p>这两种异常最后都是用统一的方式进行<strong>记录</strong>和<strong>分发</strong>的。</p>
+</div>
+
+<h3 id="2-1-CPU产生的异常"><a href="#2-1-CPU产生的异常" class="headerlink" title="2.1 CPU产生的异常"></a>2.1 CPU产生的异常</h3><p><strong>处理顺序</strong>：</p>
+<p>① CPU指令检测到异常（例：除0），异常一定是先由CPU发现的。<br>② 查IDT表，执行中断处理函数，不同的异常调用不同的中断处理函数。<br>③ CommonDispatchException。<br>④ KiDispatchException。</p>
+<p>本节以IDT的0号中断为例，分析<strong>除零异常</strong>。（<code>div</code>为无符号除法，<code>idiv</code>为有符号除法）</p>
+<p><img data-src="https://s2.loli.net/2022/07/20/wyZCGJHSgxlpTnA.png" alt="4.png"></p>
+<p>如上图，运行代码后报错，错误码为<code>0xC00000094</code>，描述是Integer Divide by Zero。</p>
+<ol>
+<li><p>查看其反汇编代码：</p>
+<p><img data-src="https://s2.loli.net/2022/07/20/5qfFrUVZpBO1Th8.png" alt="5.png"></p>
+</li>
+<li><p>Intel手册2A对该指令的描述第一句为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//IDIV-Signed Divide</span></span><br><span class="line">IF SRC = <span class="number">0</span></span><br><span class="line">  THEN #DE; (* Divide error *)</span><br><span class="line">FI;</span><br><span class="line">......</span><br></pre></td></tr></table></figure>
+
+<p>也就是当 CPU 在执行 IDIV 指令时，首先会检查源操作数（除数）是否等于零，如果等于零，那么就产生除零异常。<code>#DE</code> 是除零异常的简短记号。</p>
+</li>
+<li><p>查看中断和异常列表<code>#DE</code>为<code>int 0</code>异常，在IDA中找到对应的ISR为<code>_KiTrap00</code>。</p>
+</li>
+</ol>
+<h3 id="2-2-KiTrap00分析"><a href="#2-2-KiTrap00分析" class="headerlink" title="2.2 _KiTrap00分析"></a>2.2 _KiTrap00分析</h3><p><code>_KiTrap00</code>函数执行流程：<br>① 保存现场（将寄存器堆栈位置等信息保存到_Trap_Frame中）<br>② 调用<code>CommonDispatchException</code>函数（分析参数EAX，EBX中的值）</p>
+<p>明明CPU检测到的错误，本身就在内核，怎么还会有 <code>_KTRAP_FRAME</code> 结构？<br>很简单，用户也会走这个函数，我们在反汇编代码分析时，发现其还有一条路线是处理用户层的，如果是用户层直接进来，当然要进行线程上下文切换。</p>
+<p>⚠️<strong>注意</strong>：异常的分发并不是在<code>_KiTrap00</code>函数里直接处理的。</p>
+<p><code>_KiTrap00</code>分析如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">*(PUSHORT)(KTRAP_FRAME.ErrCode+<span class="number">2</span>) = <span class="number">0</span>;	<span class="comment">//仅使用低16位</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//从 KTRAP_FRAME.ErrCode 开始保存原来3环的环境 （省略）</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(KTRAP_FRAME.Efalgs == <span class="number">0x20000</span>)	<span class="comment">//V86模式</span></span><br><span class="line">&#123;</span><br><span class="line">  KTRAP_FRAME.SegFs = KTRAP_FRAME.V86Fs;</span><br><span class="line">  KTRAP_FRAME.SegGs = KTRAP_FRAME.V86Gs;</span><br><span class="line">  KTRAP_FRAME.SegEs = KTRAP_FRAME.V86Es;</span><br><span class="line">  KTRAP_FRAME.SegDs = KTRAP_FRAME.V86Ds;</span><br><span class="line">&#125;</span><br><span class="line">__asm cld;	<span class="comment">//cld：DF=0，ESI、EDI的地址指针自动增加</span></span><br><span class="line">		<span class="comment">//std：DF=1，ESI、EDI的地址指针自动减小</span></span><br><span class="line"></span><br><span class="line">KTRAP_FRAME.DbgArgPointer = edx;	<span class="comment">//edx指向3环的参数</span></span><br><span class="line">KTRAP_FRAME.DbgArgMark = <span class="number">0xBADB0D00</span>;</span><br><span class="line">KTRAP_FRAME.DbgEbp = KTRAP_FRAME._Ebp;</span><br><span class="line">KTRAP_FRAME.DbgEip = KTRAP_FRAME._Eip;</span><br><span class="line"><span class="keyword">if</span>(KPCR.DebugActive == <span class="number">-1</span>)	<span class="comment">//DebugActive != -1 表示当前线程正在被调试</span></span><br><span class="line">&#123;</span><br><span class="line">  __asm jmp Dr_kit0_a;	<span class="comment">//进入调试，以后学了调试再分析</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(KTRAP_FRAME.Efalgs == <span class="number">0x20000</span>)	<span class="comment">//V86模式</span></span><br><span class="line">&#123;</span><br><span class="line">  Ki386VdmReflectException_A();</span><br><span class="line">  ...	<span class="comment">//先不管</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//3环 CS == 0x23，所以这里是 3环除零异常</span></span><br><span class="line"><span class="keyword">if</span>(KTRAP_FRAME.SegCs != <span class="number">0</span> &amp;&amp; KTRAP_FRAME.SegCs != <span class="number">0x1B</span>)	<span class="comment">//PreviousMode != 0</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(CurrentThread-&gt;ApcState.Process-&gt;VdmObjects == <span class="number">0</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    __asm</span><br><span class="line">    &#123;</span><br><span class="line">      sti;</span><br><span class="line">      eax = <span class="number">0xC0000094</span>;</span><br><span class="line">      ebx = KTRAP_FRAME._Eip;	<span class="comment">//错误类异常，此处是发生异常的地址</span></span><br><span class="line">      jmp loc_46B017;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>	<span class="comment">//KTRAP_FRAME.SegCs == 0 || KTRAP_FRAME.SegCs != 0x1B，0环除零异常</span></span><br><span class="line">&#123;</span><br><span class="line">  __asm sti;</span><br><span class="line">  Ki386CheckDivideByZeroTrap(&amp;KTRAP_FRAME);	<span class="comment">//判断是否是除零异常，如果是就获取异常码</span></span><br><span class="line">  						<span class="comment">//eax = 异常码 = 0xC0000094</span></span><br><span class="line">  __asm ebx = KTRAP_FRAME._Eip;			<span class="comment">//中断门由CPU自动保存</span></span><br><span class="line">  __asm jmp loc_46B017;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* jmp loc_46B017前相关寄存器的值：</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">eax = 0xC0000094</span></span><br><span class="line"><span class="comment">ebx = KTRAP_FRAME._Eip</span></span><br><span class="line"><span class="comment">esp = ebp 指向 &amp;KTRAP_FRAME</span></span><br><span class="line"><span class="comment">ecx = 附加参数个数 = 此处为0</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/04/05/XvoBtC7yVIJOS6Q.png" alt="40.png"></p>
+<p>观察<code>loc_46B017</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0046B</span>017 loc_46B017:                             </span><br><span class="line">.text:<span class="number">0046B</span>017                                         </span><br><span class="line">.text:<span class="number">0046B</span>017                 <span class="keyword">xor</span>     ecx, ecx        <span class="comment">//ecx：表示参数的个数</span></span><br><span class="line">.text:<span class="number">0046B</span>019                 call    CommonDispatchException </span><br><span class="line">.text:<span class="number">0046B</span>01E loc_46B01E:                             <span class="comment">// CODE XREF: _KiTrap07+1C0↓j</span></span><br><span class="line">.text:<span class="number">0046B</span>01E                                         <span class="comment">// _KiTrap07+1DB↓j ...</span></span><br><span class="line">.text:<span class="number">0046B</span>01E                 <span class="keyword">xor</span>     edx, edx</span><br><span class="line">.text:<span class="number">0046B</span>020                 mov     ecx, <span class="number">1</span>          </span><br><span class="line">.text:<span class="number">0046B</span>025                 call    CommonDispatchException </span><br><span class="line">.text:<span class="number">0046B</span>02A loc_46B02A:                             <span class="comment">// CODE XREF: _KiTrap07+1CA↓j</span></span><br><span class="line">.text:<span class="number">0046B</span>02A                                         <span class="comment">// _KiTrap07+2E8↓j ...</span></span><br><span class="line">.text:<span class="number">0046B</span>02A                 <span class="keyword">xor</span>     edx, edx</span><br><span class="line">.text:<span class="number">0046B</span>02C</span><br><span class="line">.text:<span class="number">0046B</span>02C loc_46B02C:                             <span class="comment">// CODE XREF: _KiTrap0C+AC↓j</span></span><br><span class="line">.text:<span class="number">0046B</span>02C                                         <span class="comment">// _KiTrap0C+10D↓j ...</span></span><br><span class="line">.text:<span class="number">0046B</span>02C                 mov     ecx, <span class="number">2</span></span><br><span class="line">.text:<span class="number">0046B</span>031                 call    CommonDispatchException</span><br><span class="line">.text:<span class="number">0046B</span>036                 mov     edi, edi</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这里即将要去调用函数<code>CommonDispatchException</code>。</p>
+<p><strong>这里有个问题需要注意</strong>：从<code>_KiTrap00</code>函数<code>jmp loc_46B017</code>，在<code>loc_46B017</code>中是<code>call CommonDispatchException</code>，也就是说明函数处理完异常后应该是是去执行<code>KTRAP_FRAME._Eip</code>，而不是返回到这里继续执行，不然单看这里的代码返回来继续执行的话逻辑上根本不对。</p>
+<h3 id="2-3-EXCEPTION-RECORD结构"><a href="#2-3-EXCEPTION-RECORD结构" class="headerlink" title="2.3 _EXCEPTION_RECORD结构"></a>2.3 _EXCEPTION_RECORD结构</h3><p><code>CommonDispatchException</code> 函数在自己的<strong>函数堆栈上</strong>构造一个 <code>_EXCEPTION_RECORD</code> 结构体初始化赋值。</p>
+<p>Windows 系统使用 <code>_EXCEPTION_RECORD</code> 结构来描述（记录）异常。</p>
+<p><code>_EXCEPTION_RECORD</code>结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _EXCEPTION_RECORD</span><br><span class="line">nt!_EXCEPTION_RECORD</span><br><span class="line">   +<span class="number">0x000</span> ExceptionCode    : Int4B			<span class="comment">//异常代码</span></span><br><span class="line">   +<span class="number">0x004</span> ExceptionFlags   : Uint4B			<span class="comment">//异常标志</span></span><br><span class="line">   +<span class="number">0x008</span> ExceptionRecord  : Ptr32 _EXCEPTION_RECORD	<span class="comment">//相关的下一个异常</span></span><br><span class="line">   +<span class="number">0x00c</span> ExceptionAddress : Ptr32 Void			<span class="comment">//异常发生的地址</span></span><br><span class="line">   +<span class="number">0x010</span> NumberParameters : Uint4B			<span class="comment">//参数数组中的元素个数</span></span><br><span class="line">   +<span class="number">0x014</span> ExceptionInformation : [<span class="number">15</span>] Uint4B		<span class="comment">//参数数组</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><strong>ExceptionCode</strong>：异常代码。是一个32 位的整数，其格式是 Windows 系统的状态代码格式，<code>NtStatus.h</code> 中包含了已经定义的所有状态代码，在 <code>WinBase.h</code> 中可以看到异常代码只是状态代码的别名，例如：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_BREAKPOINT STATUS_BREAKPOINT		<span class="comment">//WinBase.h NtStatus.h</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_SINGLE_STEP STATUS_SINGLE_STEP</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>ExceptionFlags</strong>：异常标志。用来记录异常标志，它的每一位代表一种标志，目前已经定义的标志位如下。</p>
+<ul>
+<li><code>EH_NONCONTINUABLE</code>：1，该异常不可恢复继续执行。</li>
+<li><code>EH_UNWINDING</code>：2，当因为执行栈展开而调用异常处理函数时，会设置此标志。</li>
+<li><code>EH_EXIT_UNWIND</code>：4，也是用于栈展开，较少使用。</li>
+<li><code>BH_STACK_INVALID</code>：8，当检测到栈错误时，设置此标志。</li>
+<li><code>EH_NESTED_CALL </code>：0x10，嵌套异常（在处理异常时，再次出现异常）（第24章)。<br><code>EH_NONCONTINUABLE</code> 位用来表示该异常是否可以恢复继续执行，如果试图恢复运行一个不可继续的异常，便会导致<code>EXCEPTION_NONCONTINUABLE_EXCEPTION</code> 异常。</li>
+</ul>
+</li>
+<li><p><strong>ExceptionRecord</strong>：指针指向与该异常有关的另一个异常记录，如果没有相关的异常，那么这个指针便为空。</p>
+</li>
+<li><p><strong>ExceptionAddress</strong>：字段用来记录异常地址，错误类异常( Fault)，<code>ExceptionAddress</code> 的值是导致异常的那条指令的地址。陷阱类异常(Trap)，<code>ExceptionAddress</code> 的值是导致异常指令的下一条指令的地址。</p>
+</li>
+<li><p><strong>NumberParameters</strong>：是附加参数的个数，即 <code>ExceptionInformation</code> 数组中包含的有效参数个数，该结构最多允许存储 <strong>15</strong> 个附加参数。</p>
+</li>
+</ul>
+<h3 id="2-4-CommonDispatchException"><a href="#2-4-CommonDispatchException" class="headerlink" title="2.4 CommonDispatchException"></a>2.4 CommonDispatchException</h3><p>对于 CPU 异常，<code>KiTrapxx</code> 例程在完成针对本异常的特别动作后，通常会调用 <code>ConmonDispatchException</code> 函数，并通过寄存器将如下信息传递给这个函数。</p>
+<ul>
+<li>将唯—标识该异常的一个异常代码（表 11-2）放入 <code>EAX</code> 寄存器。</li>
+<li>将导致异常的指令地址放入 <code>EBX</code> 寄存器。</li>
+<li>将其他信息作为附带参数（最多3个）分别放入 <code>EDX</code>（参数1)、<code>ESI</code>（参数 2）和 <code>EDI</code>（参数3）寄存器，并将参数个数放入 <code>ECX</code> 寄存器。</li>
+</ul>
+<p><code>ComnenDispetchException</code> 被调用后，它会在栈中分配一个 <code>EXCEPTION_RECORD</code> 结构，并把以上异常信息存储到该结构中。在准备好这个结构后，它会调用内核中的 <code>KiDispatchException</code> 函数来分发异常。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-Exception/" title="Windows XP 异常处理（一）">https://directoree.github.io/post/WinXP-Exception/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
+              <a href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="tag"># 异常处理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXp-InterruptAndException2/" rel="prev" title="Windows XP 中断与异常（段内容补充二）">
+                  <i class="fa fa-chevron-left"></i> Windows XP 中断与异常（段内容补充二）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/column-1/" rel="next" title="读书笔记">
+                  读书笔记 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:51</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXP-Exception/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
