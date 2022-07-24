@@ -50,7 +50,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/01/20/bexjKra2ZDINPEo.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/20/Rd6YH9gJO7ZxhpU.png">
 <meta property="article:published_time" content="2022-01-15T07:19:27.000Z">
-<meta property="article:modified_time" content="2022-03-04T05:13:32.762Z">
+<meta property="article:modified_time" content="2022-07-24T15:02:12.183Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="PEB断链">
@@ -255,7 +255,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4"><span class="nav-text">1 内核空间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%BB%83%E4%B9%A0%EF%BC%9A%E9%AA%8C%E8%AF%81%E9%AB%982G%E5%86%85%E5%AD%98%E5%85%B1%E4%BA%AB"><span class="nav-text">1.1 练习：验证高2G内存共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97"><span class="nav-text">1.2 内核模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-DRIVER-OBJECT-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-text">1.3 DRIVER_OBJECT 结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%81%8D%E5%8E%86%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97"><span class="nav-text">1.4 遍历内核模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E7%BB%83%E4%B9%A0%EF%BC%9A%E9%81%8D%E5%8E%86%E5%86%85%E6%A0%B8%E4%B8%AD%E6%89%80%E6%9C%89%E6%A8%A1%E5%9D%97"><span class="nav-text">1.5 练习：遍历内核中所有模块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9C%AA%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0PspTerminateProcess"><span class="nav-text">2 未导出函数PspTerminateProcess</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Windbg-pdb"><span class="nav-text">2.1 Windbg + .pdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%80%9A%E8%BF%87%E5%B7%B2%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0"><span class="nav-text">2.2 通过已导出函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%A8%A1%E5%9D%97%E5%9F%BA%E5%9D%80-%E5%81%8F%E7%A7%BB"><span class="nav-text">2.3 模块基址+偏移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E7%89%B9%E5%BE%81%E7%A0%81%E5%8C%B9%E9%85%8D%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%EF%BC%89"><span class="nav-text">2.4 特征码匹配（最常用）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E7%BB%83%E4%B9%A0%EF%BC%9A%E4%BD%BF%E7%94%A8PspTerminateProcess%E5%85%B3%E9%97%AD%E8%AE%B0%E4%BA%8B%E6%9C%AC"><span class="nav-text">2.5 练习：使用PspTerminateProcess关闭记事本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3%E7%8E%AFPEB%E6%96%AD%E9%93%BE"><span class="nav-text">3 3环PEB断链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-TEB%E3%80%81PEB"><span class="nav-text">3.1 TEB、PEB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%96%AD%E9%93%BE%E5%8E%9F%E7%90%86"><span class="nav-text">3.2 断链原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%BB%A3%E7%A0%81%EF%BC%9A%E9%9A%90%E8%97%8F%E6%89%80%E6%9C%89%E6%A8%A1%E5%9D%97"><span class="nav-text">3.2 代码：隐藏所有模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E4%BB%A3%E7%A0%81%EF%BC%9A%E9%9A%90%E8%97%8F%E6%8C%87%E5%AE%9A%E6%A8%A1%E5%9D%97"><span class="nav-text">3.3 代码：隐藏指定模块</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E9%A9%B1%E5%8A%A8%E7%9B%B8%E5%85%B3%E5%AF%B9%E8%B1%A1"><span class="nav-text">0 驱动相关对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#01-%E9%A9%B1%E5%8A%A8%E5%AF%B9%E8%B1%A1"><span class="nav-text">01 驱动对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#02-%E8%AE%BE%E5%A4%87%E5%AF%B9%E8%B1%A1"><span class="nav-text">02 设备对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E7%A9%BA%E9%97%B4"><span class="nav-text">1 内核空间</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%BB%83%E4%B9%A0%EF%BC%9A%E9%AA%8C%E8%AF%81%E9%AB%982G%E5%86%85%E5%AD%98%E5%85%B1%E4%BA%AB"><span class="nav-text">1.1 练习：验证高2G内存共享</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97"><span class="nav-text">1.2 内核模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-DRIVER-OBJECT-%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-text">1.3 DRIVER_OBJECT 结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E9%81%8D%E5%8E%86%E5%86%85%E6%A0%B8%E6%A8%A1%E5%9D%97"><span class="nav-text">1.4 遍历内核模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E7%BB%83%E4%B9%A0%EF%BC%9A%E9%81%8D%E5%8E%86%E5%86%85%E6%A0%B8%E4%B8%AD%E6%89%80%E6%9C%89%E6%A8%A1%E5%9D%97"><span class="nav-text">1.5 练习：遍历内核中所有模块</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9C%AA%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0PspTerminateProcess"><span class="nav-text">2 未导出函数PspTerminateProcess</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Windbg-pdb"><span class="nav-text">2.1 Windbg + .pdb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%80%9A%E8%BF%87%E5%B7%B2%E5%AF%BC%E5%87%BA%E5%87%BD%E6%95%B0"><span class="nav-text">2.2 通过已导出函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%A8%A1%E5%9D%97%E5%9F%BA%E5%9D%80-%E5%81%8F%E7%A7%BB"><span class="nav-text">2.3 模块基址+偏移</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E7%89%B9%E5%BE%81%E7%A0%81%E5%8C%B9%E9%85%8D%EF%BC%88%E6%9C%80%E5%B8%B8%E7%94%A8%EF%BC%89"><span class="nav-text">2.4 特征码匹配（最常用）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E7%BB%83%E4%B9%A0%EF%BC%9A%E4%BD%BF%E7%94%A8PspTerminateProcess%E5%85%B3%E9%97%AD%E8%AE%B0%E4%BA%8B%E6%9C%AC"><span class="nav-text">2.5 练习：使用PspTerminateProcess关闭记事本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3%E7%8E%AFPEB%E6%96%AD%E9%93%BE"><span class="nav-text">3 3环PEB断链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-TEB%E3%80%81PEB"><span class="nav-text">3.1 TEB、PEB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%96%AD%E9%93%BE%E5%8E%9F%E7%90%86"><span class="nav-text">3.2 断链原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%BB%A3%E7%A0%81%EF%BC%9A%E9%9A%90%E8%97%8F%E6%89%80%E6%9C%89%E6%A8%A1%E5%9D%97"><span class="nav-text">3.2 代码：隐藏所有模块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E4%BB%A3%E7%A0%81%EF%BC%9A%E9%9A%90%E8%97%8F%E6%8C%87%E5%AE%9A%E6%A8%A1%E5%9D%97"><span class="nav-text">3.3 代码：隐藏指定模块</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -271,7 +271,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -379,7 +379,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-03-04 13:13:32" itemprop="dateModified" datetime="2022-03-04T13:13:32+08:00">2022-03-04</time>
+        <time title="修改时间：2022-07-24 23:02:12" itemprop="dateModified" datetime="2022-07-24T23:02:12+08:00">2022-07-24</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -428,14 +428,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>32k</span>
+      <span>34k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>29 分钟</span>
+      <span>31 分钟</span>
     </span>
 </div>
 
@@ -449,6 +449,24 @@
         <p>ʕ •ᴥ•ʔ  ɔ: </p>
 <a id="more"></a>
 
+<h2 id="0-驱动相关对象"><a href="#0-驱动相关对象" class="headerlink" title="0 驱动相关对象"></a>0 驱动相关对象</h2><p>驱动通信：</p>
+<p>《Windows内核安全与驱动开发》 2.3、2.5、5、10.3.5、13.3、<strong>16.5、16.6</strong></p>
+<p>看雪的那两片驱动开发的文章</p>
+<p>《内核原理与实现》6</p>
+<p>《内核情景分析》 9</p>
+<p>《驱动开发详解》 1 4 7 </p>
+<h3 id="01-驱动对象"><a href="#01-驱动对象" class="headerlink" title="01 驱动对象"></a>01 驱动对象</h3><div class="note warning"><p>一个<strong>驱动对象</strong>代表了<strong>一个驱动程序</strong>，或者说一个<strong>内核模块</strong>。</p>
+</div>
+
+<p>内核对象结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_OBJECT</span> &#123;</span></span><br><span class="line">    CSHORT Type;</span><br><span class="line">    CSHORT Size;</span><br><span class="line">    PDEVICE_OBJECT DeviceObject;</span><br><span class="line">    ULONG Flags;</span><br><span class="line">    PVOID DriverStart;			<span class="comment">//这个内核模块在内核空间中的开始地址</span></span><br><span class="line">    ULONG DriverSize;			<span class="comment">//这个内核模块在内核空间中的大小</span></span><br><span class="line">    PVOID DriverSection;		<span class="comment">//内核模块链表,指向当前模块的_LDR_DATA_TABLE_ENTRY</span></span><br><span class="line">    PDRIVER_EXTENSION DriverExtension;	<span class="comment">//驱动的扩展信息，可以自定义存放我们的数据（非分页内存，不会被换页，当全局变量用）</span></span><br><span class="line">    UNICODE_STRING DriverName;		<span class="comment">//驱动的名字</span></span><br><span class="line">    PUNICODE_STRING HardwareDatabase;</span><br><span class="line">    PFAST_IO_DISPATCH FastIoDispatch;	<span class="comment">//快速 IO 分发函数</span></span><br><span class="line">    PDRIVER_INITIALIZE DriverInit;</span><br><span class="line">    PDRIVER_STARTIO DriverStartIo;</span><br><span class="line">    PDRIVER_UNLOAD DriverUnload;	<span class="comment">//驱动的卸载地址</span></span><br><span class="line">    PDRIVER_DISPATCH MajorFunction[IRP_MJ_MAXIMUM_FUNCTION + <span class="number">1</span>];	<span class="comment">//普通分发函数</span></span><br><span class="line">&#125; DRIVER_OBJECT;</span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_OBJECT</span> *<span class="title">PDRIVER_OBJECT</span>;</span> </span><br></pre></td></tr></table></figure>
+
+<p>Windbg查看结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _DRIVER_OBJECT -v</span><br><span class="line">nt!_DRIVER_OBJECT</span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_OBJECT</span>, 15 <span class="title">elements</span>, 0<span class="title">xa8</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x000</span> <span class="title">Type</span>             :</span> Int2B</span><br><span class="line">   +<span class="number">0x002</span> Size             : Int2B</span><br><span class="line">   +<span class="number">0x004</span> DeviceObject     : Ptr32 to <span class="class"><span class="keyword">struct</span> _<span class="title">DEVICE_OBJECT</span>, 25 <span class="title">elements</span>, 0<span class="title">xb8</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x008</span> <span class="title">Flags</span>            :</span> Uint4B</span><br><span class="line">   +<span class="number">0x00c</span> DriverStart      : Ptr32 to Void</span><br><span class="line">   +<span class="number">0x010</span> DriverSize       : Uint4B</span><br><span class="line">   +<span class="number">0x014</span> DriverSection    : Ptr32 to Void</span><br><span class="line">   +<span class="number">0x018</span> DriverExtension  : Ptr32 to <span class="class"><span class="keyword">struct</span> _<span class="title">DRIVER_EXTENSION</span>, 6 <span class="title">elements</span>, 0<span class="title">x1c</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x01c</span> <span class="title">DriverName</span>       :</span> <span class="class"><span class="keyword">struct</span> _<span class="title">UNICODE_STRING</span>, 3 <span class="title">elements</span>, 0<span class="title">x8</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x024</span> <span class="title">HardwareDatabase</span> :</span> Ptr32 to <span class="class"><span class="keyword">struct</span> _<span class="title">UNICODE_STRING</span>, 3 <span class="title">elements</span>, 0<span class="title">x8</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x028</span> <span class="title">FastIoDispatch</span>   :</span> Ptr32 to <span class="class"><span class="keyword">struct</span> _<span class="title">FAST_IO_DISPATCH</span>, 28 <span class="title">elements</span>, 0<span class="title">x70</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x02c</span> <span class="title">DriverInit</span>       :</span> Ptr32 to     <span class="keyword">long</span> </span><br><span class="line">   +<span class="number">0x030</span> DriverStartIo    : Ptr32 to     <span class="keyword">void</span> </span><br><span class="line">   +<span class="number">0x034</span> DriverUnload     : Ptr32 to     <span class="keyword">void</span> </span><br><span class="line">   +<span class="number">0x038</span> MajorFunction    : [<span class="number">28</span>] Ptr32 to     <span class="keyword">long</span> </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="02-设备对象"><a href="#02-设备对象" class="headerlink" title="02 设备对象"></a>02 设备对象</h3><p>一个驱动程序可以支持多个设备，所以，驱动程序对象中有一个链表记录了它所负责的所有设备对象。每个设备对象都必定有一个为它负责的驱动程序对设备对象的各种操作实际上是由为它负贵的驱动程序中的例程来完成的。</p>
 <h2 id="1-内核空间"><a href="#1-内核空间" class="headerlink" title="1 内核空间"></a>1 内核空间</h2><p>每个进程的低2G都是独立的，而<strong>高2G是共享的</strong>。</p>
 <p><img data-src="https://s2.loli.net/2022/01/15/t3rlcvWyaSmH2Go.png" alt="7.png"></p>
 <h3 id="1-1-练习：验证高2G内存共享"><a href="#1-1-练习：验证高2G内存共享" class="headerlink" title="1.1 练习：验证高2G内存共享"></a>1.1 练习：验证高2G内存共享</h3><ol>
@@ -872,7 +890,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">20:55</span>
+    <span title="站点阅读时长">21:10</span>
   </span>
 </div>
 <div class="busuanzi-count">
