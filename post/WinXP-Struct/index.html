@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😊">
+<meta property="og:type" content="article">
+<meta property="og:title" content="WinXP 结构&#x2F;指令查询">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-Struct/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😊">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png">
+<meta property="og:image" content="https://s2.loli.net/2022/03/12/yVhx2ZkPXovHUsr.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png">
+<meta property="og:image" content="https://s2.loli.net/2022/04/26/cXUCSzfnvjFPa53.png">
+<meta property="og:image" content="https://s2.loli.net/2022/04/05/XvoBtC7yVIJOS6Q.png">
+<meta property="og:image" content="https://s2.loli.net/2022/06/19/EwzHdIBFCSaOmJT.png">
+<meta property="og:image" content="https://s2.loli.net/2022/04/26/cXUCSzfnvjFPa53.png">
+<meta property="og:image" content="https://s2.loli.net/2022/04/26/yu9bSLtdi64NehB.png">
+<meta property="article:published_time" content="2032-07-29T17:31:22.000Z">
+<meta property="article:modified_time" content="2022-07-30T07:46:33.300Z">
+<meta property="article:author" content="Catecat">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-Struct/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>WinXP 结构/指令查询 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#KTHREAD"><span class="nav-text">_KTHREAD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ETHREAD"><span class="nav-text">_ETHREAD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KPROCESS"><span class="nav-text">_KPROCESS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EPROCESS"><span class="nav-text">_EPROCESS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KPCR"><span class="nav-text">_KPCR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NT-TIB"><span class="nav-text">_NT_TIB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KPRCB"><span class="nav-text">_KPRCB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EFLAGS"><span class="nav-text">EFLAGS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KTRAP-FRAME"><span class="nav-text">_KTRAP_FRAME</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CONTEXT"><span class="nav-text">_CONTEXT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EXCEPTION-RECORD"><span class="nav-text">_EXCEPTION_RECORD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KOBJECTS"><span class="nav-text">_KOBJECTS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ETHREAD-CrossThreadFlags"><span class="nav-text">ETHREAD.CrossThreadFlags</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MmUserProbeAddress%E3%80%81MmHighestUserAddress"><span class="nav-text">MmUserProbeAddress、MmHighestUserAddress</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile%E7%B1%BB%E5%9E%8B%E4%BF%AE%E9%A5%B0%E7%AC%A6"><span class="nav-text">volatile类型修饰符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ExAcquireRundownProtection"><span class="nav-text">ExAcquireRundownProtection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KPROCESS-STATE"><span class="nav-text">_KPROCESS_STATE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#KTHREAD-STATE"><span class="nav-text">_KTHREAD_STATE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CMPXCHG"><span class="nav-text">CMPXCHG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ProbeForRead"><span class="nav-text">ProbeForRead</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ProbeForWrite"><span class="nav-text">ProbeForWrite</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#neg%E3%80%81sbb"><span class="nav-text">neg、sbb</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%B0%E5%9D%80%E5%AF%B9%E9%BD%90-X-3-amp-3"><span class="nav-text">地址对齐 (X+3)&amp;~3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#movsb%E3%80%81movsw%E3%80%81movsd"><span class="nav-text">movsb、movsw、movsd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stosb%E3%80%81stosw%E3%80%81stosd"><span class="nav-text">stosb、stosw、stosd</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLC%E3%80%81CLD%E6%8C%87%E4%BB%A4"><span class="nav-text">CLC、CLD指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BT%E7%B3%BB%E5%88%97%E6%8C%87%E4%BB%A4"><span class="nav-text">BT系列指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JCC%E5%AF%84%E5%AD%98%E5%99%A8%E4%BD%8D"><span class="nav-text">JCC寄存器位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E5%9D%80%E5%AF%BB%E5%9D%80"><span class="nav-text">变址寻址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MOVZ-x2F-MOVS"><span class="nav-text">MOVZ&#x2F;MOVS</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-Struct/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          WinXP 结构/指令查询
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2032-07-30 01:31:22" itemprop="dateCreated datePublished" datetime="2032-07-30T01:31:22+08:00">2032-07-30</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-07-30 15:46:33" itemprop="dateModified" datetime="2022-07-30T15:46:33+08:00">2022-07-30</time>
+      </span>
+
+  
+    <span id="/post/WinXP-Struct/" class="post-meta-item leancloud_visitors" data-flag-title="WinXP 结构/指令查询" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-Struct/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-Struct/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>27k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>24 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😊</p>
+<a id="more"></a>
+
+<h3 id="KTHREAD"><a href="#KTHREAD" class="headerlink" title="_KTHREAD"></a>_KTHREAD</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KTHREAD</span><br><span class="line">ntdll!_KTHREAD</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x010</span> MutantListHead   : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x018</span> InitialStack     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x01c</span> StackLimit       : Ptr32 Void</span><br><span class="line">   +<span class="number">0x020</span> Teb              : Ptr32 Void</span><br><span class="line">   +<span class="number">0x024</span> TlsArray         : Ptr32 Void</span><br><span class="line">   +<span class="number">0x028</span> KernelStack      : Ptr32 Void</span><br><span class="line">   +<span class="number">0x02c</span> DebugActive      : UChar</span><br><span class="line">   +<span class="number">0x02d</span> State            : UChar</span><br><span class="line">   +<span class="number">0x02e</span> Alerted          : [<span class="number">2</span>] UChar</span><br><span class="line">   +<span class="number">0x030</span> Iopl             : UChar</span><br><span class="line">   +<span class="number">0x031</span> NpxState         : UChar</span><br><span class="line">   +<span class="number">0x032</span> Saturation       : Char</span><br><span class="line">   +<span class="number">0x033</span> Priority         : Char</span><br><span class="line">   +<span class="number">0x034</span> ApcState         : _KAPC_STATE</span><br><span class="line">   +<span class="number">0x04c</span> ContextSwitches  : Uint4B</span><br><span class="line">   +<span class="number">0x050</span> IdleSwapBlock    : UChar</span><br><span class="line">   +<span class="number">0x051</span> Spare0           : [<span class="number">3</span>] UChar</span><br><span class="line">   +<span class="number">0x054</span> WaitStatus       : Int4B</span><br><span class="line">   +<span class="number">0x058</span> WaitIrql         : UChar</span><br><span class="line">   +<span class="number">0x059</span> WaitMode         : Char</span><br><span class="line">   +<span class="number">0x05a</span> WaitNext         : UChar</span><br><span class="line">   +<span class="number">0x05b</span> WaitReason       : UChar</span><br><span class="line">   +<span class="number">0x05c</span> WaitBlockList    : Ptr32 _KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x060</span> WaitListEntry    : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x060</span> SwapListEntry    : _SINGLE_LIST_ENTRY</span><br><span class="line">   +<span class="number">0x068</span> WaitTime         : Uint4B</span><br><span class="line">   +<span class="number">0x06c</span> BasePriority     : Char</span><br><span class="line">   +<span class="number">0x06d</span> DecrementCount   : UChar</span><br><span class="line">   +<span class="number">0x06e</span> PriorityDecrement : Char</span><br><span class="line">   +<span class="number">0x06f</span> Quantum          : Char</span><br><span class="line">   +<span class="number">0x070</span> WaitBlock        : [<span class="number">4</span>] _KWAIT_BLOCK</span><br><span class="line">   +<span class="number">0x0d0</span> LegoData         : Ptr32 Void</span><br><span class="line">   +<span class="number">0x0d4</span> KernelApcDisable : Uint4B</span><br><span class="line">   +<span class="number">0x0d8</span> UserAffinity     : Uint4B</span><br><span class="line">   +<span class="number">0x0dc</span> SystemAffinityActive : UChar</span><br><span class="line">   +<span class="number">0x0dd</span> PowerState       : UChar</span><br><span class="line">   +<span class="number">0x0de</span> NpxIrql          : UChar</span><br><span class="line">   +<span class="number">0x0df</span> InitialNode      : UChar</span><br><span class="line">   +<span class="number">0x0e0</span> ServiceTable     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x0e4</span> Queue            : Ptr32 _KQUEUE</span><br><span class="line">   +<span class="number">0x0e8</span> ApcQueueLock     : Uint4B</span><br><span class="line">   +<span class="number">0x0f0</span> Timer            : _KTIMER</span><br><span class="line">   +<span class="number">0x118</span> QueueListEntry   : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x120</span> SoftAffinity     : Uint4B</span><br><span class="line">   +<span class="number">0x124</span> Affinity         : Uint4B</span><br><span class="line">   +<span class="number">0x128</span> Preempted        : UChar</span><br><span class="line">   +<span class="number">0x129</span> ProcessReadyQueue : UChar</span><br><span class="line">   +<span class="number">0x12a</span> KernelStackResident : UChar</span><br><span class="line">   +<span class="number">0x12b</span> NextProcessor    : UChar</span><br><span class="line">   +<span class="number">0x12c</span> CallbackStack    : Ptr32 Void</span><br><span class="line">   +<span class="number">0x130</span> Win32Thread      : Ptr32 Void</span><br><span class="line">   +<span class="number">0x134</span> TrapFrame        : Ptr32 _KTRAP_FRAME		<span class="comment">//从3环进入0环后，用于保存3环的寄存器</span></span><br><span class="line">   +<span class="number">0x138</span> ApcStatePointer  : [<span class="number">2</span>] Ptr32 _KAPC_STATE</span><br><span class="line">   +<span class="number">0x140</span> PreviousMode     : Char</span><br><span class="line">   +<span class="number">0x141</span> EnableStackSwap  : UChar</span><br><span class="line">   +<span class="number">0x142</span> LargeStack       : UChar</span><br><span class="line">   +<span class="number">0x143</span> ResourceIndex    : UChar</span><br><span class="line">   +<span class="number">0x144</span> KernelTime       : Uint4B</span><br><span class="line">   +<span class="number">0x148</span> UserTime         : Uint4B</span><br><span class="line">   +<span class="number">0x14c</span> SavedApcState    : _KAPC_STATE</span><br><span class="line">   +<span class="number">0x164</span> Alertable        : UChar</span><br><span class="line">   +<span class="number">0x165</span> ApcStateIndex    : UChar</span><br><span class="line">   +<span class="number">0x166</span> ApcQueueable     : UChar</span><br><span class="line">   +<span class="number">0x167</span> AutoAlignment    : UChar</span><br><span class="line">   +<span class="number">0x168</span> StackBase        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x16c</span> SuspendApc       : _KAPC</span><br><span class="line">   +<span class="number">0x19c</span> SuspendSemaphore : _KSEMAPHORE</span><br><span class="line">   +<span class="number">0x1b0</span> ThreadListEntry  : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x1b8</span> FreezeCount      : Char</span><br><span class="line">   +<span class="number">0x1b9</span> SuspendCount     : Char</span><br><span class="line">   +<span class="number">0x1ba</span> IdealProcessor   : UChar</span><br><span class="line">   +<span class="number">0x1bb</span> DisableBoost     : UChar</span><br></pre></td></tr></table></figure>
+
+<p>成员：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>偏移</strong></th>
+<th align="left"><strong>名称</strong></th>
+<th align="left"><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0x000</td>
+<td align="left">Header</td>
+<td align="left">“可等待”对象，比如Mutex互斥体、Event事件等（WaitForSingleObject）。内核结构体中，凡是有成员是<code>_DISPATCHER_HEADER</code>就说明该内核对象可以使用<code>WaitForSingleObject</code>等函数进行等待。</td>
+</tr>
+<tr>
+<td align="center">0x018</td>
+<td align="left">InitialStack</td>
+<td align="left">记录了原始栈的位置（高地址）</td>
+</tr>
+<tr>
+<td align="center">0x01C</td>
+<td align="left">StackLimit</td>
+<td align="left">栈的大小</td>
+</tr>
+<tr>
+<td align="center">0x020</td>
+<td align="left">Teb</td>
+<td align="left">TEB，Thread Environment Block，线程环境块。大小4KB，位于用户地址空间。<mark class="label default">3环可以通过 FS:[0] 找到TEB。</mark><mark class="label warning">0环时FS执行KPCR。</mark></td>
+</tr>
+<tr>
+<td align="center">0x028</td>
+<td align="left">KernelStack</td>
+<td align="left">记录了真正内核调用栈的开始位置，由于在内核栈的顶部区域还记录了浮点处理器保存区和一个异常陷阱帧，所以，KernelStack的位置比InitialStack要低一些。线程切换时，旧线程的esp0存到它的KernelStack，然后把新线程的KernelStack写到TSS。<br/><strong>以上三个成员与线程切换相关。</strong></td>
+</tr>
+<tr>
+<td align="center">0x02C</td>
+<td align="left">DedugActive</td>
+<td align="left">如果值为<code>-1</code>，不能使用调试寄存器：<code>Dr0 - Dr7</code></td>
+</tr>
+<tr>
+<td align="center">0x02D</td>
+<td align="left">State</td>
+<td align="left">线程状态：就绪、等待还是运行</td>
+</tr>
+<tr>
+<td align="center">0x02E</td>
+<td align="left">Alerted</td>
+<td align="left"><a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/3456697.html">用来说明线程在指定模式下是否为”已经被吵醒” 。</a><br /><code>BOOLEAN Alerted[MaximumMode];</code><br /><code>typedef enum _MODE &#123; KernelMode,UserMode,MaximumMode &#125; MODE;</code></td>
+</tr>
+<tr>
+<td align="center">0x031</td>
+<td align="left">NpxState</td>
+<td align="left">反映了浮点处理器的状态</td>
+</tr>
+<tr>
+<td align="center">0x033</td>
+<td align="left">Priority</td>
+<td align="left">说明线程优先级，这里是指它的动态优先级，即执行过程中可能由于某些原因而调整过的优先级</td>
+</tr>
+<tr>
+<td align="center">0x034</td>
+<td align="left">ApcState</td>
+<td align="left">指定一个线程的APC信息</td>
+</tr>
+<tr>
+<td align="center">0x054</td>
+<td align="left">WaitStatus</td>
+<td align="left">等待的结果状态，当前对象等待的结果是什么？<br />在<code>KeWaitForSingleObject</code>函数结束等待时反映着结束的原因。</td>
+</tr>
+<tr>
+<td align="center">0x058</td>
+<td align="left">WaitIrql</td>
+<td align="left">记录了原先的IRQL值。Waitlrql域与WaitNext一起使用，当WaitNext为TRUE时，WaitIrql记录了原先的IRQL 值。</td>
+</tr>
+<tr>
+<td align="center">0x059</td>
+<td align="left">WaitMode</td>
+<td align="left">线程等待时的处理器模式，即内核模式或用户模式的等待。0：内核，1：用户</td>
+</tr>
+<tr>
+<td align="center">0x05A</td>
+<td align="left">WaitNext</td>
+<td align="left">WaitNext域也是一个布尔值，TRUE值表示这个线程马上要调用一个内核等待函数，它的用途是，在发出了一个信号（比如释放了一个信号量对象）以后，接下来该线程会马上调用等待函数，所以，它不必解除线程调度器锁。</td>
+</tr>
+<tr>
+<td align="center">0x05B</td>
+<td align="left">WaitReason</td>
+<td align="left">等待的理由，因为什么原因在等待？WaitReason域记录了一个线程的等待理由，其值的含义见base\ntos\inc\ke.h中的KWAIT_REASON枚举类型。VaitReason基本上只是记录了等待的理由，而并不参与到线程调度或决策中</td>
+</tr>
+<tr>
+<td align="center">0x60</td>
+<td align="left">WaitListEntry</td>
+<td align="left">双向链表节点，当一个线程正在等待被执行时，该域作为一个线程节点加入到某个链表中</td>
+</tr>
+<tr>
+<td align="center">0x60</td>
+<td align="left">SwapListEntry</td>
+<td align="left">单链表节点，当线程的内核栈需要被换入时，插入到以全局变量KiStackInSwapListHead为链表头的单链表中</td>
+</tr>
+<tr>
+<td align="center">0x06C</td>
+<td align="left">BasePriority</td>
+<td align="left">线程的静态优先级，其初始值是所属进程的BasePriority值（KPROCESS-&gt;BasePriority），以后可以通过<code>KeSetBasePriorityThread()</code>函数重新设定。<br />0<del>15是”普通线程”的优先级， 16</del>31是”实时线程”的优先级。</td>
+</tr>
+<tr>
+<td align="center">0x70</td>
+<td align="left">WaitBlock</td>
+<td align="left">指定等待的对象，等待哪个对象（WaitForSingleObject）</td>
+</tr>
+<tr>
+<td align="center">0x0E0</td>
+<td align="left">ServiceTable</td>
+<td align="left">指向系统服务描述符表基址（SSDT）</td>
+</tr>
+<tr>
+<td align="center">0x0E8</td>
+<td align="left">ApcQueueable</td>
+<td align="left">自旋锁，用户保护APC</td>
+</tr>
+<tr>
+<td align="center">0x124</td>
+<td align="left">Affinity</td>
+<td align="left">指定了线程的处理器亲和性，此值初始继承自进程对象的Affinity值</td>
+</tr>
+<tr>
+<td align="center">0x128</td>
+<td align="left">Preempted</td>
+<td align="left">布尔值，说明这个线程是否被高优先级的线程抢占了，只有当一个线程正在运行或者正在等待运行而被高优先级线程抢占的时候，此值才会是TRUE</td>
+</tr>
+<tr>
+<td align="center">0x129</td>
+<td align="left">ProcessReadyQueue</td>
+<td align="left">布尔值，说明线程是否在所属进程的KPROCESS对象的ReadyListEntry（ReadyListHead）链表中，TRUE表示在此链表中，FALSE表示不在此链表中</td>
+</tr>
+<tr>
+<td align="center">0x12A</td>
+<td align="left">KernelStackResident</td>
+<td align="left">布尔值，说明该线程的内核栈是否驻留在内存中，当内核栈被换出内存时，此值将被设置成FALSE；当换入内存时，在设置成TRUE</td>
+</tr>
+<tr>
+<td align="center">0x12B</td>
+<td align="left">NextProcessor</td>
+<td align="left">下一次切换线程完毕后运行在哪个核上</td>
+</tr>
+<tr>
+<td align="center">0x134</td>
+<td align="left">TrapFrame</td>
+<td align="left">线程中最关键的部分，记录了控制流状态，线程堆栈结构</td>
+</tr>
+<tr>
+<td align="center">0x138</td>
+<td align="left">ApcStatePointer</td>
+<td align="left">两个元数的数组，指向KAPC_STATE指针，两个元数分别指向线程对象的ApcState和SavedApcState</td>
+</tr>
+<tr>
+<td align="center">0x140</td>
+<td align="left">PreviousMode</td>
+<td align="left">原先模式，某些内核函数会判断程序是0环调用还是3环调用的</td>
+</tr>
+<tr>
+<td align="center">0x14C</td>
+<td align="left">SavedApcState</td>
+<td align="left">保存的APC</td>
+</tr>
+<tr>
+<td align="center">0x164</td>
+<td align="left">Alertable</td>
+<td align="left">说明一个线程是否可以被吵醒。Alertable是个布尔量，表示是否允许本次等待因用户空间APC而中断，或者说被“吵醒（Alert）”。  吵醒与唤醒是不同的，唤醒是因为所等待的条件得到了满足（仓库到货），而吵醒是因为别的原因而醒来（与仓库无关）。</td>
+</tr>
+<tr>
+<td align="center">0x165</td>
+<td align="left">ApcStateIndex</td>
+<td align="left">索引值，表明当前APC状态在ApcStatePointer域中的索引</td>
+</tr>
+<tr>
+<td align="center">0x168</td>
+<td align="left">StateBase</td>
+<td align="left">记录当前栈的基址。当线程初始化时，InitialStack和StackBase是相等的</td>
+</tr>
+<tr>
+<td align="center">0x1B0</td>
+<td align="left">ThreadListEntry</td>
+<td align="left">双向链表，<strong>一个进程所有的线程都挂在一个链表中，挂的就是这个位置。</strong><mark class="label primary">_ETHREAD一共有两个这样的链表。</mark><br/><img data-src="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png" alt="32.png"></td>
+</tr>
+<tr>
+<td align="center">0x1BA</td>
+<td align="left">IdealProcessor</td>
+<td align="left">指明了在多处理器上该线程的理想处理器</td>
+</tr>
+</tbody></table>
+<h3 id="ETHREAD"><a href="#ETHREAD" class="headerlink" title="_ETHREAD"></a>_ETHREAD</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _ETHREAD</span><br><span class="line">ntdll!_ETHREAD</span><br><span class="line">   +<span class="number">0x000</span> Tcb              : _KTHREAD</span><br><span class="line">   +<span class="number">0x1c0</span> CreateTime       : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1c0</span> NestedFaultCount : Pos <span class="number">0</span>, <span class="number">2</span> Bits</span><br><span class="line">   +<span class="number">0x1c0</span> ApcNeeded        : Pos <span class="number">2</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x1c8</span> ExitTime         : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1c8</span> LpcReplyChain    : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x1c8</span> KeyedWaitChain   : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x1d0</span> ExitStatus       : Int4B</span><br><span class="line">   +<span class="number">0x1d0</span> OfsChain         : Ptr32 Void</span><br><span class="line">   +<span class="number">0x1d4</span> PostBlockList    : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x1dc</span> TerminationPort  : Ptr32 _TERMINATION_PORT</span><br><span class="line">   +<span class="number">0x1dc</span> ReaperLink       : Ptr32 _ETHREAD</span><br><span class="line">   +<span class="number">0x1dc</span> KeyedWaitValue   : Ptr32 Void</span><br><span class="line">   +<span class="number">0x1e0</span> ActiveTimerListLock : Uint4B</span><br><span class="line">   +<span class="number">0x1e4</span> ActiveTimerListHead : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x1ec</span> Cid              : _CLIENT_ID</span><br><span class="line">   +<span class="number">0x1f4</span> LpcReplySemaphore : _KSEMAPHORE</span><br><span class="line">   +<span class="number">0x1f4</span> KeyedWaitSemaphore : _KSEMAPHORE</span><br><span class="line">   +<span class="number">0x208</span> LpcReplyMessage  : Ptr32 Void</span><br><span class="line">   +<span class="number">0x208</span> LpcWaitingOnPort : Ptr32 Void</span><br><span class="line">   +<span class="number">0x20c</span> ImpersonationInfo : Ptr32 _PS_IMPERSONATION_INFORMATION</span><br><span class="line">   +<span class="number">0x210</span> IrpList          : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x218</span> TopLevelIrp      : Uint4B</span><br><span class="line">   +<span class="number">0x21c</span> DeviceToVerify   : Ptr32 _DEVICE_OBJECT</span><br><span class="line">   +<span class="number">0x220</span> ThreadsProcess   : Ptr32 _EPROCESS</span><br><span class="line">   +<span class="number">0x224</span> StartAddress     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x228</span> Win32StartAddress : Ptr32 Void</span><br><span class="line">   +<span class="number">0x228</span> LpcReceivedMessageId : Uint4B</span><br><span class="line">   +<span class="number">0x22c</span> ThreadListEntry  : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x234</span> RundownProtect   : _EX_RUNDOWN_REF</span><br><span class="line">   +<span class="number">0x238</span> ThreadLock       : _EX_PUSH_LOCK</span><br><span class="line">   +<span class="number">0x23c</span> LpcReplyMessageId : Uint4B</span><br><span class="line">   +<span class="number">0x240</span> ReadClusterSize  : Uint4B</span><br><span class="line">   +<span class="number">0x244</span> GrantedAccess    : Uint4B</span><br><span class="line">   +<span class="number">0x248</span> CrossThreadFlags : Uint4B</span><br><span class="line">   +<span class="number">0x248</span> Terminated       : Pos <span class="number">0</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> DeadThread       : Pos <span class="number">1</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> HideFromDebugger : Pos <span class="number">2</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ActiveImpersonationInfo : Pos <span class="number">3</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> SystemThread     : Pos <span class="number">4</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> HardErrorsAreDisabled : Pos <span class="number">5</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> BreakOnTermination : Pos <span class="number">6</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> SkipCreationMsg  : Pos <span class="number">7</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> SkipTerminationMsg : Pos <span class="number">8</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x24c</span> SameThreadPassiveFlags : Uint4B</span><br><span class="line">   +<span class="number">0x24c</span> ActiveExWorker   : Pos <span class="number">0</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x24c</span> ExWorkerCanWaitUser : Pos <span class="number">1</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x24c</span> MemoryMaker      : Pos <span class="number">2</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x250</span> SameThreadApcFlags : Uint4B</span><br><span class="line">   +<span class="number">0x250</span> LpcReceivedMsgIdValid : Pos <span class="number">0</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x250</span> LpcExitThreadCalled : Pos <span class="number">1</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x250</span> AddressSpaceOwner : Pos <span class="number">2</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x254</span> ForwardClusterOnly : UChar</span><br><span class="line">   +<span class="number">0x255</span> DisablePageFaultClustering : UChar</span><br></pre></td></tr></table></figure>
+
+<p>成员：</p>
+<table>
+<thead>
+<tr>
+<th align="center"><strong>偏移</strong></th>
+<th align="left"><strong>名称</strong></th>
+<th align="left"><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0x000</td>
+<td align="left">Tcb</td>
+<td align="left">内嵌的KTHREAD结构体</td>
+</tr>
+<tr>
+<td align="center">0x1D0</td>
+<td align="left">ExitStatus</td>
+<td align="left">线程退出状态</td>
+</tr>
+<tr>
+<td align="center">0x1EC</td>
+<td align="left">Cid</td>
+<td align="left">包含进程ID、线程ID：<br/><code>kd&gt; dt _CLIENT_ID</code><br/><code>ntdll!_CLIENT_ID</code><br/><code>  +0x000 UniqueProcess    : Ptr32 Void</code><br/><code>+0x004 UniqueThread     : Ptr32 Void</code></td>
+</tr>
+<tr>
+<td align="center">0x220</td>
+<td align="left">ThreadsProcess</td>
+<td align="left">指向线程所属的进程</td>
+</tr>
+<tr>
+<td align="center">0x22C</td>
+<td align="left">ThreadListEntry</td>
+<td align="left">双向链表，一个进程所有的线程都挂在一个链表中，挂的就是这个位置，一共有两个这样的链表。<br/><img data-src="https://s2.loli.net/2022/03/21/KU5SrO9m2aYwMsl.png" alt="32.png"></td>
+</tr>
+</tbody></table>
+<h3 id="KPROCESS"><a href="#KPROCESS" class="headerlink" title="_KPROCESS"></a>_KPROCESS</h3><p><code>_KPROCESS</code>是<code>_EPROCESS</code>结构的第一个成员，大小为<code>0x6C</code>字节。</p>
+<p>可参考、：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/3453148.html">EPROCESS 进程&#x2F;线程优先级 句柄表 GDT LDT 页表 《寒江独钓》内核学习笔记（2）</a>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KPROCESS</span><br><span class="line">nt!_KPROCESS</span><br><span class="line">   +<span class="number">0x000</span> Header           : _DISPATCHER_HEADER</span><br><span class="line">   +<span class="number">0x010</span> ProfileListHead  : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x018</span> DirectoryTableBase : [<span class="number">2</span>] Uint4B</span><br><span class="line">   +<span class="number">0x020</span> LdtDescriptor    : _KGDTENTRY</span><br><span class="line">   +<span class="number">0x028</span> Int21Descriptor  : _KIDTENTRY</span><br><span class="line">   +<span class="number">0x030</span> IopmOffset       : Uint2B</span><br><span class="line">   +<span class="number">0x032</span> Iopl             : UChar</span><br><span class="line">   +<span class="number">0x033</span> Unused           : UChar</span><br><span class="line">   +<span class="number">0x034</span> ActiveProcessors : Uint4B</span><br><span class="line">   +<span class="number">0x038</span> KernelTime       : Uint4B</span><br><span class="line">   +<span class="number">0x03c</span> UserTime         : Uint4B</span><br><span class="line">   +<span class="number">0x040</span> ReadyListHead    : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x048</span> SwapListEntry    : _SINGLE_LIST_ENTRY</span><br><span class="line">   +<span class="number">0x04c</span> VdmTrapcHandler  : Ptr32 Void</span><br><span class="line">   +<span class="number">0x050</span> ThreadListHead   : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x058</span> ProcessLock      : Uint4B</span><br><span class="line">   +<span class="number">0x05c</span> Affinity         : Uint4B</span><br><span class="line">   +<span class="number">0x060</span> StackCount       : Uint2B</span><br><span class="line">   +<span class="number">0x062</span> BasePriority     : Char</span><br><span class="line">   +<span class="number">0x063</span> ThreadQuantum    : Char</span><br><span class="line">   +<span class="number">0x064</span> AutoAlignment    : UChar</span><br><span class="line">   +<span class="number">0x065</span> State            : UChar</span><br><span class="line">   +<span class="number">0x066</span> ThreadSeed       : UChar</span><br><span class="line">   +<span class="number">0x067</span> DisableBoost     : UChar</span><br><span class="line">   +<span class="number">0x068</span> PowerState       : UChar</span><br><span class="line">   +<span class="number">0x069</span> DisableQuantum   : UChar</span><br><span class="line">   +<span class="number">0x06a</span> IdealNode        : UChar</span><br><span class="line">   +<span class="number">0x06b</span> Flags            : _KEXECUTE_OPTIONS</span><br><span class="line">   +<span class="number">0x06b</span> ExecuteOptions   : UChar</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center"><strong>偏移</strong></th>
+<th align="left"><strong>名称</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">0x000</td>
+<td align="left">Header</td>
+<td>“可等待”对象，比如Mutex互斥体、Event事件等（WaitForSingleObject）。内核结构体中，凡是有成员是<code>_DISPATCHER_HEADER</code>就说明该内核对象可以使用<code>WaitForSingleObject</code>等函数进行等待。</td>
+</tr>
+<tr>
+<td align="center">0x010</td>
+<td align="left">ProfileListHead</td>
+<td>当该进程参与性能分析时，作为一个节点加入到全局性能分析进程列表（内核全局变量KiProfileListHead）</td>
+</tr>
+<tr>
+<td align="center">0x018</td>
+<td align="left">DirectoryTableBase</td>
+<td><mark class="label primary">页目录表的基址，CR3。</mark>是一个只有两项的数组，第一项指向该进程的页目录表地址，第二项指向进程的超空间的页目录表地址</td>
+</tr>
+<tr>
+<td align="center">0x020</td>
+<td align="left">LdtDescriptor</td>
+<td>该进程LDT（局部描述发表）的描述符，历史遗留，16位Windows 段选择子不够，每个进程都有一个LDT表。</td>
+</tr>
+<tr>
+<td align="center">0x028</td>
+<td align="left">Int21Descriptor</td>
+<td>兼容DOS程序，允许它们通过int 21H指令来调用DOS系统功能</td>
+</tr>
+<tr>
+<td align="center">0x30</td>
+<td align="left">IopmOffset</td>
+<td>指定IOPM(I&#x2F;O权限表)的位置，内核通过IOPM可控制进程的用户模式I&#x2F;O访问权限</td>
+</tr>
+<tr>
+<td align="center">0x32</td>
+<td align="left">Iopl</td>
+<td>定义进程的I&#x2F;O优先级</td>
+</tr>
+<tr>
+<td align="center">0x34</td>
+<td align="left">ActiveProcessors</td>
+<td>记录当前进程正在哪些处理器上运行，这和进程创建时的CPU处理器的亲和性有关。</td>
+</tr>
+<tr>
+<td align="center">0x38</td>
+<td align="left">KernelTime</td>
+<td>记录一个进程对象在内核模式下所花的时间（已经运行了多久）</td>
+</tr>
+<tr>
+<td align="center">0x3C</td>
+<td align="left">UserTime</td>
+<td>记录一个进程对象在用户模式下所花的时间（已经运行了多久）</td>
+</tr>
+<tr>
+<td align="center">0x40</td>
+<td align="left">ReadListHead</td>
+<td>是一个双向链表头，记录了进程中处于就绪状态但尚未被加入全局就绪链表的线程，这个域的意义在于，当一个进程被换出内存后，它所属的线程一旦就绪，则被挂到此链表中，并要求换入该进程。此后，当该进程被换入内存时，ReadyListHead中的所有线程被加入到系统全局的就绪线程链表中。<br />链表中的每一项都是一个指向KTHREAD对象的WaitListEntry域的地址，所以，从链表中的每一项都可以定位到对应的线程对象。<code>OutThread = (PKTHREAD)(Process-&gt;ReadyListHead.Flink - 0x60);</code><br />《Windows内核原理与实现3.3.1 P108》</td>
+</tr>
+<tr>
+<td align="center">0x048</td>
+<td align="left">SwapListEntry</td>
+<td>单链表项，当一个进程要被换出内存时，它（进程）通过此域加入到KiProcessOutSwapListHead为链头的单链表中；当一个进程被换入内存时，将进程加入到以KiProcessInSwapListHead为链头的单链表中。<br /><strong>KiProcessInSwapListHead</strong> - This is the list of processes that are waiting to be inswapped.<br /><strong>KiProcessOutSwapListHead</strong> - This is the list of processes that are waiting to be outswapped.<br />上面英语部分是从源码中拷贝到的，也就是说<code>KiProcessOutSwapListHead</code>上挂着的进程实际还在内存里。<br />Windbg中看了一下这两个变量的地址：<code>KiProcessInSwapListHead - 4 = KiProcessOutSwapListHead</code>。<br />还可参考《Windows内核原理与实现4.5.5 P284》</td>
+</tr>
+<tr>
+<td align="center">0x050</td>
+<td align="left">ThreadListHead</td>
+<td>指向一个链表头，此链表包含了该进程的所有当前进程。当一个线程被创建的时候，被加入到此链表中，在终止的时候被从链表中移除。<mark class="label warning">双向链表,属于本进程的所有线程,都可以遍历出来。</mark></td>
+</tr>
+<tr>
+<td align="center">0x058</td>
+<td align="left">ProcessLock</td>
+<td>自旋锁对象，用途是保护此进程中的数据成员</td>
+</tr>
+<tr>
+<td align="center">0x05C</td>
+<td align="left">Affinity</td>
+<td>指定该进程的线程可以在哪些处理器上运行，其类型是KAFFINITY，这是一个32位或64位整数，其二进制表示的每一位分别对应于当前机器上的一个处理器（核）。规定进程里面的所有线程能在哪个CPU上跑：<br />- <code>Affinity = 00000001</code>，值为1，那这个进程的所以线程只能在0号CPU上跑。<br />- <code>Affinity = 00000011</code>，值为3，那这个进程的所以线程能在0、1号CPU上跑。<br />-  <code>Affinity = 00000100</code>，值为4，那这个进程的所以线程能在2号CPU上跑。<br />-  <code>Affinity = 00000101</code>，值为5，那这个进程的所以线程能在0，2号CPU上跑。<br /><strong>该成员占4个字节共32位 ，所以最多32核。Windows64位就64核。</strong><br/>如果只有一个CPU 把这个设置为4 或其他非<code>00000001</code>的值，那么这个进程就死了。</td>
+</tr>
+<tr>
+<td align="center">0x060</td>
+<td align="left">StackCount</td>
+<td>记录当前进程有多少个线程栈位于内存中</td>
+</tr>
+<tr>
+<td align="center">0x062</td>
+<td align="left">BasePriority</td>
+<td>指定进程中的线程优先级，所有线程在启动时都会继承进程的BasePriority(基础优先级或最低优先级，该进程中的所有线程最起码的优先级)</td>
+</tr>
+<tr>
+<td align="center">0x064</td>
+<td align="left">AutoAlignment</td>
+<td>用于进程中的内存访问对齐设置，此标志位会被传递到线程的数据结构中，当一个线程的对齐检查开关打开时，该线程中的未对齐数据访问将会导致对齐错误（Alignment Fault)</td>
+</tr>
+<tr>
+<td align="center">0x065</td>
+<td align="left">State</td>
+<td>说明进程是否在内存中，共有六种可能状态：<br />- ProcessInMemory<br />- ProcessOutOfMemory<br />- ProcessInTransition<br />- ProcessOutTransition<br />- ProcessInSwap<br />- ProcessOutSwap</td>
+</tr>
+<tr>
+<td align="center">0x066</td>
+<td align="left">ThreadSeed</td>
+<td>用于为该进程的线程指定理想处理器</td>
+</tr>
+<tr>
+<td align="center">0x067</td>
+<td align="left">DisableBoost</td>
+<td>与线程调度过程中的优先级提升和时限分配有关</td>
+</tr>
+<tr>
+<td align="center">0x068</td>
+<td align="left">PowerState</td>
+<td>用于记录电源状态</td>
+</tr>
+<tr>
+<td align="center">0x069</td>
+<td align="left">DisableQuantum</td>
+<td>与线程调度过程中的优先级提升和时限分配有关</td>
+</tr>
+<tr>
+<td align="center">0x06A</td>
+<td align="left">IdealNode</td>
+<td>用于为一个进程选择优先的处理节点，这是在进程初始化时设定</td>
+</tr>
+<tr>
+<td align="center">0x06B</td>
+<td align="left">ExecuteOptions</td>
+<td>用于设置一个进程的执行选项，这是为了支持NX而引入到系统中的</td>
+</tr>
+</tbody></table>
+<h3 id="EPROCESS"><a href="#EPROCESS" class="headerlink" title="_EPROCESS"></a>_EPROCESS</h3><p><code>EPROCESS</code>称为进程结构体，每个Windows进程在0环都有一个对应的结构体：<code>EPROCESS</code> ，这个结构体<strong>包含了进程所有重要的信息</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _EPROCESS</span><br><span class="line">nt!_EPROCESS</span><br><span class="line">   +<span class="number">0x000</span> Pcb              : _KPROCESS</span><br><span class="line">   +<span class="number">0x06c</span> ProcessLock      : _EX_PUSH_LOCK</span><br><span class="line">   +<span class="number">0x070</span> CreateTime       : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x078</span> ExitTime         : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x080</span> RundownProtect   : _EX_RUNDOWN_REF</span><br><span class="line">   +<span class="number">0x084</span> UniqueProcessId  : Ptr32 Void</span><br><span class="line">   +<span class="number">0x088</span> ActiveProcessLinks : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x090</span> QuotaUsage       : [<span class="number">3</span>] Uint4B</span><br><span class="line">   +<span class="number">0x09c</span> QuotaPeak        : [<span class="number">3</span>] Uint4B</span><br><span class="line">   +<span class="number">0x0a8</span> CommitCharge     : Uint4B</span><br><span class="line">   +<span class="number">0x0ac</span> PeakVirtualSize  : Uint4B</span><br><span class="line">   +<span class="number">0x0b0</span> VirtualSize      : Uint4B</span><br><span class="line">   +<span class="number">0x0b4</span> SessionProcessLinks : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x0bc</span> DebugPort        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x0c0</span> ExceptionPort    : Ptr32 Void</span><br><span class="line">   +<span class="number">0x0c4</span> ObjectTable      : Ptr32 _HANDLE_TABLE</span><br><span class="line">   +<span class="number">0x0c8</span> Token            : _EX_FAST_REF</span><br><span class="line">   +<span class="number">0x0cc</span> WorkingSetLock   : _FAST_MUTEX</span><br><span class="line">   +<span class="number">0x0ec</span> WorkingSetPage   : Uint4B</span><br><span class="line">   +<span class="number">0x0f0</span> AddressCreationLock : _FAST_MUTEX</span><br><span class="line">   +<span class="number">0x110</span> HyperSpaceLock   : Uint4B</span><br><span class="line">   +<span class="number">0x114</span> ForkInProgress   : Ptr32 _ETHREAD</span><br><span class="line">   +<span class="number">0x118</span> HardwareTrigger  : Uint4B</span><br><span class="line">   +<span class="number">0x11c</span> VadRoot          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x120</span> VadHint          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x124</span> CloneRoot        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x128</span> NumberOfPrivatePages : Uint4B</span><br><span class="line">   +<span class="number">0x12c</span> NumberOfLockedPages : Uint4B</span><br><span class="line">   +<span class="number">0x130</span> Win32Process     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x134</span> Job              : Ptr32 _EJOB</span><br><span class="line">   +<span class="number">0x138</span> SectionObject    : Ptr32 Void</span><br><span class="line">   +<span class="number">0x13c</span> SectionBaseAddress : Ptr32 Void</span><br><span class="line">   +<span class="number">0x140</span> QuotaBlock       : Ptr32 _EPROCESS_QUOTA_BLOCK</span><br><span class="line">   +<span class="number">0x144</span> WorkingSetWatch  : Ptr32 _PAGEFAULT_HISTORY</span><br><span class="line">   +<span class="number">0x148</span> Win32WindowStation : Ptr32 Void</span><br><span class="line">   +<span class="number">0x14c</span> InheritedFromUniqueProcessId : Ptr32 Void</span><br><span class="line">   +<span class="number">0x150</span> LdtInformation   : Ptr32 Void</span><br><span class="line">   +<span class="number">0x154</span> VadFreeHint      : Ptr32 Void</span><br><span class="line">   +<span class="number">0x158</span> VdmObjects       : Ptr32 Void</span><br><span class="line">   +<span class="number">0x15c</span> DeviceMap        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x160</span> PhysicalVadList  : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x168</span> PageDirectoryPte : _HARDWARE_PTE</span><br><span class="line">   +<span class="number">0x168</span> Filler           : Uint8B</span><br><span class="line">   +<span class="number">0x170</span> Session          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x174</span> ImageFileName    : [<span class="number">16</span>] UChar</span><br><span class="line">   +<span class="number">0x184</span> JobLinks         : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x18c</span> LockedPagesList  : Ptr32 Void</span><br><span class="line">   +<span class="number">0x190</span> ThreadListHead   : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x198</span> SecurityPort     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x19c</span> PaeTop           : Ptr32 Void</span><br><span class="line">   +<span class="number">0x1a0</span> ActiveThreads    : Uint4B</span><br><span class="line">   +<span class="number">0x1a4</span> GrantedAccess    : Uint4B</span><br><span class="line">   +<span class="number">0x1a8</span> DefaultHardErrorProcessing : Uint4B</span><br><span class="line">   +<span class="number">0x1ac</span> LastThreadExitStatus : Int4B</span><br><span class="line">   +<span class="number">0x1b0</span> Peb              : Ptr32 _PEB</span><br><span class="line">   +<span class="number">0x1b4</span> PrefetchTrace    : _EX_FAST_REF</span><br><span class="line">   +<span class="number">0x1b8</span> ReadOperationCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1c0</span> WriteOperationCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1c8</span> OtherOperationCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1d0</span> ReadTransferCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1d8</span> WriteTransferCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1e0</span> OtherTransferCount : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x1e8</span> CommitChargeLimit : Uint4B</span><br><span class="line">   +<span class="number">0x1ec</span> CommitChargePeak : Uint4B</span><br><span class="line">   +<span class="number">0x1f0</span> AweInfo          : Ptr32 Void</span><br><span class="line">   +<span class="number">0x1f4</span> SeAuditProcessCreationInfo : _SE_AUDIT_PROCESS_CREATION_INFO</span><br><span class="line">   +<span class="number">0x1f8</span> Vm               : _MMSUPPORT</span><br><span class="line">   +<span class="number">0x238</span> LastFaultCount   : Uint4B</span><br><span class="line">   +<span class="number">0x23c</span> ModifiedPageCount : Uint4B</span><br><span class="line">   +<span class="number">0x240</span> NumberOfVads     : Uint4B</span><br><span class="line">   +<span class="number">0x244</span> JobStatus        : Uint4B</span><br><span class="line">   +<span class="number">0x248</span> Flags            : Uint4B</span><br><span class="line">   +<span class="number">0x248</span> CreateReported   : Pos <span class="number">0</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> NoDebugInherit   : Pos <span class="number">1</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ProcessExiting   : Pos <span class="number">2</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ProcessDelete    : Pos <span class="number">3</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Wow64SplitPages  : Pos <span class="number">4</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> VmDeleted        : Pos <span class="number">5</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> OutswapEnabled   : Pos <span class="number">6</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Outswapped       : Pos <span class="number">7</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ForkFailed       : Pos <span class="number">8</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> HasPhysicalVad   : Pos <span class="number">9</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> AddressSpaceInitialized : Pos <span class="number">10</span>, <span class="number">2</span> Bits</span><br><span class="line">   +<span class="number">0x248</span> SetTimerResolution : Pos <span class="number">12</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> BreakOnTermination : Pos <span class="number">13</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> SessionCreationUnderway : Pos <span class="number">14</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> WriteWatch       : Pos <span class="number">15</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> ProcessInSession : Pos <span class="number">16</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> OverrideAddressSpace : Pos <span class="number">17</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> HasAddressSpace  : Pos <span class="number">18</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> LaunchPrefetched : Pos <span class="number">19</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> InjectInpageErrors : Pos <span class="number">20</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> VmTopDown        : Pos <span class="number">21</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused3          : Pos <span class="number">22</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused4          : Pos <span class="number">23</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> VdmAllowed       : Pos <span class="number">24</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused           : Pos <span class="number">25</span>, <span class="number">5</span> Bits</span><br><span class="line">   +<span class="number">0x248</span> Unused1          : Pos <span class="number">30</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x248</span> Unused2          : Pos <span class="number">31</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x24c</span> ExitStatus       : Int4B</span><br><span class="line">   +<span class="number">0x250</span> NextPageColor    : Uint2B</span><br><span class="line">   +<span class="number">0x252</span> SubSystemMinorVersion : UChar</span><br><span class="line">   +<span class="number">0x253</span> SubSystemMajorVersion : UChar</span><br><span class="line">   +<span class="number">0x252</span> SubSystemVersion : Uint2B</span><br><span class="line">   +<span class="number">0x254</span> PriorityClass    : UChar</span><br><span class="line">   +<span class="number">0x255</span> WorkingSetAcquiredUnsafe : </span><br></pre></td></tr></table></figure>
+
+<p>下面对进程结构体<code>EPROCESS</code>的重要成员&#x2F;结构进行说明介绍。</p>
+<p>可参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LittleHann/p/3453148.html">EPROCESS 进程&#x2F;线程优先级 句柄表 GDT LDT 页表 《寒江独钓》内核学习笔记（2）</a>。</p>
+<table>
+<thead>
+<tr>
+<th><strong>偏移</strong></th>
+<th><strong>名称</strong></th>
+<th><strong>含义</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x000</td>
+<td>Pcb</td>
+<td>即上面介绍的KPROCESS内嵌结构体，因此，在系统内部，一个进程的EPROCESS对象地址和KPROCESS对象的地址是相同的</td>
+</tr>
+<tr>
+<td>0x06C</td>
+<td>ProcessLock</td>
+<td>与KPROCESS的自旋锁同名，但是它们类型不同，保护成员也不同。这里的ProcessLock域是一个推锁对象，用于保护EPROCESS中的数据成员</td>
+</tr>
+<tr>
+<td>0x070</td>
+<td>CreateTime</td>
+<td>进程创建时间</td>
+</tr>
+<tr>
+<td>0x078</td>
+<td>ExitTime</td>
+<td>进程退出时间</td>
+</tr>
+<tr>
+<td>0x080</td>
+<td>RundownProtect</td>
+<td>进程停止保护锁，当一个进程到最后被销毁时，它要等到所有其他进程和线程已经释放此锁才可以继续进行</td>
+</tr>
+<tr>
+<td>0x084</td>
+<td>UniqueProcessId</td>
+<td>进程的编号，任务管理器中的<mark class="label danger">PID</mark>。</td>
+</tr>
+<tr>
+<td>0x088</td>
+<td>ActiveProcessLinks</td>
+<td>双向链表，所有正在运行的进程。所有的活动进程都连接在一起**，构成了一个链表。全局变量<code>PsActiveProcessHead</code>指向链表头。<br /><img data-src="https://s2.loli.net/2022/03/12/yVhx2ZkPXovHUsr.png" alt="图片1.png">下一个<code>EPROCESS = PsActiveProcessHead-&gt;Flink - 0x88</code>。</td>
+</tr>
+<tr>
+<td>0x090<br />0x09c</td>
+<td>QuotaUsage<br />QuotaPeak</td>
+<td>物理页相关的统计信息。</td>
+</tr>
+<tr>
+<td>0x0a8<br />0x0ac<br />0x0b0</td>
+<td>CommitCharge<br />PeakVirtualSize<br />VirtualSize</td>
+<td>虚拟内存相关的统计信息。</td>
+</tr>
+<tr>
+<td>0x0B4</td>
+<td>SessionProcessLinks</td>
+<td>双链表节点，当一个进程加入到一个系统会话中，其SessionProcessLinks域将作为一个节点加入到该会话的进程链表中</td>
+</tr>
+<tr>
+<td>0x0BC</td>
+<td>DebugPort</td>
+<td>指向调试端口的句柄。DebugPort是一个指针，<strong>充当调试程序和被调试程序之间的桥梁</strong>。A – B – C。<br />- A：调试器（程序）<br />- B：DebugPort存的地址<br />- C：被调试程序<br />不断地将该值清为0，可以在一定程度上防止程序被调试。要想彻底一些防御，还需要清楚ETHREAD里面的DebugPort成员。<br />⚠️注意：DebugPort是被调试程序的DebugPort。</td>
+</tr>
+<tr>
+<td>0x0C0</td>
+<td>Exception</td>
+<td>指向异常端口的句柄</td>
+</tr>
+<tr>
+<td>0x0C4</td>
+<td>ObjectTable</td>
+<td>指向进程的<strong>句柄表</strong></td>
+</tr>
+<tr>
+<td>0x0C8</td>
+<td>Token</td>
+<td>是一个快速引用，指向该进程的访问令牌</td>
+</tr>
+<tr>
+<td>0x1A0</td>
+<td>ActiveThreads</td>
+<td>记录了当前进程有多少活动线程。当该值减为0时，所有的线程将退出，于是进程也退出。（分析<code>NtTerminateThread(IN HANDLE ThreadHandle OPTIONAL,IN NTSTATUS ExitStatus)</code>时逆得的。）</td>
+</tr>
+<tr>
+<td>0x11C</td>
+<td>VadRoot</td>
+<td>虚拟地址描述符二叉树根节点</td>
+</tr>
+<tr>
+<td>0x130</td>
+<td>Win32Process</td>
+<td>指向由Windows子系统管理的进程区域，如果此指不为NULL，说明这是一个Windows子系统进程（GUI进程）</td>
+</tr>
+<tr>
+<td>0x140</td>
+<td>QuotaBlock</td>
+<td>指向进程的配额块，进程的配额块类型为: EPROCESS_QUOTA_BLOCK。Windows系统中的”配额块”相互串起来构成了一个双链表，<strong>每个配额块都可以被多个进程共享</strong>，所以有一个引用计数指用来说明当前有多少个进程正在使用这一配额块。配额块中主要定义了非换页内存池、换页内存池、交换文件中的内存配额限制。这里要注意的是，所有配额块构成的双链表的表头为PspQuotaBlockList。系统的默认配额块PspDefaultQuotaBlock。</td>
+</tr>
+<tr>
+<td>0x170</td>
+<td>Session</td>
+<td>所属会话对象</td>
+</tr>
+<tr>
+<td>0x174</td>
+<td>ImageName</td>
+<td>指向进程名，进程镜像文件名，最多16个字节。</td>
+</tr>
+<tr>
+<td>0x190</td>
+<td>ThreadListHead</td>
+<td><strong>双向链表,属于本进程的所有线程，都可以遍历出来</strong>。</td>
+</tr>
+<tr>
+<td>0x1A0</td>
+<td>ActiveThreads</td>
+<td>活动线程的数量。当该值为0，所有线程都将退出，进程也就会退出</td>
+</tr>
+<tr>
+<td>0x1A4</td>
+<td>GrantedAccess</td>
+<td>进程的访问权限</td>
+</tr>
+<tr>
+<td>0x1B0</td>
+<td>Peb</td>
+<td>PEB（Process Environment Block 进程环境块），进程在3环的一个结构体，里面包含了进程的模块列表、是否处于调试状态等信息。<mark class="label success">PEB是给3环用的，ETHREAD是给操作系统用的。</mark></td>
+</tr>
+<tr>
+<td>0x24C</td>
+<td>ExitStatus</td>
+<td>包含了进程的退出状态，从进程的退出状态通常可以获知进程非正常退出的大致原因</td>
+</tr>
+<tr>
+<td>0x252</td>
+<td>SubSystemMinorVersion</td>
+<td>子系统次版本号</td>
+</tr>
+<tr>
+<td>0x253</td>
+<td>SubSystemMajorVersion</td>
+<td>子系统主版本号</td>
+</tr>
+<tr>
+<td>0x254</td>
+<td>PriorityClass</td>
+<td>单字节，表明进程的优先级程度，分别有以下几个类别：1：空闲类别2：普通类别3：高优先级类别4：实时类别5：普通之下类别6：普通之上类别0：未知类别</td>
+</tr>
+</tbody></table>
+<h3 id="KPCR"><a href="#KPCR" class="headerlink" title="_KPCR"></a>_KPCR</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KPCR</span><br><span class="line">nt!_KPCR</span><br><span class="line">   +<span class="number">0x000</span> NtTib            : _NT_TIB</span><br><span class="line">   +<span class="number">0x01c</span> SelfPcr          : Ptr32 _KPCR	<span class="comment">//指向自己，方便寻址</span></span><br><span class="line">   +<span class="number">0x020</span> Prcb             : Ptr32 _KPRCB	<span class="comment">//指向拓展结构体_KPRCB</span></span><br><span class="line">   +<span class="number">0x024</span> Irql             : UChar</span><br><span class="line">   +<span class="number">0x028</span> IRR              : Uint4B</span><br><span class="line">   +<span class="number">0x02c</span> IrrActive        : Uint4B</span><br><span class="line">   +<span class="number">0x030</span> IDR              : Uint4B</span><br><span class="line">   +<span class="number">0x034</span> KdVersionBlock   : Ptr32 Void</span><br><span class="line">   +<span class="number">0x038</span> IDT              : Ptr32 _KIDTENTRY	<span class="comment">//IDT表基址</span></span><br><span class="line">   +<span class="number">0x03c</span> GDT              : Ptr32 _KGDTENTRY	<span class="comment">//GDT表基址</span></span><br><span class="line">   +<span class="number">0x040</span> TSS              : Ptr32 _KTSS	<span class="comment">//指针，指向TSS，每个CPU都有一个TSS</span></span><br><span class="line">   +<span class="number">0x044</span> MajorVersion     : Uint2B</span><br><span class="line">   +<span class="number">0x046</span> MinorVersion     : Uint2B</span><br><span class="line">   +<span class="number">0x048</span> SetMember        : Uint4B</span><br><span class="line">   +<span class="number">0x04c</span> StallScaleFactor : Uint4B</span><br><span class="line">   +<span class="number">0x050</span> DebugActive      : UChar</span><br><span class="line">   +<span class="number">0x051</span> Number           : UChar		<span class="comment">//CPU编号：0 1 2 3 4 5...</span></span><br><span class="line">   +<span class="number">0x052</span> Spare0           : UChar</span><br><span class="line">   +<span class="number">0x053</span> SecondLevelCacheAssociativity : UChar</span><br><span class="line">   +<span class="number">0x054</span> VdmAlert         : Uint4B</span><br><span class="line">   +<span class="number">0x058</span> KernelReserved   : [<span class="number">14</span>] Uint4B</span><br><span class="line">   +<span class="number">0x090</span> SecondLevelCacheSize : Uint4B</span><br><span class="line">   +<span class="number">0x094</span> HalReserved      : [<span class="number">16</span>] Uint4B</span><br><span class="line">   +<span class="number">0x0d4</span> InterruptMode    : Uint4B</span><br><span class="line">   +<span class="number">0x0d8</span> Spare1           : UChar</span><br><span class="line">   +<span class="number">0x0dc</span> KernelReserved2  : [<span class="number">17</span>] Uint4B</span><br><span class="line">   +<span class="number">0x120</span> PrcbData         : _KPRCB		<span class="comment">//拓展结构体</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="NT-TIB"><a href="#NT-TIB" class="headerlink" title="_NT_TIB"></a>_NT_TIB</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kd&gt;  dt _NT_TIB</span><br><span class="line">nt!_NT_TIB</span><br><span class="line">   +<span class="number">0x000</span> ExceptionList    : Ptr32 _EXCEPTION_REGISTRATION_RECORD<span class="comment">//当前线程内核异常链表（SEH）。</span></span><br><span class="line">   +<span class="number">0x004</span> StackBase        : Ptr32 Void		<span class="comment">//当前线程内核栈的基址。</span></span><br><span class="line">   +<span class="number">0x008</span> StackLimit       : Ptr32 Void		<span class="comment">//当前线程内核栈的大小。</span></span><br><span class="line">   +<span class="number">0x00c</span> SubSystemTib     : Ptr32 Void</span><br><span class="line">   +<span class="number">0x010</span> FiberData        : Ptr32 Void</span><br><span class="line">   +<span class="number">0x010</span> Version          : Uint4B</span><br><span class="line">   +<span class="number">0x014</span> ArbitraryUserPointer : Ptr32 Void</span><br><span class="line">   +<span class="number">0x018</span> Self             : Ptr32 _NT_TIB	<span class="comment">//指向自己(也就是指向KPCR结构) 这样设计的目的是为了查找方便。</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="KPRCB"><a href="#KPRCB" class="headerlink" title="_KPRCB"></a>_KPRCB</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KPRCB</span><br><span class="line">nt!_KPRCB</span><br><span class="line">   +<span class="number">0x000</span> MinorVersion     : Uint2B</span><br><span class="line">   +<span class="number">0x002</span> MajorVersion     : Uint2B</span><br><span class="line">   +<span class="number">0x004</span> CurrentThread    : Ptr32 _KTHREAD	<span class="comment">//指向当前线程</span></span><br><span class="line">   +<span class="number">0x008</span> NextThread       : Ptr32 _KTHREAD	<span class="comment">//即将切换的下一个线程</span></span><br><span class="line">   +<span class="number">0x00c</span> IdleThread       : Ptr32 _KTHREAD	<span class="comment">//CPU空闲时跑的线程</span></span><br><span class="line">   +<span class="number">0x010</span> Number           : Char</span><br><span class="line">   +<span class="number">0x011</span> Reserved         : Char</span><br><span class="line">   +<span class="number">0x012</span> BuildType        : Uint2B</span><br><span class="line">   +<span class="number">0x014</span> SetMember        : Uint4B</span><br><span class="line">   +<span class="number">0x018</span> CpuType          : Char</span><br><span class="line">   +<span class="number">0x019</span> CpuID            : Char</span><br><span class="line">   +<span class="number">0x01a</span> CpuStep          : Uint2B</span><br><span class="line">   +<span class="number">0x01c</span> ProcessorState   : _KPROCESSOR_STATE</span><br><span class="line">   +<span class="number">0x33c</span> KernelReserved   : [<span class="number">16</span>] Uint4B</span><br><span class="line">   +<span class="number">0x37c</span> HalReserved      : [<span class="number">16</span>] Uint4B</span><br><span class="line">   +<span class="number">0x3bc</span> PrcbPad0         : [<span class="number">92</span>] UChar</span><br><span class="line">   +<span class="number">0x418</span> LockQueue        : [<span class="number">16</span>] _KSPIN_LOCK_QUEUE</span><br><span class="line">   +<span class="number">0x498</span> PrcbPad1         : [<span class="number">8</span>] UChar</span><br><span class="line">   +<span class="number">0x4a0</span> NpxThread        : Ptr32 _KTHREAD</span><br><span class="line">   +<span class="number">0x4a4</span> InterruptCount   : Uint4B</span><br><span class="line">   +<span class="number">0x4a8</span> KernelTime       : Uint4B</span><br><span class="line">   +<span class="number">0x4ac</span> UserTime         : Uint4B</span><br><span class="line">   +<span class="number">0x4b0</span> DpcTime          : Uint4B</span><br><span class="line">   +<span class="number">0x4b4</span> DebugDpcTime     : Uint4B</span><br><span class="line">   +<span class="number">0x4b8</span> InterruptTime    : Uint4B</span><br><span class="line">   +<span class="number">0x4bc</span> AdjustDpcThreshold : Uint4B</span><br><span class="line">   +<span class="number">0x4c0</span> PageColor        : Uint4B</span><br><span class="line">   +<span class="number">0x4c4</span> SkipTick         : Uint4B</span><br><span class="line">   +<span class="number">0x4c8</span> MultiThreadSetBusy : UChar</span><br><span class="line">   +<span class="number">0x4c9</span> Spare2           : [<span class="number">3</span>] UChar</span><br><span class="line">   +<span class="number">0x4cc</span> ParentNode       : Ptr32 _KNODE</span><br><span class="line">   +<span class="number">0x4d0</span> MultiThreadProcessorSet : Uint4B</span><br><span class="line">   +<span class="number">0x4d4</span> MultiThreadSetMaster : Ptr32 _KPRCB</span><br><span class="line">   +<span class="number">0x4d8</span> ThreadStartCount : [<span class="number">2</span>] Uint4B</span><br><span class="line">   +<span class="number">0x4e0</span> CcFastReadNoWait : Uint4B</span><br><span class="line">   +<span class="number">0x4e4</span> CcFastReadWait   : Uint4B</span><br><span class="line">   +<span class="number">0x4e8</span> CcFastReadNotPossible : Uint4B</span><br><span class="line">   +<span class="number">0x4ec</span> CcCopyReadNoWait : Uint4B</span><br><span class="line">   +<span class="number">0x4f0</span> CcCopyReadWait   : Uint4B</span><br><span class="line">   +<span class="number">0x4f4</span> CcCopyReadNoWaitMiss : Uint4B</span><br><span class="line">   +<span class="number">0x4f8</span> KeAlignmentFixupCount : Uint4B</span><br><span class="line">   +<span class="number">0x4fc</span> KeContextSwitches : Uint4B</span><br><span class="line">   +<span class="number">0x500</span> KeDcacheFlushCount : Uint4B</span><br><span class="line">   +<span class="number">0x504</span> KeExceptionDispatchCount : Uint4B</span><br><span class="line">   +<span class="number">0x508</span> KeFirstLevelTbFills : Uint4B</span><br><span class="line">   +<span class="number">0x50c</span> KeFloatingEmulationCount : Uint4B</span><br><span class="line">   +<span class="number">0x510</span> KeIcacheFlushCount : Uint4B</span><br><span class="line">   +<span class="number">0x514</span> KeSecondLevelTbFills : Uint4B</span><br><span class="line">   +<span class="number">0x518</span> KeSystemCalls    : Uint4B	<span class="comment">//系统调用计数,即记录KiFastCallEntry被调用了多少次</span></span><br><span class="line">   +<span class="number">0x51c</span> SpareCounter0    : [<span class="number">1</span>] Uint4B</span><br><span class="line">   +<span class="number">0x520</span> PPLookasideList  : [<span class="number">16</span>] _PP_LOOKASIDE_LIST</span><br><span class="line">   +<span class="number">0x5a0</span> PPNPagedLookasideList : [<span class="number">32</span>] _PP_LOOKASIDE_LIST</span><br><span class="line">   +<span class="number">0x6a0</span> PPPagedLookasideList : [<span class="number">32</span>] _PP_LOOKASIDE_LIST</span><br><span class="line">   +<span class="number">0x7a0</span> PacketBarrier    : Uint4B</span><br><span class="line">   +<span class="number">0x7a4</span> ReverseStall     : Uint4B</span><br><span class="line">   +<span class="number">0x7a8</span> IpiFrame         : Ptr32 Void</span><br><span class="line">   +<span class="number">0x7ac</span> PrcbPad2         : [<span class="number">52</span>] UChar</span><br><span class="line">   +<span class="number">0x7e0</span> CurrentPacket    : [<span class="number">3</span>] Ptr32 Void</span><br><span class="line">   +<span class="number">0x7ec</span> TargetSet        : Uint4B</span><br><span class="line">   +<span class="number">0x7f0</span> WorkerRoutine    : Ptr32     <span class="keyword">void</span> </span><br><span class="line">   +<span class="number">0x7f4</span> IpiFrozen        : Uint4B</span><br><span class="line">   +<span class="number">0x7f8</span> PrcbPad3         : [<span class="number">40</span>] UChar</span><br><span class="line">   +<span class="number">0x820</span> RequestSummary   : Uint4B</span><br><span class="line">   +<span class="number">0x824</span> SignalDone       : Ptr32 _KPRCB</span><br><span class="line">   +<span class="number">0x828</span> PrcbPad4         : [<span class="number">56</span>] UChar</span><br><span class="line">   +<span class="number">0x860</span> DpcListHead      : _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x868</span> DpcStack         : Ptr32 Void</span><br><span class="line">   +<span class="number">0x86c</span> DpcCount         : Uint4B</span><br><span class="line">   +<span class="number">0x870</span> DpcQueueDepth    : Uint4B</span><br><span class="line">   +<span class="number">0x874</span> DpcRoutineActive : Uint4B</span><br><span class="line">   +<span class="number">0x878</span> DpcInterruptRequested : Uint4B</span><br><span class="line">   +<span class="number">0x87c</span> DpcLastCount     : Uint4B</span><br><span class="line">   +<span class="number">0x880</span> DpcRequestRate   : Uint4B</span><br><span class="line">   +<span class="number">0x884</span> MaximumDpcQueueDepth : Uint4B</span><br><span class="line">   +<span class="number">0x888</span> MinimumDpcRate   : Uint4B</span><br><span class="line">   +<span class="number">0x88c</span> QuantumEnd       : Uint4B</span><br><span class="line">   +<span class="number">0x890</span> PrcbPad5         : [<span class="number">16</span>] UChar</span><br><span class="line">   +<span class="number">0x8a0</span> DpcLock          : Uint4B</span><br><span class="line">   +<span class="number">0x8a4</span> PrcbPad6         : [<span class="number">28</span>] UChar</span><br><span class="line">   +<span class="number">0x8c0</span> CallDpc          : _KDPC</span><br><span class="line">   +<span class="number">0x8e0</span> ChainedInterruptList : Ptr32 Void</span><br><span class="line">   +<span class="number">0x8e4</span> LookasideIrpFloat : Int4B</span><br><span class="line">   +<span class="number">0x8e8</span> SpareFields0     : [<span class="number">6</span>] Uint4B</span><br><span class="line">   +<span class="number">0x900</span> VendorString     : [<span class="number">13</span>] UChar</span><br><span class="line">   +<span class="number">0x90d</span> InitialApicId    : UChar</span><br><span class="line">   +<span class="number">0x90e</span> LogicalProcessorsPerPhysicalProcessor : UChar</span><br><span class="line">   +<span class="number">0x910</span> MHz              : Uint4B</span><br><span class="line">   +<span class="number">0x914</span> FeatureBits      : Uint4B</span><br><span class="line">   +<span class="number">0x918</span> UpdateSignature  : _LARGE_INTEGER</span><br><span class="line">   +<span class="number">0x920</span> NpxSaveArea      : _FX_SAVE_AREA</span><br><span class="line">   +<span class="number">0xb30</span> PowerState       : _PROCESSOR_POWER_STATE</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="EFLAGS"><a href="#EFLAGS" class="headerlink" title="EFLAGS"></a>EFLAGS</h3><p>Intel 提供的<code>cli</code>与<code>sti</code>指令：</p>
+<p><code>cli</code>：将EFLAGS寄存器的<code>IF = 0</code>，屏蔽可屏蔽的<strong>硬件中断</strong>。</p>
+<p><code>sti</code>：将EFLAGS寄存器的<code>IF = 1</code>，响应可屏蔽的<strong>硬件中断。</strong></p>
+<p>Intel手册3A 2.3：控制寄存器CR4中的CPL、IOPL和VME标志决定着IF标志是可否可以由指令CLI、STTI、POPF、POPFD和IRET修改（可修改IF位的指令）。</p>
+<p><img data-src="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png" alt="58.png"></p>
+<p><img data-src="https://s2.loli.net/2022/04/26/cXUCSzfnvjFPa53.png" alt="1.png"></p>
+<h3 id="KTRAP-FRAME"><a href="#KTRAP-FRAME" class="headerlink" title="_KTRAP_FRAME"></a>_KTRAP_FRAME</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KTRAP_FRAME -v</span><br><span class="line">nt!_KTRAP_FRAME</span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">KTRAP_FRAME</span>, 35 <span class="title">elements</span>, 0<span class="title">x8c</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x000</span> <span class="title">DbgEbp</span>           :</span> Uint4B</span><br><span class="line">   +<span class="number">0x004</span> DbgEip           : Uint4B</span><br><span class="line">   +<span class="number">0x008</span> DbgArgMark       : Uint4B</span><br><span class="line">   +<span class="number">0x00c</span> DbgArgPointer    : Uint4B</span><br><span class="line">   +<span class="number">0x010</span> TempSegCs        : Uint4B</span><br><span class="line">   +<span class="number">0x014</span> TempEsp          : Uint4B</span><br><span class="line">   +<span class="number">0x018</span> Dr0              : Uint4B</span><br><span class="line">   +<span class="number">0x01c</span> Dr1              : Uint4B</span><br><span class="line">   +<span class="number">0x020</span> Dr2              : Uint4B</span><br><span class="line">   +<span class="number">0x024</span> Dr3              : Uint4B</span><br><span class="line">   +<span class="number">0x028</span> Dr6              : Uint4B</span><br><span class="line">   +<span class="number">0x02c</span> Dr7              : Uint4B</span><br><span class="line">   +<span class="number">0x030</span> SegGs            : Uint4B</span><br><span class="line">   +<span class="number">0x034</span> SegEs            : Uint4B</span><br><span class="line">   +<span class="number">0x038</span> SegDs            : Uint4B</span><br><span class="line">   +<span class="number">0x03c</span> Edx              : Uint4B</span><br><span class="line">   +<span class="number">0x040</span> Ecx              : Uint4B</span><br><span class="line">   +<span class="number">0x044</span> Eax              : Uint4B</span><br><span class="line">   +<span class="number">0x048</span> PreviousPreviousMode : Uint4B</span><br><span class="line">   +<span class="number">0x04c</span> ExceptionList    : Ptr32 to <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_REGISTRATION_RECORD</span>, 2 <span class="title">elements</span>, 0<span class="title">x8</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x050</span> <span class="title">SegFs</span>            :</span> Uint4B</span><br><span class="line">   +<span class="number">0x054</span> Edi              : Uint4B</span><br><span class="line">   +<span class="number">0x058</span> Esi              : Uint4B</span><br><span class="line">   +<span class="number">0x05c</span> Ebx              : Uint4B</span><br><span class="line">   +<span class="number">0x060</span> Ebp              : Uint4B</span><br><span class="line">   +<span class="number">0x064</span> ErrCode          : Uint4B</span><br><span class="line">   +<span class="number">0x068</span> Eip              : Uint4B</span><br><span class="line">   +<span class="number">0x06c</span> SegCs            : Uint4B</span><br><span class="line">   +<span class="number">0x070</span> EFlags           : Uint4B</span><br><span class="line">   +<span class="number">0x074</span> HardwareEsp      : Uint4B</span><br><span class="line">   +<span class="number">0x078</span> HardwareSegSs    : Uint4B</span><br><span class="line">   +<span class="number">0x07c</span> V86Es            : Uint4B</span><br><span class="line">   +<span class="number">0x080</span> V86Ds            : Uint4B</span><br><span class="line">   +<span class="number">0x084</span> V86Fs            : Uint4B</span><br><span class="line">   +<span class="number">0x088</span> V86Gs            : Uint4B</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/04/05/XvoBtC7yVIJOS6Q.png" alt="40.png"></p>
+<h3 id="CONTEXT"><a href="#CONTEXT" class="headerlink" title="_CONTEXT"></a>_CONTEXT</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _CONTEXT -v</span><br><span class="line">nt!_CONTEXT</span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">CONTEXT</span>, 25 <span class="title">elements</span>, 0<span class="title">x2cc</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x000</span> <span class="title">ContextFlags</span>     :</span> Uint4B</span><br><span class="line">     </span><br><span class="line">   <span class="comment">//调试寄存器组，ContextFlags 设置为 CONTEXT_DEBUG_REGISTERS</span></span><br><span class="line">   <span class="comment">//注意：CONTEXT_DEBUG_REGISTERS 没有被包含在 CONTEXT_FULL 中。</span></span><br><span class="line">   +<span class="number">0x004</span> Dr0              : Uint4B	</span><br><span class="line">   +<span class="number">0x008</span> Dr1              : Uint4B</span><br><span class="line">   +<span class="number">0x00c</span> Dr2              : Uint4B</span><br><span class="line">   +<span class="number">0x010</span> Dr3              : Uint4B</span><br><span class="line">   +<span class="number">0x014</span> Dr6              : Uint4B</span><br><span class="line">   +<span class="number">0x018</span> Dr7              : Uint4B</span><br><span class="line">     </span><br><span class="line">   <span class="comment">//浮点寄存器组，ContextFlags 设置为 CONTEXT_FLOATING_POINT</span></span><br><span class="line">   +<span class="number">0x01c</span> FloatSave        : <span class="class"><span class="keyword">struct</span> _<span class="title">FLOATING_SAVE_AREA</span>, 9 <span class="title">elements</span>, 0<span class="title">x70</span> <span class="title">bytes</span>	</span></span><br><span class="line"><span class="class">     </span></span><br><span class="line"><span class="class">   //段寄存器组，<span class="title">ContextFlags</span> 字包含 <span class="title">CONTEXT_SEGMENTS</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x08c</span> <span class="title">SegGs</span>            :</span> Uint4B		</span><br><span class="line">   +<span class="number">0x090</span> SegFs            : Uint4B</span><br><span class="line">   +<span class="number">0x094</span> SegEs            : Uint4B</span><br><span class="line">   +<span class="number">0x098</span> SegDs            : Uint4B</span><br><span class="line">     </span><br><span class="line">   <span class="comment">//通用数据寄存器（整型寄存器）组，ContextFlags 字包含 CONTEXT_INTEGER</span></span><br><span class="line">   +<span class="number">0x09c</span> Edi              : Uint4B</span><br><span class="line">   +<span class="number">0x0a0</span> Esi              : Uint4B</span><br><span class="line">   +<span class="number">0x0a4</span> Ebx              : Uint4B</span><br><span class="line">   +<span class="number">0x0a8</span> Edx              : Uint4B</span><br><span class="line">   +<span class="number">0x0ac</span> Ecx              : Uint4B</span><br><span class="line">   +<span class="number">0x0b0</span> Eax              : Uint4B</span><br><span class="line">     </span><br><span class="line">   <span class="comment">//控制寄存器组，ContextFlags 字包含 CONTEXT_CONTROL</span></span><br><span class="line">   +<span class="number">0x0b4</span> Ebp              : Uint4B</span><br><span class="line">   +<span class="number">0x0b8</span> Eip              : Uint4B</span><br><span class="line">   +<span class="number">0x0bc</span> SegCs            : Uint4B</span><br><span class="line">   +<span class="number">0x0c0</span> EFlags           : Uint4B</span><br><span class="line">   +<span class="number">0x0c4</span> Esp              : Uint4B</span><br><span class="line">   +<span class="number">0x0c8</span> SegSs            : Uint4B</span><br><span class="line">     </span><br><span class="line">   <span class="comment">//拓展寄存器组，ContextFlags 字包含 CONTEXT_EXTENDED_REGISTERS</span></span><br><span class="line">   +<span class="number">0x0cc</span> ExtendedRegisters : [<span class="number">512</span>] UChar</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="EXCEPTION-RECORD"><a href="#EXCEPTION-RECORD" class="headerlink" title="_EXCEPTION_RECORD"></a>_EXCEPTION_RECORD</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_RECORD</span> &#123;</span></span><br><span class="line">    NTSTATUS ExceptionCode;</span><br><span class="line">    ULONG ExceptionFlags;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_RECORD</span> *<span class="title">ExceptionRecord</span>;</span></span><br><span class="line">    PVOID ExceptionAddress;</span><br><span class="line">    ULONG NumberParameters;</span><br><span class="line">    ULONG_PTR ExceptionInformation[EXCEPTION_MAXIMUM_PARAMETERS];</span><br><span class="line">    &#125; EXCEPTION_RECORD;</span><br><span class="line"></span><br><span class="line">kd&gt; dt _EXCEPTION_RECORD -v</span><br><span class="line">nt!_EXCEPTION_RECORD</span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_RECORD</span>, 6 <span class="title">elements</span>, 0<span class="title">x50</span> <span class="title">bytes</span></span></span><br><span class="line"><span class="class">   +0<span class="title">x000</span> <span class="title">ExceptionCode</span>    :</span> Int4B			<span class="comment">//异常代码</span></span><br><span class="line">   +<span class="number">0x004</span> ExceptionFlags   : Uint4B			<span class="comment">//异常标志</span></span><br><span class="line">   +<span class="number">0x008</span> ExceptionRecord  : Ptr32 _EXCEPTION_RECORD	<span class="comment">//相关的下一个异常</span></span><br><span class="line">   +<span class="number">0x00c</span> ExceptionAddress : Ptr32 Void			<span class="comment">//异常发生的地址</span></span><br><span class="line">   +<span class="number">0x010</span> NumberParameters : Uint4B			<span class="comment">//参数数组中的元素个数</span></span><br><span class="line">   +<span class="number">0x014</span> ExceptionInformation : [<span class="number">15</span>] Uint4B		<span class="comment">//参数数组</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="KOBJECTS"><a href="#KOBJECTS" class="headerlink" title="_KOBJECTS"></a>_KOBJECTS</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DISPATCHER_OBJECT_TYPE_MASK 0x7</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">KOBJECTS</span> &#123;</span></span><br><span class="line">    EventNotificationObject = <span class="number">0</span>,	<span class="comment">//通知类型对象</span></span><br><span class="line">    EventSynchronizationObject = <span class="number">1</span>,	<span class="comment">//事件同步对象</span></span><br><span class="line">    MutantObject = <span class="number">2</span>,</span><br><span class="line">    ProcessObject = <span class="number">3</span>,</span><br><span class="line">    QueueObject = <span class="number">4</span>,</span><br><span class="line">    SemaphoreObject = <span class="number">5</span>,</span><br><span class="line">    ThreadObject = <span class="number">6</span>,</span><br><span class="line">    Spare1Object = <span class="number">7</span>,</span><br><span class="line">    TimerNotificationObject = <span class="number">8</span>,</span><br><span class="line">    TimerSynchronizationObject = <span class="number">9</span>,</span><br><span class="line">    Spare2Object = <span class="number">10</span>,</span><br><span class="line">    Spare3Object = <span class="number">11</span>,</span><br><span class="line">    Spare4Object = <span class="number">12</span>,</span><br><span class="line">    Spare5Object = <span class="number">13</span>,</span><br><span class="line">    Spare6Object = <span class="number">14</span>,</span><br><span class="line">    Spare7Object = <span class="number">15</span>,</span><br><span class="line">    Spare8Object = <span class="number">16</span>,</span><br><span class="line">    Spare9Object = <span class="number">17</span>,</span><br><span class="line">    ApcObject,	<span class="comment">//18</span></span><br><span class="line">    DpcObject,	<span class="comment">//19</span></span><br><span class="line">    DeviceQueueObject,	<span class="comment">//20</span></span><br><span class="line">    EventPairObject,	<span class="comment">//21</span></span><br><span class="line">    InterruptObject,	<span class="comment">//22</span></span><br><span class="line">    ProfileObject	<span class="comment">//23</span></span><br><span class="line">    &#125; KOBJECTS;</span><br><span class="line"></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Enumerated kernel types</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// Kernel object types.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  N.B. There are really two types of event objects; NotificationEvent and</span></span><br><span class="line"><span class="comment">//       SynchronizationEvent. The type value for a notification event is 0,</span></span><br><span class="line"><span class="comment">//       and that for a synchronization event 1.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//  N.B. There are two types of new timer objects; NotificationTimer and</span></span><br><span class="line"><span class="comment">//       SynchronizationTimer. The type value for a notification timer is</span></span><br><span class="line"><span class="comment">//       8, and that for a synchronization timer is 9. These values are</span></span><br><span class="line"><span class="comment">//       very carefully chosen so that the dispatcher object type AND&#x27;ed</span></span><br><span class="line"><span class="comment">//       with 0x7 yields 0 or 1 for event objects and the timer objects.</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="ETHREAD-CrossThreadFlags"><a href="#ETHREAD-CrossThreadFlags" class="headerlink" title="ETHREAD.CrossThreadFlags"></a>ETHREAD.CrossThreadFlags</h3><p>CrossThreadFlags域是一些针对跨线程访问的标志位（《Windows内核原理与实现3.4 P128》），包括：</p>
+<ul>
+<li>Terminated（线程已执行终止操作）</li>
+<li>DeadThread（创建失败）</li>
+<li>HideFromDebugger（该线程对于调试器不可见）</li>
+<li>Activelmpersonationlnfo（线程正在模仿）</li>
+<li>SystemThread（是一个系统线程）</li>
+<li>HardErrorsAreDisabled（对于该线程，硬件错误无效）</li>
+<li>BreakOnTermination（调试器在线程终止时停下该线程，即要求退出进程时中断到调试器）</li>
+<li>SkipCreationMsg（不向调试器发送创建消息）</li>
+<li>SkipTerminationMsg（不向调试器发送终止消息）。</li>
+</ul>
+<p>在创建线程时，经常将CrossThreadFlags.SystemThread设置为1，来伪装成系统线程，这样普通线程就没有办法将自己Kill了。</p>
+<p>由定义可以知道，低1字节的8bit为常用位，其他高位为未定义或者不常用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line"></span><br><span class="line">  ULONG CrossThreadFlags;</span><br><span class="line">  <span class="comment">// The following fields are for the debugger only. Do not use.</span></span><br><span class="line">  <span class="comment">// Use the bit definitions instead.以下字段仅适用于调试器。不使用。请改用位定义。</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    ULONG Terminated              : <span class="number">1</span>;</span><br><span class="line">    ULONG DeadThread              : <span class="number">1</span>;</span><br><span class="line">    ULONG HideFromDebugger        : <span class="number">1</span>;</span><br><span class="line">    ULONG ActiveImpersonationInfo : <span class="number">1</span>;</span><br><span class="line">    ULONG SystemThread            : <span class="number">1</span>;</span><br><span class="line">    ULONG HardErrorsAreDisabled   : <span class="number">1</span>;</span><br><span class="line">    ULONG BreakOnTermination      : <span class="number">1</span>;</span><br><span class="line">    ULONG SkipCreationMsg         : <span class="number">1</span>;</span><br><span class="line">    ULONG SkipTerminationMsg      : <span class="number">1</span>;</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line">    ACCESS_MASK GrantedAccess;</span><br><span class="line">    <span class="comment">// Flags for cross thread access. Use interlocked operations</span></span><br><span class="line">    <span class="comment">// via PS_SET_BITS etc.</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Used to signify that the delete APC has been queued or the</span></span><br><span class="line">    <span class="comment">// thread has called PspExitThread itself.</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_TERMINATED           0x00000001UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Thread create failed</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_DEADTHREAD           0x00000002UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Debugger isn&#x27;t shown this thread</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_HIDEFROMDBG          0x00000004UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Thread is impersonating</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_IMPERSONATING        0x00000008UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// This is a system thread</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SYSTEM               0x00000010UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Hard errors are disabled for this thread</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_HARD_ERRORS_DISABLED 0x00000020UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// We should break in when this thread is terminated</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_BREAK_ON_TERMINATION 0x00000040UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// This thread should skip sending its create thread message</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SKIP_CREATION_MSG    0x00000080UL</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// This thread should skip sending its final thread termination message</span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PS_CROSS_THREAD_FLAGS_SKIP_TERMINATION_MSG 0x00000100UL</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="MmUserProbeAddress、MmHighestUserAddress"><a href="#MmUserProbeAddress、MmHighestUserAddress" class="headerlink" title="MmUserProbeAddress、MmHighestUserAddress"></a>MmUserProbeAddress、MmHighestUserAddress</h3><p><code>MmUserProbeAddress</code>是一个全局变量，指向一个划定用户空间和内核空间界限的地址。</p>
+<p>与该值的比较用于确定地址是指向用户空间还是内核空间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dd MmUserProbeAddress</span><br><span class="line"><span class="number">80563134</span>  <span class="number">7f</span>ff0000 <span class="number">80000000</span> <span class="number">7f</span>feffff <span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到<code>MmUserProbeAddress == 0x7fff0000</code>，则用户空间（3环）可以访问的最大地址是<code>0x7fff0000</code>。</p>
+<p>源码中有：<code>PreviousSuspendCount &gt;= MmUserProbeAddress</code>，就会<code>MmUserProbeAddress = NULL</code>。就会抛出异常，因为<code>NULL</code>地址不可写。实际上源码中用了<code>try-except</code>，源码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line"></span><br><span class="line">        Mode = KeGetPreviousMode();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> ( Mode != KernelMode ) &#123;</span><br><span class="line">            <span class="keyword">if</span> (ARGUMENT_PRESENT(PreviousSuspendCount)) &#123;</span><br><span class="line">                ProbeForWriteUlong(PreviousSuspendCount);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; except (EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> GetExceptionCode();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ARGUMENT_PRESENT(p) ((p) != NULL)</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ProbeForWriteUlong(Address) &#123;                                        </span></span><br><span class="line">    <span class="keyword">if</span> ((Address) &gt;= (ULONG * <span class="keyword">const</span>)MM_USER_PROBE_ADDRESS) &#123;                 </span><br><span class="line">        *(<span class="keyword">volatile</span> ULONG * <span class="keyword">const</span>)MM_USER_PROBE_ADDRESS = <span class="number">0</span>;                  </span><br><span class="line">    &#125;                                                                        </span><br><span class="line">                                                                             </span><br><span class="line">    *(<span class="keyword">volatile</span> ULONG *)(Address) = *(<span class="keyword">volatile</span> ULONG *)(Address);             </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，当<code>try</code>中的<code>ProbeForWriteUlong(PreviousSuspendCount)</code>执行到<code>*(volatile ULONG * const)MM_USER_PROBE_ADDRESS = 0</code>就会触发异常（因为NULL地址不可读写），然后执行<code>except</code>中的代码。</p>
+<div class="note success"><p>0环下大部分的<code>Nt-</code>函数都会对来自3环调用的参数进行检查，常用到<code>MmUserProbeAddress</code>。</p>
+</div>
+
+
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_HIGHEST_USER_ADDRESS *MmHighestUserAddress</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_SYSTEM_RANGE_START *MmSystemRangeStart</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_USER_PROBE_ADDRESS *MmUserProbeAddress</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PTE_BASE 0xc0000000</span></span><br><span class="line"></span><br><span class="line">MmHighestUserAddress = <span class="number">0x7ffeffff</span></span><br><span class="line">MmUserProbeAddress = <span class="number">0x7fff0000</span></span><br><span class="line">MmSystemRangeStart = <span class="number">0x80000000</span></span><br><span class="line">MmUserProbeAddress = MmHighestUserAddress + <span class="number">1</span>	</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>用户空间可以访问的最高地址是MmHighestUserAddress（<code>0x7ffeffff</code>），从MmUserProbeAddress（<code>0x7fff0000</code>）开始就不能访问了。一般文献中讲Windows系统中用户空间与系统空间的分界线是<code>0x80000000</code>，而这里之所以是<code>0x7fff0000</code>而不是<code>0x80000000</code>，是因为在分界下面留了64KB的空间不让访问，以此作为隔离区。（<code>64KB = 2^6*2^10</code>共16位）</p>
+</li>
+<li><p><code>MmUserProbeAddress</code>是一个界限，<strong>该地址不可用</strong>。</p>
+<ul>
+<li><mark class="label success">3环可用地址</mark><mark class="label danger"><=</mark><mark class="label success">MmHighestUserAddress</mark></li>
+<li><mark class="label success">3环可用地址</mark><mark class="label primary"><</mark><mark class="label success">MmUserProbeAddress</mark></li>
+</ul>
+</li>
+</ul>
+<p>这部分内容的讲解在《Windows内核情景分析5.2 P253》有、《Windows内核原理与实现4.2 P207》。</p>
+<h3 id="volatile类型修饰符"><a href="#volatile类型修饰符" class="headerlink" title="volatile类型修饰符"></a>volatile类型修饰符</h3><p>volatile关键字是一种类型修饰符。Volatile意思是“易变的”，应该解释为“直接存取原始内存地址”比较合适。这个关键词volatile总是与优化有关，多线程读取变量时也用到。</p>
+<p>使用<code>volatile</code>修饰的变量，在编译这样的变量时，编译器一般都会作减少存取内存的优化，但有可能会读脏数据。<strong>遇到这个关键字声明的变量，编译器对访问该变量的代码就不再进行优化，从而可以提供对特殊地址的稳定访问</strong>。</p>
+<p>但是也不能频繁的使用<code>volatile</code>，否则会影响程序运行的性能。具体可以参考<a target="_blank" rel="noopener" href="https://www.runoob.com/w3cnote/c-volatile-keyword.html">C&#x2F;C++ 中 volatile 关键字详解</a>。</p>
+<p>以下举个例子说明一下：</p>
+<ol>
+<li><p>不使用<code>volatile</code>时编译Release版本（vc6编译器）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> TestNum = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> temp = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">	TestNum = <span class="number">2</span>;</span><br><span class="line">	temp = TestNum;</span><br><span class="line">	TestNum = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Release版本编译代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00401000</span>	mov eax,dword ptr ds:[<span class="number">0x407034</span>]</span><br><span class="line"><span class="number">00401005</span>	mov dword ptr ds:[<span class="number">0x4098A8</span>],<span class="number">0x5</span></span><br><span class="line"><span class="number">0040100F</span>	dec eax                                  </span><br><span class="line"><span class="number">00401010</span>	mov dword ptr ds:[<span class="number">0x407034</span>],eax         </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>0x4098A8</code>即为变量TestNum的地址，由于源代码最后一次赋值是<code>TestNum = 5</code>，则代码<code>TestNum = 2</code>是无用的被优化了。</li>
+<li>代码<code>temp = TestNum</code>中，赋值后<code>temp</code>没有被用到，在代码中也被优化了。</li>
+</ul>
+</li>
+<li><p>使用<code>volatile</code>修饰变量时编译Release版本（vc6编译器）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">volatile</span> <span class="keyword">int</span> TestNum = <span class="number">0</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">int</span> temp = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">	TestNum = <span class="number">2</span>;</span><br><span class="line">	temp = TestNum;</span><br><span class="line">	TestNum = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Release版本编译代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">00401000</span>	mov dword ptr ds:[<span class="number">0x4098A8</span>],<span class="number">0x2</span></span><br><span class="line"><span class="number">0040100</span>A	mov eax,dword ptr ds:[<span class="number">0x4098A8</span>]</span><br><span class="line"><span class="number">0040100F</span>	mov dword ptr ds:[<span class="number">0x4098A8</span>],<span class="number">0x5</span></span><br><span class="line"><span class="number">00401019</span>	mov eax,dword ptr ds:[<span class="number">0x407034</span>]</span><br><span class="line"><span class="number">0040101</span>E	dec eax                                  </span><br><span class="line"><span class="number">0040101F</span>	mov dword ptr ds:[<span class="number">0x407034</span>],eax         </span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，两次对<code>TestNum</code>的赋值都没有被优化，对于取地址<code>0x4098A8</code>中的值给<code>temp</code>赋值的代码也没有优化。</p>
+</li>
+</ol>
+<h3 id="ExAcquireRundownProtection"><a href="#ExAcquireRundownProtection" class="headerlink" title="ExAcquireRundownProtection"></a>ExAcquireRundownProtection</h3><p><code>ExAcquireRundownProtection</code>函数：尝试获取共享对象的运行保护，以便调用方可以安全地访问该对象。</p>
+<p><strong>当运行保护生效时，驱动程序可以安全地访问对象，而不会有在访问完成之前删除该对象的风险。</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTKERNELAPI BOOLEAN FASTCALL <span class="title">ExAcquireRundownProtection</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">     IN PEX_RUNDOWN_REF RunRef	<span class="comment">//跟踪关联的共享对象的运行状态</span></span></span></span><br><span class="line"><span class="function"><span class="params">     )</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>参数<code>RunRef</code>：指向先前对 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-exinitializerundownprotection">ExInitializeRundownProtection</a> 例程的调用初始化<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/kernel/eprocess">的EX_RUNDOWN_REF</a>结构的指针。 运行保护例程使用此结构来跟踪关联的共享对象的运行状态。 此结构对驱动程序不透明。</li>
+<li>返回值：如果例程成功获取调用方的运行保护，<strong>ExAcquireRundownProtection</strong> 将返回 <strong>TRUE</strong>。 否则，它将返回 <strong>FALSE</strong>。 <strong>FALSE</strong> 的返回值指示对象的运行已启动，并且该对象必须被视为无效，不可再访问该对象。</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/kernel/run-down-protection"><strong>停止运行保护</strong></a>（Run-Down Protection）：从 Windows XP 开始，内核驱动就支持停运保护机制。驱动通过停运机制可以<strong>安全地</strong>访问在系统内存中的对象，通常这些对象是由其他内核驱动创建和销毁的。</p>
+<div class="note info"><p>拥有共享对象的驱动程序可以允许其他驱动程序获取和释放对象的运行时保护。 <strong>当停运保护生效时，除对象的所有者外，其他驱动可以访问该对象而不用担心在访问结束前该对象会被其所有者删除</strong>。在访问开始之前，要访问的驱动会提出对目标对象实施停运保护的请求。对于一个存活周期较长的对象来说，这类请求几乎都是被允许的。当访问结束时，执行访问的驱动会卸除之前对对象实施的停运保护。</p>
+</div>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/liaoguifa/p/9670868.html">同步下的资源互斥：停运保护（Run-Down Protection）机制</a>。</p>
+<h3 id="KPROCESS-STATE"><a href="#KPROCESS-STATE" class="headerlink" title="_KPROCESS_STATE"></a>_KPROCESS_STATE</h3><p><code>_KPROCESS_STATE</code>：表示进程当前的状态，共有以下5种。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">KPROCESS_STATE</span> &#123;</span></span><br><span class="line">    ProcessInMemory,		<span class="comment">//0，表示进程的虚拟地址空间内容在物理内存中</span></span><br><span class="line">    ProcessOutOfMemory,		<span class="comment">//1，表示进程的虚拟地址空间内容已被换出物理内存</span></span><br><span class="line">    ProcessInTransition,	<span class="comment">//2，表示进程的虚拟地址空间内容不在物理内存中，但已请求换入</span></span><br><span class="line">    ProcessOutTransition,	<span class="comment">//3，表示进程的虚拟地址空间内容存在于物理内存中，但已请求换出</span></span><br><span class="line">    ProcessInSwap,		<span class="comment">//4，表示正在将进程的虚拟地址空间内容换入物理内存，换入完成后，状态将变更为 ProcessInMemory</span></span><br><span class="line">    ProcessOutSwap		<span class="comment">//5，表示正在将进程的虚拟地址空间内容换出物理内存，换出完成后，状态将变更为 ProcessOutOfMemory</span></span><br><span class="line">    &#125; KPROCESS_STATE;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Process State Enumerated Type Values</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ProcessInMemory 0x0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ProcessOutOfMemory 0x1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ProcessInTransition 0x2</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>可参考<a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000012550584">Windows线程调度学习（一）</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34355715/article/details/88922189">Windows线程调度学习（一）</a>、<a target="_blank" rel="noopener" href="https://www.ucloud.cn/yun/61190.html">Windows线程调度学习（一）</a></p>
+<h3 id="KTHREAD-STATE"><a href="#KTHREAD-STATE" class="headerlink" title="_KTHREAD_STATE"></a>_KTHREAD_STATE</h3><p><code>_KTHREAD_STATE</code>：表示线程<strong>当前的调度状态</strong>。</p>
+<p>共有以下7种（WRK有9种）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">KTHREAD_STATE</span> &#123;</span></span><br><span class="line">    Initialized,	</span><br><span class="line">    Ready,</span><br><span class="line">    Running,</span><br><span class="line">    Standby,</span><br><span class="line">    Terminated,</span><br><span class="line">    Waiting,</span><br><span class="line">    Transition</span><br><span class="line">    &#125; KTHREAD_STATE;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Thread State Enumerated Type Values</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Initialized 0x0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Ready 0x1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Running 0x2</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Standby 0x3</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Terminated 0x4</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> Waiting 0x5</span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center">状态</th>
+<th align="center">枚举值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><strong>Initialized</strong></td>
+<td align="center">0</td>
+<td>已初始化（Initialized）：说明一个线程对象的内部状态已经初始化，这是线程创建过程中的一个内部状态，此时线程尚未加入到进程的线程链表中，也没有启动。</td>
+</tr>
+<tr>
+<td align="center"><strong>Ready</strong></td>
+<td align="center">1</td>
+<td>就绪（Ready）：代表该线程已经准备就绪，等待被调度执行。当线程调度器选择一个线程来执行时，它只考虑处于就绪状态的线程。此时，线程已被加入到某个处理器的就绪线程链表中。</td>
+</tr>
+<tr>
+<td align="center"><strong>Running</strong></td>
+<td align="center">2</td>
+<td>运行（Running）：线程正在运行。该线程一直占有处理器，直至分到的时限结束，或者被一个更高优先级的线程抢占，或者线程终止，或者主动放弃处理器执行权，或者进入等待状态。</td>
+</tr>
+<tr>
+<td align="center"><strong>Standby</strong></td>
+<td align="center">3</td>
+<td>备用（Standby）：处于备用状态的线程已经被选中作为某个处理器上下一个要运行的线程。对于系统中的每个处理器，只能有一个线程可以处于备用状态。然而，一个处于备用状态的线程在真正被执行以前，有可能被更高优先级的线程抢占。</td>
+</tr>
+<tr>
+<td align="center"><strong>Terminated</strong></td>
+<td align="center">4</td>
+<td>已终止（Terminated）：表示线程已经完成任务，正在进行资源回收。KeTerminateThread&#96;&#96;函数用于设置此状态。</td>
+</tr>
+<tr>
+<td align="center"><strong>Waiting</strong></td>
+<td align="center">5</td>
+<td>等待（Waiting）：表示一个线程正在等待某个条件，比如等待一个分发器对象变成有信号状态，也可以等待多个对象。当等待的条件满足时，线程或者立即开始运行，或者回到就绪状态。</td>
+</tr>
+<tr>
+<td align="center"><strong>Transition</strong></td>
+<td align="center">6</td>
+<td>转移（Transition）：处于转移状态的线程已经准备好运行，但是它的内核栈不在内存中。一旦它的内核栈被换人内存，则该线程进入就绪状态。</td>
+</tr>
+<tr>
+<td align="center">DeferredReady</td>
+<td align="center">7</td>
+<td>延迟的就绪（DeferredReady）：处于延迟的就绪状态的线程也已经准备好可以运行了，但是，与就绪状态不同的是，它尚未确定在哪个处理器上运行。当有机会被调度时，或者直接转人备用状态，或者转到就绪状态。因此，此状态是为了多处理器而引入的，对于单处理器系统没有意义。（WRK中）</td>
+</tr>
+<tr>
+<td align="center">GateWait</td>
+<td align="center">8</td>
+<td>门等待（GateWait）：线程正在等待一个门对象。此状态与等待状态类似，只不过它是专门针对门对象而设计。关于门对象和门等待，请参考5.4.3节。（WRK中）</td>
+</tr>
+</tbody></table>
+<p>与传统的操作系统中的调度状态相比，这里可能多了后三个状态。这些状态之间的转移图并不复杂，图3.5显示了WRK中的线程状态转移图。</p>
+<p><img data-src="https://s2.loli.net/2022/06/19/EwzHdIBFCSaOmJT.png" alt="1.png"></p>
+<p>可参考：</p>
+<ul>
+<li>《Windows内核原理与实现3.5.2 P153》</li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000012550584">Windows线程调度学习（一）</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_34355715/article/details/88922189">Windows线程调度学习（一）</a>、<a target="_blank" rel="noopener" href="https://www.ucloud.cn/yun/61190.html">Windows线程调度学习（一）</a></li>
+</ul>
+<h3 id="CMPXCHG"><a href="#CMPXCHG" class="headerlink" title="CMPXCHG"></a>CMPXCHG</h3><p><a target="_blank" rel="noopener" href="https://www.felixcloutier.com/x86/cmpxchg">关于指令<code>cmpxchg</code></a>：</p>
+<table>
+<thead>
+<tr>
+<th>Opcode&#x2F;Instruction</th>
+<th>Op&#x2F;En</th>
+<th>64-Bit Mode</th>
+<th>Compat&#x2F;Leg Mode</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0F B1&#x2F;<em>r</em> CMPXCHG <em>r&#x2F;m32, r32</em></td>
+<td>MR</td>
+<td>Valid</td>
+<td>Valid*</td>
+<td align="left"><strong>CMPXCHG <em>r&#x2F;m32, r32</em></strong><br />Compare EAX with <em>r&#x2F;m32</em>. If equal, ZF is set and <em>r32</em> is loaded into <em>r&#x2F;m32</em>. Else, clear ZF and load <em>r&#x2F;m32</em> into EAX.</td>
+</tr>
+</tbody></table>
+<h3 id="ProbeForRead"><a href="#ProbeForRead" class="headerlink" title="ProbeForRead"></a>ProbeForRead</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTKERNELAPI VOID NTAPI <span class="title">ProbeForRead</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN CONST VOID *Address,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T Length,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN ULONG Alignment</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function probes a structure for read accessibility and ensures</span></span></span><br><span class="line"><span class="function"><span class="comment">    correct alignment of the structure. If the structure is not accessible</span></span></span><br><span class="line"><span class="function"><span class="comment">    or has incorrect alignment, then an exception is raised.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments:</span></span></span><br><span class="line"><span class="function"><span class="comment">    Address - Supplies a pointer to the structure to be probed.</span></span></span><br><span class="line"><span class="function"><span class="comment">    Length - Supplies the length of the structure.</span></span></span><br><span class="line"><span class="function"><span class="comment">    Alignment - Supplies the required alignment of the structure expressed</span></span></span><br><span class="line"><span class="function"><span class="comment">        as the number of bytes in the primitive datatype (e.g., 1 for char,</span></span></span><br><span class="line"><span class="function"><span class="comment">        2 for short, 4 for long, and 8 for quad).</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: None.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PAGED_CODE();</span><br><span class="line"></span><br><span class="line">    ASSERT(((Alignment) == <span class="number">1</span>) || ((Alignment) == <span class="number">2</span>) ||</span><br><span class="line">           ((Alignment) == <span class="number">4</span>) || ((Alignment) == <span class="number">8</span>) ||</span><br><span class="line">           ((Alignment) == <span class="number">16</span>));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> ((Length) != <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (((ULONG_PTR)(Address) &amp; ((Alignment) - <span class="number">1</span>)) != <span class="number">0</span>) &#123;</span><br><span class="line">            ExRaiseDatatypeMisalignment();</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> ((((ULONG_PTR)(Address) + (Length)) &lt; (ULONG_PTR)(Address)) ||</span><br><span class="line">                   (((ULONG_PTR)(Address) + (Length)) &gt; (ULONG_PTR)MM_USER_PROBE_ADDRESS)) &#123;</span><br><span class="line">            ExRaiseAccessViolation();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="ProbeForWrite"><a href="#ProbeForWrite" class="headerlink" title="ProbeForWrite"></a>ProbeForWrite</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">ProbeForWrite</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Address,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T Length,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN ULONG Alignment</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function probes a structure for write accessibility and ensures</span></span></span><br><span class="line"><span class="function"><span class="comment">    correct alignment of the structure. If the structure is not accessible</span></span></span><br><span class="line"><span class="function"><span class="comment">    or has incorrect alignment, then an exception is raised.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments:</span></span></span><br><span class="line"><span class="function"><span class="comment">    Address - Supplies a pointer to the structure to be probed.</span></span></span><br><span class="line"><span class="function"><span class="comment">    Length - Supplies the length of the structure.</span></span></span><br><span class="line"><span class="function"><span class="comment">    Alignment - Supplies the required alignment of the structure expressed</span></span></span><br><span class="line"><span class="function"><span class="comment">        as the number of bytes in the primitive datatype (e.g., 1 for char,</span></span></span><br><span class="line"><span class="function"><span class="comment">        2 for short, 4 for long, and 8 for quad).</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: None.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ULONG_PTR EndAddress;</span><br><span class="line">    ULONG_PTR StartAddress;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(_WIN64)</span></span><br><span class="line">    ULONG_PTR PageSize;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    <span class="meta">#<span class="meta-keyword">define</span> PageSize  PAGE_SIZE</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// If the structure has zero length, then do not probe the structure for write accessibility or alignment.</span></span><br><span class="line">    <span class="keyword">if</span> (Length != <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// If the structure is not properly aligned, then raise a data misalignment exception.</span></span><br><span class="line">        ASSERT((Alignment == <span class="number">1</span>) || (Alignment == <span class="number">2</span>) ||</span><br><span class="line">               (Alignment == <span class="number">4</span>) || (Alignment == <span class="number">8</span>) ||</span><br><span class="line">               (Alignment == <span class="number">16</span>));</span><br><span class="line"></span><br><span class="line">        StartAddress = (ULONG_PTR)Address;</span><br><span class="line">        <span class="keyword">if</span> ((StartAddress &amp; (Alignment - <span class="number">1</span>)) == <span class="number">0</span>) &#123;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Compute the ending address of the structure and probe for</span></span><br><span class="line">            <span class="comment">// write accessibility.</span></span><br><span class="line">            EndAddress = StartAddress + Length - <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> ((StartAddress &lt;= EndAddress) &amp;&amp;</span><br><span class="line">                (EndAddress &lt; MM_USER_PROBE_ADDRESS)) &#123;</span><br><span class="line"></span><br><span class="line">                <span class="comment">// N.B. Only the contents of the buffer may be probed.</span></span><br><span class="line">                <span class="comment">//      Therefore the starting byte is probed for the</span></span><br><span class="line">                <span class="comment">//      first page, and then the first byte in the page</span></span><br><span class="line">                <span class="comment">//      for each succeeding page.</span></span><br><span class="line">              </span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(_WIN64)</span></span><br><span class="line">                <span class="comment">//</span></span><br><span class="line">                <span class="comment">// If this is a Wow64 process, then the native page is 4K, which</span></span><br><span class="line">                <span class="comment">// could be smaller than the native page size/</span></span><br><span class="line">                <span class="keyword">if</span> (PsGetCurrentProcess()-&gt;Wow64Process != <span class="literal">NULL</span>) &#123;</span><br><span class="line">                    PageSize = PAGE_SIZE_X86NT;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    PageSize = PAGE_SIZE;</span><br><span class="line">                &#125;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">                EndAddress = (EndAddress &amp; ~(PageSize - <span class="number">1</span>)) + PageSize;</span><br><span class="line">                <span class="keyword">do</span> &#123;</span><br><span class="line">                    *(<span class="keyword">volatile</span> CHAR *)StartAddress = *(<span class="keyword">volatile</span> CHAR *)StartAddress;</span><br><span class="line"></span><br><span class="line">                    StartAddress = (StartAddress &amp; ~(PageSize - <span class="number">1</span>)) + PageSize;</span><br><span class="line">                &#125; <span class="keyword">while</span> (StartAddress != EndAddress);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                ExRaiseAccessViolation();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            ExRaiseDatatypeMisalignment();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="neg、sbb"><a href="#neg、sbb" class="headerlink" title="neg、sbb"></a>neg、sbb</h3><p>neg和sbb指令来判断函数返回值是0还是非0。</p>
+<p>NEG、SBB 指令在Intel手册2b中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">NEG DEST;	<span class="comment">// DEST = r/m8, r/m16, r/m32, r/m64</span></span><br><span class="line"><span class="comment">// Description</span></span><br><span class="line">IF DEST = <span class="number">0</span></span><br><span class="line">  THEN CF &lt;- <span class="number">0</span>;</span><br><span class="line">  ELSE CF &lt;- <span class="number">1</span>;</span><br><span class="line">FI;</span><br><span class="line">DEST &lt;- [-(DEST)]</span><br><span class="line">  </span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">neg X：对 X 求补 == 对 X 求反+1 == 求一个数的相反数</span></span><br><span class="line"><span class="comment">not X：对 X 求反</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">neg X：</span></span><br><span class="line"><span class="comment">    X == 0，CF = 0</span></span><br><span class="line"><span class="comment">    X != 0，CF = 1</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">  </span><br><span class="line">SBB DEST, SRC;</span><br><span class="line"><span class="comment">// Description</span></span><br><span class="line">DEST &lt;- (DEST-SRC-CF);</span><br></pre></td></tr></table></figure>
+
+
+
+<p>故常有这样的用法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">neg eax;</span><br><span class="line">sbb eax, eax;</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>eax == 0</code>，那么sbb之后eax的结果还是0。</p>
+<p>如果<code>eax != 0</code>，那么sbb之后eax的结果是<code>0xFFFFFFFF</code>。</p>
+<h3 id="地址对齐-X-3-amp-3"><a href="#地址对齐-X-3-amp-3" class="headerlink" title="地址对齐 (X+3)&amp;~3"></a>地址对齐 (X+3)&amp;~3</h3><p>在内核中，经常会判断3环的一个指针是否已经4字节对齐，也常会配合<code>ProbeForRead</code>、<code>ProbeForWrite</code>一起使用。</p>
+<p>4字节对齐的用法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">(pAddr + <span class="number">3</span>) &amp;= (~<span class="number">3</span>);	<span class="comment">//对 pAddr 向上对齐。~ 是按位取反</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//如果对齐前 pAddr == 123，对齐后 pAddr == 124</span></span><br><span class="line"><span class="comment">//如果对齐前 pAddr == 125，对齐后 pAddr == 128</span></span><br></pre></td></tr></table></figure>
+
+<p>如果判断一个地址是否已经4字节对齐：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(pAddr &amp; (~<span class="number">3</span>))</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//没有4字节对齐</span></span><br><span class="line">&#125;<span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">//已经4字节对齐</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h3 id="movsb、movsw、movsd"><a href="#movsb、movsw、movsd" class="headerlink" title="movsb、movsw、movsd"></a>movsb、movsw、movsd</h3><p>数据传送指令，将 <code>ESI</code> 地址指向的内容复制到 <code>EDI</code> 指向的地址中。</p>
+<p>CF位决定传输方向：</p>
+<ul>
+<li>当<code>DF = 0</code> 时，表示正向传送，传送之后<code>ESI</code>和<code>EDI</code>的值会增加。</li>
+<li>当<code>DF = 1</code> 时，表示反向传送，传送之后<code>ESI</code>和<code>EDI</code>的值会减小。</li>
+</ul>
+<p><code>MOVSB</code>：传送一个字节，之后<code>ESI</code>和<code>EDI</code>加&#x2F;减<code>1</code><br><code>MOVSW</code>：传送一个字，之后<code>ESI</code>和<code>EDI</code>加&#x2F;减<code>2</code><br><code>MOVSD</code>：传送一个双字，之后<code>ESI</code>和<code>EDI</code>加&#x2F;减<code>4</code></p>
+<h3 id="stosb、stosw、stosd"><a href="#stosb、stosw、stosd" class="headerlink" title="stosb、stosw、stosd"></a>stosb、stosw、stosd</h3><p>这三个指令把<code>al/ ax/ eax</code><strong>的内容</strong>复制到<code>EDI</code>指向的内存单元中。</p>
+<p><code>DF</code>位影响<code>EDI</code>的加减。</p>
+<h3 id="CLC、CLD指令"><a href="#CLC、CLD指令" class="headerlink" title="CLC、CLD指令"></a>CLC、CLD指令</h3><p>CLC：Clears the CF flag in the EFLAGS register.</p>
+<p>CLD：Clears the DF flag in the EFLAGS register.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">clc;	<span class="comment">//CF = 0</span></span><br><span class="line">cld;	<span class="comment">//DF = 0</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+<h3 id="BT系列指令"><a href="#BT系列指令" class="headerlink" title="BT系列指令"></a>BT系列指令</h3><p><strong>BT系列指令</strong>：位测试和设置指令。</p>
+<ol>
+<li>按照源操作指定的位号（最低位下标为0），测试目的操作数指定的位，并将被测试位拷贝复制到EFLAG得CF。</li>
+<li>操作目的操作数指定的位。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>含义</th>
+<th>实例测试</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BT DEST，SRC</td>
+<td>将 SRC 指定的 DEST 中一位的数值复制到 CF。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>bt ax,0x7;</code><br />BT执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BT执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>bt ax,0x7;</code><br />BT执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BT执行后：EAX &#x3D; 0x101，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+<tr>
+<td>BTS DEST，SRC</td>
+<td>BTS 将 SRC 指定的 DEST 中一位的数值复制到 CF，且将 DEST 中该位置位。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>bts ax,0x7;</code><br />BTS执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTS执行后：EAX &#x3D; 0x1<strong>8</strong>1，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>bts ax,0x7;</code><br />BTS执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTS执行后：EAX &#x3D; 0x181，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+<tr>
+<td>BTC DEST，SRC</td>
+<td>BTC 将 SRC 指定的 DEST  中一位的数值复制到 CF，且将 DEST 中该位取反。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>btc ax,0x7;</code><br />BTC执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTC执行后：EAX &#x3D; 0x1<strong>8</strong>1，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>btc ax,0x7;</code><br />BTC执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTC执行后：EAX &#x3D; 0x1<strong>0</strong>1，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+<tr>
+<td>BTR DEST，SRC</td>
+<td>BTR将 SRC 指定的 DEST 中一位的数值复制到 CF，且将 DEST中该位复位。</td>
+<td><code>mov ax, 1 0000 0001b;</code><br /><code>btr ax,0x7;</code><br />BTR执行前：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTR执行后：EAX &#x3D; 0x101，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br /><br /><code>mov ax, 1 1000 0001b;</code><br /><code>btr ax,0x7;</code><br />BTR执行前：EAX &#x3D; 0x181，EFLAG &#x3D; 0x206，CF &#x3D; 0。<br />BTR执行后：EAX &#x3D; 0x1<strong>0</strong>1，EFLAG &#x3D; 0x20<strong>7</strong>，<strong>CF &#x3D; 1</strong>。</td>
+</tr>
+</tbody></table>
+<h3 id="JCC寄存器位"><a href="#JCC寄存器位" class="headerlink" title="JCC寄存器位"></a>JCC寄存器位</h3><p>EFLAG寄存器（Intel 64 and IA-32 Architectures Software Developer’s Manual <strong>Volume 1:Basic Architecture 3.4.3</strong>），具体可参看该章节和文章<a target="_blank" rel="noopener" href="https://blog.csdn.net/jn1158359135/article/details/7761011">x86—EFLAGS寄存器详解</a>。</p>
+<p><img data-src="https://s2.loli.net/2022/04/26/cXUCSzfnvjFPa53.png" alt="1.png"></p>
+<p><img data-src="https://s2.loli.net/2022/04/26/yu9bSLtdi64NehB.png" alt="2.png"></p>
+<h3 id="变址寻址"><a href="#变址寻址" class="headerlink" title="变址寻址"></a>变址寻址</h3><p>$Imm[r_b,r_i,s] &#x3D; Imm + r_b + r_i*s$</p>
+<ol>
+<li>立即数偏移 $Imm$</li>
+<li>基址寄存器$r_b$</li>
+<li>变址寄存器$r_i$</li>
+<li>比例因子$s$</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lea  esi, ds:<span class="number">14</span>h[<span class="number">10</span>*<span class="number">4</span>]	<span class="comment">//esi = 0x54</span></span><br></pre></td></tr></table></figure>
+
+<p>此时的 esi 已经是一个地址了。<code>lea</code> 最重要的就是说明：<strong>目的寄存器已经是一个地址了</strong>。</p>
+<h3 id="MOVZ-x2F-MOVS"><a href="#MOVZ-x2F-MOVS" class="headerlink" title="MOVZ&#x2F;MOVS"></a>MOVZ&#x2F;MOVS</h3><p>这两类指令将较小的源值复制到较大的目的时使用，这两类指令都把源（在寄存器或内存中）复制到<strong>目的寄存器</strong>。上面的<code>movl</code>指令以寄存器为目的时，会将目的寄存器的高32位都置0。《<a target="_blank" rel="noopener" href="https://catecat.top/post/cssapp_notes-1-2-3/">CS:APP 深入理解计算机系统读书笔记</a>》</p>
+<ul>
+<li><span id="jumpz"><mark class="label warning">MOVZ</mark><mark class="label primary">将目的寄存器的剩余的字节填充为0</mark></span><mark class="label success">用于无符号数的扩展</mark></li>
+<li><span id="jumps"><mark class="label success">MOVS</mark><mark class="label primary">通过符号扩展来填充，将目的寄存器的剩余的字节填充为源寄存器的最高位</mark></span><mark class="label success">用于有符号数的扩展</mark></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-Struct/" title="WinXP 结构&#x2F;指令查询">https://directoree.github.io/post/WinXP-Struct/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Exception2/" rel="prev" title="Windows XP 异常处理（二）">
+                  <i class="fa fa-chevron-left"></i> Windows XP 异常处理（二）
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">21:55</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXP-Struct/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

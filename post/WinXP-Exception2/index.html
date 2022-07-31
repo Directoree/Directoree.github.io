@@ -33,8 +33,12 @@
 <meta property="og:image" content="https://s2.loli.net/2022/07/26/3kRs7cFdzXH4UOA.png">
 <meta property="og:image" content="https://s2.loli.net/2022/07/26/ATe4VUPqpW2rlRd.png">
 <meta property="og:image" content="https://s2.loli.net/2022/07/27/upWZj53SlhsKNBQ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/30/opgN4syDPQKeAEq.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/31/8yCiHToczUY64xv.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/27/upWZj53SlhsKNBQ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/31/QkBmbHvYWw7lzcS.png">
 <meta property="article:published_time" content="2022-07-23T13:29:37.000Z">
-<meta property="article:modified_time" content="2022-07-28T15:32:23.938Z">
+<meta property="article:modified_time" content="2022-07-31T10:42:03.050Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="异常处理">
@@ -236,7 +240,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">1 内核异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-KiDispatchException%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8"><span class="nav-text">1.1 KiDispatchException内核异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-RtlDispatchException%E5%A4%84%E7%90%86"><span class="nav-text">1.2 RtlDispatchException处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">2 用户异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-KiDispatchException%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8"><span class="nav-text">2.1 KiDispatchException用户异常</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">1 内核异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-KiDispatchException%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8"><span class="nav-text">1.1 KiDispatchException内核异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-RtlDispatchException%E5%A4%84%E7%90%86"><span class="nav-text">1.2 RtlDispatchException处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">2 用户异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-KiDispatchException%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8"><span class="nav-text">2.1 KiDispatchException用户异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-KiUserExceptionDispatcher"><span class="nav-text">2.2 KiUserExceptionDispatcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-RtlDispatchException"><span class="nav-text">2.3 RtlDispatchException</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-VEH%E4%B8%8ESEH"><span class="nav-text">2.4 VEH与SEH</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-VEH"><span class="nav-text">3 VEH</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-RtlpCalloutEntryList"><span class="nav-text">3.1 RtlpCalloutEntryList</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E7%BB%83%E4%B9%A0%EF%BC%9A%E6%8F%92%E5%85%A5VEH%E8%A7%A3%E5%86%B3%E9%99%A4%E9%9B%B6%E5%BC%82%E5%B8%B8"><span class="nav-text">3.2 练习：插入VEH解决除零异常</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -252,7 +256,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">121</span>
+          <span class="site-state-item-count">122</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -360,7 +364,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-07-28 23:32:23" itemprop="dateModified" datetime="2022-07-28T23:32:23+08:00">2022-07-28</time>
+        <time title="修改时间：2022-07-31 18:42:03" itemprop="dateModified" datetime="2022-07-31T18:42:03+08:00">2022-07-31</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -405,14 +409,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.7k</span>
+      <span>7.9k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -457,49 +461,86 @@
 
 
 <h2 id="2-用户异常分发"><a href="#2-用户异常分发" class="headerlink" title="2 用户异常分发"></a>2 用户异常分发</h2><p>异常如果发生在内核层，处理起来比较简单，因为异常处理函数也在0环，不用切换堆栈，但是如果异常发生在3环，就意味着必须要切换堆栈，回到3环执行处理函数。<br>切换堆栈的处理方式与用户APC的执行过程几乎是一样的，惟一的区别就是执行用户APC时返回3环后执行的函数<code>KiUserApcDispatcher</code>，而异常处理时返回3环后执行的函数是<code>KiUserExceptionDispatcher</code>。</p>
-<h3 id="2-1-KiDispatchException用户异常"><a href="#2-1-KiDispatchException用户异常" class="headerlink" title="2.1 KiDispatchException用户异常"></a>2.1 KiDispatchException用户异常</h3><div class="note success"><p>KiDispatchException函数内核处理部分流程总结：<br>①  将Trap_Frame备份到ContextFrame为返回3环做准备。<br>②  判断先前模式，0是内核调用、1是用户层调。<br>③  用户调用，判断是否是第一次机会。<br>④  第一次机会，判断是否有内核调试器。<br>⑤  如果有内核调试器，且DebugPort &#x3D;&#x3D; 0，就调用KiDebugRoutine进行内核调试。<br>⑥ 如果没有内核调试器，或者内核调试器没有处理异常，则使用DbgkForwardException函数将异常发送给3环调试器（调试器在0环处理）。</p>
-<p>⑦  如果3环调试器没有处理这个异常 ，则给返回3环做准备工作：</p>
+<h3 id="2-1-KiDispatchException用户异常"><a href="#2-1-KiDispatchException用户异常" class="headerlink" title="2.1 KiDispatchException用户异常"></a>2.1 KiDispatchException用户异常</h3><div class="note success"><p>KiDispatchException函数内核处理部分流程总结：<br>①  将Trap_Frame备份到ContextFrame为返回3环做准备。<br>②  判断先前模式，0是内核调用、1是用户层调。<br>③  用户调用，判断是否是第一次机会。<br>④  第一次机会，判断是否有内核调试器。<br>⑤  如果有内核调试器，且DebugPort &#x3D;&#x3D; 0，就调用KiDebugRoutine进行内核调试。<br>⑥ 如果没有内核调试器，或者内核调试器没有处理异常，则使用DbgkForwardException函数将异常发送给进程调试器（调试器在0环处理）。</p>
+<p>⑦  如果进程调试器没有处理这个异常 ，则给返回3环做准备工作：</p>
 <ol>
-<li>将在RtlRaiseException中的EXCEPTION_RECORD所有数据拷贝到3环KiUserExceptionDispatcher函数堆栈（拷贝之前验证3环地址ProbeForWrite，内核地址无需调用ProbeForWrite）；</li>
+<li>将在NT!RtlRaiseException中的EXCEPTION_RECORD所有数据拷贝到3环KiUserExceptionDispatcher函数堆栈（拷贝之前验证3环地址ProbeForWrite，内核地址无需调用ProbeForWrite）；</li>
 <li>紧接着将在KiDispatchException中的ContextFrame数据拷贝到3环KiUserExceptionDispatcher函数堆栈（拷贝之前验证3环地址ProbeForWrite）；</li>
 <li>紧接着将3环的EXCEPTION_RECORD、ContextFrame地址放到KiUserExceptionDispatcher函数栈顶。</li>
-<li>修正EIP3为KiUserExceptionDispatcher；</li>
+<li>修正KTRAP_FRAME.HardwareEsp &#x3D; esp3，并修正Eip3为KiUserExceptionDispatcher；</li>
 </ol>
 <p>⑧  KiDispatchException函数执行结束，从当前函数进行返回，CPU异常与模拟异常返回地点不同：</p>
 <ul>
-<li>CPU异常：CPU检测到异常 --&gt; 查IDT执行处理函数 --&gt; CommonDispatchException。<br>    则 KiDispatchException 通过<strong>IRETD</strong>返回3环。</li>
-<li>模拟异常：CxxThrowException --&gt; RaiseException --&gt; RtlRaiseException --&gt; NT!NtRaiseException --&gt; NT!KiRaiseException 。<br>    则 KiDispatchException 通过<strong>系统调用</strong>返回3环 。</li>
+<li>CPU异常：CPU检测到异常 --&gt; 查IDT执行处理函数 --&gt; CommonDispatchException --&gt; KiDispatchException。<br>    则 KiDispatchException 通过<mark class="label default">IRETD</mark>返回3环。</li>
+<li>模拟异常：CxxThrowException --&gt; RaiseException --&gt; RtlRaiseException --&gt; NT!NtRaiseException --&gt; NT!KiRaiseException --&gt;  KiDispatchException。<br>    则 KiDispatchException 通过<mark class="label danger">系统调用</mark>返回3环 。</li>
 </ul>
 <p>⑨  无论通过那种方式，但线程再次回到3环时，将执行 KiUserExceptionDispatcher 函数。</p>
 <p>第二次异常处理是从3环又返回0环才处理，这里先不讲。</p>
 </div>
 
+<h3 id="2-2-KiUserExceptionDispatcher"><a href="#2-2-KiUserExceptionDispatcher" class="headerlink" title="2.2 KiUserExceptionDispatcher"></a>2.2 KiUserExceptionDispatcher</h3><p>该函数主要功能如下：</p>
+<ol>
+<li><p>调用 <code>RtlDispatchException</code>  查找并执行异常处理函数。</p>
+</li>
+<li><p>如果 <code>RtlDispatchException</code> 返回<code>TRUE</code>，调用 <code>ZwContinue</code> 再次进入0环，但线程再次返回3环时，从 <code>CONTETX.Eip</code> 开始执行。</p>
+</li>
+<li><p>如果 <code>RtlDispatchException</code> 返回<code>FALSE</code>，调用 <code>ZwRaiseException  </code>进行<strong>第二轮异常分发</strong>。</p>
+</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2022/07/30/opgN4syDPQKeAEq.png" alt="17.png"></p>
+<h3 id="2-3-RtlDispatchException"><a href="#2-3-RtlDispatchException" class="headerlink" title="2.3 RtlDispatchException"></a>2.3 RtlDispatchException</h3><ol>
+<li><code>RtlDispatchException</code>函数会调用<code>RtlCallVectoredExceptionHandlers</code>函数<strong>处理 VEH</strong>。</li>
+<li>如果在 VEH 中没有处理异常，则会调用 <code>RtlpGetRegistrationHead</code> 获取 <code>FS:[0]</code> 后，调用 <code>RtlpExecuteHandlerForException</code> <strong>处理 SEH</strong>。</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2022/07/31/8yCiHToczUY64xv.png" alt="18.png"></p>
+<p>由图，处理用户异常的<code>RtlDispatchException</code>要多调用一个<strong>函数RtlCallVectoredExceptionHandlers</strong>。这个函数的<strong>作用就是在VEH链表中遍历，以便寻找对应的异常处理函数</strong>。（从Windows XP开始）</p>
+<h3 id="2-4-VEH与SEH"><a href="#2-4-VEH与SEH" class="headerlink" title="2.4 VEH与SEH"></a>2.4 VEH与SEH</h3><p>什么是VEH与SEH呢，首先来说说SEH，在之前内核异常的分发中分析过处理内核异常的<code>RtlDispatchException</code>函数中，它的内部调用了<code>RtlpGetRegistrationHead</code>来查找一个异常链表，结构大致如下。</p>
+<p><img data-src="https://s2.loli.net/2022/07/27/upWZj53SlhsKNBQ.png" alt="15.png"></p>
+<p>这就是<strong>SEH链表</strong>的大致结构，它是一种存<strong>在堆栈中的局部链表</strong>。本篇将要学习的<strong>VEH结构与之类似，只不过VEH是全局链表</strong>。<strong>内核的<code>RtlDispatchException</code>函数中只会查找SEH，用户的<code>RtlDispatchException</code>会先查找VEH，若异常未能得到处理，才会找SEH。</strong></p>
+<p>参考：<a target="_blank" rel="noopener" href="https://cataloc.gitee.io/blog/2020/08/22/VEH/#KiUserDispatchException">VEH</a>。</p>
+<h2 id="3-VEH"><a href="#3-VEH" class="headerlink" title="3 VEH"></a>3 VEH</h2><p>除了结构化异常处理，从 Windows XP 开始，Windows 还支持一种名为向量化异常处理（Vectored Exception Handling，VEH）的异常处理机制。与 SEH 既可以用在用户模式又可以用在内核模式不同，<mark class="label danger">VEH 只能用在用户态程序中</mark>。</p>
+<p>在 <code>RtlCallVectoredExceptionHandlers</code> 函数中，会循环地从 VEH 链表取每一个异常处理函数执行，根据执行的返回结果 <code>0/-1</code> 判断异常是否已经处理了，然后进行下一步动作。</p>
+<h3 id="3-1-RtlpCalloutEntryList"><a href="#3-1-RtlpCalloutEntryList" class="headerlink" title="3.1 RtlpCalloutEntryList"></a>3.1 RtlpCalloutEntryList</h3><p><strong>一、RtlpCalloutEntryList 链表头</strong></p>
+<p><code>Ntdll.dll</code> 中的全局变量 <code>RtlpCalloutEntryList</code> 指向 VEH 链表头，链表中每一个节点成员是 <code>VEH_REGISTRATION</code> 结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">VEH_REGISTRATION</span>&#123;</span></span><br><span class="line">    _VEH_REGISTRATION* next;		<span class="comment">//指向下一个VEH</span></span><br><span class="line">    _VEH_REGISTRATION* prev;		<span class="comment">//指向前一个VEH</span></span><br><span class="line">    PVECTORED_EXCEPTION_HANDLER pfnVeh;	<span class="comment">//指向当前VEH的回调函数</span></span><br><span class="line">&#125;VEH_REGISTRATION, *PVEH_REGISTRATION;</span><br></pre></td></tr></table></figure>
+
+<p><code>PVECTORED_EXCEPTION_HANDLER</code> 是一个函数指针，用来指向3环异常处理的回调函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">LONG</span> <span class="params">(NTAPI *PVECTORED_EXCEPTION_HANDLER)</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    struct _EXCEPTION_POINTERS *ExceptionInfo</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>当 <code>RtlpCalloutEntryList-&gt;next == &amp;RtlpCalloutEntryList</code> 时表示空链表。</p>
+<p><strong>二、异常处理回调函数格式</strong></p>
+<p>VEH的基本思想是通过注册回调函数来接收和处理异常。<strong>回调函数</strong>的格式为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LONG CALLBACK <span class="title">VectoredHandler</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    PEXCEPTION_POINTERS ExceptionInfo</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p><code>EXCEPTION_POINTERS</code> 结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_POINTERS</span> &#123;</span></span><br><span class="line">    PEXCEPTION_RECORD ExceptionRecord;	<span class="comment">//异常记录</span></span><br><span class="line">    PCONTEXT ContextRecord;		<span class="comment">//异常发生时的线程上下文环境</span></span><br><span class="line">&#125; EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;</span><br></pre></td></tr></table></figure>
+
+<div class="note primary"><p>需要注意：异常处理回调函数在插入到 <code>RtlpCalloutEntryList</code> 链表前需要使用 <code>RtlEncodePointer </code> 函数进行<strong>加密</strong>。在调用异常回调函数前需要调用 <code>RtlDecodePointer</code> 进行<strong>解密</strong>。</p>
+</div>
+
+<p><strong>三、回调函数的返回值</strong></p>
+<p>当一个3环的异常处理回调函数被调用之后，返回值有两个：0 、-1</p>
+<ul>
+<li>0，<code>EXCEPTION_CONTINUE_SEARCH</code>，<strong>异常未被处理</strong>，继续搜索。</li>
+<li>-1，<code>EXCEPTION_CONTINUE_EXECUTION</code>，<strong>异常处理完毕</strong>，恢复往下执行。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_EXECUTE_HANDLER       1</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_CONTINUE_SEARCH       0</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> EXCEPTION_CONTINUE_EXECUTION    -1</span></span><br></pre></td></tr></table></figure>
 
 
 
+<p><strong>四、插入&#x2F;移除SEH</strong></p>
+<p>我们可以在 SEH 链表中插入 <code>VEH_REGISTRATION</code> 以便用来劫持异常处理，如除零异常这种“未处理异常”会让3环的异常处理机制得到机会处理。</p>
+<p>函数 <code>AddVectoredExceptionHandler</code>、<code>RemoveVectoredExceptionHandler</code> 可以在链表中插入&#x2F;移除一个 VEH。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">WINBASEAPI PVOID WINAPI <span class="title">AddVectoredExceptionHandler</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN ULONG FirstHandler,		<span class="comment">//1：插入到链表头，0：插入到链表尾</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVECTORED_EXCEPTION_HANDLER VectoredHandler</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">WINBASEAPI ULONG WINAPI <span class="title">RemoveVectoredExceptionHandler</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID VectorerHandler</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br></pre></td></tr></table></figure>
 
 
 
+<h3 id="3-2-练习：插入VEH解决除零异常"><a href="#3-2-练习：插入VEH解决除零异常" class="headerlink" title="3.2 练习：插入VEH解决除零异常"></a>3.2 练习：插入VEH解决除零异常</h3><p><code>div</code>为无符号除法，<code>idiv</code>为有符号除法。（Win7 x64，VC++）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> bSuccess = <span class="literal">false</span>;</span><br><span class="line"><span class="comment">// 定义指向AddVectorExceptionHandler函数原型的函数指针</span></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">PVOID</span> <span class="params">(NTAPI *FnAddVectoredExceptionHandler)</span><span class="params">(ULONG, _EXCEPTION_POINTERS*)</span></span>; </span><br><span class="line">FnAddVectoredExceptionHandler MyAddVectoredExceptionHandler;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义异常处理函数</span></span><br><span class="line"><span class="function">LONG NTAPI <span class="title">VectExcepHandler</span><span class="params">(PEXCEPTION_POINTERS pExcepInfo)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  bSuccess = <span class="literal">true</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//除0异常</span></span><br><span class="line">	<span class="keyword">if</span> (pExcepInfo-&gt;ExceptionRecord-&gt;ExceptionCode == <span class="number">0xC0000094</span>) </span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//修改发生异常时代码的Eip</span></span><br><span class="line">		<span class="comment">//pExcepInfo-&gt;ContextRecord-&gt;Eip = pExcepInfo-&gt;ContextRecord-&gt;Eip + 2;</span></span><br><span class="line">		</span><br><span class="line">		<span class="comment">//修改发生异常时ecx的值（被除数）</span></span><br><span class="line">		pExcepInfo-&gt;ContextRecord-&gt;Ecx = <span class="number">20</span>;</span><br><span class="line">		</span><br><span class="line">		<span class="comment">//此处返回表示异常已处理</span></span><br><span class="line">		<span class="keyword">return</span> EXCEPTION_CONTINUE_EXECUTION;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//此处返回表示异常未处理</span></span><br><span class="line">	<span class="keyword">return</span> EXCEPTION_CONTINUE_SEARCH;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//动态获取AddVectoredExceptionHandler函数地址，并将异常处理函数挂入VEH链表</span></span><br><span class="line">	MyAddVectoredExceptionHandler = (FnAddVectoredExceptionHandler)GetProcAddress(GetModuleHandle(<span class="string">&quot;Kernel32.dll&quot;</span>),</span><br><span class="line">                                              <span class="string">&quot;AddVectoredExceptionHandler&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//参数1表示插入VEH链的头部, 0插入到VEH链的尾部</span></span><br><span class="line">	<span class="comment">//&amp;VectExcepHandler == VectExcepHandler</span></span><br><span class="line">	MyAddVectoredExceptionHandler(<span class="number">0</span>, (_EXCEPTION_POINTERS *)&amp;VectExcepHandler);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//构造除0异常</span></span><br><span class="line">	<span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">xor</span> edx, edx</span><br><span class="line">		<span class="keyword">xor</span> ecx, ecx</span><br><span class="line">		mov eax, <span class="number">100</span></span><br><span class="line">		idiv ecx		<span class="comment">//edx &lt;- (eax/ecx)的余数</span></span><br><span class="line">		mov val, eax</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;val = %d\n&quot;</span>,val);</span><br><span class="line">	<span class="keyword">if</span>(val == <span class="number">5</span>)</span><br><span class="line">	&#123;</span><br><span class="line">    		<span class="built_in">printf</span>(<span class="string">&quot;异常修复成功！\n&quot;</span>);</span><br><span class="line">    		MessageBox(<span class="literal">NULL</span>,<span class="string">&quot;VEH异常处理函数执行了...&quot;</span>,<span class="string">&quot;VEH异常&quot;</span>,MB_OK);</span><br><span class="line">	&#125;<span class="keyword">else</span> <span class="built_in">printf</span>(<span class="string">&quot;异常修复失败！\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p><img data-src="https://s2.loli.net/2022/07/31/QkBmbHvYWw7lzcS.png" alt="19.png"></p>
 
     </div>
 
@@ -544,8 +585,8 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"># WinXP内核</a>
-              <a href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="tag"># 异常处理</a>
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> WinXP内核</a>
+              <a href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 异常处理</a>
           </div>
 
         
@@ -557,8 +598,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/column-1/" rel="next" title="读书笔记">
-                  读书笔记 <i class="fa fa-chevron-right"></i>
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -627,7 +668,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">21:25</span>
+    <span title="站点阅读时长">21:55</span>
   </span>
 </div>
 <div class="busuanzi-count">
