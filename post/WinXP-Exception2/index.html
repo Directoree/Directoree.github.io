@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/08/01/16Hclsgd2yjCSk9.png">
 <meta property="og:image" content="https://s2.loli.net/2022/08/03/9j6bYun7DoLNH8J.png">
 <meta property="article:published_time" content="2022-07-23T13:29:37.000Z">
-<meta property="article:modified_time" content="2022-08-02T16:47:52.909Z">
+<meta property="article:modified_time" content="2022-08-03T15:02:02.043Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="异常处理">
@@ -243,7 +243,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">1 内核异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-KiDispatchException%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8"><span class="nav-text">1.1 KiDispatchException内核异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-nt-RtlDispatchException%E5%A4%84%E7%90%86"><span class="nav-text">1.2 nt!RtlDispatchException处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">2 用户异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-KiDispatchException%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8"><span class="nav-text">2.1 KiDispatchException用户异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-KiUserExceptionDispatcher"><span class="nav-text">2.2 KiUserExceptionDispatcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-ntdll-RtlDispatchException"><span class="nav-text">2.3 ntdll!RtlDispatchException</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-VEH%E4%B8%8ESEH"><span class="nav-text">2.4 VEH与SEH</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-VEH"><span class="nav-text">3 VEH</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-VEH%E7%BB%93%E6%9E%84"><span class="nav-text">3.1 VEH结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-VEH%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-text">3.2 VEH回调函数的返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-RtlCallVectoredExceptionHandler%E7%9A%84%E5%9B%9E%E5%80%BC"><span class="nav-text">3.3 RtlCallVectoredExceptionHandler的回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E7%BB%83%E4%B9%A0%EF%BC%9A%E6%8F%92%E5%85%A5VEH%E8%A7%A3%E5%86%B3%E9%99%A4%E9%9B%B6%E5%BC%82%E5%B8%B8"><span class="nav-text">3.4 练习：插入VEH解决除零异常</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-SEH"><span class="nav-text">4 SEH</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-SEH%E7%BB%93%E6%9E%84"><span class="nav-text">4.1 SEH结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-RtlpExecuteHandlerForException%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-text">4.2 RtlpExecuteHandlerForException函数返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%BB%83%E4%B9%A0%EF%BC%9A%E4%BD%BF%E7%94%A8SEH%E8%A7%A3%E5%86%B3int-3%E5%BC%82%E5%B8%B8"><span class="nav-text">4.3 练习：使用SEH解决int 3异常</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">1 内核异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-KiDispatchException%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8"><span class="nav-text">1.1 KiDispatchException内核异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-nt-RtlDispatchException%E5%A4%84%E7%90%86"><span class="nav-text">1.2 nt!RtlDispatchException处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">2 用户异常分发</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-KiDispatchException%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8"><span class="nav-text">2.1 KiDispatchException用户异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-KiUserExceptionDispatcher"><span class="nav-text">2.2 KiUserExceptionDispatcher</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-ntdll-RtlDispatchException"><span class="nav-text">2.3 ntdll!RtlDispatchException</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-VEH%E4%B8%8ESEH"><span class="nav-text">2.4 VEH与SEH</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-VEH"><span class="nav-text">3 VEH</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-VEH%E7%BB%93%E6%9E%84"><span class="nav-text">3.1 VEH结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-VEH%E5%9B%9E%E8%B0%83%E5%87%BD%E6%95%B0%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-text">3.2 VEH回调函数的返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-RtlCallVectoredExceptionHandler%E7%9A%84%E5%9B%9E%E5%80%BC"><span class="nav-text">3.3 RtlCallVectoredExceptionHandler的回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E7%BB%83%E4%B9%A0%EF%BC%9A%E6%8F%92%E5%85%A5VEH%E8%A7%A3%E5%86%B3%E9%99%A4%E9%9B%B6%E5%BC%82%E5%B8%B8"><span class="nav-text">3.4 练习：插入VEH解决除零异常</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-SEH"><span class="nav-text">4 SEH</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-SEH%E7%BB%93%E6%9E%84"><span class="nav-text">4.1 SEH结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-RtlpExecuteHandlerForException%E5%87%BD%E6%95%B0%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-text">4.2 RtlpExecuteHandlerForException函数返回值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%BB%83%E4%B9%A0%EF%BC%9A%E4%BD%BF%E7%94%A8SEH%E8%A7%A3%E5%86%B3int-3%E5%BC%82%E5%B8%B8"><span class="nav-text">4.3 练习：使用SEH解决int 3异常</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E4%BD%BF%E7%94%A8%E6%B1%87%E7%BC%96%E4%BB%A3%E7%A0%81%E6%8C%82%E5%85%A5SEH"><span class="nav-text">5 使用汇编代码挂入SEH</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -259,7 +259,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">122</span>
+          <span class="site-state-item-count">123</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -367,7 +367,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-08-03 00:47:52" itemprop="dateModified" datetime="2022-08-03T00:47:52+08:00">2022-08-03</time>
+        <time title="修改时间：2022-08-03 23:02:02" itemprop="dateModified" datetime="2022-08-03T23:02:02+08:00">2022-08-03</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -412,14 +412,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>13k</span>
+      <span>14k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
+      <span>13 分钟</span>
     </span>
 </div>
 
@@ -583,8 +583,8 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">EXCEPTION_DISPOSITION __cdecl Eexception_Handler	<span class="comment">//注意调用约定</span></span><br><span class="line">(</span><br><span class="line">	struct _EXCEPTION_RECORD *ExceptionRecord,	<span class="comment">//异常记录结构体</span></span><br><span class="line">	<span class="keyword">void</span>* EstablisherFrame,				<span class="comment">//SEH结构体地址</span></span><br><span class="line">	struct _CONTEXT *ContextRecord,			<span class="comment">//存储异常发生时的上下文环境</span></span><br><span class="line">	<span class="keyword">void</span>* DispatcherContext				<span class="comment">//异常分发函数传递来的额外信息，一般用不到</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 
 <div class="note success"><ol>
-<li><mark class="label danger">SEH 结构</mark>需要<strong>初始化（注册）在可能发生异常函数内</strong>。</li>
-<li>3 环 SEH 的<mark class="label default">回调函数</mark>一定<strong>不能在当前线程内</strong>堆栈内（软件调试P617：异常处理器不应该是栈中的代码，这是为了支持 DEP 功能，以防止意外执行攻击程序动态布置在栈上的代码）。在0环没有这一条要求。</li>
+<li><mark class="label danger">SEH 结构</mark>需要<strong>初始化（注册）在可能发生异常函数堆栈内</strong>（包含于当前线程堆栈）。</li>
+<li>3 环 SEH 的<mark class="label default">回调函数</mark>一定<strong>不能在当前线程堆栈内</strong>（软件调试P617：异常处理器不应该是栈中的代码，这是为了支持 DEP 功能，以防止意外执行攻击程序动态布置在栈上的代码）。在0环没有这一条要求。</li>
 </ol>
 </div>
 
@@ -662,6 +662,44 @@
 <p>软件调试：11.3.3中讲了KiDispatchException用户部分，24.3.2讲KiUserExceptionDispatcher的执行流程，24.3.1讲ntdll!RtlDispatchException，11.5讲VEH，24.3，24.4讲SEH过程。</p>
 <p>看到24.4。</p>
 <p><img data-src="https://s2.loli.net/2022/08/03/9j6bYun7DoLNH8J.png" alt="截屏2022_08_03_上午12_46_32.png"></p>
+<h2 id="5-使用汇编代码挂入SEH"><a href="#5-使用汇编代码挂入SEH" class="headerlink" title="5 使用汇编代码挂入SEH"></a>5 使用汇编代码挂入SEH</h2><p>挂 SEH 的两个原则：</p>
+<ol>
+<li>SEH 结构必须注册在当前线程堆栈中。</li>
+<li>SEH 的回调函数不能汇编于当前线程堆栈中。</li>
+</ol>
+<p>通过汇编代码在当前线程堆栈中<strong>注册</strong>一个 <code>EXCEPTION_REGISTRATION_RECORD</code> 结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">push offset MyEexception_Handler	<span class="comment">//SEH回调函数（处理器）的地址</span></span><br><span class="line">push fs:[<span class="number">0</span>]				<span class="comment">//前一个SEH结构（结构化异常处理器）的地址。使fs:[0]成为当前SEH-&gt;Next</span></span><br><span class="line">mov  fs:[<span class="number">0</span>], esp			<span class="comment">//登记新的结构</span></span><br></pre></td></tr></table></figure>
+
+<p>将刚才注册的<code>EXCEPTION_REGISTRATION_RECORD</code> 结构注销：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov eax, [esp]		<span class="comment">//从栈顶取得前一个异常登记结构的地址</span></span><br><span class="line">mov fs:[<span class="number">0</span>], eax		<span class="comment">//将前一个异常结构的地址赋给 FS:[0]</span></span><br><span class="line">add esp, <span class="number">8</span>		<span class="comment">//清理栈上的异常登记结构，平衡堆栈</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>如下代码使用汇编代码挂入SEH解决除零异常：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//SEH 回调函数</span></span><br><span class="line">EXCEPTION_DISPOSITION __cdecl MyEexception_Handler</span><br><span class="line">(</span><br><span class="line">	struct _EXCEPTION_RECORD *ExceptionRecord,	<span class="comment">//异常结构体</span></span><br><span class="line">	PVOID EstablisherFrame,				<span class="comment">//SEH结构体地址</span></span><br><span class="line">	struct _CONTEXT *ContextRecord,			<span class="comment">//存储异常发生时的各种寄存器的值 栈位置等</span></span><br><span class="line">	PVOID DispatcherContext</span><br><span class="line">)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">if</span> (ExceptionRecord-&gt;ExceptionCode == <span class="number">0xC0000094</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		ContextRecord-&gt;Eip += <span class="number">2</span>;</span><br><span class="line">		<span class="keyword">return</span> ExceptionContinueExecution; <span class="comment">//-1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> ExceptionContinueSearch; <span class="comment">//0</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> val = <span class="number">0</span>;</span><br><span class="line">  </span><br><span class="line">  __asm</span><br><span class="line">  &#123; </span><br><span class="line">    push offset MyEexception_Handler;	<span class="comment">//将自己定义的SEH回调函数挂入链首</span></span><br><span class="line">    push fs:[<span class="number">0</span>];</span><br><span class="line">    mov fs:[<span class="number">0</span>], esp;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">xor</span> edx, edx;	<span class="comment">//构造除零异常</span></span><br><span class="line">    <span class="keyword">xor</span> ecx, ecx;</span><br><span class="line">    mov eax, <span class="number">100</span>;</span><br><span class="line">    idiv ecx;		<span class="comment">//EDX:EAX 除以 ECX</span></span><br><span class="line">    </span><br><span class="line">    mov eax, <span class="number">999</span>;</span><br><span class="line">    mov val, eax;</span><br><span class="line">    </span><br><span class="line">    mov eax, [esp];	<span class="comment">//恢复原始ExceptionList</span></span><br><span class="line">    mov fs:[<span class="number">0</span>], eax;</span><br><span class="line">    add esp, <span class="number">8</span>;		<span class="comment">//平衡堆栈</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span>(val == <span class="number">999</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    MessageBox(<span class="literal">NULL</span>, <span class="string">&quot;SEH异常处理函数执行了...&quot;</span>, <span class="string">&quot;SEH异常&quot;</span>,<span class="literal">NULL</span>);</span><br><span class="line">  &#125;<span class="keyword">else</span></span><br><span class="line">    MessageBox(<span class="literal">NULL</span>, <span class="string">&quot;SEH异常处理函数没有执行...&quot;</span>, <span class="string">&quot;SEH异常&quot;</span>,<span class="literal">NULL</span>);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;除零异常修复成功...\n&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  getchar();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     </div>
 
@@ -719,8 +757,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
-                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                <a href="/post/WinXP-Exception3/" rel="next" title="Windows XP 异常处理（三）">
+                  Windows XP 异常处理（三） <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -789,7 +827,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">21:59</span>
+    <span title="站点阅读时长">22:02</span>
   </span>
 </div>
 <div class="busuanzi-count">
