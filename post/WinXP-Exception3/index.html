@@ -30,8 +30,9 @@
 <meta property="og:description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/08/03/ACHrmZRjxMWYfuo.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/05/X2VpTrL4MCwKjJ9.png">
 <meta property="article:published_time" content="2022-08-03T14:02:25.000Z">
-<meta property="article:modified_time" content="2022-08-03T15:32:45.587Z">
+<meta property="article:modified_time" content="2022-08-04T16:15:56.128Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="异常处理">
@@ -233,7 +234,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-SEH%E7%9A%84%E7%BC%96%E8%AF%91"><span class="nav-text">1 SEH的编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-try-except"><span class="nav-text">1.1 try-except</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-try-finally"><span class="nav-text">1.2 try-finally</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-try-except%E6%B1%87%E7%BC%96"><span class="nav-text">1.3 try-except汇编</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-SEH%E7%9A%84%E7%BC%96%E8%AF%91"><span class="nav-text">1 SEH的编译</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-try-except"><span class="nav-text">1.1 try-except</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-try-finally"><span class="nav-text">1.2 try-finally</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-try-except%E6%B1%87%E7%BC%96"><span class="nav-text">1.3 try-except汇编</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-1-32-x2F-64%E4%BD%8DSEH%E7%BC%96%E8%AF%91%E5%B7%AE%E5%BC%82"><span class="nav-text">1.3.1 32&#x2F;64位SEH编译差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-2-32%E4%BD%8DSEH%E7%BC%96%E8%AF%91"><span class="nav-text">1.3.2 32位SEH编译</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-3-scopetable"><span class="nav-text">1.3.3 scopetable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-3-4-trylevel"><span class="nav-text">1.3.4 trylevel</span></a></li></ol></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -349,10 +350,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-08-03 22:02:25 / 修改时间：23:32:45" itemprop="dateCreated datePublished" datetime="2022-08-03T22:02:25+08:00">2022-08-03</time>
+      <time title="创建时间：2022-08-03 22:02:25" itemprop="dateCreated datePublished" datetime="2022-08-03T22:02:25+08:00">2022-08-03</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-08-05 00:15:56" itemprop="dateModified" datetime="2022-08-05T00:15:56+08:00">2022-08-05</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -396,14 +403,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>9.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -438,7 +445,7 @@
 </blockquote>
 <mark class="label danger">过滤表达式的使用：</mark>
 
-<p>过滤表达式既可以是常量，函数调用，也可以是用条件表达式或其他表达式，只要表达式的结果为 $-1$ ，$0$，$1$ 这三个值之一，它们的含义如下：</p>
+<p>过滤表达式既可以是<strong>常量</strong>，<strong>函数调用</strong>，也可以是<strong>表达式</strong>，只要表达式的结果为 $-1$ ，$0$，$1$ 这三个值之一，它们的含义如下：</p>
 <table>
 <thead>
 <tr>
@@ -491,7 +498,114 @@
 
 
 <p>参考：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-271013.htm#msg_header_h3_1">Windows内核学习笔记之异常（下）– 看雪1900</a>。</p>
-<h3 id="1-3-try-except汇编"><a href="#1-3-try-except汇编" class="headerlink" title="1.3 try-except汇编"></a>1.3 try-except汇编</h3>
+<h3 id="1-3-try-except汇编"><a href="#1-3-try-except汇编" class="headerlink" title="1.3 try-except汇编"></a>1.3 try-except汇编</h3><h4 id="1-3-1-32-x2F-64位SEH编译差异"><a href="#1-3-1-32-x2F-64位SEH编译差异" class="headerlink" title="1.3.1 32&#x2F;64位SEH编译差异"></a>1.3.1 32&#x2F;64位SEH编译差异</h4><div class="note danger"><p>在上一篇文章中 SEH 部分说过<strong>关于 SEH 的存放位置</strong>：</p>
+<ol>
+<li><strong>栈帧</strong>（stack frame)：将异常处理器注册在所在函数的栈帧中。使用这种方式注册的异常处理经常称为基于帧的异常处理（fame based exception handling ）。<strong>32 位的 Windows 系统（x86）</strong>使用的就是此种方式。</li>
+<li><strong>表格</strong>（table)：将异常处理器的基本信息以表格的形式存储在可执行文件（PE）的数据段中，这种方式简称为基于表的异常处理（table based exception handling )。<strong>64 位 Windows 系统（x64）中的64 位程序</strong>使用了这种方式。</li>
+</ol>
+<p>所以编译器在编译 32 bit 程序和 64 bit 程序的时候，针对 <code>try-except</code> 的编译是不同的。就针对 32 位程序的编译来说，VC、VS编译器在编译时实际上差异不大，VS编译器因为加入了一些新的安全选项，所以编译时加入了一些额外的安全检查代码。</p>
+</div>
+
+
+
+<div class="note default"><p><strong>64 位基于表的异常处理</strong>：增强异常处理机制安全性的一种更彻底的方法是 x64 系统中的基于表的异常处理（table based exception handling）。其基本思想是将异常处理器的描述和登记信息都以表格的形式存储在可执行文件中，当有异常发生时，系统根据异常的发生位置自动在这些表格中寻找匹配的处理函数，不需要在栈上做任何登记，也不再使用 <code>FS:[0]</code> 链条。基于表的异常处理机制与基于帧的异常处理机制是不兼容的。运行在 x64 CPU 上的 64 位 Windows 使用了基于表的异常处理，编译运行在这样的目标系统中的 64 位应用序时，编译器会自动使用新的编译方式产生合适的代码。</p>
+</div>
+
+
+
+<p>本文主要讨论 32 位程序的编译，因为 32 位程序的 SEH 是注册在线程堆栈中的，可以在写代码时查看反汇编代码就能知道其编译情况。但是 64 位程序应该是需要逆向一下异常的处理框架才能知道怎么使用 SEH 的，<code>try-except</code> 源代码反汇编查看不到 SEH 相关情况。</p>
+<h4 id="1-3-2-32位SEH编译"><a href="#1-3-2-32位SEH编译" class="headerlink" title="1.3.2 32位SEH编译"></a>1.3.2 32位SEH编译</h4><div class="note primary"><p>编译器不是为每一个 <code>try-except</code> 都注册 SEH，而是一个函数内不管使用了多少次对 <code>try-except</code> ，<strong>都只会注册一个 SEH 结构，并且只是用一个统一的异常处理回调函数</strong>：<code>__except_handler3/__except_handler4</code>。</p>
+<p>每次执行到 <code>__except_handler3</code> 时，该函数会把回调函数的第二个参数 <code>EstablisherFrame</code> 指向的结构<code>EXCEPTION_REGISTRATION_RECORD</code>（SEH）进行拓展。<code>__except_handler3</code> 回调函数正是依靠扩展的 3 个字段来寻找过滤表达式和异常处理块的。</p>
+</div>
+
+
+<p>VC&#x2F;VS编译器对 Windows 提供的 <code>EXCEPTION_REGISTRATION_RECORD</code> 结构进行了拓展，拓展后的结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_REGISTRATION</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_REGISTRATION</span>* <span class="title">prev</span>;</span>   </span><br><span class="line">    <span class="keyword">void</span> (*handler)(PEXCEPTION_RECORD, PEXCEPTION_ REGISTRATION, PCONTEXT, PEXCEPTION_RECORD);   </span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">scopetable_entry</span> * <span class="title">scopetable</span>;</span></span><br><span class="line">    <span class="keyword">int</span> trylevel;   </span><br><span class="line">    <span class="keyword">int</span> _ebp;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th align="center"><strong>字段</strong></th>
+<th align="left"><strong>作用</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">prev</td>
+<td align="left">指向上一个结构体的地址</td>
+</tr>
+<tr>
+<td align="center">handler</td>
+<td align="left">指向异常处理函数</td>
+</tr>
+<tr>
+<td align="center">scopetable</td>
+<td align="left">范围表的起始地址</td>
+</tr>
+<tr>
+<td align="center">trylevel</td>
+<td align="left">这个结构对应的__try块的编号</td>
+</tr>
+<tr>
+<td align="center">ebp</td>
+<td align="left">栈帧的基地址</td>
+</tr>
+</tbody></table>
+<p>可以看到 <code>EXCEPTION_REGISTRATION_RECORD</code> 结构是拓展后<code>_EXCEPTION_REGISTRATION</code> 结构的第一个成员（类似于C++类的继承）。</p>
+<p>其中前两个字段是操作系统规定的标准登记结构，后三个字段是编译器扩展的。<code>__except_handler3</code> 函数整数依靠这几个扩展字段来寻找过滤表达式和异常处理块。</p>
+<div class="note success"><p><strong>在一个函数里面</strong>：</p>
+<ol>
+<li>不管有多少个 <code>try-except </code>都只会挂入一个 <code>_EXCEPTION_REGISTRATION</code> 结构，也就是只有一个 <code>excepthandler4</code> 函数。</li>
+<li>有多少个 <code>try-except</code> ，<code>scopetable</code> 数组就有几项。</li>
+</ol>
+</div>
+
+<p>堆栈中的形成的 <code>FS:[0]</code> 链条： </p>
+<p><img data-src="https://s2.loli.net/2022/08/05/X2VpTrL4MCwKjJ9.png" alt="22.png"></p>
+<p>下面用 VC6 和 VS2019 分别将如下代码编译成 32 位程序：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">TestSEH</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	__try</span><br><span class="line">	&#123;</span><br><span class="line">	&#125;</span><br><span class="line">	__except (<span class="number">1</span>)</span><br><span class="line">	&#123;</span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	TestSEH();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>1、VC6编译函数 <code>TestSEH</code> 汇编代码如下</strong>（Debug版）： </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00401020</span> <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">00401020</span></span><br><span class="line">.text:<span class="number">00401020</span> <span class="comment">// Attributes: bp-based frame</span></span><br><span class="line">.text:<span class="number">00401020</span></span><br><span class="line">.text:<span class="number">00401020</span> sub_401020      proc near               <span class="comment">// CODE XREF: sub_401005↑j</span></span><br><span class="line">.text:<span class="number">00401020</span></span><br><span class="line">.text:<span class="number">00401020</span> var_58          = byte ptr <span class="number">-58</span>h</span><br><span class="line">.text:<span class="number">00401020</span> ms_exc          = CPPEH_RECORD ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">00401020</span></span><br><span class="line">.text:<span class="number">00401020</span> <span class="comment">// __unwind &#123; // __except_handler3</span></span><br><span class="line">.text:<span class="number">00401020</span>                 push    ebp</span><br><span class="line">.text:<span class="number">00401021</span>                 mov     ebp, esp</span><br><span class="line">.text:<span class="number">00401023</span>                 push    <span class="number">0F</span>FFFFFFFh</span><br><span class="line">.text:<span class="number">00401025</span>                 push    offset stru_422020</span><br><span class="line">.text:<span class="number">0040102</span>A                 push    offset __except_handler3</span><br><span class="line">.text:<span class="number">0040102F</span>                 mov     eax, large fs:<span class="number">0</span></span><br><span class="line">.text:<span class="number">00401035</span>                 push    eax</span><br><span class="line">.text:<span class="number">00401036</span>                 mov     large fs:<span class="number">0</span>, esp</span><br><span class="line">.text:<span class="number">0040103</span>D                 add     esp, <span class="number">0F</span>FFFFFB8h</span><br><span class="line">.text:<span class="number">00401040</span>                 push    ebx</span><br><span class="line">.text:<span class="number">00401041</span>                 push    esi</span><br><span class="line">.text:<span class="number">00401042</span>                 push    edi</span><br><span class="line">.text:<span class="number">00401043</span>                 mov     [ebp+ms_exc.old_esp], esp</span><br><span class="line">.text:<span class="number">00401046</span>                 lea     edi, [ebp+var_58]</span><br><span class="line">.text:<span class="number">00401049</span>                 mov     ecx, <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">0040104</span>E                 mov     eax, <span class="number">0</span>CCCCCCCCh</span><br><span class="line">.text:<span class="number">00401053</span>                 rep stosd</span><br><span class="line">.text:<span class="number">00401055</span> <span class="comment">//   __try &#123; // __except at loc_40106B</span></span><br><span class="line">.text:<span class="number">00401055</span>                 mov     [ebp+ms_exc.registration.TryLevel], <span class="number">0</span></span><br><span class="line">.text:<span class="number">00401055</span> <span class="comment">//   &#125; // starts at 401055</span></span><br><span class="line">.text:<span class="number">0040105</span>C                 mov     [ebp+ms_exc.registration.TryLevel], <span class="number">0F</span>FFFFFFFh</span><br><span class="line">.text:<span class="number">00401063</span>                 jmp     <span class="keyword">short</span> loc_401075</span><br><span class="line">.text:<span class="number">00401065</span> <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">00401065</span></span><br><span class="line">.text:<span class="number">00401065</span> loc_401065:                             <span class="comment">// DATA XREF: .rdata:stru_422020↓o</span></span><br><span class="line">.text:<span class="number">00401065</span> <span class="comment">//   __except filter // owned by 401055</span></span><br><span class="line">.text:<span class="number">00401065</span>                 mov     eax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0040106</span>A                 retn</span><br><span class="line">.text:<span class="number">0040106B</span> <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">0040106B</span></span><br><span class="line">.text:<span class="number">0040106B</span> loc_40106B:                             <span class="comment">// DATA XREF: .rdata:stru_422020↓o</span></span><br><span class="line">.text:<span class="number">0040106B</span> <span class="comment">//   __except(loc_401065) // owned by 401055</span></span><br><span class="line">.text:<span class="number">0040106B</span>                 mov     esp, [ebp+ms_exc.old_esp]</span><br><span class="line">.text:<span class="number">0040106</span>E                 mov     [ebp+ms_exc.registration.TryLevel], <span class="number">0F</span>FFFFFFFh</span><br><span class="line">.text:<span class="number">00401075</span></span><br><span class="line">.text:<span class="number">00401075</span> loc_401075:                             <span class="comment">// CODE XREF: sub_401020+43↑j</span></span><br><span class="line">.text:<span class="number">00401075</span>                 mov     ecx, [ebp+ms_exc.registration.Next]</span><br><span class="line">.text:<span class="number">00401078</span>                 mov     large fs:<span class="number">0</span>, ecx</span><br><span class="line">.text:<span class="number">0040107F</span>                 pop     edi</span><br><span class="line">.text:<span class="number">00401080</span>                 pop     esi</span><br><span class="line">.text:<span class="number">00401081</span>                 pop     ebx</span><br><span class="line">.text:<span class="number">00401082</span>                 mov     esp, ebp</span><br><span class="line">.text:<span class="number">00401084</span>                 pop     ebp</span><br><span class="line">.text:<span class="number">00401085</span>                 retn</span><br><span class="line">.text:<span class="number">00401085</span> <span class="comment">// &#125; // starts at 401020</span></span><br><span class="line">.text:<span class="number">00401085</span> sub_401020      endp</span><br><span class="line">.text:<span class="number">00401085</span></span><br><span class="line">.text:<span class="number">00401085</span> <span class="comment">// ---------------------------------------------------------------------------</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>首先注册一个 <code>_EXCEPTION_REGISTRATION</code> 结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00401020</span>                 push    ebp</span><br><span class="line">.text:<span class="number">00401021</span>                 mov     ebp, esp</span><br><span class="line">.text:<span class="number">00401023</span>                 push    <span class="number">0F</span>FFFFFFFh</span><br><span class="line">.text:<span class="number">00401025</span>                 push    offset stru_422020</span><br><span class="line">.text:<span class="number">0040102</span>A                 push    offset __except_handler3</span><br><span class="line">.text:<span class="number">0040102F</span>                 mov     eax, large fs:<span class="number">0</span></span><br><span class="line">.text:<span class="number">00401035</span>                 push    eax</span><br><span class="line">.text:<span class="number">00401036</span>                 mov     large fs:<span class="number">0</span>, esp</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>trylevel = 0xffffffff</code></li>
+<li><code>scopetable = 0x00422020</code></li>
+<li><code>handler = __except_handler3</code></li>
+<li><code>prev = fs:[0]</code></li>
+</ul>
+</li>
+</ol>
+<p><strong>2、VS2019编译函数 <code>TestSEH</code> 汇编代码如下</strong>（Debug版）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00411740</span> <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">00411740</span></span><br><span class="line">.text:<span class="number">00411740</span> <span class="comment">// Attributes: bp-based frame</span></span><br><span class="line">.text:<span class="number">00411740</span></span><br><span class="line">.text:<span class="number">00411740</span> sub_411740      proc near               <span class="comment">// CODE XREF: sub_4110D7↑j</span></span><br><span class="line">.text:<span class="number">00411740</span></span><br><span class="line">.text:<span class="number">00411740</span> ms_exc          = CPPEH_RECORD ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">00411740</span></span><br><span class="line">.text:<span class="number">00411740</span>                 push    ebp</span><br><span class="line">.text:<span class="number">00411741</span>                 mov     ebp, esp</span><br><span class="line">.text:<span class="number">00411743</span>                 push    <span class="number">0F</span>FFFFFFEh</span><br><span class="line">.text:<span class="number">00411745</span>                 push    offset stru_419108</span><br><span class="line">.text:<span class="number">0041174</span>A                 push    offset SEH_412E20</span><br><span class="line">.text:<span class="number">0041174F</span>                 mov     eax, large fs:<span class="number">0</span></span><br><span class="line">.text:<span class="number">00411755</span>                 push    eax</span><br><span class="line">.text:<span class="number">00411756</span>                 add     esp, <span class="number">0F</span>FFFFF38h</span><br><span class="line">.text:<span class="number">0041175</span>C                 push    ebx</span><br><span class="line">.text:<span class="number">0041175</span>D                 push    esi</span><br><span class="line">.text:<span class="number">0041175</span>E                 push    edi</span><br><span class="line">.text:<span class="number">0041175F</span>                 lea     edi, [ebp+ms_exc]</span><br><span class="line">.text:<span class="number">00411762</span>                 <span class="keyword">xor</span>     ecx, ecx</span><br><span class="line">.text:<span class="number">00411764</span>                 mov     eax, <span class="number">0</span>CCCCCCCCh</span><br><span class="line">.text:<span class="number">00411769</span>                 rep stosd</span><br><span class="line">.text:<span class="number">0041176B</span>                 mov     eax, ___security_cookie</span><br><span class="line">.text:<span class="number">00411770</span>                 <span class="keyword">xor</span>     [ebp+ms_exc.registration.ScopeTable], eax</span><br><span class="line">.text:<span class="number">00411773</span>                 <span class="keyword">xor</span>     eax, ebp</span><br><span class="line">.text:<span class="number">00411775</span>                 push    eax</span><br><span class="line">.text:<span class="number">00411776</span>                 lea     eax, [ebp+ms_exc.registration]</span><br><span class="line">.text:<span class="number">00411779</span>                 mov     large fs:<span class="number">0</span>, eax</span><br><span class="line">.text:<span class="number">0041177F</span>                 mov     [ebp+ms_exc.old_esp], esp</span><br><span class="line">.text:<span class="number">00411782</span>                 mov     ecx, offset unk_41C00F</span><br><span class="line">.text:<span class="number">00411787</span>                 call    sub_41130C</span><br><span class="line">.text:<span class="number">0041178</span>C                 push    offset aStart   <span class="comment">// &quot;Start........................&quot;</span></span><br><span class="line">.text:<span class="number">00411791</span>                 call    sub_4113A2</span><br><span class="line">.text:<span class="number">00411796</span>                 add     esp, <span class="number">4</span></span><br><span class="line">.text:<span class="number">00411799</span>                 mov     [ebp+ms_exc.registration.TryLevel], <span class="number">0</span></span><br><span class="line">.text:<span class="number">004117</span>A0                 mov     [ebp+ms_exc.registration.TryLevel], <span class="number">0F</span>FFFFFFEh</span><br><span class="line">.text:<span class="number">004117</span>A7                 jmp     <span class="keyword">short</span> loc_4117B9</span><br><span class="line">.text:<span class="number">004117</span>A9 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">004117</span>A9</span><br><span class="line">.text:<span class="number">004117</span>A9 loc_4117A9:                             <span class="comment">// DATA XREF: .rdata:stru_419108↓o</span></span><br><span class="line">.text:<span class="number">004117</span>A9                 mov     eax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">004117</span>AE                 retn</span><br><span class="line">.text:<span class="number">004117</span>AF <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">004117</span>AF</span><br><span class="line">.text:<span class="number">004117</span>AF loc_4117AF:                             <span class="comment">// DATA XREF: .rdata:stru_419108↓o</span></span><br><span class="line">.text:<span class="number">004117</span>AF                 mov     esp, [ebp+ms_exc.old_esp]</span><br><span class="line">.text:<span class="number">004117B</span>2                 mov     [ebp+ms_exc.registration.TryLevel], <span class="number">0F</span>FFFFFFEh</span><br><span class="line">.text:<span class="number">004117B</span>9</span><br><span class="line">.text:<span class="number">004117B</span>9 loc_4117B9:                             <span class="comment">// CODE XREF: sub_411740+67↑j</span></span><br><span class="line">.text:<span class="number">004117B</span>9                 mov     ecx, [ebp+ms_exc.registration.Next]</span><br><span class="line">.text:<span class="number">004117B</span>C                 mov     large fs:<span class="number">0</span>, ecx</span><br><span class="line">.text:<span class="number">004117</span>C3                 pop     ecx</span><br><span class="line">.text:<span class="number">004117</span>C4                 pop     edi</span><br><span class="line">.text:<span class="number">004117</span>C5                 pop     esi</span><br><span class="line">.text:<span class="number">004117</span>C6                 pop     ebx</span><br><span class="line">.text:<span class="number">004117</span>C7                 add     esp, <span class="number">0</span>D8h</span><br><span class="line">.text:<span class="number">004117</span>CD                 cmp     ebp, esp</span><br><span class="line">.text:<span class="number">004117</span>CF                 call    sub_411235</span><br><span class="line">.text:<span class="number">004117</span>D4                 mov     esp, ebp</span><br><span class="line">.text:<span class="number">004117</span>D6                 pop     ebp</span><br><span class="line">.text:<span class="number">004117</span>D7                 retn</span><br><span class="line">.text:<span class="number">004117</span>D7 sub_411740      endp</span><br><span class="line">.text:<span class="number">004117</span>D7</span><br><span class="line">.text:<span class="number">004117</span>D8 <span class="comment">// ---------------------------------------------------------------------------</span></span><br></pre></td></tr></table></figure>
+
+<p>将 <code>_EXCEPTION_REGISTRATION</code> 结构挂入：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00411776</span>                 lea     eax, [ebp+ms_exc.registration]</span><br><span class="line">.text:<span class="number">00411779</span>                 mov     large fs:<span class="number">0</span>, eax</span><br></pre></td></tr></table></figure>
+
+<p>卸载 <code>_EXCEPTION_REGISTRATION</code> 结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">004117B</span>9                 mov     ecx, [ebp+ms_exc.registration.Next]</span><br><span class="line">.text:<span class="number">004117B</span>C                 mov     large fs:<span class="number">0</span>, ecx</span><br></pre></td></tr></table></figure>
+
+
+
+<p>VC6 和 VS2019 编译的 SEH 大同小异。主要不同点：</p>
+<ul>
+<li>handler<ul>
+<li>VC6：<code>handler = __except_handler3</code></li>
+<li>VS2019：<code>handler = __except_handler4</code></li>
+</ul>
+</li>
+<li>trylevel<ul>
+<li>VC6：<code>trylevel = 0xffffffff</code></li>
+<li>VS2019：<code>trylevel = 0xfffffffe</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="1-3-3-scopetable"><a href="#1-3-3-scopetable" class="headerlink" title="1.3.3 scopetable"></a>1.3.3 scopetable</h4><h4 id="1-3-4-trylevel"><a href="#1-3-4-trylevel" class="headerlink" title="1.3.4 trylevel"></a>1.3.4 trylevel</h4>
     </div>
 
     
@@ -618,7 +732,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">22:02</span>
+    <span title="站点阅读时长">22:09</span>
   </span>
 </div>
 <div class="busuanzi-count">
