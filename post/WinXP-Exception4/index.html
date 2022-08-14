@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 异常处理（四）未处理异常">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-Exception4/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/08/12/kcXtvuAJBHhZo7U.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/12/CfxmDys9p6L7jwJ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/13/dfm23ClXkL5RicO.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/14/Ci5JMZn1LPGdzoU.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/14/ichAGyxoVzlLt1H.png">
+<meta property="article:published_time" content="2022-08-14T10:14:52.000Z">
+<meta property="article:modified_time" content="2022-08-14T10:18:30.279Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="异常处理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/08/12/kcXtvuAJBHhZo7U.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-Exception4/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 异常处理（四）未处理异常 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%9C%AA%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8"><span class="nav-text">1 未处理异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%9C%80%E5%90%8E%E4%B8%80%E9%81%93%E9%98%B2%E7%BA%BF%E4%B8%BE%E4%BE%8B"><span class="nav-text">1.1 最后一道防线举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-BaseProcessStart%E5%88%86%E6%9E%90"><span class="nav-text">1.2 BaseProcessStart分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-UnhandledExceptionFilter"><span class="nav-text">1.3 UnhandledExceptionFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-SetUnhandledExceptionFilter"><span class="nav-text">1.4 SetUnhandledExceptionFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-Vista%E4%B9%8B%E5%90%8E%E7%9A%84%E9%A1%B6%E5%B1%82%E5%A4%84%E7%90%86%E5%8F%98%E5%8C%96"><span class="nav-text">1.5 Vista之后的顶层处理变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-SafeSEH"><span class="nav-text">2 SafeSEH</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-SEHOP"><span class="nav-text">3 SEHOP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%89%E5%85%A8Cookie"><span class="nav-text">4 安全Cookie</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">124</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">65</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-Exception4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 异常处理（四）未处理异常
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-08-14 18:14:52 / 修改时间：18:18:30" itemprop="dateCreated datePublished" datetime="2022-08-14T18:14:52+08:00">2022-08-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%82%E5%B8%B8/" itemprop="url" rel="index"><span itemprop="name">异常</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%BC%82%E5%B8%B8/Windows%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">Windows内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-Exception4/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 异常处理（四）未处理异常" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-Exception4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-Exception4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
+<a id="more"></a>
+
+
+
+<h2 id="1-未处理异常"><a href="#1-未处理异常" class="headerlink" title="1 未处理异常"></a>1 未处理异常</h2><p>这里的未处理异常是进入二次分发的用户异常，并不是<mark class="label default">顶层异常处理</mark>。</p>
+<div class="note info"><p>实际上，系统在创建进程时，先由 <code>ntdll.dll</code> 做了一系列的准备工作，然后才从系统模块提供的启动函数开始运行。例如，在 Windows XP 系统中，进程的实际启动位置是 <code>kernel32!BaseProcessStartThunk</code>，然后才跳转到 <code>kernel32!BaseProcessStart</code>。</p>
+<p>同样，在使用 <code>CreateThread</code> 函数创建线程的时候，线程也不是直接从线程函数处开始运行的，它的起点是 <code>kernel32!BaseThreadStartThunk</code>，而后跳转到 <code>kernel32!Base ThreadStart</code>，并由该函数执行<code>ThreadProc</code>。 <code>BaseThreadStart</code> 函数也包括异常处理代码，与 <code>BaseProcessStart</code> 的代码几乎一样。</p>
+<p>操作系统在执行任意一个用户线程（不管是不是主线程）之前，都已经为它安装了一个默认的 SEH 处理程序，这是<strong>该线程的第 1 个 SEH 处理程序</strong>。根据SEH链表的结构和操作规定，不管用户线程开始执行之后有没有再安装其他 SEH，系统默认的这个 SEH 处理程序一定是最后一个。如果用户线程没有安装异常处理程序，或者安装的所有异常处理程序都没有处理该异常，异常就会交由系统安装的这个默认 SEH 处理程序进行终结处理，即由系统来收拾异常发生后的“烂摊子”（也叫做<strong>最后一道防线</strong>）。这个由系统安装的默认异常处理程序就是本节要介绍的顶层异常处理程序。显然，它也是一个标准的 SEH 处理程序，只不过是由系统安装的而已。</p>
+<p><strong>注意</strong>：<mark class="label danger">所有线程顶层异常处理的Hander函数使用同一个。</mark></p>
+</div>
+
+<div class="note danger"><p>当一个进程中无论是哪一个线程产生异常，如果在此之前没有任何一个 SEH 来解决相关的异常，那在用户空间中，这个最后一道防线的 SEH 一定会来解决这个异常，除非当前有调试器，则会进行第二次异常分发进入 0 环，<strong>如果此时并没有调试器，那用户空间的异常一定不会进行二次异常分发再进入 0 环</strong>，秘密就在异常过滤器的 <code>UnhandledExceptionFilter</code> 函数，后面将会介绍。</p>
+</div>
+
+<h3 id="1-1-最后一道防线举例"><a href="#1-1-最后一道防线举例" class="headerlink" title="1.1 最后一道防线举例"></a>1.1 最后一道防线举例</h3><p>在 VC6 中如下只写有空白 <code>main</code> 函数的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>拖入OD中，程序停在模块入口处（还未进入 <code>mainCRTStartup()</code> 启动函数），在命令框使用 <code>dd fs:[0]</code> 查看一下当前的 <code>FS:[0]</code> 链条，此时链条上已经挂入了第一个 <code>EXCEPTION_REGISTR_RECORD</code>，对应的异常处理函数地址在 <code>0x7C839AC0</code>：</p>
+<p><img data-src="https://s2.loli.net/2022/08/12/kcXtvuAJBHhZo7U.png" alt="28.png"></p>
+</li>
+<li><p>如上图进入 <code>mainCRTStartup()</code> 启动函数以后的第一个动作就是向 <code>FS:[0]</code> 链条插入一个 <code>EXCEPTION_REGISTR_RECORD</code>，异常处理回调函数为 <code>__except_handler3</code>。</p>
+</li>
+<li><p>找到 <code>main</code> 函数单击选中然后 <code>F4</code> 运行到这里（还未进入到 <code>main</code>），此时查看 <code>FS:[0]</code> 链条，<code>FS:[0]</code> 链条上已经挂入了第二个 <code>EXCEPTION_REGISTR_RECORD</code>：</p>
+<p><img data-src="https://s2.loli.net/2022/08/12/CfxmDys9p6L7jwJ.png" alt="29.png"></p>
+<p>进入 <code>main</code> 以后，链条上并没有插入新的 SEH。</p>
+<p>至此，在 <code>kernel32.dll</code> 及  <code>mainCRTStartup()</code> 启动函数中分别向 <code>FS:[0]</code> 链条挂入了 <code>EXCEPTION_REGISTR_RECORD</code>。<code>kernel32</code> 中挂入的也叫做程序<strong>最后一道防线</strong>、<strong>SEHOP</strong>，其为 <code>kernel32.dll</code> 的<mark class="label success">BaseProcessStart</mark>函数（<strong>BaseProcessStart用于进程中的第一个线程，BaseThreadStart用于随后的线程</strong>。）。</p>
+</li>
+</ol>
+<p>试验一下是否是所有线程最后一道防线的异常处理函数都是同一个。</p>
+<p>例2，如下代码在 VC6下进行编译生成：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_REGISTR_RECORD</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_REGISTR_RECORD</span>* <span class="title">Next</span>;</span>	</span><br><span class="line">  <span class="keyword">void</span>* Handler;				</span><br><span class="line">&#125;EXCEPTION_REGISTR_RECORD,*PEXCEPTION_REGISTR_RECORD;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ShowException</span><span class="params">(<span class="keyword">char</span>* pFunctionName)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	EXCEPTION_REGISTR_RECORD *pExc_Reg_Record = <span class="literal">NULL</span>;</span><br><span class="line">	DWORD Temp = <span class="number">0</span>;</span><br><span class="line">	__asm</span><br><span class="line">	&#123;</span><br><span class="line">		mov eax, fs:[<span class="number">0</span>];</span><br><span class="line">		mov Temp, eax;</span><br><span class="line">	&#125;</span><br><span class="line">	pExc_Reg_Record = (EXCEPTION_REGISTR_RECORD*)Temp;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;---------------------------------------------\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%s:\n&quot;</span>,pFunctionName);</span><br><span class="line">	<span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		i++;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;Function%d,RcordAddr = %08X, Next = %08X, Hander = %08X\n&quot;</span>,i, pExc_Reg_Record, </span><br><span class="line">           pExc_Reg_Record-&gt;Next, pExc_Reg_Record-&gt;Handler);</span><br><span class="line">		pExc_Reg_Record = pExc_Reg_Record-&gt;Next;</span><br><span class="line">	&#125;<span class="keyword">while</span>(pExc_Reg_Record !=  (EXCEPTION_REGISTR_RECORD*)<span class="number">-1</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;---------------------------------------------\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD __stdcall <span class="title">ThreadProc1</span><span class="params">(PVOID p)</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	ShowException(<span class="string">&quot;ThreadProc1&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">DWORD __stdcall <span class="title">ThreadProc</span><span class="params">(PVOID p)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ShowException(<span class="string">&quot;ThreadProc&quot;</span>);</span><br><span class="line">	CreateThread(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadProc1, <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ShowException(<span class="string">&quot;main&quot;</span>);</span><br><span class="line"></span><br><span class="line">	CreateThread(<span class="literal">NULL</span>, <span class="number">0</span>, ThreadProc, <span class="literal">NULL</span>, <span class="number">0</span>, <span class="literal">NULL</span>);</span><br><span class="line">	</span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/08/13/dfm23ClXkL5RicO.png" alt="30.png"></p>
+<p><code>FS:[0]</code> 链条是跟线程相关的，因为每个线程的<code>KPCR</code> 不同。三个线程 <code>FS:[0]</code> 链条：</p>
+<ul>
+<li><code>main</code> 函数的主线程：第一个 SEH 是在 <code>mainCRTStartup</code> 中一开始挂入的（在OD中单步分析的）。</li>
+<li>可以看到三个线程有一个相同的 SEH，通过分析这里的地址 <code>0x7c839ac0</code> 为 <code>kernel32!BaseProcessStart</code> 函数（BaseProcessStart用于进程中的第一个线程，BaseThreadStart用于随后的线程）。它也是每个线程的最后一道防线。但从上图来看，每个 <code>Next = -1</code> 时其 <code>EXCEPTION_REGISTR_RECORD</code> 结构的地址不相同，是因为<strong>BaseProcessStart用于进程中的第一个线程，BaseThreadStart用于随后的线程</strong>。虽然每个结构地址不同，但是异常处理函数的地址相同。</li>
+</ul>
+<p>所以每一个线程开始时候都会在 <code>FS:[0]</code> 链条上挂入SEH，在每个进程一开始也会挂入 SEH，<strong>所以最后一道防线是 BaseProcessStart</strong>。</p>
+<p> 参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/HsinTsao/p/6534317.html">关于Windows创建进程的过程</a>。</p>
+<h3 id="1-2-BaseProcessStart分析"><a href="#1-2-BaseProcessStart分析" class="headerlink" title="1.2 BaseProcessStart分析"></a>1.2 BaseProcessStart分析</h3><p>这部分完全可以参考《加密与解密第四版8.3.4》。</p>
+<p>函数 <code>BaseProcessStart</code> 是程序创建以后的第一个线程在 3 环执行的起始地址，其余第二个、第三个…线程被创建以后在 3 环之行的起始地址为 <code>BaseThreadStart</code>。</p>
+<p>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID __stdcall <span class="title">BaseProcessStart</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    PPROCESS_START_ROUTINE lpStartAddress</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"><span class="comment">/*++</span></span></span><br><span class="line"><span class="function"><span class="comment">Routine Description:</span></span></span><br><span class="line"><span class="function"><span class="comment">    This function is called to start a Win32 process.  Its purpose is to</span></span></span><br><span class="line"><span class="function"><span class="comment">    call the initial thread of the process, and if the thread returns,</span></span></span><br><span class="line"><span class="function"><span class="comment">    to terminate the thread and delete its stack.</span></span></span><br><span class="line"><span class="function"><span class="comment">Arguments:</span></span></span><br><span class="line"><span class="function"><span class="comment">    lpStartAddress - Supplies the starting address of the new thread.  The</span></span></span><br><span class="line"><span class="function"><span class="comment">        address is logically a procedure that never returns.</span></span></span><br><span class="line"><span class="function"><span class="comment">Return Value: None.</span></span></span><br><span class="line"><span class="function"><span class="comment">--*/</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">      DWORD ExitCode;</span><br><span class="line">        NtSetInformationThread( NtCurrentThread(),</span><br><span class="line">                                ThreadQuerySetWin32StartAddress,</span><br><span class="line">                                &amp;lpStartAddress,</span><br><span class="line">                                <span class="keyword">sizeof</span>( lpStartAddress )</span><br><span class="line">                              );</span><br><span class="line">      ExitCode = lpStartAddress();</span><br><span class="line">        ExitThread(ExitCode);</span><br><span class="line">        &#125;</span><br><span class="line">    except(UnhandledExceptionFilter( GetExceptionInformation() )) &#123;</span><br><span class="line">        <span class="keyword">if</span> ( !BaseRunningInServerProcess ) &#123;</span><br><span class="line">            ExitProcess(GetExceptionCode());</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            ExitThread(GetExceptionCode());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>逆向分析如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">7</span>C817044 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">7</span>C817044</span><br><span class="line">.text:<span class="number">7</span>C817044 <span class="comment">// Attributes: noreturn bp-based frame</span></span><br><span class="line">.text:<span class="number">7</span>C817044</span><br><span class="line">.text:<span class="number">7</span>C817044 <span class="comment">// __stdcall BaseProcessStart(x)</span></span><br><span class="line">.text:<span class="number">7</span>C817044 _BaseProcessStart@<span class="number">4</span> proc near           <span class="comment">// CODE XREF: BaseProcessStartThunk(x,x)+5↑j</span></span><br><span class="line">.text:<span class="number">7</span>C817044</span><br><span class="line">.text:<span class="number">7</span>C817044 uExitCode       = dword ptr <span class="number">-1</span>Ch</span><br><span class="line">.text:<span class="number">7</span>C817044 ms_exc          = CPPEH_RECORD ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">7</span>C817044 lpStartAddress  = dword ptr  <span class="number">8</span></span><br><span class="line">.text:<span class="number">7</span>C817044</span><br><span class="line">.text:<span class="number">7</span>C817044 <span class="comment">// FUNCTION CHUNK AT .text:7C843882 SIZE 00000011 BYTES</span></span><br><span class="line">.text:<span class="number">7</span>C817044 <span class="comment">// FUNCTION CHUNK AT .text:7C843898 SIZE 00000018 BYTES</span></span><br><span class="line">.text:<span class="number">7</span>C817044</span><br><span class="line">.text:<span class="number">7</span>C817044 <span class="comment">// __unwind &#123; // __SEH_prolog</span></span><br><span class="line">.text:<span class="number">7</span>C817044                 push    <span class="number">0</span>Ch</span><br><span class="line">.text:<span class="number">7</span>C817046                 push    offset stru_7C817070 <span class="comment">// scopetable</span></span><br><span class="line">.text:<span class="number">7</span>C81704B                 call    __SEH_prolog</span><br><span class="line">.text:<span class="number">7</span>C817050 <span class="comment">//   __try &#123; // __except at loc_7C843898</span></span><br><span class="line">.text:<span class="number">7</span>C817050                 <span class="keyword">and</span>     [ebp+ms_exc.registration.TryLevel], <span class="number">0</span></span><br><span class="line">.text:<span class="number">7</span>C817054                 push    <span class="number">4</span>               <span class="comment">// ThreadInformationLength</span></span><br><span class="line">.text:<span class="number">7</span>C817056                 lea     eax, [ebp+lpStartAddress]</span><br><span class="line">.text:<span class="number">7</span>C817059                 push    eax             <span class="comment">// &amp;lpStartAddress</span></span><br><span class="line">.text:<span class="number">7</span>C81705A                 push    <span class="number">9</span>               <span class="comment">// ThreadInformationClass</span></span><br><span class="line">.text:<span class="number">7</span>C81705C                 push    <span class="number">0F</span>FFFFFFEh      <span class="comment">// ThreadHandle</span></span><br><span class="line">.text:<span class="number">7</span>C81705E                 call    ds:__imp__NtSetInformationThread@<span class="number">16</span> <span class="comment">// NtSetInformationThread(x,x,x,x)</span></span><br><span class="line">.text:<span class="number">7</span>C817064                 call    [ebp+lpStartAddress]</span><br><span class="line">.text:<span class="number">7</span>C817067                 push    eax             <span class="comment">// dwExitCode</span></span><br><span class="line">.text:<span class="number">7</span>C817068</span><br><span class="line">.text:<span class="number">7</span>C817068 loc_7C817068:                           <span class="comment">// CODE XREF: BaseProcessStart(x)+2C861↓j</span></span><br><span class="line">.text:<span class="number">7</span>C817068                 call    _ExitThread@<span class="number">4</span>   <span class="comment">// ExitThread(x)</span></span><br><span class="line">.text:<span class="number">7</span>C817068 <span class="comment">//   &#125; // starts at 7C817050</span></span><br><span class="line">.text:<span class="number">7</span>C817068 <span class="comment">// &#125; // starts at 7C817044</span></span><br><span class="line">.text:<span class="number">7</span>C817068 _BaseProcessStart@<span class="number">4</span> endp</span><br><span class="line">.text:<span class="number">7</span>C817068</span><br><span class="line">.text:<span class="number">7</span>C817068 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">7</span>C81706D                 align <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">7</span>C817070 stru_7C817070   _SCOPETABLE_ENTRY &lt;<span class="number">0F</span>FFFFFFFh, offset loc_7C843882, \</span><br><span class="line">.text:<span class="number">7</span>C817070                                         <span class="comment">// DATA XREF: BaseProcessStart(x)+2↑o</span></span><br><span class="line">.text:<span class="number">7</span>C817070                                    offset loc_7C843898&gt; <span class="comment">// SEH scope table for function 7C817044</span></span><br><span class="line">.text:<span class="number">7</span>C81707C                 db <span class="number">5</span> dup(<span class="number">90</span>h)</span><br></pre></td></tr></table></figure>
+
+<p>该函数调用 <code>__SEH_prolog</code> 在 <code>FS:[0]</code> 链条挂入最后一道防线，然后调用 <code>NtSetInformationThread</code> 给进程的主线程做一些设置，随后调用线程的起始地址 <code>call lpStartAddress</code>  开始运行第一个线程。</p>
+<div class="note danger"><p>当一个进程中无论是哪一个线程产生异常，如果在此之前没有任何一个 SEH 来解决相关的异常，那在用户空间中，这个最后一道防线的 SEH 一定会来解决这个异常，除非当前有调试器，则会进行第二次异常分发进入 0 环，<strong>如果此时并没有调试器，那用户空间的异常一定不会进行二次异常分发再进入 0 环</strong>，秘密就在异常过滤器的 <code>UnhandledExceptionFilter</code> 函数，后面将会介绍。</p>
+</div>
+
+<p>查看 <code>scopetable</code>异常处理过滤器及异常处理块：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//处理过滤器</span></span><br><span class="line">.text:<span class="number">7</span>C843882 loc_7C843882:                           <span class="comment">// DATA XREF: .text:stru_7C817070↑o</span></span><br><span class="line">.text:<span class="number">7</span>C843882 <span class="comment">// __unwind &#123; // __SEH_prolog</span></span><br><span class="line">.text:<span class="number">7</span>C843882 <span class="comment">//   __except filter // owned by 7C817050</span></span><br><span class="line">.text:<span class="number">7</span>C843882                 mov     eax, [ebp+ms_exc.exc_ptr]</span><br><span class="line">.text:<span class="number">7</span>C843885                 mov     ecx, [eax]      <span class="comment">// ecx = EXCEPTION_POINTERS-&gt;ExceptionRecord</span></span><br><span class="line">.text:<span class="number">7</span>C843887                 mov     ecx, [ecx]      <span class="comment">// ecx = EXCEPTION_POINTERS-&gt;ExceptionRecord-&gt;ExceptionCode</span></span><br><span class="line">.text:<span class="number">7</span>C843889                 mov     [ebp+uExitCode], ecx</span><br><span class="line">.text:<span class="number">7</span>C84388C                 push    eax             <span class="comment">// ExceptionInfo</span></span><br><span class="line">.text:<span class="number">7</span>C84388D                 call    _UnhandledExceptionFilter@<span class="number">4</span> <span class="comment">// UnhandledExceptionFilter(x)</span></span><br><span class="line">.text:<span class="number">7</span>C843892                 retn</span><br><span class="line">.text:<span class="number">7</span>C843892 <span class="comment">// &#125; // starts at 7C843882</span></span><br><span class="line">.text:<span class="number">7</span>C843892 <span class="comment">// END OF FUNCTION CHUNK FOR _BaseProcessStart@4</span></span><br><span class="line">.text:<span class="number">7</span>C843892 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">7</span>C843893                 align <span class="number">8</span></span><br><span class="line">.text:<span class="number">7</span>C843898 <span class="comment">// START OF FUNCTION CHUNK FOR _BaseProcessStart@4</span></span><br><span class="line">.text:<span class="number">7</span>C843898</span><br><span class="line">  </span><br><span class="line"><span class="comment">//异常处理块</span></span><br><span class="line">.text:<span class="number">7</span>C843898 loc_7C843898:                           <span class="comment">// DATA XREF: .text:stru_7C817070↑o</span></span><br><span class="line">.text:<span class="number">7</span>C843898 <span class="comment">// __unwind &#123; // __SEH_prolog</span></span><br><span class="line">.text:<span class="number">7</span>C843898 <span class="comment">//   __except(loc_7C843882) // owned by 7C817050</span></span><br><span class="line">.text:<span class="number">7</span>C843898                 mov     esp, [ebp+ms_exc.old_esp]</span><br><span class="line">.text:<span class="number">7</span>C84389B                 push    [ebp+uExitCode] <span class="comment">// uExitCode</span></span><br><span class="line">.text:<span class="number">7</span>C84389E                 cmp     _BaseRunningInServerProcess, <span class="number">0</span></span><br><span class="line">.text:<span class="number">7</span>C8438A5                 jnz     loc_7C817068</span><br><span class="line">.text:<span class="number">7</span>C8438AB                 call    _ExitProcess@<span class="number">4</span>  <span class="comment">// ExitProcess(x)</span></span><br><span class="line">...</span><br><span class="line">.text:<span class="number">7</span>C817068 loc_7C817068:                           <span class="comment">// CODE XREF: BaseProcessStart(x)+2C861↓j</span></span><br><span class="line">.text:<span class="number">7</span>C817068                 call    _ExitThread@<span class="number">4</span>   <span class="comment">// ExitThread(x)</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/08/14/Ci5JMZn1LPGdzoU.png" alt="34.png"></p>
+<h3 id="1-3-UnhandledExceptionFilter"><a href="#1-3-UnhandledExceptionFilter" class="headerlink" title="1.3 UnhandledExceptionFilter"></a>1.3 UnhandledExceptionFilter</h3><p>函数 <code>_UnhandledExceptionFilter</code> 的功能至关重要，具体实现可以参考《加密与解密第四版8.3.4 P352》，概述如下：</p>
+<div class="note primary"><p><code>UnhandledExceptionFilter</code> 的执行流程：</p>
+<ol>
+<li>通过 <code>NtQueryInformationProcess</code> 查询当前进程是否正在被调试，如果是，返回 <code>EXCEPTION_CONTINUE_SEARCH</code>，此时会进入<strong>第二轮分发</strong>。如果当前进程没有被调试，那过滤表达式**一定不会返回 <code>EXCEPTION_CONTINUE_SEARCH</code>**，这个时候才会出现未处理异常。                                    </li>
+<li>如果没有被调试：<br>查询是否通过 <code>SetUnhandledExceptionFilter</code> 注册顶层异常处理函数，如果有就调用。<br>如果没有通过 <code>SetUnhandledExceptionFilter</code> 注册处理函数，弹出窗口，让用户选择终止程序还是启动即时调试器。<br>如果用户没有启用即时调试器，那么该函数返回 <code>EXCEPTION_EXECUTE_HANDER</code> 去执行异常处理块（终止进程）。</li>
+</ol>
+<p>只有程序被调试时，才会存在未处理异常（进入二次分发）。</p>
+</div>
+
+<p>简单了解完 <code>UnhandledExceptionFilter</code> 函数后，可以对用户异常的处理有进一步的认识，<strong>通常情况下，用户异常不会进入第二轮分发，在第一轮分发时，若线程堆栈中的SEH未对异常进行处理，那么系统帮忙注册的最后一道防线会对异常进行处理（即终止进程&#x2F;线程）；只有存在调试器的情况下，才会进入第二轮分发。</strong></p>
+<h3 id="1-4-SetUnhandledExceptionFilter"><a href="#1-4-SetUnhandledExceptionFilter" class="headerlink" title="1.4 SetUnhandledExceptionFilter"></a>1.4 SetUnhandledExceptionFilter</h3><p> 微软提供了一个 API 函数 <code>SetUnhandledExceptionFiter</code> 来让用户设置一个顶层异常过滤回调函数，在条件满足时会在 <code>kernel32!UnhandledExceptionFilter</code> 中会调用它并根据它的返回值进行相应的操作，平时所说的<strong>顶层异常回调函数</strong>指的就是这个回调函数，而不是<code>UnhandledExceptionFilter</code> 函数。该 API 原型及参数类型定义如下。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> __stdcall <span class="title">callback</span><span class="params">(_EXCEPTION_POINTERS* excp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>API 函数<code> kernel32!SetUnhandledExceptionFilter</code> 实际上把用户设置的<strong>回调函数地址加密并保存</strong>在一个全局变量 <code>kernel32!BasepCurrentTopLevelFilter</code> 中。</p>
+<p>举一个反调试的例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">long</span> _stdcall <span class="title">callback</span><span class="params">(_EXCEPTION_POINTERS* excp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	excp-&gt;ContextRecord-&gt;Ecx = <span class="number">1</span>;</span><br><span class="line">	<span class="keyword">return</span> EXCEPTION_CONTINUE_EXECUTION;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="comment">//注册一个最顶层异常处理函数</span></span><br><span class="line">	SetUnhandledExceptionFilter(callback);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//除0异常</span></span><br><span class="line">	_asm</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">xor</span> edx,edx</span><br><span class="line">		<span class="keyword">xor</span> ecx,ecx</span><br><span class="line">		mov eax,<span class="number">0x10</span></span><br><span class="line">		idiv ecx</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="comment">//程序正常执行</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;程序执行&quot;</span>);</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>构造一个除0异常，然后将异常修复的代码通过SetUnhandledExceptionFilter注册为顶层的异常处理函数。这样，如果程序被调试，那么顶层的异常处理函数就得不到执行，程序就会报错退出（二次异常时退出的），这样就达到了反调试的目的</strong>。这里注意一点，不要在VC++6.0编译器内运行程序，这样会报除零异常，进入该项目的文件夹，双击.exe文件，即程序能够正常执行；若拖入调试器中，则无法正常执行。</p>
+<h3 id="1-5-Vista之后的顶层处理变化"><a href="#1-5-Vista之后的顶层处理变化" class="headerlink" title="1.5 Vista之后的顶层处理变化"></a>1.5 Vista之后的顶层处理变化</h3><p>从 Windows Vista 开始，线程的实际入口点变成了 <code>ntdll!_RtlUserThreadStart</code> （不再位于 <code>kernel32.dll</code> 中）。该函数直接跳转到了 <code>ntdl!_RtlUserThreadStart</code>，其内部调用了 <code>RtlInitializeExceptionChain</code> 函数，该函数与 SEHOP 保护机制有关，然后再调用 <code>__RtlUserThreadStart</code>。（注意 <code>_RtlUserThreadStart</code> 不同于 <code>__RtlUserThreadStart</code>）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">VOID _RtlUserThreadstart(</span><br><span class="line">	LPTHREAD_START_ROUTINE lpThreadstartaddr,</span><br><span class="line">	LPVOID lpThreadParm</span><br><span class="line">	)</span><br><span class="line">&#123;</span><br><span class="line">	EXCEPTION_REGISTRATION_RECORD FinalSEH;</span><br><span class="line">	RtlInitializeExceptionChain(&amp;FinalSEH);			<span class="comment">//注册第一个SEH</span></span><br><span class="line">	__RtluserThreadstart(lpThreadstartAddr, lpThreadParm);<span class="comment">//注册第二个SEH</span></span><br><span class="line">	__debugbreak ()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>32位：XP+VC6、Win10+VS2019&#x2F;VC6（除了1.4.6区别编译器外，还有此处跟系统有关，最后一道防线在ntdll中）</p>
+<p>64位：Win10 64位</p>
+<p>如6.1例2的代码在Win10+VS2019&#x2F;VC6编译生成的截图如下：</p>
+<p><img data-src="https://s2.loli.net/2022/08/14/ichAGyxoVzlLt1H.png" alt="35.png"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Win10+VC6/VS2019</span></span><br><span class="line"><span class="comment">//main函数</span></span><br><span class="line">ntdll.RtlInitializeExceptionChain	第一个SEH</span><br><span class="line">ntdll.__RtluserThreadstart		第二个SEH</span><br><span class="line">mainCRTStartup				第三个SEH</span><br><span class="line"></span><br><span class="line">前两个SEH的Hander所有线程都使用，类似于BaseThreadStart</span><br></pre></td></tr></table></figure>
+
+<p>具体可以参考《揭秘与解密第四版 8.3.5 P354》。</p>
+<h2 id="2-SafeSEH"><a href="#2-SafeSEH" class="headerlink" title="2 SafeSEH"></a>2 SafeSEH</h2><h2 id="3-SEHOP"><a href="#3-SEHOP" class="headerlink" title="3 SEHOP"></a>3 SEHOP</h2><h2 id="4-安全Cookie"><a href="#4-安全Cookie" class="headerlink" title="4 安全Cookie"></a>4 安全Cookie</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-Exception4/" title="Windows XP 异常处理（四）未处理异常">https://directoree.github.io/post/WinXP-Exception4/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> WinXP内核</a>
+              <a href="/tags/%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> 异常处理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Exception3/" rel="prev" title="Windows XP 异常处理（三）编译器扩展SEH">
+                  <i class="fa fa-chevron-left"></i> Windows XP 异常处理（三）编译器扩展SEH
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.5m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">23:17</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXP-Exception4/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
