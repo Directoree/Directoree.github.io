@@ -24,14 +24,15 @@
 
   <meta name="description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows XP 调试（一）">
+<meta property="og:title" content="Windows XP 用户态调试（一）">
 <meta property="og:url" content="https://directoree.github.io/post/WinXP-Debug/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/08/17/BgEyv4S9DZTPhtw.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/18/yDcb3HzVnmaG5qj.png">
 <meta property="article:published_time" content="2022-08-16T10:37:42.000Z">
-<meta property="article:modified_time" content="2022-08-16T16:55:58.868Z">
+<meta property="article:modified_time" content="2022-08-17T16:41:15.742Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="X86调试">
@@ -52,7 +53,7 @@
   };
 </script>
 
-  <title>Windows XP 调试（一） | Catecat</title>
+  <title>Windows XP 用户态调试（一） | Catecat</title>
   
 
 
@@ -233,7 +234,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%B0%83%E8%AF%95%E7%94%A8%E5%88%B0%E7%9A%84-API"><span class="nav-text">1 调试用到的 API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%B0%83%E8%AF%95%E5%99%A8%E4%B8%8E%E8%A2%AB%E8%B0%83%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="nav-text">2 调试器与被调试程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%B0%83%E8%AF%95%E5%AF%B9%E8%B1%A1"><span class="nav-text">2.1 调试对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%B0%83%E8%AF%95%E5%85%B3%E7%B3%BB%E5%BB%BA%E7%AB%8B%E6%96%B9%E5%BC%8F"><span class="nav-text">2.2 调试关系建立方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-DebugActiveProcess%EF%BC%9A%E8%B0%83%E8%AF%95%E5%99%A8-%E8%B0%83%E8%AF%95%E5%AF%B9%E8%B1%A1"><span class="nav-text">2.3 DebugActiveProcess：调试器-调试对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">反调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">反反调试</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%B0%83%E8%AF%95%E7%94%A8%E5%88%B0%E7%9A%84-API"><span class="nav-text">1 调试用到的 API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%B0%83%E8%AF%95%E5%99%A8%E4%B8%8E%E8%A2%AB%E8%B0%83%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="nav-text">2 调试器与被调试程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%B0%83%E8%AF%95%E5%AF%B9%E8%B1%A1"><span class="nav-text">2.1 调试对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%B0%83%E8%AF%95%E5%85%B3%E7%B3%BB%E5%BB%BA%E7%AB%8B%E6%96%B9%E5%BC%8F"><span class="nav-text">2.2 调试关系建立方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-DebugActiveProcess"><span class="nav-text">2.3 DebugActiveProcess</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-TEB-DbgSsReserved"><span class="nav-text">2.4 TEB.DbgSsReserved</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">2.5 反调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E5%8F%8D%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">2.6 反反调试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%B0%83%E8%AF%95%E4%BA%8B%E4%BB%B6%E7%9A%84%E9%87%87%E9%9B%86-0%E7%8E%AF"><span class="nav-text">3 调试事件的采集-0环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%B0%83%E8%AF%95%E4%BA%8B%E4%BB%B6"><span class="nav-text">3.1 调试事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%B0%83%E8%AF%95%E4%BA%8B%E4%BB%B6%E7%A7%8D%E7%B1%BB"><span class="nav-text">3.2 调试事件种类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E8%B0%83%E8%AF%95%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86-3%E7%8E%AF"><span class="nav-text">4 调试事件处理-3环</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -339,7 +340,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Windows XP 调试（一）
+          Windows XP 用户态调试（一）
         </h1>
 
         <div class="post-meta-container">
@@ -357,7 +358,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-08-17 00:55:58" itemprop="dateModified" datetime="2022-08-17T00:55:58+08:00">2022-08-17</time>
+        <time title="修改时间：2022-08-18 00:41:15" itemprop="dateModified" datetime="2022-08-18T00:41:15+08:00">2022-08-18</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -370,7 +371,7 @@
     </span>
 
   
-    <span id="/post/WinXP-Debug/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 调试（一）" title="阅读次数">
+    <span id="/post/WinXP-Debug/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 用户态调试（一）" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -398,14 +399,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.7k</span>
+      <span>5.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -428,59 +429,95 @@
 <p><code>ntoskrnl.exe</code>：该文件中的调试支持函数负责<strong>采集</strong>和<strong>传递</strong>调试事件，以及控制被调试进程。这些内核函数都是以 <code>Dbgk</code> 开头的。</p>
 </div>
 
+<p>调试子系统主要由 3 个部分：位于<code>ntdll.dll</code> 中的支持函数、位于内核文件中的 <code>Dbgk</code>支持函数，以及在内核的调试子系统服务器组成（实际上子系统是一类服务函数的集合，所以这里指的服务器就是为调试提供服务的函数）。</p>
 <h2 id="2-调试器与被调试程序"><a href="#2-调试器与被调试程序" class="headerlink" title="2 调试器与被调试程序"></a>2 调试器与被调试程序</h2><h3 id="2-1-调试对象"><a href="#2-1-调试对象" class="headerlink" title="2.1 调试对象"></a>2.1 调试对象</h3><p>调试器是一个进程，被调试程序是一个进程，如何才能将两个进程联系到一起呢？就需要一个桥梁，在 Windows 中一般都是用一个<strong>对象</strong>来管理和连接许多事务，而调试用到的就是<strong>调试对象</strong><code>_DEBUG_OBJECT</code>（进程间是相互隔离的，但是高2G往往又是相同的，因此这个桥梁可以利用内核层来实现）。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> ULONG ERESOURCE, *PERESOURCE;</span><br><span class="line"><span class="keyword">typedef</span> ULONG FAST_MUTEX, *PFAST_MUTEX;</span><br><span class="line"><span class="keyword">typedef</span> ULONG KEVENT, *PKEVENT;</span><br><span class="line"><span class="keyword">typedef</span> ULONG KMUTEX, *PKMUTEX;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DEBUG_OBJECT</span> &#123;</span></span><br><span class="line">    <span class="comment">// Event thats set when the EventList is populated.</span></span><br><span class="line">    KEVENT EventsPresent;</span><br><span class="line">    <span class="comment">// Mutex to protect the structure</span></span><br><span class="line">    FAST_MUTEX Mutex;</span><br><span class="line">    <span class="comment">// Queue of events waiting for debugger intervention</span></span><br><span class="line">    LIST_ENTRY EventList;</span><br><span class="line">    <span class="comment">// Flags for the object</span></span><br><span class="line">    ULONG Flags;</span><br><span class="line">&#125; DEBUG_OBJECT, *PDEBUG_OBJECT;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DEBUG_OBJECT</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    KEVENT EventsPresent;</span><br><span class="line">    FAST_MUTEX Mutex;</span><br><span class="line">    LIST_ENTRY StateEventListEntry;</span><br><span class="line">    ULONG Flags;</span><br><span class="line">&#125;DEBUG_OBJECT, *PDEBUG_OBJECT;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> ULONG ERESOURCE, *PERESOURCE;</span><br><span class="line"><span class="keyword">typedef</span> ULONG FAST_MUTEX, *PFAST_MUTEX;</span><br><span class="line"><span class="keyword">typedef</span> ULONG KEVENT, *PKEVENT;</span><br><span class="line"><span class="keyword">typedef</span> ULONG KMUTEX, *PKMUTEX;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DEBUG_OBJECT</span> &#123;</span></span><br><span class="line">    KEVENT EventsPresent;</span><br><span class="line">    FAST_MUTEX Mutex;</span><br><span class="line">    LIST_ENTRY EventList;</span><br><span class="line">    ULONG Flags;</span><br><span class="line">&#125; DEBUG_OBJECT, *PDEBUG_OBJECT;</span><br></pre></td></tr></table></figure>
 
 <table>
 <thead>
 <tr>
 <th align="center"><strong>偏移</strong></th>
-<th align="center"><strong>名称</strong></th>
+<th align="left"><strong>名称</strong></th>
 <th align="center"><strong>作用</strong></th>
 </tr>
 </thead>
 <tbody><tr>
 <td align="center">0x00</td>
-<td align="center">EventsPresent</td>
-<td align="center">用于指示调试事件发生的事件对象，用来同步调试器进程和被调试进程，调试子系统服务器通过设置此事件来通知调试器读取消息队列中的调试信息</td>
+<td align="left">EventsPresent</td>
+<td align="center">用于指示调试事件发生的事件对象，用来同步调试器进程和被调试进程，<strong>调试子系统服务器通过设置此事件来通知调试器读取消息队列中的调试信息</strong>。调试器通过 <code>WaitForDebugEvent</code> 来等待此对象。</td>
 </tr>
 <tr>
-<td align="center">0x4</td>
-<td align="center">Mutex</td>
-<td align="center">用于同步的互斥对象，用来锁定对这个数据结构的访问，以防止对各线程同时读写造成数据错误</td>
+<td align="center">0x10</td>
+<td align="left">Mutex</td>
+<td align="center">用于同步的互斥对象，用来锁定对 <code>StateEventListEntry</code> 的访问，以防止向链表写数据时调试器正在取数据造成数据读写错误。</td>
 </tr>
 <tr>
-<td align="center">0x8</td>
-<td align="center">StateEventListEntry</td>
-<td align="center">保存调试事件的链表，被称为调试消息队列</td>
+<td align="center">0x30</td>
+<td align="left">StateEventListEntry</td>
+<td align="center">保存调试事件的链表，被称为<strong>调试消息队列</strong>。</td>
 </tr>
 <tr>
-<td align="center">0xC</td>
-<td align="center">Flags</td>
-<td align="center">包含多个标志位，比如，位1代表结束调试会话时是否终止被调试进程</td>
+<td align="center">0x38</td>
+<td align="left">Flags</td>
+<td align="center">包含多个标志位，比如，位1代表结束调试会话时是否终止被调试进程（<code>KillProcessOnExit</code>）， <code>DebugSetProcessKillOnExit</code> 实际上设置的就是这个标志位。</td>
 </tr>
 </tbody></table>
-<p>当调试器与调试子系统建立连接时，调试子系统会为其创建一个DEBUG_OBJECT调试对象，并将其保存在调试器当前线程的线程环境块（TEB）偏移0x0F24的DbgSsReserved[1]字段中。该字段中保存的调试对象是这个调试器线程区别于其他普通线程的重要标志。由于TEB是用户层的数据结构，所以此时DbgSsReserved[1]中保存的其实是调试对象的句柄，而不是调试对象的地址。</p>
-<p>调试对象通常由调试器进程创建，为了起到联系被调试进程和调试进程的作用，还需要将其设置到被调试进程EPROCESS结构的DebugPort字段中。DebugPort是内核进程对象结构的一个有关调试的重要字段。如果一个进程不在调试状态，那么该字段为NULL，否则，该字段是一个指针，指向的就是DEBUG_OBJECT调试对象。</p>
+<p>调试对象通常是在调试器进程中创建的，将调试器进程与被调试进程建立连接的过程为：</p>
+<ol>
+<li>调试器进程调用函数创建调试对象，并将调试对象<strong>句柄</strong>保存到调试器当前线程 <code>TEB.DbgSsReserved[1]</code> 字段中。</li>
+<li>然后进入 0 环，将调试<strong>对象地址</strong>保存在被调试进程 <code>EPROCESS.DebugPort</code>。</li>
+</ol>
 <h3 id="2-2-调试关系建立方式"><a href="#2-2-调试关系建立方式" class="headerlink" title="2.2 调试关系建立方式"></a>2.2 调试关系建立方式</h3><p>打开调试器，有两种与被调试程序建立联系的方式：</p>
 <ul>
 <li>在调试器中<mark class="label warning">打开</mark>未运行的可执行文件：通过 <code>kernel32!CreateProcess</code> 建立联系。</li>
 <li>将一个正在运行的程序<mark class="label success">附加</mark>到调试器中：通过 <code>kernel32!DebugActiveProcess</code> 建立联系。</li>
 </ul>
+<p><strong>一、kernel32!CreateProcess</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">CreateProcessA</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LPCSTR lpApplicationName,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LPSTR lpCommandLine,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LPSECURITY_ATTRIBUTES lpProcessAttributes,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LPSECURITY_ATTRIBUTES lpThreadAttributes,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN BOOL bInheritHandles,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN DWORD dwCreationFlags,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LPVOID lpEnvironment,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LPCSTR lpCurrentDirectory,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN LPSTARTUPINFOA lpStartupInfo,</span></span></span><br><span class="line"><span class="function"><span class="params">    OUT LPPROCESS_INFORMATION lpProcessInformation</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>dwCreationFlags</code> 参数用于指定创建新进程的选项，可以是一系列标志位的组合。以下两个标志位是<strong>专门用于调试</strong>的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG_PROCESS                     0x00000001</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG_ONLY_THIS_PROCESS           0x00000002</span></span><br></pre></td></tr></table></figure>
+
+<p>系统在创建进程时，会检查创建标志中是否包含以上标志。如果包含，那么系统会把调用进程当作调试器（debugger）进程，把新创建的进程当作被调试（debuggee）进程，为二者建立起调试关系。</p>
+<p><strong>二者主要区别</strong>：</p>
+<ul>
+<li><code>DEBUG_PROCESS</code> ：调试器会收到被调试进程及由被调试进程创建的所有子进程中发生的所有调试事件的信息，但一般来说没有必要这样做。<code>DEBUG_ONLY_THIS_PROCESS</code> 和 <code>DEBUG_PROCESS</code> 组合标志来禁止它。</li>
+<li><code>DEBUG_ONLY_THIS_PROCESS</code>：调试器将只会收到被调试进程的调试事件，而对其子进程的调试事件不予理睬。</li>
+</ul>
+<p>因为操作系统将调试对象标记为在特殊模式下运行，所以可以使用 <code>IsDebuggerPresent</code> 函数查看进程是否在调试器下运行。《加密与解密第四版 9.3 P377》。</p>
+<p>这种方式创建具体细节请看《软件调试第二版卷2 10.3 P201》。</p>
 <p>两种建立联系的方式本质上区别并不大，只是第一种有一个创建进程的过程，多出一步，所以仅分析第二种通过 <code>kernel32!DebugActiveProcess</code> 建立联系的方式即可。</p>
-<h3 id="2-3-DebugActiveProcess：调试器-调试对象"><a href="#2-3-DebugActiveProcess：调试器-调试对象" class="headerlink" title="2.3 DebugActiveProcess：调试器-调试对象"></a>2.3 DebugActiveProcess：调试器-调试对象</h3><p>函数 <code>kernel32!DebugActiveProcess</code>：该函数允许调试器<strong>附加</strong>一个处于活动状态的进程。</p>
+<h3 id="2-3-DebugActiveProcess"><a href="#2-3-DebugActiveProcess" class="headerlink" title="2.3 DebugActiveProcess"></a>2.3 DebugActiveProcess</h3><p>函数 <code>kernel32!DebugActiveProcess</code>：该函数允许调试器<strong>附加</strong>一个处于活动状态的进程。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL __stdcall <span class="title">DebugActiveProcess</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    DWORD dwProcessId	<span class="comment">//被调试进程的PID</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span>			<span class="comment">//返回值：TRUE-附加成功，FALSE-附加失败。使用GetLastError可获取错误码</span></span></span><br></pre></td></tr></table></figure>
 
-<p>该函数调用 <code>ntdll!DbgUiConnectToDbg</code> ，无需进入 0 环。先判断调试器当前线程 <code>TEB+0xF24</code> 即 <code>DbgSsReserved[1] == NULL</code>，如果不为空则直接使用该调试对象即可，如果为空会创建一个调试对象。最后<strong>将调试对象句柄值存入调试器当前线程</strong> <code>TEB+0xF24</code>，即可关联起来。</p>
-<p>由于TEB是用户层的数据结构，所以此时DbgSsReserved[1]中保存的其实是调试对象的句柄，而不是调试对象的地址。</p>
+<ol>
+<li>该函数调用 <code>ntdll!DbgUiConnectToDbg</code> ，无需进入 0 环。先判断调试器当前线程 <mark class="label info">TEB+0xF24</mark> 即 <code>DbgSsReserved[1] == NULL</code>，如果不为空则直接使用该调试对象即可，如果为空会创建一个调试对象。最后<strong>将调试对象句柄值存入调试器当前线程</strong> <code>TEB+0xF24</code>，即可关联起来。</li>
+<li>然后调用 <code>ntdll!DbgUiDebugActiveProcess</code> 带着被调试进程句柄、调试对象句柄进入 0 环后调用 <code>DbgkpSetProcessDebugObject</code>，然后将<strong>调试对象地址</strong>存入被调试进程 <mark class="label default">EPROCESS.DebugPort</mark>即可。</li>
+</ol>
+<p>由于TEB是用户层的数据结构，所以此时 <code>DbgSsReserved[1]</code> 中保存的其实是调试对象的句柄，而不是调试对象的地址。</p>
+<ul>
+<li><code>ntdll!DbgUiConnectToDbg</code>：关联调试器-调试对象。</li>
+<li><code>ntdll!DbgUiDebugActiveProcess --&gt; DbgkpSetProcessDebugObject</code>：关联被调试进程-调试对象。</li>
+</ul>
 <p><img data-src="https://s2.loli.net/2022/08/17/BgEyv4S9DZTPhtw.png" alt="DebugActiveProcess.png"></p>
-<h2 id="反调试"><a href="#反调试" class="headerlink" title="反调试"></a>反调试</h2><p>在掌握了调试原理后，自然也就可以总结出一些反调试的手段：</p>
+<h3 id="2-4-TEB-DbgSsReserved"><a href="#2-4-TEB-DbgSsReserved" class="headerlink" title="2.4 TEB.DbgSsReserved"></a>2.4 TEB.DbgSsReserved</h3><p><code>TEB</code> 结构的 <code>DbgSsReservedr[2]</code> 数组就是专门用来记录调试器工作线程与调试子系统之间通信用的同步对象和通信对象的。</p>
+<ul>
+<li><code>DbgSsReservear[0]</code>：是一个链表头，指向所有被调试线程。这个链表的每个节点是一个 <code>DBGSS_THREAD_DATA</code> 结构，每个节点用来描述被调试进程中的一个线程。</li>
+<li><code>DbgSsReservear[1]</code>：存放调试对象句柄。</li>
+</ul>
+<p>关于 <code>DBGSS_THREAD_DATA</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DBGSS_THREAD_DATA</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">DBGSS_THREAD_DATA</span> *<span class="title">Next</span>;</span>	<span class="comment">//指向下一个节点</span></span><br><span class="line">    HANDLE ThreadHandle;		<span class="comment">//线程句柄（被调试进程中）</span></span><br><span class="line">    HANDLE ProcessHandle;		<span class="comment">//被调试进程的句柄</span></span><br><span class="line">    DWORD ProcessId;			<span class="comment">//被调试进程的 ID</span></span><br><span class="line">    DWORD ThreadId;			<span class="comment">//线程ID（被调试进程中）</span></span><br><span class="line">    BOOLEAN HandleMarked;		<span class="comment">//退出标记</span></span><br><span class="line">&#125; DBGSS_THREAD_DATA, *PDBGSS_THREAD_DATA;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>调试时间处理的 <code>WaitForDebugEvent</code> 和 <code>ContinueDebugEvent</code> 函数会维护这个链表。</p>
+<h3 id="2-5-反调试"><a href="#2-5-反调试" class="headerlink" title="2.5 反调试"></a>2.5 反调试</h3><p>在掌握了调试原理后，自然也就可以总结出一些反调试的手段：</p>
 <ol>
 <li><strong>清零DebugPort</strong>，只要起一个线程不断的检查当前进程的DebugPort，一旦有值就退出程序或者将其清零，这样可以<strong>中断调试对象与被调试进程的联系</strong>，以达到反调试的目的。</li>
 <li><strong>遍历所有进程TEB+0xF24处</strong>，看有没有值，若有值，一定就是调试器，则退出程序。</li>
 <li><strong>Hook NtCreateDebugObject</strong>，不让它创建调试对象。</li>
 </ol>
-<h2 id="反反调试"><a href="#反反调试" class="headerlink" title="反反调试"></a>反反调试</h2><p>有反调试，自然就有反反调试，正所谓道高一尺魔高一丈，针对各类反调试手段，也会衍生出各类的反反调试，攻防领域永远都在交替上升：</p>
+<h3 id="2-6-反反调试"><a href="#2-6-反反调试" class="headerlink" title="2.6 反反调试"></a>2.6 反反调试</h3><p>有反调试，自然就有反反调试，正所谓道高一尺魔高一丈，针对各类反调试手段，也会衍生出各类的反反调试，攻防领域永远都在交替上升：</p>
 <ol>
 <li>针对Hook NtCreateDebugObject的反调试方式，可以<strong>自己分配一个内存给_DEBUG_OBJECT</strong>，并为它的成员赋值。</li>
 <li>针对清零DebugPort的反调试方式，可以不使用DebugPort的位置，<strong>在进程中另找一个区域存放_DEBUG_OBJECT的地址</strong>。把原先+0xbc的值都选为新的偏移处。</li>
@@ -490,6 +527,26 @@
 <li><a target="_blank" rel="noopener" href="https://cataloc.gitee.io/blog/2020/09/11/%E8%B0%83%E8%AF%95%E5%AF%B9%E8%B1%A1/">调试对象</a></li>
 <li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-271021.htm#msg_header_h1_1">Windows内核学习笔记之调试（上）</a></li>
 </ul>
+<h2 id="3-调试事件的采集-0环"><a href="#3-调试事件的采集-0环" class="headerlink" title="3 调试事件的采集-0环"></a>3 调试事件的采集-0环</h2><h3 id="3-1-调试事件"><a href="#3-1-调试事件" class="headerlink" title="3.1 调试事件"></a>3.1 调试事件</h3><p>调试事件：<strong>调试器进程如何才能知道被调试进程发生甚么事了</strong>？于是就有了调试事件这么一个概念，<strong>用来描述被调试进程的某些行为</strong>，当被调试进程做出了一些行为后，如果属于调试事件中的一类，就会借助调试对象告知调试器。参考下图：</p>
+<p><img data-src="https://s2.loli.net/2022/08/18/yDcb3HzVnmaG5qj.png" alt="1.png"></p>
+<div class="note danger"><p>调试事件的采集是<strong>在内核</strong>进行的，使用以 <code>Dbgk</code> 开头的函数来进行采集。</p>
+</div>
+
+<p>在内核中，调试事件有时也称为调试消息，并使用一个名为 <code>DBGKM_APIMSG</code> 的结构来描述。<br>在发送给调试器时，调试 API 使用的是一个名为 <code>DEBUG_EVENT</code> 的结构。因为这两个结构是不同的，所以需要一个转化过程，这个工作是由调试子系统服务器和 <code>ntdll,dll</code> 中的用户态函数来完成的。简单来说，子系统服务器会将自己使用的结构转化为 <code>ntdll.dll</code> 使用的<code>DBGULWAIT_STATE_CHANGE</code>， <code>ntdll.dll</code> 再将这个结构转化为调试器使用的 <code>DEBUG_EVENT</code> 结构。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DEBUG_OBJECT</span> &#123;</span></span><br><span class="line">     KEVENT EventsPresent;		<span class="comment">//+0x00,用于指示有调试事件发生的事件对象</span></span><br><span class="line">     FAST_MUTEX Mutex;			<span class="comment">//+0x10,用于同步的互斥对象</span></span><br><span class="line">     LIST_ENTRY EventList;		<span class="comment">//+0x30,保存调试事件的链表</span></span><br><span class="line">     ULONG Flags;			<span class="comment">//+0x38,标志位,调试消息是否已读取</span></span><br><span class="line">&#125; DEBUG_OBJECT, *PDEBUG_OBJECT;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-调试事件种类"><a href="#3-2-调试事件种类" class="headerlink" title="3.2 调试事件种类"></a>3.2 调试事件种类</h3><p>不能说执行了什么代码（例如打印了某个字符，申请了一块内存），都产生一个调试事件发送给 <code>_DEBUG_OBJECT</code>，那样链表也就过于复杂了，所以<strong>调试事件设定了以下7种类型</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">DBGKM_APINUMBER</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    DbgKmExceptionApi = <span class="number">0</span>,		<span class="comment">//异常(例：Int3断点，硬件断点)</span></span><br><span class="line">    DbgKmCreateThreadApi = <span class="number">1</span>,		<span class="comment">//创建线程</span></span><br><span class="line">    DbgKmCreateProcessApi = <span class="number">2</span>,		<span class="comment">//创建进程</span></span><br><span class="line">    DbgKmExitThreadApi = <span class="number">3</span>,		<span class="comment">//线程退出</span></span><br><span class="line">    DbgKmExitProcessApi = <span class="number">4</span>,		<span class="comment">//进程退出</span></span><br><span class="line">    DbgKmLoadDllApi = <span class="number">5</span>,		<span class="comment">//加载DLL</span></span><br><span class="line">    DbgKmUnloadDllApi = <span class="number">6</span>,		<span class="comment">//卸载DLL</span></span><br><span class="line">    DbgKmErrorReportApi = <span class="number">7</span>,		<span class="comment">//内部错误(已废弃)</span></span><br><span class="line">    DbgKmMaxApiNumber = <span class="number">8</span>,		<span class="comment">//最大值</span></span><br><span class="line">&#125; DBGKM_APINUMBER;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="4-调试事件处理-3环"><a href="#4-调试事件处理-3环" class="headerlink" title="4 调试事件处理-3环"></a>4 调试事件处理-3环</h2><p>《软件调试第二版》 第九章内核部分被调试程序的处理，第十章是用户部分调试器处理。</p>
 
     </div>
 
@@ -525,7 +582,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/WinXP-Debug/" title="Windows XP 调试（一）">https://directoree.github.io/post/WinXP-Debug/</a>
+      <a href="https://directoree.github.io/post/WinXP-Debug/" title="Windows XP 用户态调试（一）">https://directoree.github.io/post/WinXP-Debug/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -617,7 +674,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:22</span>
+    <span title="站点阅读时长">23:24</span>
   </span>
 </div>
 <div class="busuanzi-count">
