@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/08/14/Ci5JMZn1LPGdzoU.png">
 <meta property="og:image" content="https://s2.loli.net/2022/08/14/ichAGyxoVzlLt1H.png">
 <meta property="article:published_time" content="2022-08-14T10:14:52.000Z">
-<meta property="article:modified_time" content="2022-08-16T13:47:38.565Z">
+<meta property="article:modified_time" content="2022-08-18T16:27:47.330Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="异常处理">
@@ -237,7 +237,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%9C%AA%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8"><span class="nav-text">1 未处理异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%9C%80%E5%90%8E%E4%B8%80%E9%81%93%E9%98%B2%E7%BA%BF%E4%B8%BE%E4%BE%8B"><span class="nav-text">1.1 最后一道防线举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-BaseProcessStart%E5%88%86%E6%9E%90"><span class="nav-text">1.2 BaseProcessStart分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-UnhandledExceptionFilter"><span class="nav-text">1.3 UnhandledExceptionFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-SetUnhandledExceptionFilter"><span class="nav-text">1.4 SetUnhandledExceptionFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-Vista%E4%B9%8B%E5%90%8E%E7%9A%84%E9%A1%B6%E5%B1%82%E5%A4%84%E7%90%86%E5%8F%98%E5%8C%96"><span class="nav-text">1.5 Vista之后的顶层处理变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-SafeSEH"><span class="nav-text">2 SafeSEH</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-SEHOP"><span class="nav-text">3 SEHOP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%89%E5%85%A8Cookie"><span class="nav-text">4 安全Cookie</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%9C%AA%E5%A4%84%E7%90%86%E5%BC%82%E5%B8%B8"><span class="nav-text">1 未处理异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%9C%80%E5%90%8E%E4%B8%80%E9%81%93%E9%98%B2%E7%BA%BF%E4%B8%BE%E4%BE%8B"><span class="nav-text">1.1 最后一道防线举例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-BaseProcessStart%E5%88%86%E6%9E%90"><span class="nav-text">1.2 BaseProcessStart分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-UnhandledExceptionFilter"><span class="nav-text">1.3 UnhandledExceptionFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-SetUnhandledExceptionFilter"><span class="nav-text">1.4 SetUnhandledExceptionFilter</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-Vista%E4%B9%8B%E5%90%8E%E7%9A%84%E9%A1%B6%E5%B1%82%E5%A4%84%E7%90%86%E5%8F%98%E5%8C%96"><span class="nav-text">1.5 Vista之后的顶层处理变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AE%89%E5%85%A8Cookie"><span class="nav-text">2 安全Cookie</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-SafeSEH"><span class="nav-text">3 SafeSEH</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-SEHOP"><span class="nav-text">4 SEHOP</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -361,7 +361,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-08-16 21:47:38" itemprop="dateModified" datetime="2022-08-16T21:47:38+08:00">2022-08-16</time>
+        <time title="修改时间：2022-08-19 00:27:47" itemprop="dateModified" datetime="2022-08-19T00:27:47+08:00">2022-08-19</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -468,6 +468,29 @@
 </ul>
 <p>所以每一个线程开始时候都会在 <code>FS:[0]</code> 链条上挂入SEH，在每个进程一开始也会挂入 SEH，<strong>所以最后一道防线是 BaseProcessStart</strong>。</p>
 <p> 参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/HsinTsao/p/6534317.html">关于Windows创建进程的过程</a>。</p>
+<p><strong>总结</strong>：在 XP 系统中，每个线程最后一道防线如下（跟编译器无关）：</p>
+<table>
+<thead>
+<tr>
+<th>Windows XP</th>
+<th>最后一道防线、顶层处理插入位置</th>
+<th>次顶层处理插入位置</th>
+<th>异常处理函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主线程：</td>
+<td>BaseProcessStart</td>
+<td>mainCRTStartup</td>
+<td>__SEH_prolog&#x2F;__except_handler3</td>
+</tr>
+<tr>
+<td>其余线程</td>
+<td>BaseProcessStart</td>
+<td>-</td>
+<td>__SEH_prolog&#x2F;__except_handler3</td>
+</tr>
+</tbody></table>
 <h3 id="1-2-BaseProcessStart分析"><a href="#1-2-BaseProcessStart分析" class="headerlink" title="1.2 BaseProcessStart分析"></a>1.2 BaseProcessStart分析</h3><p>这部分完全可以参考《加密与解密第四版8.3.4》。</p>
 <p>函数 <code>BaseProcessStart</code> 是程序创建以后的第一个线程在 3 环执行的起始地址，其余第二个、第三个…线程被创建以后在 3 环之行的起始地址为 <code>BaseThreadStart</code>。</p>
 <p>函数原型如下：</p>
@@ -504,24 +527,46 @@
 
 
 <p><strong>构造一个除0异常，然后将异常修复的代码通过SetUnhandledExceptionFilter注册为顶层的异常处理函数。这样，如果程序被调试，那么顶层的异常处理函数就得不到执行，程序就会报错退出（二次异常时退出的），这样就达到了反调试的目的</strong>。这里注意一点，不要在VC++6.0编译器内运行程序，这样会报除零异常，进入该项目的文件夹，双击.exe文件，即程序能够正常执行；若拖入调试器中，则无法正常执行。</p>
-<h3 id="1-5-Vista之后的顶层处理变化"><a href="#1-5-Vista之后的顶层处理变化" class="headerlink" title="1.5 Vista之后的顶层处理变化"></a>1.5 Vista之后的顶层处理变化</h3><p>从 Windows Vista 开始，线程的实际入口点变成了 <code>ntdll!_RtlUserThreadStart</code> （不再位于 <code>kernel32.dll</code> 中）。该函数直接跳转到了 <code>ntdl!_RtlUserThreadStart</code>，其内部调用了 <code>RtlInitializeExceptionChain</code> 函数，该函数与 SEHOP 保护机制有关，然后再调用 <code>__RtlUserThreadStart</code>。（注意 <code>_RtlUserThreadStart</code> 不同于 <code>__RtlUserThreadStart</code>）</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">VOID _RtlUserThreadstart(</span><br><span class="line">	LPTHREAD_START_ROUTINE lpThreadstartaddr,</span><br><span class="line">	LPVOID lpThreadParm</span><br><span class="line">	)</span><br><span class="line">&#123;</span><br><span class="line">	EXCEPTION_REGISTRATION_RECORD FinalSEH;</span><br><span class="line">	RtlInitializeExceptionChain(&amp;FinalSEH);			<span class="comment">//注册第一个SEH</span></span><br><span class="line">	__RtluserThreadstart(lpThreadstartAddr, lpThreadParm);<span class="comment">//注册第二个SEH</span></span><br><span class="line">	__debugbreak ()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-5-Vista之后的顶层处理变化"><a href="#1-5-Vista之后的顶层处理变化" class="headerlink" title="1.5 Vista之后的顶层处理变化"></a>1.5 Vista之后的顶层处理变化</h3><p>从 Windows Vista 开始，线程的实际入口点变成了 <code>ntdll!RtlUserThreadStart</code> （不再位于 <code>kernel32.dll</code> 中）。该函数直接跳转到了 <code>ntdll!_RtlUserThreadStart</code>，其内部调用了 <code>RtlInitializeExceptionChain</code> 函数，该函数与 SEHOP 保护机制有关，然后再调用 <code>__RtlUserThreadStart</code>。（注意 <code>_RtlUserThreadStart</code> 不同于 <code>__RtlUserThreadStart</code>）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">VOID _RtlUserThreadstart(</span><br><span class="line">	LPTHREAD_START_ROUTINE lpThreadstartaddr,</span><br><span class="line">	LPVOID lpThreadParm</span><br><span class="line">	)</span><br><span class="line">&#123;</span><br><span class="line">	EXCEPTION_REGISTRATION_RECORD FinalSEH;</span><br><span class="line">	RtlInitializeExceptionChain(&amp;FinalSEH);			<span class="comment">//注册第一个SEH</span></span><br><span class="line">	__RtluserThreadstart(lpThreadstartAddr, lpThreadParm);	<span class="comment">//注册第二个SEH</span></span><br><span class="line">	__debugbreak ()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-<p>32位：XP+VC6、Win10+VS2019&#x2F;VC6（除了1.4.6区别编译器外，还有此处跟系统有关，最后一道防线在ntdll中）</p>
-<p>64位：Win10 64位</p>
 <p>如6.1例2的代码在Win10+VS2019&#x2F;VC6编译生成的截图如下：</p>
 <p><img data-src="https://s2.loli.net/2022/08/14/ichAGyxoVzlLt1H.png" alt="35.png"></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Win10+VC6/VS2019</span></span><br><span class="line"><span class="comment">//main函数</span></span><br><span class="line">ntdll.RtlInitializeExceptionChain	第一个SEH</span><br><span class="line">ntdll.__RtluserThreadstart		第二个SEH，顶层处理的SEH</span><br><span class="line">mainCRTStartup				第三个SEH</span><br><span class="line"></span><br><span class="line">前两个SEH的Hander所有线程都使用，但是第二个SEH才是顶层异常处理函数的SEH</span><br></pre></td></tr></table></figure>
-
+<p><strong>总结</strong>：在 Win10 系统中，每个线程最后一道防线如下（跟编译器无关）：</p>
+<table>
+<thead>
+<tr>
+<th>Windows 10</th>
+<th>SEHOP函数（ntdll!FinalExceptionHandler）插入位置</th>
+<th>最后一道防线、顶层处理插入位置</th>
+<th>次顶层处理插入位置</th>
+<th>异常处理函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主线程：</td>
+<td>ntdll!_RtlUserThreadstart.RtlInitializeExceptionChain</td>
+<td>ntdll!__RtluserThreadstart</td>
+<td>mainCRTStartup</td>
+<td>__SEH_prolog&#x2F;__except_hander4</td>
+</tr>
+<tr>
+<td>其余线程</td>
+<td>ntdll!_RtlUserThreadstart.RtlInitializeExceptionChain</td>
+<td>ntdll!__RtluserThreadstart</td>
+<td>-</td>
+<td>__SEH_prolog&#x2F;__except_hander4</td>
+</tr>
+</tbody></table>
+<p>前两个SEH的Hander所有线程都使用，但是第二个SEH才是顶层异常处理函数的SEH。第一个<code>SEH-&gt;Next == 0xffffffff</code> 时，对应的异常处理函数为 <code>ntdll!FinalExceptionHandler</code>，这是SEHOP加入后的才有的，具体见下面SEHOP介绍。</p>
 <p>具体可以参考《揭秘与解密第四版 8.3.5 P354》。</p>
-<h2 id="2-SafeSEH"><a href="#2-SafeSEH" class="headerlink" title="2 SafeSEH"></a>2 SafeSEH</h2><p>SafeSEH依赖于编译器可以开启SafeSEH的功能，同时必须是XP SP2以后的操作系统才支持，必须两者同时支持。</p>
+<h2 id="2-安全Cookie"><a href="#2-安全Cookie" class="headerlink" title="2 安全Cookie"></a>2 安全Cookie</h2><p>《软件调试第二版卷2》</p>
+<h2 id="3-SafeSEH"><a href="#3-SafeSEH" class="headerlink" title="3 SafeSEH"></a>3 SafeSEH</h2><p>SafeSEH依赖于编译器可以开启SafeSEH的功能，同时必须是XP SP2以后的操作系统才支持，必须两者同时支持。</p>
 <p>参考《加密与解密第四版8.3.6 P357》、《0day安全11.1 P284》。</p>
-<h2 id="3-SEHOP"><a href="#3-SEHOP" class="headerlink" title="3 SEHOP"></a>3 SEHOP</h2><p>Vista以后的操作系统才支持，跟编译器无关。</p>
+<h2 id="4-SEHOP"><a href="#4-SEHOP" class="headerlink" title="4 SEHOP"></a>4 SEHOP</h2><p>Vista以后的操作系统才支持，跟编译器无关。</p>
 <p>SEHOP为操作系统在 <code>ntdll!RtlInitializeExceptionChain</code> 注册的，此时的顶层处理的 SEH 为 <code>ntdll.__RtluserThreadstart</code>。</p>
-<p>具体可以参考《揭秘与解密第四版 8.3.6 P359》。</p>
-<h2 id="4-安全Cookie"><a href="#4-安全Cookie" class="headerlink" title="4 安全Cookie"></a>4 安全Cookie</h2><p>《软件调试第二版卷2》</p>
+<p>具体可以参考《加密与解密第四版 8.3.6 P359》。</p>
+<p>SEHOP，Structured Exception Handling Overwrite Protection（SEH 覆写保护机制）。</p>
 
     </div>
 
@@ -642,14 +687,14 @@
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">1.5m</span>
+    <span title="站点总字数">1.6m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:24</span>
+    <span title="站点阅读时长">23:29</span>
   </span>
 </div>
 <div class="busuanzi-count">
