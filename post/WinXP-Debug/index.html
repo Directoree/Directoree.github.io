@@ -36,10 +36,10 @@
 <meta property="og:image" content="https://s2.loli.net/2022/08/18/UiVgqFL1jTMAGxS.png">
 <meta property="og:image" content="https://s2.loli.net/2022/08/21/FRVS3IvgJp4d6zq.png">
 <meta property="og:image" content="https://s2.loli.net/2022/08/21/z9QAPpnXOk7letc.png">
-<meta property="og:image" content="https://s2.loli.net/2022/08/21/lk1LIZ4FXiVhbEf.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/22/z7I1vDhKFxrGds3.png">
 <meta property="og:image" content="https://s2.loli.net/2022/08/21/e7b6DA8JPNuZcX3.png">
 <meta property="article:published_time" content="2022-08-16T10:37:42.000Z">
-<meta property="article:modified_time" content="2022-08-21T11:00:42.288Z">
+<meta property="article:modified_time" content="2022-08-22T12:25:41.951Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="X86调试">
@@ -241,7 +241,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%B0%83%E8%AF%95%E7%94%A8%E5%88%B0%E7%9A%84-API"><span class="nav-text">1 调试用到的 API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%B0%83%E8%AF%95%E5%99%A8%E4%B8%8E%E8%A2%AB%E8%B0%83%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="nav-text">2 调试器与被调试程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%B0%83%E8%AF%95%E5%AF%B9%E8%B1%A1"><span class="nav-text">2.1 调试对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%B0%83%E8%AF%95%E5%85%B3%E7%B3%BB%E5%BB%BA%E7%AB%8B%E6%96%B9%E5%BC%8F"><span class="nav-text">2.2 调试关系建立方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-DebugActiveProcess"><span class="nav-text">2.3 DebugActiveProcess</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-TEB-DbgSsReserved"><span class="nav-text">2.4 TEB.DbgSsReserved</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">2.5 反调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E5%8F%8D%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">2.6 反反调试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%9A%84%E9%87%87%E9%9B%86-0%E7%8E%AF"><span class="nav-text">3 调试消息的采集-0环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-text">3.1 调试消息是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%A7%8D%E7%B1%BB"><span class="nav-text">3.2 调试消息种类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%BB%93%E6%9E%84"><span class="nav-text">3.3 调试消息结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%9A%84%E9%87%87%E9%9B%86"><span class="nav-text">3.4 调试消息的采集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-%E5%88%9B%E5%BB%BA%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B"><span class="nav-text">3.4.1 创建进程、线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-%E9%80%80%E5%87%BA%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B"><span class="nav-text">3.4.2 退出进程、线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-%E6%A8%A1%E5%9D%97%E7%9A%84%E5%8A%A0%E8%BD%BD%E3%80%81%E5%8D%B8%E8%BD%BD"><span class="nav-text">3.4.3 模块的加载、卸载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-4-%E5%BC%82%E5%B8%B8%E6%B6%88%E6%81%AF"><span class="nav-text">3.4.4 异常消息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81"><span class="nav-text">3.5 调试消息的发送</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-1-DbgkpSendApiMessage"><span class="nav-text">3.5.1 DbgkpSendApiMessage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-2-DbgkpQueueMessage"><span class="nav-text">3.5.2 DbgkpQueueMessage</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9D%9C%E6%92%B0%E7%9A%84%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF"><span class="nav-text">4 杜撰的调试消息</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%B0%83%E8%AF%95%E7%94%A8%E5%88%B0%E7%9A%84-API"><span class="nav-text">1 调试用到的 API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%B0%83%E8%AF%95%E5%99%A8%E4%B8%8E%E8%A2%AB%E8%B0%83%E8%AF%95%E7%A8%8B%E5%BA%8F"><span class="nav-text">2 调试器与被调试程序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%B0%83%E8%AF%95%E5%AF%B9%E8%B1%A1"><span class="nav-text">2.1 调试对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%B0%83%E8%AF%95%E5%85%B3%E7%B3%BB%E5%BB%BA%E7%AB%8B%E6%96%B9%E5%BC%8F"><span class="nav-text">2.2 调试关系建立方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-DebugActiveProcess"><span class="nav-text">2.3 DebugActiveProcess</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-TEB-DbgSsReserved"><span class="nav-text">2.4 TEB.DbgSsReserved</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">2.5 反调试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-6-%E5%8F%8D%E5%8F%8D%E8%B0%83%E8%AF%95"><span class="nav-text">2.6 反反调试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%9A%84%E9%87%87%E9%9B%86-0%E7%8E%AF"><span class="nav-text">3 调试消息的采集-0环</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-text">3.1 调试消息是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%A7%8D%E7%B1%BB"><span class="nav-text">3.2 调试消息种类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%BB%93%E6%9E%84"><span class="nav-text">3.3 调试消息结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%9A%84%E9%87%87%E9%9B%86"><span class="nav-text">3.4 调试消息的采集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-1-%E5%88%9B%E5%BB%BA%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B"><span class="nav-text">3.4.1 创建进程、线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-2-%E9%80%80%E5%87%BA%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B"><span class="nav-text">3.4.2 退出进程、线程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-3-%E6%A8%A1%E5%9D%97%E7%9A%84%E5%8A%A0%E8%BD%BD%E3%80%81%E5%8D%B8%E8%BD%BD"><span class="nav-text">3.4.3 模块的加载、卸载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-4-%E5%BC%82%E5%B8%B8%E6%B6%88%E6%81%AF"><span class="nav-text">3.4.4 异常消息</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF%E7%9A%84%E5%8F%91%E9%80%81"><span class="nav-text">3.5 调试消息的发送</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-1-DbgkpSendApiMessage"><span class="nav-text">3.5.1 DbgkpSendApiMessage</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-2-DbgkpQueueMessage"><span class="nav-text">3.5.2 DbgkpQueueMessage</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9D%9C%E6%92%B0%E7%9A%84%E8%B0%83%E8%AF%95%E6%B6%88%E6%81%AF"><span class="nav-text">4 杜撰的调试消息</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%B8%85%E9%99%A4%E8%B0%83%E8%AF%95%E5%AF%B9%E8%B1%A1"><span class="nav-text">5 清除调试对象</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -365,7 +365,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-08-21 19:00:42" itemprop="dateModified" datetime="2022-08-21T19:00:42+08:00">2022-08-21</time>
+        <time title="修改时间：2022-08-22 20:25:41" itemprop="dateModified" datetime="2022-08-22T20:25:41+08:00">2022-08-22</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -406,14 +406,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>30k</span>
+      <span>33k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>27 分钟</span>
+      <span>30 分钟</span>
     </span>
 </div>
 
@@ -508,6 +508,9 @@
 </ul>
 <p>当调试器与被调试进程的调试会话建立起来后，调试器进程就进入了调试事件循环，等待调试事件的发生，然后处理，然后等待，直到调试会话结束，调试器的调试事件循环如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span>(WaitForDebugEvent(&amp;DbgEvt, INFINITB))<span class="comment">// 等待事件</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// 处理等待得到的事件</span></span><br><span class="line">  <span class="comment">// 处理后，恢复调试目标继续执行</span></span><br><span class="line">  ContinueDebugEvent(DbgEvt.dwProcessId, DbgEvt.dwThreadId, dwContinueStatus);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>DbgkpSetProcessDebugObject</code> 函数内部除了将调试对象赋给 <code>EPROCESS</code> 结构的 <code>DebugPort</code>字段，还会调用 <code>DbgkpMarkProcessPeb</code> 函数设置进程环境块 <mark class="label success">PEB.BeingDebugged</mark> 字段：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">DbgkpMarkProcessPeb</span><span class="params">(PEPROCESS Process)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(ExAcquireRundownProtection (&amp;Process-&gt;RundownProtect))</span><br><span class="line">  &#123;</span><br><span class="line">    KeStackAttachProcess(&amp;Process-&gt;Pcb, &amp;ApcState);</span><br><span class="line">    ExAcquireFastMutex (&amp;DbgkpProcessDebugPortMutex);</span><br><span class="line">    </span><br><span class="line">    Process-&gt;Peb-&gt;BeingDebugged = (BOOLEAN)(Process-&gt;DebugPort != <span class="literal">NULL</span> ? TRUE : FALSE);</span><br><span class="line">    </span><br><span class="line">    ExReleaseFastMutex (&amp;DbgkpProcessDebugPortMutex);</span><br><span class="line">    KeUnstackDetachProcess(&amp;ApcState);</span><br><span class="line">  &#125;</span><br><span class="line">  ExReleaseRundownProtection (&amp;Process-&gt;RundownProtect);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
@@ -658,8 +661,8 @@
 </tr>
 </tbody></table>
 <p><img data-src="https://s2.loli.net/2022/08/21/z9QAPpnXOk7letc.png" alt="4.png"></p>
-<p><code>KeFreezeAllThreads</code> ：当被调试进程中断到调试器中时，它当前线程的 <code>FreezeCount</code> 通常为0，其他线程的 <code>FreezeCount</code> 通常为1。因为 <code>KeFreezeAllThreads</code> 不会冻结当前线程，包括 WinDBG 在内的调试器在收到调试事件后，会对被调试进程中的所有线程依次调用 <code>SuspendThread</code>，这样所有线程的 <code>SuspendCount</code> 计数通常都为 <code>1</code>。例如，当使用 WinDBG 调试包含两个线程的 <code>MulThreads</code> 程序时，当设置在 <code>kernel32!SleepEx</code> 处的断点命中后，使用本地内核调试会话可以观察到 <code>MulThreads</code> 进程内所有线程的详细信息。</p>
-<p><img data-src="https://s2.loli.net/2022/08/21/lk1LIZ4FXiVhbEf.png" alt="DbgkpSendApiMessage.png"></p>
+<p><code>KeFreezeAllThreads</code> ：当被调试进程中断到调试器中时，它当前线程的 <code>FreezeCount</code> 通常为0，其他线程的 <code>FreezeCount</code> 通常为1。因为 <code>KeFreezeAllThreads</code> 不会冻结当前线程，包括 WinDBG 在内的调试器在收到调试事件后，会对被调试进程中的所有线程依次调用 <code>SuspendThread</code>，这样所有线程的 <code>SuspendCount</code> 计数通常都为 <code>1</code>。</p>
+<p><img data-src="https://s2.loli.net/2022/08/22/z7I1vDhKFxrGds3.png" alt="DbgkpSendApiMessage.png"></p>
 <div class="note primary"><p>关于 <code>KTHREAD.FrezeeCount</code> 和 <code>KTHREAD.SuspendCount</code>：</p>
 <ul>
 <li><code>KTHREAD.FrezeeCount</code>：该字段由 <code>KeFreezeAllThreads</code>函数和 <code>KeThawAllThreads</code> 操作。当一个线程的进程被中断到调试器之后，当前线程<code>FreezeCount == 0</code>，其余线程<code>FreezeCount == 1</code>。即该字段为 <code>1</code> 时表示这个线程处于冻结状态。《软件调试第二版卷2 9.3.3 P175》</li>
@@ -704,11 +707,44 @@
 
 
 
-<h2 id="4-杜撰的调试消息"><a href="#4-杜撰的调试消息" class="headerlink" title="4 杜撰的调试消息"></a>4 杜撰的调试消息</h2><p>《软件调试第二版》 第九章内核部分被调试程序的处理，第十章是用户部分调试器处理。</p>
-<p><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1509729-1-1.html">现在流行debugport 移位, 重写调试框架啥的,我是这么实现的,一劳永逸</a></p>
-<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-260034.htm">win7 x64内核调试函数逆向还原C代码，自建调试体系</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/s/video/BV1nt411v75x"><strong>梦织未来论坛的调试与异常和过驱动保护</strong></a></p>
-<p><strong>win7&#x2F;win8&#x2F;win10 64 过保护 驱动教程</strong>–郁金香外挂教程</p>
+<h2 id="4-杜撰的调试消息"><a href="#4-杜撰的调试消息" class="headerlink" title="4 杜撰的调试消息"></a>4 杜撰的调试消息</h2><p>在 2.3 中讲了如何将调试器附加到一个已经处于运行状态的被调试进程，但是还有两个细节没有说（没有逆向分析）。本节是对 2.3 的补充，同时本节用来和 3.4.1 作对比。</p>
+<div class="note default"><p>当使用<strong>附加</strong>的方式来调试一个进程时，调试子系统会“假装”此时正在创建一个新进程，模仿像创建进程那样给调试器发送杜撰的消息（faked debug message）。但是有一点区别：</p>
+<ol>
+<li>在 <code>DbgkCreateThread</code> 中，当判断是创建进程时，会调用两次 <code>DbgkpSendApiMessage</code> 来分别发送 <code>DbgKmCreateProcessApi-DbgKmLoadDllApi</code> 或 <code>DbgKmCreateThreadApi</code> 消息。</li>
+<li>在发送杜撰消息时，直接使用 <code>DbgkpQueueMessage</code> 来发送上面这三类消息。</li>
+</ol>
+</div>
+
+<p>在 <code>NtDebugActiveProcess</code> 中函数的主要调用顺序如下（由于该函数调用的子函数太多了，所以本节主要是参考源码和软件调试第二版卷2 9.4.5 来精简总结）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">NtDebugActiveProcess</span><span class="params">(IN HANDLE ProcessHandle, IN HADNLE DebugObjectHandle)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  PDEBUG_OBJECT DebugObject;</span><br><span class="line">  PEPROCESS Process;</span><br><span class="line">  NTSTATUS Status;</span><br><span class="line">  </span><br><span class="line">  Status = ObReferenceObjectByHandle(ProcessHandle,PROCESS_SET_PORT,PsProcessType,PreviousMode,&amp;Process,<span class="literal">NULL</span>);</span><br><span class="line">  Status = ObReferenceObjectByHandle(DebugObjectHandle,DEBUG_PROCESS_ASSIGN,DbgkDebugObjectType,PreviousMode,</span><br><span class="line">                                     &amp;DebugObject,<span class="literal">NULL</span>);</span><br><span class="line">  </span><br><span class="line">  Status = DbgkpPostFakeProcessCreateMessages(Process,DebugObject,&amp;LastThread);</span><br><span class="line">  </span><br><span class="line">  Status = DbgkpSetProcessDebugObject(Process,DebugObject,Status,LastThread);</span><br><span class="line">  <span class="keyword">return</span> Status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>函数 <code>DbgkpSetProcessDebugObject</code> 用来将被调试进程和调试对象进行关联，但是在关联之前会调用 <code>DbgkpPostFakeProcessCreateMessages</code> 来发送上面提到的杜撰的消息。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">DbgkpPostFakeProcessCreateMessages</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PEPROCESS Process,		<span class="comment">//被调试的进程对象</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PDEBUG_OBJECT DebugObject,	<span class="comment">//调试对象</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PETHREAD *pLastThread</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  NTSTATUS Status;</span><br><span class="line">  KAPC_STATE ApcState;</span><br><span class="line">  PETHREAD Thread;</span><br><span class="line">  PETHREAD LastThread;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 将当前属于调试器的线程附加到被调试进程地址空间，CR3。</span></span><br><span class="line">  <span class="comment">// 调试会话建立的过程是由调试器发起的，所以当前线程属于调试器进程。</span></span><br><span class="line">  KeStackAttachProcess(&amp;Process-&gt;Pcb, &amp;ApcState);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 发送 DbgKmCreateProcessApi/DbgKmCreateThreadApi 消息</span></span><br><span class="line">  Status = DbgkpPostFakeThreadMessages(Process, DebugObject, <span class="literal">NULL</span>, &amp;Thread, &amp;LastThread);</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 发送 DbgKmLoadDllApi 消息</span></span><br><span class="line">  <span class="keyword">if</span>(NT_SUCCESS(Status))</span><br><span class="line">  &#123;</span><br><span class="line">    Status = DbgkpPostFakeModuleMessages(Process, Thread, DebugObject);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> Status;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>DbgkpPostFakeProcessCreateMessages</code> 会先调用 <code>DbgkpPostFakeThreadMessages</code>，后者会遍历被调试进程的所有线程，以向调试对象的消息队列中投放杜撰的进程和线程来创建消息。而后 <code>DbgkpPostPakeProcessCreateMessages</code> 会调用<code>DbgkpPostFakeModuleMessages</code> 来投放杜撰的模块加载消息。</p>
+<div class="note success"><p><code>DbgkpPostFakeThreadMessages</code> 和 <code>DbgkpPostFakeModuleMessages</code> 都是调用 <code>DbgkpQueueMessage</code> 来向消息队列添加调试消息的。</p>
+<p>因为在<strong>参数中指定了不需等待的标志</strong>（<code>NOWAIT</code>，异步)，所以 <code>DbgkpQueueMessage</code> 将事件放人队列后便会返回，不会设置 <code>EventsPresent</code> 对象以避免它通知调试器来读取。</p>
+</div>
+
+<p><code>DbgkpSetProcessDebugObject</code> 函数内部除了将调试对象赋给 <code>EPROCESS</code> 结构的 <code>DebugPort</code>字段，还会调用 <code>DbgkpMarkProcessPeb</code> 函数设置进程环境块<mark class="label primary">PEB.BeingDebugged</mark>字段：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">DbgkpMarkProcessPeb</span><span class="params">(PEPROCESS Process)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(ExAcquireRundownProtection (&amp;Process-&gt;RundownProtect))</span><br><span class="line">  &#123;</span><br><span class="line">    KeStackAttachProcess(&amp;Process-&gt;Pcb, &amp;ApcState);</span><br><span class="line">    ExAcquireFastMutex (&amp;DbgkpProcessDebugPortMutex);</span><br><span class="line">    </span><br><span class="line">    Process-&gt;Peb-&gt;BeingDebugged = (BOOLEAN)(Process-&gt;DebugPort != <span class="literal">NULL</span> ? TRUE : FALSE);</span><br><span class="line">    </span><br><span class="line">    ExReleaseFastMutex (&amp;DbgkpProcessDebugPortMutex);</span><br><span class="line">    KeUnstackDetachProcess(&amp;ApcState);</span><br><span class="line">  &#125;</span><br><span class="line">  ExReleaseRundownProtection (&amp;Process-&gt;RundownProtect);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="5-清除调试对象"><a href="#5-清除调试对象" class="headerlink" title="5 清除调试对象"></a>5 清除调试对象</h2><p>当调试结束后需要撤销调试会话时，系统会调用 <code>DbgkClearProcessDebugObject</code> 将被调试进程的 <code>DebugPort</code> 字段恢复为 <code>NULL</code>。恢复时，这个函数会遍历调试对象的消息队列，将关于这个进程的调试事件清除。这个函数并不破坏调试对象，因为一个调试器可以同时调试多个被调试进程，这个调试对象可能还在被其他被调试进程所使用。</p>
+<p>以前的 TP 保护就是起一个线程不断地扫描要保护的程序的 <code>DebugPort</code> 字段，来检测是否被调试，然后将 <code>DebugPort</code> 不断清零。后来逐渐演变，有的调试器在建立调试会话时，会将 <code>DebugPort</code> 移位到其他一些不常用的偏移处或保留位置（如 <code>ExitTime</code>）。也有的是将 <code>EPROCESS</code> 结构进行扩展，然后将相关调试结构移位到扩展的位置。</p>
+<p>还有的检测手段就是，起一个线程，不断地遍历每一个线程 <code>TEB.DbgSsReserved</code> 出来判断其是否是调试器。</p>
+<p>可以参考：</p>
+<ul>
+<li><p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-260034.htm">win7 x64内核调试函数逆向还原C代码，自建调试体系</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1509729-1-1.html">现在流行debugport 移位, 重写调试框架啥的,我是这么实现的,一劳永逸</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/s/video/BV1nt411v75x"><strong>梦织未来论坛的调试与异常和过驱动保护</strong></a>（win7&#x2F;win8&#x2F;win10 64 过保护 驱动教程–郁金香外挂教程）</p>
+</li>
+</ul>
 
     </div>
 
@@ -836,7 +872,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">23:48</span>
+    <span title="站点阅读时长">23:53</span>
   </span>
 </div>
 <div class="busuanzi-count">
