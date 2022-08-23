@@ -22,16 +22,22 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Catecat">
-<meta property="og:url" content="https://directoree.github.io/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/index.html">
+  <meta name="description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 用户态调试（二）调试器进程">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-Debug2/index.html">
 <meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-08-23T12:35:19.000Z">
+<meta property="article:modified_time" content="2022-08-23T16:38:35.777Z">
 <meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="X86调试">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://directoree.github.io/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/">
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-Debug2/">
 
 
 <script class="page-configurations">
@@ -39,12 +45,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>分类: 网络安全 | Catecat</title>
+  <title>Windows XP 用户态调试（二）调试器进程 | Catecat</title>
   
 
 
@@ -213,7 +219,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -225,6 +231,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%AE%80%E8%BF%B0%E8%BF%9B%E7%A8%8B%E5%88%9B%E5%BB%BA%E8%BF%87%E7%A8%8B"><span class="nav-text">1 简述进程创建过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Windbg-Win10%E4%B8%8B%E8%BD%BD%E8%B0%83%E8%AF%95%E7%AC%A6%E5%8F%B7"><span class="nav-text">2 Windbg+Win10下载调试符号</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -304,58 +311,260 @@
 </noscript>
 
 
-    <div class="main-inner category posts-collapse">
+    <div class="main-inner post posts-expand">
       
 
       
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h2 class="collection-header">网络安全
-          <small>分类</small>
-        </h2>
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-Debug2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 用户态调试（二）调试器进程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-08-23 20:35:19" itemprop="dateCreated datePublished" datetime="2022-08-23T20:35:19+08:00">2022-08-23</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-08-24 00:38:35" itemprop="dateModified" datetime="2022-08-24T00:38:35+08:00">2022-08-24</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/X86%E8%B0%83%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">X86调试</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-Debug2/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 用户态调试（二）调试器进程" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-Debug2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-Debug2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
       </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2018</span>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
+<span id="more"></span>
+
+
+
+
+
+<h2 id="1-简述进程创建过程"><a href="#1-简述进程创建过程" class="headerlink" title="1 简述进程创建过程"></a>1 简述进程创建过程</h2><p>进程创建过程涉及到内核许多方面知识，其创建过程中调用的 API 以及调用过程是非常繁琐的。这里就根据《Windows内核情景分析 5.6 P306》与《<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-207429.htm">64位CreateProcess逆向系列文章</a>》简要总结 32 位进程创建的基本架构（ 64 位系统创建进程暂不研究）。</p>
+<p><strong>第一阶段：在 3 环</strong></p>
+<ul>
+<li><p>创建当前进程的子进程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//对 dwCreationFlags 等参数进行检查并处理</span></span><br><span class="line">kernel32!CreateProcess() -&gt; CreateProcessInternal() -&gt; NtCreateProcess() -&gt; 进入 <span class="number">0</span> 环</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建的当前进程、其他进程的子进程：<code>nt!NtCreateProcess</code>。</p>
+</li>
+</ul>
+<p><strong>第二阶段：在 0 环，创建内核中的进程对象</strong></p>
+<ol>
+<li>创建 <code>EPROCESS</code> 结构、创建进程句柄表、初始化进程地址空间、初始化 <code>EPROCESS</code>。</li>
+<li>将 PE 文件映射到进程用户空间。</li>
+<li>将系统 DLL 映射到进程用户空间（<code>ntdll.dll</code> 这个 DLL 比较特殊，在初始化内核的此时就映射了）。</li>
+<li>创建 <code>PEB</code> 、将刚创建的子进程句柄插入到当前进程的句柄表。</li>
+</ol>
+<p><strong>第三阶段：在 0 环，创建并初始化第一个线程</strong></p>
+<ol>
+<li><p>创建并初始化 <code>ETHREAD</code>。</p>
+</li>
+<li><p>在子进程用户空间创建并初始化 <code>TEB</code>。</p>
+</li>
+<li><p>将线程在用户空间的起始地址设置成：</p>
+<p>X86：<code>kernel32!BaseProcessStartThunk</code>（主线程），随后线程 <code>BaseThreadStartupThunk</code>。</p>
+<p>X64：<code>ntdll!RtlUserThreadStart</code>（所有线程）。</p>
+</li>
+<li><p>设置第一个线程被调度执行开始的地方为 <code>KiThreadStartup</code> 函数。</p>
+</li>
+<li><p>调用通知回调函数。</p>
+</li>
+</ol>
+<p><strong>第四阶段：在 0 环，通知 Windows 子系统</strong></p>
+<p>由子进程的创建者进程向 <code>csrss.exe</code> 子系统服务进程发通知。 在《Windows内核情景分析 5.6 P308》详细阐述了Windows子系统。</p>
+<p>至此 <code>CreateProcess</code> 的操作己经完成，<code>CreateProcess</code> 的调用者从该函数返回，就回到了应用程序或更高层的 DLL 中。这四个阶段都是立足于创建者进程的用户空间。</p>
+<p><strong>第五阶段：在 0、3 环，启动第一个线程</strong></p>
+<p>当第一个线程（主线程）被调度时，首先会执行内核中的 <code>KiThreadStartup</code>，该函数把目标线程的运行级别从 DPC 级降低到 APC 级，然后调用内核函数 <code>PspUserThreadStartup</code>，最后 <code>PspUserThreadStartup</code> 将 <code>ntdll!LdrInitializeThunk</code> 作为 APC 函数挂入到 APC 队列，只要主线程一准备进入用户空间就会先执行该 APC 函数。当该 APC 函数执行完之后还是会再回到用户空间，开始执行 <code>kernel32!BaseProcessStartThunk</code> 或 <code>kernel32!BaseThreadStartupThunk</code>函数。对于进程中的第一个线程是前者，对于后来的线程则是后者。然后就是比较熟悉的接着调用 <code>mainCRTStartup-main </code>了。</p>
+<p>至于用户程序所提供的（线程）入口，则是作为参数提供给这两个函数的，这两个函数都会使用该指针调用由用户提供的入口函数。</p>
+<p><strong>第六阶段：在 3 环调用 <code>ntdll!LdrInitializeThunk</code> ，用户空间的初始化和 DLL 的连接</strong></p>
+<p>用户空间的初始化和 DLL 的动态连接是由 APC 函数 <code>LdrInitializeThunk</code> 在用户空间完成的。</p>
+<p>在第二阶段 <code>ntdll.dll</code> 已经被映射到了用户空间，但是其他的 DLL 尚未装入，应用软件与 DLL 之间也尚未建立动态连接。函数 <code>LdrInitializeThunk</code> 在映像中的位置是预定的，所以在进入这个函数之前并不需要连接。</p>
+<h2 id="2-Windbg-Win10下载调试符号"><a href="#2-Windbg-Win10下载调试符号" class="headerlink" title="2 Windbg+Win10下载调试符号"></a>2 Windbg+Win10下载调试符号</h2><p>Windows10 调试符号匹配下载：</p>
+<ol>
+<li>Clash梯子搭好<ul>
+<li>Profiles：到<a target="_blank" rel="noopener" href="https://glados.one/console/clash">GlaDOS</a>复制链接粘贴后，点击Download，然后选择刚下载的配置。</li>
+<li>General：勾选“System proxy”、“Start with Windows”，并记好“Port”是多少。</li>
+<li>Edge浏览器直接测试Google能否访问。</li>
+</ul>
+</li>
+<li>Windows环境变量，在用户变量下添加<ul>
+<li>在本地先随便建立一个空文件夹，如“C:\Symbols”。</li>
+<li>_NT_SYMBOL_PATH：C:\Symbols。</li>
+<li>_NT_SYMBOL_PROXY：127.0.0.1:Port。</li>
+</ul>
+</li>
+<li>Windbg<ul>
+<li>先随便打开任意一个可执行文件进行调试（下面下载的符号是该文件加载的DLL对应的符号）。</li>
+<li>设置符号链接：srv*C:\Symbols*<a target="_blank" rel="noopener" href="https://msdl.microsoft.com/download/symbols%EF%BC%88https%E4%B8%8D%E6%98%AFhttp%EF%BC%89%E3%80%82">https://msdl.microsoft.com/download/symbols（https不是http）。</a></li>
+<li>Windbg命令行输入：!sym moisy（查看下载时的日志）。</li>
+<li>Windbg命令行输入：.reload &#x2F;f。查看C:\Symbols已经下载好了一些.pdb符号了，但是不全。</li>
+<li>Windbg命令行输入：.reload &#x2F;f .reload &#x2F;f C:\Windows\System32\ntoskrnl.exe（全路径），下载指定符号，中间可能会中断，由于网路原因多试几次就好了。</li>
+<li>此时会下载：ntkrnlmp.exe、ntoskrnl.exe、ntkrnlpa.exe、ntkrnlmp.pdb四个文件夹及其对应文件。</li>
+</ul>
+</li>
+<li>IDA连接调试符号<ul>
+<li>复制IDA提供的远程Server（如win64_remote64.exe）到已经下载好符号的设备，运行。</li>
+<li>这里注意，如果IDA要反汇编ntoskrnl.exe，需要使用步骤3下载的该文件及对应的该文件的调试符号（此处不能使用System32下的那个内核文件，否则内核文件与符号文件时间戳对不上，IDA无法识别，此处应该是为啥.reload &#x2F;f没有下载内核文件的调试符号，因为时间戳没对上，所以直接下载了4个文件夹和文件），《加密与解密第四版 2.4.1、7.3.2》。</li>
+<li>如果IDA中是ntoskrnl.exe，则需要在_NT_SYMBOL_PATH中将步骤3中的“C:\Symbols”替换成“C:\Symbols\ntkrnlmp.pdb\DCD0B9772B46C59FF6E45DFBB3D1AE7B1”，保存。（每次使用Windbg双机调试时又需要换成“C:\Symbols”）。</li>
+<li>在IDA中：File-Loadfile-PDB file-OK-远程ServerIP:端口。</li>
+</ul>
+</li>
+</ol>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2018-11-29T22:08:27+08:00"
-              content="2018-11-29">
-          11-29
-        </time>
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
       </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/post/Network-security/" itemprop="url">
-            <span itemprop="name">网络安全复习笔记</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-    </div>
   </div>
-  
-  
-  
+</div>
 
-  
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-Debug2/" title="Windows XP 用户态调试（二）调试器进程">https://directoree.github.io/post/WinXP-Debug2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> WinXP内核</a>
+              <a href="/tags/X86%E8%B0%83%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> X86调试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Debug/" rel="prev" title="Windows XP 用户态调试（一）被调试进程">
+                  <i class="fa fa-chevron-left"></i> Windows XP 用户态调试（一）被调试进程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
 
 
 
       
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -561,7 +770,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/categories/%E7%BD%91%E7%BB%9C%E5%AE%89%E5%85%A8/",
+      path: "/post/WinXP-Debug2/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
