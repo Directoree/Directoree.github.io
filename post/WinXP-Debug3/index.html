@@ -22,16 +22,24 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Catecat">
-<meta property="og:url" content="https://directoree.github.io/categories/MySQL/index.html">
+  <meta name="description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 用户态调试（三）调试器处理">
+<meta property="og:url" content="https://directoree.github.io/post/WinXP-Debug3/index.html">
 <meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/08/28/mvqiFUSwN7oYjyk.png">
+<meta property="article:published_time" content="2022-08-28T12:47:35.000Z">
+<meta property="article:modified_time" content="2022-08-28T15:10:16.726Z">
 <meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="X86调试">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/08/28/mvqiFUSwN7oYjyk.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/categories/MySQL/">
+<link rel="canonical" href="https://directoree.github.io/post/WinXP-Debug3/">
 
 
 <script class="page-configurations">
@@ -39,12 +47,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>分类: MySQL | Catecat</title>
+  <title>Windows XP 用户态调试（三）调试器处理 | Catecat</title>
   
 
 
@@ -213,7 +221,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -225,6 +233,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%97%A0%E7%97%95HOOK"><span class="nav-text">1 无痕HOOK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Windbg-Win10%E4%B8%8B%E8%BD%BD%E8%B0%83%E8%AF%95%E7%AC%A6%E5%8F%B7"><span class="nav-text">2 Windbg+Win10下载调试符号</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -304,58 +313,218 @@
 </noscript>
 
 
-    <div class="main-inner category posts-collapse">
+    <div class="main-inner post posts-expand">
       
 
       
 
   
+
+
+<div class="post-block">
   
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h2 class="collection-header">MySQL
-          <small>分类</small>
-        </h2>
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXP-Debug3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 用户态调试（三）调试器处理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-08-28 20:47:35 / 修改时间：23:10:16" itemprop="dateCreated datePublished" datetime="2022-08-28T20:47:35+08:00">2022-08-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/X86%E8%B0%83%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">X86调试</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXP-Debug3/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 用户态调试（三）调试器处理" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXP-Debug3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXP-Debug3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
       </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
 
-      
-    <div class="collection-year">
-      <span class="collection-header">2019</span>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
+<span id="more"></span>
+
+
+
+
+
+
+
+<h2 id="1-无痕HOOK"><a href="#1-无痕HOOK" class="headerlink" title="1 无痕HOOK"></a>1 无痕HOOK</h2><p>参考《<a target="_blank" rel="noopener" href="https://blog.csdn.net/Simon798/article/details/117791214?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522166167216916782391831703%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=166167216916782391831703&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-6-117791214-null-null.nonecase&utm_term=HOOK&spm=1018.2226.3001.4450">无痕 hook - 硬件断点</a>》。</p>
+<p><img data-src="https://s2.loli.net/2022/08/28/mvqiFUSwN7oYjyk.png" alt="20210610205143998.png"></p>
+<h2 id="2-Windbg-Win10下载调试符号"><a href="#2-Windbg-Win10下载调试符号" class="headerlink" title="2 Windbg+Win10下载调试符号"></a>2 Windbg+Win10下载调试符号</h2><p>Windows10 调试符号匹配下载：</p>
+<ol>
+<li>Clash梯子搭好<ul>
+<li>Profiles：到<a target="_blank" rel="noopener" href="https://glados.one/console/clash">GlaDOS</a>复制链接粘贴后，点击Download，然后选择刚下载的配置。</li>
+<li>General：勾选“System proxy”、“Start with Windows”，并记好“Port”是多少。</li>
+<li>Edge浏览器直接测试Google能否访问。</li>
+</ul>
+</li>
+<li>Windows环境变量，在用户变量下添加<ul>
+<li>在本地先随便建立一个空文件夹，如“C:\Symbols”。</li>
+<li>_NT_SYMBOL_PATH：C:\Symbols。</li>
+<li>_NT_SYMBOL_PROXY：127.0.0.1:Port。</li>
+</ul>
+</li>
+<li>Windbg<ul>
+<li>先随便打开任意一个可执行文件进行调试（下面下载的符号是该文件加载的DLL对应的符号）。</li>
+<li>设置符号链接：srv*C:\Symbols*<a target="_blank" rel="noopener" href="https://msdl.microsoft.com/download/symbols%EF%BC%88https%E4%B8%8D%E6%98%AFhttp%EF%BC%89%E3%80%82">https://msdl.microsoft.com/download/symbols（https不是http）。</a></li>
+<li>Windbg命令行输入：!sym moisy（查看下载时的日志）。</li>
+<li>Windbg命令行输入：.reload &#x2F;f。查看C:\Symbols已经下载好了一些.pdb符号了，但是不全。</li>
+<li>Windbg命令行输入：.reload &#x2F;f .reload &#x2F;f C:\Windows\System32\ntoskrnl.exe（全路径），下载指定符号，中间可能会中断，由于网路原因多试几次就好了。</li>
+<li>此时会下载：ntkrnlmp.exe、ntoskrnl.exe、ntkrnlpa.exe、ntkrnlmp.pdb四个文件夹及其对应文件。</li>
+</ul>
+</li>
+<li>IDA连接调试符号<ul>
+<li>复制IDA提供的远程Server（如win64_remote64.exe）到已经下载好符号的设备，运行。</li>
+<li>这里注意，如果IDA要反汇编ntoskrnl.exe，需要使用步骤3下载的该文件及对应的该文件的调试符号（此处不能使用System32下的那个内核文件，否则内核文件与符号文件时间戳对不上，IDA无法识别，此处应该是为啥.reload &#x2F;f没有下载内核文件的调试符号，因为时间戳没对上，所以直接下载了4个文件夹和文件），《加密与解密第四版 2.4.1、7.3.2》。</li>
+<li>如果IDA中是ntoskrnl.exe，则需要在_NT_SYMBOL_PATH中将步骤3中的“C:\Symbols”替换成“C:\Symbols\ntkrnlmp.pdb\DCD0B9772B46C59FF6E45DFBB3D1AE7B1”，保存。（每次使用Windbg双机调试时又需要换成“C:\Symbols”）。</li>
+<li>在IDA中：File-Loadfile-PDB file-OK-远程ServerIP:端口。</li>
+</ul>
+</li>
+</ol>
+
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2019-02-23T14:23:42+08:00"
-              content="2019-02-23">
-          02-23
-        </time>
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
       </div>
 
-      <div class="post-title">
-          <a class="post-title-link" href="/post/MySQL-Primer/" itemprop="url">
-            <span itemprop="name">MySQL入门</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-    </div>
   </div>
-  
-  
-  
+</div>
 
-  
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXP-Debug3/" title="Windows XP 用户态调试（三）调试器处理">https://directoree.github.io/post/WinXP-Debug3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> WinXP内核</a>
+              <a href="/tags/X86%E8%B0%83%E8%AF%95/" rel="tag"><i class="fa fa-tag"></i> X86调试</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Debug2/" rel="prev" title="Windows XP 用户态调试（二）调试器进程">
+                  <i class="fa fa-chevron-left"></i> Windows XP 用户态调试（二）调试器进程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
 
 
 
       
+    <div class="comments" id="valine-comments"></div>
 
 <script>
   window.addEventListener('tabs:register', () => {
@@ -561,7 +730,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/categories/MySQL/",
+      path: "/post/WinXP-Debug3/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
