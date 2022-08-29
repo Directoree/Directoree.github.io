@@ -24,19 +24,22 @@
 
   <meta name="description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows XP 用户态调试（三）调试器处理">
+<meta property="og:title" content="Windows XP 用户态调试（三）调试器处理断点异常">
 <meta property="og:url" content="https://directoree.github.io/post/WinXP-Debug3/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/08/29/iL4AdDB1GCey2QN.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/29/c7L8AWHluvVE5XT.png">
+<meta property="og:image" content="https://s2.loli.net/2022/08/29/i4DuCp7smfF39jW.png">
 <meta property="og:image" content="https://s2.loli.net/2022/08/28/mvqiFUSwN7oYjyk.png">
 <meta property="article:published_time" content="2022-08-28T12:47:35.000Z">
-<meta property="article:modified_time" content="2022-08-28T15:10:16.726Z">
+<meta property="article:modified_time" content="2022-08-29T12:29:15.655Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="X86调试">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2022/08/28/mvqiFUSwN7oYjyk.png">
+<meta name="twitter:image" content="https://s2.loli.net/2022/08/29/iL4AdDB1GCey2QN.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/WinXP-Debug3/">
@@ -52,7 +55,7 @@
   };
 </script>
 
-  <title>Windows XP 用户态调试（三）调试器处理 | Catecat</title>
+  <title>Windows XP 用户态调试（三）调试器处理断点异常 | Catecat</title>
   
 
 
@@ -233,7 +236,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%97%A0%E7%97%95HOOK"><span class="nav-text">1 无痕HOOK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Windbg-Win10%E4%B8%8B%E8%BD%BD%E8%B0%83%E8%AF%95%E7%AC%A6%E5%8F%B7"><span class="nav-text">2 Windbg+Win10下载调试符号</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%BD%AF%E4%BB%B6%E6%96%AD%E7%82%B9"><span class="nav-text">1 软件断点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E8%BD%AF%E4%BB%B6%E6%96%AD%E7%82%B9%E7%9A%84%E5%8E%9F%E7%90%86"><span class="nav-text">1.1 软件断点的原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%BD%AF%E4%BB%B6%E6%96%AD%E7%82%B9%E5%88%86%E5%8F%91%E5%92%8C%E5%A4%84%E7%90%86"><span class="nav-text">1.2 软件断点分发和处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91%EF%BC%88%E8%A2%AB%E8%B0%83%E8%AF%95%E8%BF%9B%E7%A8%8B%EF%BC%89"><span class="nav-text">1.2.1 异常分发（被调试进程）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-2-%E5%A4%84%E7%90%86%E8%BD%AF%E4%BB%B6%E6%96%AD%E7%82%B9%EF%BC%88%E8%B0%83%E8%AF%95%E5%99%A8%EF%BC%89"><span class="nav-text">1.2.2 处理软件断点（调试器）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%86%85%E5%AD%98%E6%96%AD%E7%82%B9"><span class="nav-text">2 内存断点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%97%A0%E7%97%95HOOK"><span class="nav-text">1 无痕HOOK</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Windbg-Win10%E4%B8%8B%E8%BD%BD%E8%B0%83%E8%AF%95%E7%AC%A6%E5%8F%B7"><span class="nav-text">2 Windbg+Win10下载调试符号</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -249,7 +252,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">128</span>
+          <span class="site-state-item-count">129</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -339,7 +342,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Windows XP 用户态调试（三）调试器处理
+          Windows XP 用户态调试（三）调试器处理断点异常
         </h1>
 
         <div class="post-meta-container">
@@ -349,10 +352,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-08-28 20:47:35 / 修改时间：23:10:16" itemprop="dateCreated datePublished" datetime="2022-08-28T20:47:35+08:00">2022-08-28</time>
+      <time title="创建时间：2022-08-28 20:47:35" itemprop="dateCreated datePublished" datetime="2022-08-28T20:47:35+08:00">2022-08-28</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-08-29 20:29:15" itemprop="dateModified" datetime="2022-08-29T20:29:15+08:00">2022-08-29</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -364,7 +373,7 @@
     </span>
 
   
-    <span id="/post/WinXP-Debug3/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 用户态调试（三）调试器处理" title="阅读次数">
+    <span id="/post/WinXP-Debug3/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 用户态调试（三）调试器处理断点异常" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -392,14 +401,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.2k</span>
+      <span>5.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>5 分钟</span>
     </span>
 </div>
 
@@ -413,13 +422,67 @@
         <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
 <span id="more"></span>
 
+<p>调试的本质，就是<strong>在被调试进程中触发异常，并由调试器接管异常的过程</strong>。</p>
+<p>其中有3种触发异常的方式：</p>
+<ul>
+<li>软件断点</li>
+<li>内存断点</li>
+<li>硬件断点</li>
+</ul>
+<p>调试处理异常的框架一般为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  DEBUG_EVENT debugEvent = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">  BOOL bRet = FALSE;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">while</span>(WaitForDebugEvent(&amp;debugEvent, INFINITE))</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">switch</span>(debugEvent.dwDebugEventCode)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">case</span> EXCEPTION_DEBUG_EVENT:</span><br><span class="line">        bRet = ExceptionHandler(&amp;debugEvent);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="keyword">case</span> CREATE_THREAD_DEBUG_EVENT:</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      <span class="comment">/*case ...:</span></span><br><span class="line"><span class="comment">       *</span></span><br><span class="line"><span class="comment">       */</span></span><br><span class="line">      <span class="keyword">default</span>:</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(bRet)</span><br><span class="line">    &#123;</span><br><span class="line">      bRet = ContinueDebugEvent(debugEvent.dwProcessId, debugEvent.dwThreadId, DBG_CONTINUE);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">ExceptionHandler</span><span class="params">(DEBUG_EVENT* pDebugEvent)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  BOOL bRet = TRUE;</span><br><span class="line">	EXCEPTION_DEBUG_INFO* pExceptionInfo = <span class="literal">NULL</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">switch</span>(pExceptionInfo-&gt;ExceptionRecord.ExceptionCode)</span><br><span class="line">  &#123;</span><br><span class="line">      <span class="comment">//INT3异常</span></span><br><span class="line">    <span class="keyword">case</span> EXCEPTION_BREAKPOINT:</span><br><span class="line">      bRet = Int3ExceptionProc(pExceptionInfo);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> EXCEPTION_ACCESS_VIOLATION:</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    <span class="comment">/*case ...:</span></span><br><span class="line"><span class="comment">     *</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
+<h2 id="1-软件断点"><a href="#1-软件断点" class="headerlink" title="1 软件断点"></a>1 软件断点</h2><h3 id="1-1-软件断点的原理"><a href="#1-1-软件断点的原理" class="headerlink" title="1.1 软件断点的原理"></a>1.1 软件断点的原理</h3><div class="note info"><p>软件断点，就是我们常说的 <code>INT3</code>（陷阱类异常），它的<strong>本质就是将下断处的机器码修改为0xCC</strong>（<code>INT3</code>对应的机器码），实质就是 Inline Hook 修改一字节。</p>
+</div>
 
+<p>如下在 <code>0x004023E8</code> 处按 <code>F2</code> 下一个断点（此时该地址的数据前4字节为<code>0x0000A164</code>），OllyDbg 并不会直接显示该地址对应的值为<code>0xCC</code>。</p>
+<p><img data-src="https://s2.loli.net/2022/08/29/iL4AdDB1GCey2QN.png" alt="11.png"></p>
+<p>此时打开CheatEngine来验证一下，可以看到<code>0x64</code>已经被修改为<code>0xCC</code>。</p>
+<p><img data-src="https://s2.loli.net/2022/08/29/c7L8AWHluvVE5XT.png" alt="12.png"></p>
+<p>需要注意的是：</p>
+<ol>
+<li>在OllyDbg 里面，<code>int3</code>的硬编码为<code>0xCC</code>，<code>int 3</code>的硬编码为<code>0xCD 03</code>。</li>
+<li><code>int3</code> 断点为<strong>陷阱类</strong>异常，发生异常时<code>EXCEPTION_RECORD</code>结构记录的<code>ExceptionAddress</code>为产生异常的地址，<strong>但是此时的<code>EIP</code>为产生异常的下一条要执行的地址</strong>（本例为<code>0x004023E9</code>）。</li>
+</ol>
+<h3 id="1-2-软件断点分发和处理"><a href="#1-2-软件断点分发和处理" class="headerlink" title="1.2 软件断点分发和处理"></a>1.2 软件断点分发和处理</h3><p><strong>触发软件断点的过程，实际上就是CPU异常分发的过程</strong>，所以说了解异常是学习调试的基础。</p>
+<h4 id="1-2-1-异常分发（被调试进程）"><a href="#1-2-1-异常分发（被调试进程）" class="headerlink" title="1.2.1 异常分发（被调试进程）"></a>1.2.1 异常分发（被调试进程）</h4><p>在被调试进程中，触发软件断点的过程如下：</p>
+<ol>
+<li>CPU 检测到<code>int3</code>指令。</li>
+<li>在中断描述符表中找到 3 号中断处理函数 <code>KiTrap03</code>（ISR）。</li>
+<li>中断处理函数内部会调用 <code>CommonDispatchException</code>。</li>
+<li><code>CommonDispatchException</code> 内部又会调用 <code>KiDispatchException</code>。</li>
+<li>在<code>KiDispatchException</code>中，由于是模拟用户层的软件断点，所以这里直接进入处理用户层异常的跳转，<strong>在处理用户异常时，如果不存在 0 环调试器或者 0 环调试器未处理异常，就会调用 <code>DbgkForwardException</code> 试图发送给 3 环调试器。</strong></li>
+<li><code>DbgkForwardException</code> 内部最终会调用 <code>DbgkpSendApiMessage</code>，它是将调试事件发送给调试对象的消息队列。</li>
+<li>进入 <code>DbgkpSendApiMessage</code>，刚开始会判断第二个参数的值，若为 <code>TRUE</code>，则<strong>调用 <code>DbgkpSuspendProcess</code> 将本进程（被调试进程）内除自己外的其它进程挂起</strong>，然后调用<code>DbgkpQueueMessage</code>将发送消息的线程也挂起，此时被调试进程就被挂起了。</li>
+<li>调试器得到信号之后将会在循环中取出调试事件，并根据异常调试事件结构体列出相应信息（当前寄存器的值，内存情况等），接下来便交由用户自定义的逻辑代码去处理。</li>
+<li>调试器处理完事件之后调用<code>ContinueDebugEvent</code>来回复消息。</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2022/08/29/i4DuCp7smfF39jW.png" alt="flowpath_4.png"></p>
+<h4 id="1-2-2-处理软件断点（调试器）"><a href="#1-2-2-处理软件断点（调试器）" class="headerlink" title="1.2.2 处理软件断点（调试器）"></a>1.2.2 处理软件断点（调试器）</h4><p>当我们在调试器中接到该异常后，我们会执行自己想要实现的代码，但是最后一定要修复该异常，及<mark class="label danger">将替换成 0xCC 地址处的原来的硬编码恢复回去，然后修改 EIP</mark>。</p>
+<p>调试器处理<code>int3</code>的流程一般为：</p>
+<ol>
+<li>调用自定义 <code>IsSytemInt3()</code> 函数判断当前<code>int3</code>是否为初始断点，若为初始断点则不需要修复（因为该断点不是我们自己触发的）此时让函数 <code>ContinueDebugEvent</code> 直接返回<code>DBG_CONTINUE</code>（表示异常已处理）。<strong>断点处的地址则可以通过DebugEvent(调试事件)-&gt;u.Exception-&gt;ExceptionRecord.ExceptionAddress来获取。</strong></li>
+<li>如果不是初始断点，则我们可以实现我们自己写的代码。</li>
+<li>修复<code>EIP</code>。我们之前人为的将触发软件断点的地方修改为<code>0xCC</code>，软件断点是<mark class="label success">陷阱类</mark>异常，此时的<code>EIP</code> 为产生异常的下一条要执行的地址，需要修改为<code>EIP++</code>。</li>
+</ol>
+<p>我们手动故意触发的软件断点：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">SetInt3BreakPoint</span><span class="params">(PCHAR pAddress)</span></span>&#123;</span><br><span class="line">    BYTE bInt3 = <span class="number">0xCC</span>;</span><br><span class="line">    <span class="comment">//1.备份</span></span><br><span class="line">    ReadProcessMemory(hDebugeeProcess, pAddress, &amp;OriginalCode<span class="comment">/*全局变量*/</span>, <span class="number">1</span>, <span class="literal">NULL</span>);</span><br><span class="line">    <span class="comment">//2.修改</span></span><br><span class="line">    <span class="comment">//需要 VirtualProtectEx(hProcess,pStartAddredd,dwSize,NewProtect,&amp;OldProtect) 来设置可写</span></span><br><span class="line">    WriteProcessMemory(hDebugeeProcess, pAddress, &amp;bInt3, <span class="number">1</span>, <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
+<p>软件断点的处理函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">Int3ExceptionProc</span><span class="params">(EXCEPTION_DEBUG_INFO* pExceptionInfo)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	BOOL bRet = FALSE;</span><br><span class="line">	CONTEXT Context;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//1.将INT3修复为原来的数据(如果是系统断点，不用修复)</span></span><br><span class="line">	<span class="keyword">if</span>(IsSystemInt3(pExceptionInfo))</span><br><span class="line">		<span class="keyword">return</span> TRUE;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">		WriteProcessMemory(hDebugeeProcess,pExceptionInfo-&gt;ExceptionRecord.ExceptionAddress,&amp;OriginalCode,<span class="number">1</span>,<span class="literal">NULL</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//2.显示断点位置</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;int 3断点: 0x%p \n&quot;</span>,pExceptionInfo-&gt;ExceptionRecord.ExceptionAddress);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//3.获取线程上下文</span></span><br><span class="line">	Context.ContextFlags = CONTEXT_FULL | CONTEXT_DEBUG_REGISTERS;</span><br><span class="line">	GetThreadContext(hDebugeeThread,&amp;Context);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//4.修复EIP</span></span><br><span class="line">	Context.Eip--;</span><br><span class="line">	SetThreadContext(hDebugeeThread, &amp;Context);</span><br><span class="line"></span><br><span class="line">	<span class="comment">//5.显示反汇编</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">//6.等待用户命令</span></span><br><span class="line">	<span class="keyword">while</span>(bRet == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		bRet = WaitForUserCommand();</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> bRet;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="1-无痕HOOK"><a href="#1-无痕HOOK" class="headerlink" title="1 无痕HOOK"></a>1 无痕HOOK</h2><p>参考《<a target="_blank" rel="noopener" href="https://blog.csdn.net/Simon798/article/details/117791214?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522166167216916782391831703%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=166167216916782391831703&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-6-117791214-null-null.nonecase&utm_term=HOOK&spm=1018.2226.3001.4450">无痕 hook - 硬件断点</a>》。</p>
+<p>下面来梳理一下每一步做的事：</p>
+<ol>
+<li>调用自定义 <code>IsSytemInt3()</code> 函数判断当前<code>int3</code>是否为初始断点，若为初始断点则不需要修复（因为该断点不是我们自己触发的）此时让函数 <code>ContinueDebugEvent</code> 直接返回<code>DBG_CONTINUE</code>（表示异常已处理）。断点处的地址则可以通过 <code>DebugEvent-&gt;u.Exception-&gt;ExceptionRecord.ExceptionAddress</code> 来获取。然后调用 <code>WriteProcessMemory</code> 恢复原来的数据。</li>
+<li><strong>显示断点的位置</strong>，该值保存在 <code>ExceptionRecord.ExceptionAddress</code> 的地址。</li>
+<li><strong>获取线程上下文环境</strong>，调用 <code>GetThreadContext</code>获取，获得到线程上下文环境后，就可以获取到当前状态下各个寄存器的值。</li>
+<li>接下来需要<strong>修复EIP</strong>，原因是对于不同类型的断点，断下后 <code>EIP</code> 的位置会有所不同，对于软件断点 <code>int3</code>，断下后 <code>EIP</code> 会位于原先地址<code>+1</code>字节的位置，因此这里需要将 <code>EIP-1</code>，修复 <code>EIP</code>。</li>
+<li><strong>显示反汇编</strong>，对于常规调试器，要能够实时看到程序的反汇编代码，所以断下后，至少要能够显示断点周围的反汇编代码，这个功能后面看情况决定是否加上。</li>
+<li><strong>等待用户命令</strong>，调试器最主要的一个特征就是对代码进行调试，包括但不限于单步，步进，执行等操作。这里通过 <code>while</code> 循环等待用户执行的命令，若用户未执行命令，就一直等下去。这里参考了 <code>KiDispatchException</code> 在调用完 <code>DbgkForwardException</code> 后也会等待处理结果，判断异常是否得到了处理，若未被处理则会分发给 <code>VEH</code> 或 <code>SEH</code> 去处理。而我们这里调试器就会一直等待 <code>WaitUserForCommand</code> 传回来的结果，该函数将手动实现，后面涉及到单步操作时会学习到。</li>
+</ol>
+<h2 id="2-内存断点"><a href="#2-内存断点" class="headerlink" title="2 内存断点"></a>2 内存断点</h2><h2 id="1-无痕HOOK"><a href="#1-无痕HOOK" class="headerlink" title="1 无痕HOOK"></a>1 无痕HOOK</h2><p>参考《<a target="_blank" rel="noopener" href="https://blog.csdn.net/Simon798/article/details/117791214?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522166167216916782391831703%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=166167216916782391831703&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-6-117791214-null-null.nonecase&utm_term=HOOK&spm=1018.2226.3001.4450">无痕 hook - 硬件断点</a>》。</p>
 <p><img data-src="https://s2.loli.net/2022/08/28/mvqiFUSwN7oYjyk.png" alt="20210610205143998.png"></p>
 <h2 id="2-Windbg-Win10下载调试符号"><a href="#2-Windbg-Win10下载调试符号" class="headerlink" title="2 Windbg+Win10下载调试符号"></a>2 Windbg+Win10下载调试符号</h2><p>Windows10 调试符号匹配下载：</p>
 <ol>
@@ -487,7 +550,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/WinXP-Debug3/" title="Windows XP 用户态调试（三）调试器处理">https://directoree.github.io/post/WinXP-Debug3/</a>
+      <a href="https://directoree.github.io/post/WinXP-Debug3/" title="Windows XP 用户态调试（三）调试器处理断点异常">https://directoree.github.io/post/WinXP-Debug3/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -509,8 +572,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
-                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                <a href="/post/Win32-EventMessage2/" rel="next" title="Win32开发（二）对话框">
+                  Win32开发（二）对话框 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -579,7 +642,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">24:29</span>
+    <span title="站点阅读时长">24:35</span>
   </span>
 </div>
 <div class="busuanzi-count">
