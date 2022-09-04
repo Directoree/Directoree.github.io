@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows XP 内存管理（一）">
+<meta property="og:url" content="https://directoree.github.io/post/WinXp-Memory/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/04/tQEdkUYe8ZTXhCJ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/04/nfqBGhTuCyXUYmp.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/04/46W5kwbs9D3NBGh.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/ma4xYgrbGp97zOn.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/DCTXFZUkJvz61l2.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/jlHetkBW4pThrGV.png">
+<meta property="article:published_time" content="2022-09-04T05:12:37.000Z">
+<meta property="article:modified_time" content="2022-09-04T16:39:33.728Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="WinXP内核">
+<meta property="article:tag" content="X86内存管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/WinXp-Memory/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows XP 内存管理（一） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">1 内存基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-MMU"><span class="nav-text">1.1 MMU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B8%8E%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-text">1.2  虚拟内存与物理内存交换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-x86-%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2 x86 地址空间布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.1 系统地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%94%A8%E6%88%B7%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.2 用户地址空间布局</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E7%AE%A1%E7%90%86"><span class="nav-text">3 系统地址管理</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">130</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/WinXp-Memory/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows XP 内存管理（一）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-04 13:12:37" itemprop="dateCreated datePublished" datetime="2022-09-04T13:12:37+08:00">2022-09-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-09-05 00:39:33" itemprop="dateModified" datetime="2022-09-05T00:39:33+08:00">2022-09-05</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/X86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">X86内存管理</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/WinXp-Memory/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 内存管理（一）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/WinXp-Memory/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/WinXp-Memory/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
+<span id="more"></span>
+
+
+
+<p>本节开始研究 X86 内存管理，按以下路线进行研究：</p>
+<ol>
+<li>内存的页式管理、段式管理。</li>
+<li>进程内存管理（内存管理-用户空间）</li>
+<li>系统内存管理（内存管理-系统空间）</li>
+<li>内存页面交换（物理内存-磁盘文件）</li>
+<li>物理内存管理</li>
+<li>页面异常处理</li>
+<li>共享内存区</li>
+<li>工作集管理</li>
+</ol>
+<p>主要参考：《Windows内核原理与实现》、《Windows内核情景分析》、《深入解析Windows操作系统第6,7版-上册》。</p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-204829.htm">《深入解析windows操作系统第6版下册》第10章:内存管理（第二部分）</a>。</p>
+<p>x64研究：</p>
+<ol>
+<li>x64汇编基础、调用约定等。</li>
+<li>段页机制。</li>
+<li>内存管理。</li>
+<li>对象管理、I&#x2F;O管理。</li>
+<li>进程管理、句柄表、ju’bi线程管理。</li>
+<li>系统调用、Wow64。</li>
+<li>异常处理。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/feizianquan/p/15674578.html">《深入解析Windows Kenrel》</a>、<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-271634.htm">Windows 7 x64 虚拟内存管理</a>、<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-204829.htm">《深入解析windows操作系统第6版下册》</a>。</p>
+<h2 id="1-内存基本概念"><a href="#1-内存基本概念" class="headerlink" title="1 内存基本概念"></a>1 内存基本概念</h2><p>计算机的指令可以直接操纵内存单元中的数据，所以，内存管理是操作系统中除了进程和线程管理以外最为重要的一部分。</p>
+<p>内存（memory）是指处理器可以直接访问，但位于处理器之外的存储器。在硬件上，处理器通过一组地址线连接到这些存储器上，这组地址线构成了内存总线。<strong>处理器最终需要的是一个物理地址</strong>。</p>
+<ul>
+<li><strong>虚拟地址</strong>（有时候称为<strong>线性地址</strong>）。在 32 位系统上，虚拟地址空间可以达到 4 GB 大小，也就是说，整个空间可以有 $2^{32}&#x3D;4 294  967 296$ 个字节单元。Intel x86 芯片内有专门的电路（MMU）负责把一个虚拟地址转译成物理地址。<mark class="label warning">页式管理使用线性地址</mark>。</li>
+<li><strong>逻辑地址</strong>。逻辑地址包含两部分：段（scgment）和偏移（offset）。段部分指定了在整个地址空间中的一个基地址以及段空间的大小，当然还有段的一些其他属性。与寻址相关的是段的基址和大小。偏移部分指定了一个逻辑地址相对于段基址的偏移量。此偏移量不能超过段的边界。因此，逻辑地址的实际地址是段基址加上偏移量。Intel x86 芯片也有专门的电路把逻辑地址转译成一个虚拟地址或物理地址。<mark class="label success">段式管理使用逻辑地址</mark>。</li>
+<li><strong>物理地址</strong>。即内存存储器的索引，处理器操纵内存芯片时，通过地址线管脚加上电信号来读或写相应的内存单元。在 Intel x86 体系结构上，物理地址是一个32 位或 36位的无符号整数。</li>
+</ul>
+<p>如下图，除了 <code>FS</code> 寄存器指向的段基址不为 <code>0</code>，其他段的 <strong>虚拟地址 &#x3D;&#x3D; 逻辑地址</strong>。</p>
+<p><img data-src="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png" alt="2.png"></p>
+<h3 id="1-1-MMU"><a href="#1-1-MMU" class="headerlink" title="1.1 MMU"></a>1.1 MMU</h3><p>将虚拟地址、逻辑地址映射为物理地址的电路叫做存储管理单元（<mark class="label danger">MMU</mark>，Memory Management Unit），集成在 CPU 中，X86 的保护模式实际上需要有 MMU 才能实现。</p>
+<p>将虚拟地址、逻辑地址映射为物理地址是以<strong>页大小</strong>为单位的，不是以字节为单位。X86 包括 X64 页大小一般都是 4KB（PTE低12位）。</p>
+<p>Windows 和 Linux <strong>都选择了页式内存管理</strong>作为主要的内存管理手段，但同时也不可避免地涉及了段机制，x64 使用平坦模式后段式管理就不再使用了。</p>
+<p>如下图可以看到，段式管理的逻辑地址需要转换成线性地址，最后才转换成物理地址：</p>
+<p><img data-src="https://s2.loli.net/2022/09/04/tQEdkUYe8ZTXhCJ.png" alt="10.png"></p>
+<p>Windows采用页式内存管理方案，在Intel x86处理器上，Windows不适用段来管理虚拟内存，但是，Intel x86处理器在访问内存时必须要通过段描述符，这意味着Windows将所有的段描述符都构造成了从基地址0开始，且段的大小根据段的用户和系统设置的不同，会设置为0x80000000，0xC0000000或0xFFFFFFFF。所以，Windows系统中的代码，包括操作系统本身的代码和应用程序的代码，所面对的地址空间都是线性地址空间。这种做法相当于屏蔽了处理器中的逻辑地址概念，<strong>段只被用于访问控制和内存保护</strong>。</p>
+<p><strong>使用 MMU 的两个重要意义：</strong></p>
+<ol>
+<li>解决不同进程相同虚拟地址被映射到不同物理页的问题，使每个进程空间得到隔离。</li>
+<li>解决保护内核的问题。对应于 CPU 内核态与用户态，将地址空间划分为用户空间和内核空间，使得 CPU 运行于用户态时不能访问内核态地址。</li>
+</ol>
+<p><strong>TLB</strong></p>
+<p>MMU 实际上就是根据 PDE、PTE对应的索引映射到物理内存页。当程序访问一个线性地址，需要先查PDPT，然后查PDT，然后查页表PTT，最后才是访问物理页。这期间多次访问内存，效率非常低。于是TLB就被设计出来了，当然一个内存页有没有 TLB 缓存，由 <code>PDE_G | PTE_G</code> 决定，可看《<a href="https://directoree.github.io/post/WinXP-ProtectionMode-Page3/">Windows XP 页保护（三）-TLB</a>》。（<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/108425561">64位CPU分页及TLB请点这儿</a>）。</p>
+<p>每当需要使用一个页面映射表项时，MMU 首先在 TLB中寻找，找到就不需要访问物理内存了，找不到才从物理内存装入所需的表项。一般而言，一个进程在运行了一会儿以后，其TLB 的命中率还是很高的。<strong>关于 TLB 进一步信息可看《Windows内核原理与实现4.1.1页式内存管理》</strong>。</p>
+<p><strong>综上所述，在 CPU 的页面映射机制中，MMU 的作用是</strong>：</p>
+<ol>
+<li>根据虚拟地址计算出该地址所属的页面。</li>
+<li>再根据页面映射表的起始地址计算出该页面映射表项所在的物理地址。</li>
+<li>根据物理地址在高速缓存的 TLB 中寻找该表项的内容。</li>
+<li>如果该表项不在 TLB 中，就从内存将其内容装载到 TLB中。</li>
+<li>检查该表项的 <code>PA_PRESENT</code> 标志位（PDE、PTE最低位），如果为 1 就表示映射的目标为某个物理页面，因而可<br>以访问这个页面，但是需要进一步检查、比较 CPU 当前对此页面是否具有所要求的访问权限，如果权限不够就使当前指令的执行失败并产生一次页面异常。</li>
+<li>如果 <code>PA_PRESENT</code> 标志位为 0，则说明该虚存页面的映像不在内存中，当前指令的执行因此而失败，CPU 为此产生一次页面异常此时相应的异常处理程序应采取相应的措施。</li>
+</ol>
+<h3 id="1-2-虚拟内存与物理内存交换"><a href="#1-2-虚拟内存与物理内存交换" class="headerlink" title="1.2  虚拟内存与物理内存交换"></a>1.2  虚拟内存与物理内存交换</h3><p>同一个物理内存页面在不同的时间可被用于不同进程的不同虚存页面。而暂时不会被用到的虚存页面的内容，则可以被存储在磁盘上（就 Windows 而言，实际上是“倒换文件”中)，磁盘介质的存储成本比物理内存要小得多。</p>
+<p>在现代操作系统中，一般把不紧急的进程中的数据或代码先存放到外存（通常是硬盘）中，从而把它们占用的物理内存腾出来给紧念的进程使用，或者交给系统使用。以后，当内存紫缺的状况缓解时，系统再把外存中的进程数据或代码装回到已经空闲下来的内存单元中，从而使这些进程有机会继续运行。这两个过程称为内存换出和换入。几乎所有的多进程操作系统都支持这种内存管理。</p>
+<p>这样，在不同的时间内，根据不同的需要，虚存页面的内容可以在物理内存和磁盘之间倒换（Swap）需要时就把一个虚存页面的内容从磁盘倒入物理内存，暂时不需要的时候就将其倒出到磁盘上。当然，页面的倒入、倒出需要耗费时间，但是适度地以时间换空间在经济上是有利的。</p>
+<p>关于 X86 段页管理：</p>
+<ul>
+<li><a href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment/">Windows XP 段保护（一）</a></li>
+<li><a href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment2/">Windows XP 段保护（二）</a></li>
+<li><a href="https://directoree.github.io/post/WinXP-ProtectionMode-Segment3/">Windows XP 段保护（三）</a></li>
+<li><a href="https://directoree.github.io/post/WinXP-ProtectionMode-Page/">Windows XP 页保护（一）</a></li>
+<li><a href="https://directoree.github.io/post/WinXP-ProtectionMode-Page2/">Windows XP 页保护（二）</a></li>
+<li><a href="https://directoree.github.io/post/WinXP-ProtectionMode-Page3/">Windows XP 页保护（三）</a></li>
+</ul>
+<h2 id="2-x86-地址空间布局"><a href="#2-x86-地址空间布局" class="headerlink" title="2 x86 地址空间布局"></a>2 x86 地址空间布局</h2><p>Windows 采用了按需分配的策略，也就是说，只有当一段虚拟地址空间真正被使用的时候，系统才会为它分配页表和物理页面。<strong>每个进程的虚拟地址空间的分配情况通过一组虚拟地址描述符（VAD）记录下来，这些描述符构成了有一颗平衡二叉树</strong>，以便于快速地定位到一个指定虚拟地址地描述符上。</p>
+<p>在Windows中，有三种类型的数据被映射到虚拟地址空间中（<code>0~0xFFFFFFFF</code>）：</p>
+<ol>
+<li>每个进程私有的代码和数据（<code>0~0x7FFFeFFF</code>，<code>0x7FFF0000~ 0x7FFFFFFF</code>为用户与内核模式都不可访问的 64KB 区域）：进程隔离的地址范围，每个进程都有它自己的页表集合，这些页表被保存在只有从内核模式才能访问的页面中，因此一个进程的用户模式线程不能修改它们自己的地址空间布局。</li>
+<li>会话范围内的代码和数据（<code>0x80000000~0xC0000000</code>）：在系统地址空间中，有些部分提供一些特殊模块使用，比如会话空间是由会话管理器和Windows子系统使用的。</li>
+<li>以及系统范围内的代码和数据（<code>0x80000000~0xFFFFFFFF</code>）：高 2 G 的代码和数据。</li>
+</ol>
+<p>在Windows的 32 位版本上，每个用户进程默认可以拥有多达2GB私有地址空间，操作系统使用高 2GB 空间。然而，系统可以被配置使用 BCD 启动选项 <code>increaseuserva</code>，以便允许用户地址空间多达3GB（PE 文件头必须包含 <code>IMAGE_FILE_LARGE_ADDRESS_AWARE</code>）。这两种可能的地址空间布局结构如图10.8所示。</p>
+<p><img data-src="https://s2.loli.net/2022/09/04/nfqBGhTuCyXUYmp.png" alt="2.png"></p>
+<p>对于用户空间 3 GB的程序，PE 文件头必须包含 <code>IMAGE_FILE_LARGE_ADDRESS_AWARE</code>。构建相应可执行文件时，指定 <code>/LARGEADDRESSAWARE</code> 链接器标志（在VS中：项目属性-链接器-系统-启用大地址），配置应用程序使用 3 GB 的地址空间。当在一个配置成使用 2 GB 用户地址空间的系统上运行该应用程序时，此链接器标志将不起作用。</p>
+<p><img data-src="https://s2.loli.net/2022/09/04/46W5kwbs9D3NBGh.png" alt="3.png"></p>
+<p>可以参考《深入解析Windows操作系统第7版5.5》x86地址空间布局或《<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-204829.htm">《深入解析windows操作系统第6版下册》第10章:内存管理（第二部分）</a>》。</p>
+<h3 id="2-1-系统地址空间布局"><a href="#2-1-系统地址空间布局" class="headerlink" title="2.1 系统地址空间布局"></a>2.1 系统地址空间布局</h3><p>在 Intel x86 处理器的 Windows 系统中，<code>0x80000000-0xFFFFFFFF</code> 是所有进程共享的系统地址空间。在这段地址空间中，其布局结构是在内核初始化阶段完成的。</p>
+<p>32 位 Windows 的各个版本都利用一个<strong>虚拟地址分配器</strong>，实现了动态的系统地址空间布局结构。仍然有一些指定的区域被保留下来，然而，很多内核模式结构使用了动态的地址空间分配方式。因此，这些结构的虚拟地址互相之间不一定是连续的。每个结构都可以存在于系统地址空间的各个区域中，多个不连续的内存碎片里。使用这种动态方式来分配系统地址空间的场合包括以下这些：</p>
+<ul>
+<li>非换页内存池</li>
+<li>特殊内存池</li>
+<li>换页内存池</li>
+<li>系统页表项（PTE)</li>
+<li>系统映射的视图</li>
+<li>文件系统缓存</li>
+<li>PFN 数据库</li>
+<li>会话空间</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/09/05/ma4xYgrbGp97zOn.png" alt="6.png"></p>
+<div class="note success"><p><strong>📢⚠️注意</strong>：以下列出的固定地址仅针对 Windows XP，在 Windows Vista 以后的系统中，<strong>地址都是动态映射的，每次系统启动时映射的位置都不相同</strong>。</p>
+</div>
+
+<p><strong>一、会话空间</strong></p>
+<p>对于有多个会话的系统而言，每个会话（<code>Session0、Session1...</code>）独有的代码与数据被映射到系统地址空间，但是被属于该会话中的所有进程共享。</p>
+<p>在图中，会话映像文件区包括 <code>win32k.sys</code>、视频驱动程序以及一些打印驱动程序的映像文件；会话内存池是指属于会话空间的换页内存池。</p>
+<p><img data-src="https://s2.loli.net/2022/09/05/DCTXFZUkJvz61l2.png" alt="4.png"></p>
+<p>Win10 x86：</p>
+<p><img data-src="https://s2.loli.net/2022/09/05/jlHetkBW4pThrGV.png" alt="5.png"></p>
+<p><strong>二、PDE、PTE</strong></p>
+<p>第一项 PTE 从 <code>0xC0000000</code> 开始， <code>PDE</code> 属于 <code>PTE</code> 中的一部分。</p>
+<ul>
+<li>10-10-12：页表<code>0xC0000000~0xC0400000</code>，<code>PDE = 0xC0300000</code>。</li>
+<li>2-9-9-12：页表<code>0xC0000000~0xC0800000</code>，<code>PDE = 0xC0600000</code>。</li>
+</ul>
+<p><strong>三、系统缓存</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(MmSystemCacheStart)<span class="number">0xC1000000</span>~<span class="number">0xE1000000</span>(MM_SYSTEM_CACHE_END)</span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_SYSTEM_CACHE_START (0xC1000000)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MM_SYSTEM_CACHE_END (0xE1000000)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>《Windows内核原理与实现4.2.1》接着分析、分页内存、非分页内存</p>
+<h3 id="2-2-用户地址空间布局"><a href="#2-2-用户地址空间布局" class="headerlink" title="2.2 用户地址空间布局"></a>2.2 用户地址空间布局</h3><h2 id="3-系统地址管理"><a href="#3-系统地址管理" class="headerlink" title="3 系统地址管理"></a>3 系统地址管理</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/WinXp-Memory/" title="Windows XP 内存管理（一）">https://directoree.github.io/post/WinXp-Memory/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> WinXP内核</a>
+              <a href="/tags/X86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> X86内存管理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Win32-EventMessage2/" rel="prev" title="Win32开发（二）对话框">
+                  <i class="fa fa-chevron-left"></i> Win32开发（二）对话框
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:03</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/WinXp-Memory/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
