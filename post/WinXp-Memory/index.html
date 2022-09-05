@@ -29,20 +29,26 @@
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/127h6mwWNQyXZoi.png">
 <meta property="og:image" content="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/04/tQEdkUYe8ZTXhCJ.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/04/nfqBGhTuCyXUYmp.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/G4gLxBMAzJfwomb.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/04/46W5kwbs9D3NBGh.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/ma4xYgrbGp97zOn.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/DCTXFZUkJvz61l2.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/jlHetkBW4pThrGV.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/84LMojdrHK3PtnX.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/lP67rQvYUgIEBWM.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/efIwmF41KrRaPvW.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/05/6NihJSAQoEqnPyG.png">
 <meta property="article:published_time" content="2022-09-04T05:12:37.000Z">
-<meta property="article:modified_time" content="2022-09-04T16:39:33.728Z">
+<meta property="article:modified_time" content="2022-09-05T18:10:00.407Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="X86内存管理">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png">
+<meta name="twitter:image" content="https://s2.loli.net/2022/09/05/127h6mwWNQyXZoi.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/WinXp-Memory/">
@@ -239,7 +245,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">1 内存基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-MMU"><span class="nav-text">1.1 MMU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B8%8E%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-text">1.2  虚拟内存与物理内存交换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-x86-%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2 x86 地址空间布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.1 系统地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%94%A8%E6%88%B7%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.2 用户地址空间布局</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E7%AE%A1%E7%90%86"><span class="nav-text">3 系统地址管理</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">1 内存基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-MMU"><span class="nav-text">1.1 MMU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B8%8E%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-text">1.2  虚拟内存与物理内存交换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-x86-%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2 x86 地址空间布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.1 系统地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%94%A8%E6%88%B7%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.2 用户地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-ASLR"><span class="nav-text">2.3 ASLR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-%E6%98%A0%E5%83%8F%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.1 映像随机化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-%E5%A0%86%E6%A0%88%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.2 堆栈随机化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-TEB-%E5%92%8C-PEB-%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.3 TEB 和 PEB 随机化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E7%A9%BA%E9%97%B4%E5%9C%B0%E5%9D%80%E7%AE%A1%E7%90%86"><span class="nav-text">3 系统空间地址管理</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -363,7 +369,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-09-05 00:39:33" itemprop="dateModified" datetime="2022-09-05T00:39:33+08:00">2022-09-05</time>
+        <time title="修改时间：2022-09-06 02:10:00" itemprop="dateModified" datetime="2022-09-06T02:10:00+08:00">2022-09-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -404,14 +410,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.6k</span>
+      <span>7.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -458,7 +464,8 @@
 <li><strong>逻辑地址</strong>。逻辑地址包含两部分：段（scgment）和偏移（offset）。段部分指定了在整个地址空间中的一个基地址以及段空间的大小，当然还有段的一些其他属性。与寻址相关的是段的基址和大小。偏移部分指定了一个逻辑地址相对于段基址的偏移量。此偏移量不能超过段的边界。因此，逻辑地址的实际地址是段基址加上偏移量。Intel x86 芯片也有专门的电路把逻辑地址转译成一个虚拟地址或物理地址。<mark class="label success">段式管理使用逻辑地址</mark>。</li>
 <li><strong>物理地址</strong>。即内存存储器的索引，处理器操纵内存芯片时，通过地址线管脚加上电信号来读或写相应的内存单元。在 Intel x86 体系结构上，物理地址是一个32 位或 36位的无符号整数。</li>
 </ul>
-<p>如下图，除了 <code>FS</code> 寄存器指向的段基址不为 <code>0</code>，其他段的 <strong>虚拟地址 &#x3D;&#x3D; 逻辑地址</strong>。</p>
+<p>如下图，除了 <code>FS</code> 寄存器指向的段基址不为 <code>0</code>，其他段的 <strong>虚拟地址 &#x3D;&#x3D; 逻辑地址</strong>，这种相当于把段机制屏蔽了，成为<strong>地址空间平坦化</strong>，<code>FS</code> 指向寄存器控制区 <code>KPCR</code>。</p>
+<p><img data-src="https://s2.loli.net/2022/09/05/127h6mwWNQyXZoi.png" alt="8.png"></p>
 <p><img data-src="https://s2.loli.net/2021/12/14/zI3QXb5RtSmMkZP.png" alt="2.png"></p>
 <h3 id="1-1-MMU"><a href="#1-1-MMU" class="headerlink" title="1.1 MMU"></a>1.1 MMU</h3><p>将虚拟地址、逻辑地址映射为物理地址的电路叫做存储管理单元（<mark class="label danger">MMU</mark>，Memory Management Unit），集成在 CPU 中，X86 的保护模式实际上需要有 MMU 才能实现。</p>
 <p>将虚拟地址、逻辑地址映射为物理地址是以<strong>页大小</strong>为单位的，不是以字节为单位。X86 包括 X64 页大小一般都是 4KB（PTE低12位）。</p>
@@ -503,7 +510,10 @@
 <li>以及系统范围内的代码和数据（<code>0x80000000~0xFFFFFFFF</code>）：高 2 G 的代码和数据。</li>
 </ol>
 <p>在Windows的 32 位版本上，每个用户进程默认可以拥有多达2GB私有地址空间，操作系统使用高 2GB 空间。然而，系统可以被配置使用 BCD 启动选项 <code>increaseuserva</code>，以便允许用户地址空间多达3GB（PE 文件头必须包含 <code>IMAGE_FILE_LARGE_ADDRESS_AWARE</code>）。这两种可能的地址空间布局结构如图10.8所示。</p>
+<p>Windows 7 32 位：</p>
 <p><img data-src="https://s2.loli.net/2022/09/04/nfqBGhTuCyXUYmp.png" alt="2.png"></p>
+<p>Windows 10 32 位：</p>
+<p><img data-src="https://s2.loli.net/2022/09/05/G4gLxBMAzJfwomb.png" alt="7.png"></p>
 <p>对于用户空间 3 GB的程序，PE 文件头必须包含 <code>IMAGE_FILE_LARGE_ADDRESS_AWARE</code>。构建相应可执行文件时，指定 <code>/LARGEADDRESSAWARE</code> 链接器标志（在VS中：项目属性-链接器-系统-启用大地址），配置应用程序使用 3 GB 的地址空间。当在一个配置成使用 2 GB 用户地址空间的系统上运行该应用程序时，此链接器标志将不起作用。</p>
 <p><img data-src="https://s2.loli.net/2022/09/04/46W5kwbs9D3NBGh.png" alt="3.png"></p>
 <p>可以参考《深入解析Windows操作系统第7版5.5》x86地址空间布局或《<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-204829.htm">《深入解析windows操作系统第6版下册》第10章:内存管理（第二部分）</a>》。</p>
@@ -511,23 +521,24 @@
 <p>32 位 Windows 的各个版本都利用一个<strong>虚拟地址分配器</strong>，实现了动态的系统地址空间布局结构。仍然有一些指定的区域被保留下来，然而，很多内核模式结构使用了动态的地址空间分配方式。因此，这些结构的虚拟地址互相之间不一定是连续的。每个结构都可以存在于系统地址空间的各个区域中，多个不连续的内存碎片里。使用这种动态方式来分配系统地址空间的场合包括以下这些：</p>
 <ul>
 <li>非换页内存池</li>
-<li>特殊内存池</li>
 <li>换页内存池</li>
+<li>特殊内存池</li>
 <li>系统页表项（PTE)</li>
 <li>系统映射的视图</li>
 <li>文件系统缓存</li>
 <li>PFN 数据库</li>
 <li>会话空间</li>
 </ul>
-<p><img data-src="https://s2.loli.net/2022/09/05/ma4xYgrbGp97zOn.png" alt="6.png"></p>
+<p>Windows XP 32 位系统地址空间布局：<img data-src="https://s2.loli.net/2022/09/05/ma4xYgrbGp97zOn.png" alt="6.png"></p>
 <div class="note success"><p><strong>📢⚠️注意</strong>：以下列出的固定地址仅针对 Windows XP，在 Windows Vista 以后的系统中，<strong>地址都是动态映射的，每次系统启动时映射的位置都不相同</strong>。</p>
 </div>
 
 <p><strong>一、会话空间</strong></p>
 <p>对于有多个会话的系统而言，每个会话（<code>Session0、Session1...</code>）独有的代码与数据被映射到系统地址空间，但是被属于该会话中的所有进程共享。</p>
 <p>在图中，会话映像文件区包括 <code>win32k.sys</code>、视频驱动程序以及一些打印驱动程序的映像文件；会话内存池是指属于会话空间的换页内存池。</p>
+<p>Windows XP 会话空间：</p>
 <p><img data-src="https://s2.loli.net/2022/09/05/DCTXFZUkJvz61l2.png" alt="4.png"></p>
-<p>Win10 x86：</p>
+<p>Win10 32 位：</p>
 <p><img data-src="https://s2.loli.net/2022/09/05/jlHetkBW4pThrGV.png" alt="5.png"></p>
 <p><strong>二、PDE、PTE</strong></p>
 <p>第一项 PTE 从 <code>0xC0000000</code> 开始， <code>PDE</code> 属于 <code>PTE</code> 中的一部分。</p>
@@ -540,8 +551,83 @@
 
 
 
-<p>《Windows内核原理与实现4.2.1》接着分析、分页内存、非分页内存</p>
-<h3 id="2-2-用户地址空间布局"><a href="#2-2-用户地址空间布局" class="headerlink" title="2.2 用户地址空间布局"></a>2.2 用户地址空间布局</h3><h2 id="3-系统地址管理"><a href="#3-系统地址管理" class="headerlink" title="3 系统地址管理"></a>3 系统地址管理</h2>
+<h3 id="2-2-用户地址空间布局"><a href="#2-2-用户地址空间布局" class="headerlink" title="2.2 用户地址空间布局"></a>2.2 用户地址空间布局</h3><p>内核的地址空间是动态的，类似地，用户地址空间也是动态地被构建的——线程栈、进程堆和已加载镜像的地址（例如DLL和应用程序的可执行文件）都是通过一种称为地址空间布局随机化（Address Space Layout Randomization, <strong>ASLR</strong>) 的机制，<strong>动态地计算出来的</strong>（如果应用程序和它的各个映像支持这一特性的话)。</p>
+<p>在操作系统层面上，用户地址空间被划分为几个有明确定义的内存区域。可执行文件和DLL都为内存映射文件，随后跟着的是进程的堆和其中各个线程的栈。除了这些区域（和一些保留的系统结构，如TEB和PEB）之外，所有其它的内存分配都依赖于运行时（动态）生成。ASLR 会处理所有这些依赖于运行时的区域的位置，它与DEP相结合，一起提供了一种机制，让通过远程操纵内存来挖掘系统的企图变得更难成功。<strong>由于 Windows 的代码和数据都被放在动态的位置了，一个攻击者通常就无法在一个程序或系统提供的DLL中硬编码出一个有意义的偏移量</strong>。</p>
+<blockquote>
+<p>这里指的就是远程执行代码的缓冲区溢出攻击，例如使用 metasploit 通过网络发送 shellcode 来取得一个从受害机器到攻击主机的反弹 shell，而且还具备管理员，或者 root 权限。这是由于，被攻击的有缺陷的应用程序同样是以这些特权级别运行的。</p>
+</blockquote>
+<p><img data-src="https://s2.loli.net/2022/09/05/84LMojdrHK3PtnX.png" alt="9.png"></p>
+<div class="note info"><p>实际上系统将所有进程加载的相同 DLL（非第三方）都映射到相同的物理内存页，也就是仅维护一个 DLL 副本，然后在所有进程之间共享——通过共享文件映射的方式。</p>
+</div>
+
+<p>本质上 VMMap 的Type 中 <code>image</code> 类型段中的<strong>所有系统 DLL</strong> 与下文提及的 <code>shareable</code> 类型段，<code>Mapped File</code> 类型段一样，都是基于共享文件映射来实现共享。</p>
+<p>软件 VMMap 中将用户空间的内存分为很多类型：</p>
+<ul>
+<li><strong>Shareable</strong>：可共享的，显示了标记为可共享的内存分配，通常包含共享的内存（但不包括内存映射文件，它们属于“映像”或“映射文件”）</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/09/05/lP67rQvYUgIEBWM.png" alt="10.png"></p>
+<p>以下主要解释一下重要的几个列：</p>
+<ul>
+<li><strong>Total WS</strong>：驻留在物理内存中的字节数，如 $38138KB&#x2F;4KB &#x3D; 9534$个页面（$4KB &#x3D; 4*2^{10}Bytes &#x3D; 2^{12}Bytes&#x3D; 4096Bytes$）。</li>
+<li><strong>Commited</strong>：实际已使用的内存大小，已提交的。<code>Commited - Total WS = 被换出到磁盘的页面大小</code>，会在必要的时刻由缺页异常处理程序，或者其它的内核例程将其换入物理内存。</li>
+<li><strong>Shareable WS</strong>：可共享的。</li>
+<li><strong>Shared WS</strong>：已共享的。“可共享”和“已共享”的页面通常包含程序运行时依赖的动态链接库——多数属于 Windows 子系统 DLL 。“私有”的页面通常包含程序的可执行 PE 文件映射的内存。</li>
+</ul>
+<p>具体举例可参考<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-206911.htm">《深入解析windows操作系统第6版下册》第10章:内存管理（第三部分）</a>。</p>
+<h3 id="2-3-ASLR"><a href="#2-3-ASLR" class="headerlink" title="2.3 ASLR"></a>2.3 ASLR</h3><p>ASLR（Address space layout randomization），地址空间布局随机化。ASLR的概念在WindowsXP时代提出，到Windows Vista才完整实现。</p>
+<p> ASLR 包含了<strong>映像随机化</strong>、<strong>堆栈随机化</strong>、<strong>PEB 与 TEB 随机化</strong>。</p>
+<h4 id="2-3-1-映像随机化"><a href="#2-3-1-映像随机化" class="headerlink" title="2.3.1 映像随机化"></a>2.3.1 映像随机化</h4><p>EXE 和 DLL 随机化映射方式不一样，参见<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-206911.htm">《深入解析windows操作系统第6版下册》第10章:内存管理（第三部分</a>。</p>
+<div class="note warning"><p>映像随机化机制<mark class="label danger">需要编译器及系统同时支持</mark>（SafeSEH也是）。</p>
+<p><strong>注意</strong>：比如在 OllyDbg 中，每次重启电脑后，随机化的地址才和上一次不一样，且<mark class="label primary">地址最低16位不会被随机化</mark>，保持不变。</p>
+</div>
+
+<div class="note success"><p>编译时开启 ALSR 的 PE 文件有以下特征：</p>
+<ol>
+<li>开启 ASLR 后的 PE 文件 <code>Optional Header DllCharacteristics</code> 多一个 <code>IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE(0x40)</code> 属性。</li>
+<li>开启 ASLR 后的 PE 文件后 Release版本 PE 文件 <code>Section Headers</code> 多一个 <code>.reloc</code> 节（Debug PE自带）。</li>
+<li>未开启 ASLR 的 <code>File Header Characteristics</code> 会多一个 <code>IMAGE_FILE_RELOCS_STRIPPED(0x1)</code> 的属性，开启 ASLR 后不会有这个属性。（该标志表示重定位信息已从文件中删除，该文件必须以其首选的基地址加载。如果基址不可用，则加载程序报告错误。）</li>
+</ol>
+</div>
+
+<p>以下提供两种方法来去掉 PE 文件的 ASLR 属性（使用010edit工具）：</p>
+<ol>
+<li>在 PE 文件头的 <code>Characteristics</code> 属性中加上 <code>IMAGE_FILE_RELOCS_STRIPPED(0x1)</code>（原属性使用异或组装的），同时将可选文件头 <code>DllCharacteristics</code> 的<code>IMAGE_DLLCHARACTERISTICS_DYNAMIC_BASE(0x40)</code> 属性抹掉。</li>
+<li>抹掉 <code>.reloc</code> 数据：<ol>
+<li>将 <code>Section Headers</code> 的 <code>.reloc</code> 数据全部清零。（不是删除，否则数据会发生偏移，PE文件就错乱了）</li>
+<li>根据节表头信息（位置和大小），找到<code>.reloc</code> 数据所在位置，将数据全部清零。</li>
+<li>修改<code>_IMAGE_FILE_HEADER.NumberOfSections -= 1</code>。</li>
+<li>修改<code>_IMAGE_OPTIONAL_HEADER.SizeOfImage -= 对齐的页大小</code>。（如果.reloc大小是600h，而该PE文件SectionAlignment节在内存中的最小单位 (对齐单位) 一般为: 1000h， 1000h &gt; 600h。以1000h对齐，所以我们直接将<strong>SizeOfImage</strong>减去1000h即可）</li>
+</ol>
+</li>
+</ol>
+<p>参考<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-259451.htm">ASLR学习总结</a>。</p>
+<p><strong>开启 ASLR</strong>：</p>
+<ol>
+<li><p>VS2019编译器设置（默认开启）：项目属性-链接器-高级-随机地址。</p>
+</li>
+<li><p>Windows 10 两种设置方法：</p>
+<ul>
+<li><p>方法一：在注册表：<code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session ManagerMemory\</code> 下新建一个 <code>DWORD</code> 键值对 <code>MoveImages = 0</code>。需重启后生效。</p>
+<ul>
+<li><p><code>MoveImages == 0</code>：禁用映像随机化。</p>
+</li>
+<li><p><code>MoveImages &gt; 0</code>：启用映像随机化。</p>
+<p><img data-src="https://s2.loli.net/2022/09/05/efIwmF41KrRaPvW.png" alt="11.png"></p>
+</li>
+</ul>
+</li>
+<li><p>方法二：在 Windows 10 的Windows安全中心-应用和浏览器控制-Exploit Protection-强制映像随机化（强制性 ASLR），默认是关闭的。</p>
+<p><img data-src="https://s2.loli.net/2022/09/05/6NihJSAQoEqnPyG.png" alt="12.png"></p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="2-3-2-堆栈随机化"><a href="#2-3-2-堆栈随机化" class="headerlink" title="2.3.2 堆栈随机化"></a>2.3.2 堆栈随机化</h4><p>这项措施是在程序运行时随机的选择堆栈的基址，与映像基址随机化不同的是<strong>堆栈的基址不是在系统启动的时候确定的</strong>，而是在打开程序的时候确定的，也就是说<strong>同一个程序任意两次运行时的堆栈基址都是不同的</strong>，进而各变量在内存中的位置也就是不确定的。</p>
+<h4 id="2-3-3-TEB-和-PEB-随机化"><a href="#2-3-3-TEB-和-PEB-随机化" class="headerlink" title="2.3.3 TEB 和 PEB 随机化"></a>2.3.3 TEB 和 PEB 随机化</h4><p>微软在 XP SP2 之后不再使用固定的 PEB 基址 <code>0x7FFDF000</code> 和 TEB 基址 <code>0x7FFDE000</code>，而是使用具有一定随机性的基址，这就增加了攻击 PEB 中的函数指针的难度。</p>
+<p>获取当前进程的 TEB 和 PEB很简单，TEB 存放在<code>FS:0</code> 和 <code>FS:[0x18]</code> 处，PEB 存放在 TEB偏移 0x30 的位置。</p>
+<p><strong>注意</strong>：关于 TEB 和 KPCR 的获取，不能直接使用 <code>FS:[0]</code>，该方法获取的是 SEH 链条。而应该在 3 环使用 <code>FS:[0x18]</code>，在 0 环使用 <code>FS:[0x1C]</code>。</p>
+<p>关于 ASLR 攻击方式可以参考《0Day安全第二版 第13章》。</p>
+<h2 id="3-系统空间地址管理"><a href="#3-系统空间地址管理" class="headerlink" title="3 系统空间地址管理"></a>3 系统空间地址管理</h2>
     </div>
 
     
@@ -668,7 +754,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">25:03</span>
+    <span title="站点阅读时长">25:06</span>
   </span>
 </div>
 <div class="busuanzi-count">

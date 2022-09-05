@@ -59,7 +59,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/01/02/ukwKTxjbW3BUSfm.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/03/yIhRYajNOdwM6Zt.png">
 <meta property="article:published_time" content="2021-12-26T08:20:51.000Z">
-<meta property="article:modified_time" content="2022-01-09T08:05:48.800Z">
+<meta property="article:modified_time" content="2022-09-05T11:50:13.086Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta name="twitter:card" content="summary">
@@ -384,7 +384,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-01-09 16:05:48" itemprop="dateModified" datetime="2022-01-09T16:05:48+08:00">2022-01-09</time>
+        <time title="修改时间：2022-09-05 19:50:13" itemprop="dateModified" datetime="2022-09-05T19:50:13+08:00">2022-09-05</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -433,14 +433,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>9.3k</span>
+      <span>9.6k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>9 分钟</span>
     </span>
 </div>
 
@@ -492,6 +492,12 @@
 <li>将步骤3得到的地址低12位（属性）置0，然后 PageTable &#x3D; (Dir &amp; 0xFFFFF000) + Offset_2  * 4，指向第二级的页表。</li>
 <li>将步骤4得到的地址低12位（属性）置0，然后 Address &#x3D; (PageTable &amp; 0xFFFFF000) + Offset_3 ，即为物理地址。</li>
 </ol>
+<div class="note default"><p>实际上，把PDT、PTT表堪称两个 <code>DWORD</code> 数组：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">DWORD PDT[Num_PDT];</span><br><span class="line">DWORD PTT[Num_PTT];	</span><br><span class="line"><span class="number">1</span>、每一项 PDT[x] 对应一张PTT表，也就是对应一个 PTT[Num_PTT] 数组</span><br><span class="line"><span class="number">2</span>、数组 PDT[Num_PDT] 起始地址为 CR3，<span class="number">32</span>位线性地址的的高<span class="number">10</span>位为数组索引，计算第x项PDE的地址为：CR3+((VirtualAddress&gt;&gt;<span class="number">22</span>)&amp;<span class="number">0x3FF</span>)*<span class="number">4</span></span><br></pre></td></tr></table></figure>
+
+
+</div>
+
 <h2 id="3-练习：查找字符串的物理地址"><a href="#3-练习：查找字符串的物理地址" class="headerlink" title="3 练习：查找字符串的物理地址"></a>3 练习：查找字符串的物理地址</h2><p>题目：打开Notepad.exe输入字符串并查找其对应的物理地址。</p>
 <ol>
 <li><p>修改Windows XP启动配置，将<code>noexecute</code>改成<code>execute</code>，使用10-10-12分页模式。</p>
@@ -920,7 +926,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">25:03</span>
+    <span title="站点阅读时长">25:06</span>
   </span>
 </div>
 <div class="busuanzi-count">
