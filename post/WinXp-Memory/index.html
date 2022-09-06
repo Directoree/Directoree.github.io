@@ -38,12 +38,13 @@
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/ma4xYgrbGp97zOn.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/DCTXFZUkJvz61l2.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/jlHetkBW4pThrGV.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/05/84LMojdrHK3PtnX.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/06/o7XOFuBxpqv13Kk.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/lP67rQvYUgIEBWM.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/efIwmF41KrRaPvW.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/6NihJSAQoEqnPyG.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/06/1EB8XIoLJwG6Kcg.png">
 <meta property="article:published_time" content="2022-09-04T05:12:37.000Z">
-<meta property="article:modified_time" content="2022-09-05T18:10:00.407Z">
+<meta property="article:modified_time" content="2022-09-06T17:13:32.126Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
 <meta property="article:tag" content="X86内存管理">
@@ -369,7 +370,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-09-06 02:10:00" itemprop="dateModified" datetime="2022-09-06T02:10:00+08:00">2022-09-06</time>
+        <time title="修改时间：2022-09-07 01:13:32" itemprop="dateModified" datetime="2022-09-07T01:13:32+08:00">2022-09-07</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -410,14 +411,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.6k</span>
+      <span>14k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>13 分钟</span>
     </span>
 </div>
 
@@ -556,7 +557,7 @@
 <blockquote>
 <p>这里指的就是远程执行代码的缓冲区溢出攻击，例如使用 metasploit 通过网络发送 shellcode 来取得一个从受害机器到攻击主机的反弹 shell，而且还具备管理员，或者 root 权限。这是由于，被攻击的有缺陷的应用程序同样是以这些特权级别运行的。</p>
 </blockquote>
-<p><img data-src="https://s2.loli.net/2022/09/05/84LMojdrHK3PtnX.png" alt="9.png"></p>
+<p><img data-src="https://s2.loli.net/2022/09/06/o7XOFuBxpqv13Kk.png" alt="9.png"></p>
 <div class="note info"><p>实际上系统将所有进程加载的相同 DLL（非第三方）都映射到相同的物理内存页，也就是仅维护一个 DLL 副本，然后在所有进程之间共享——通过共享文件映射的方式。</p>
 </div>
 
@@ -607,11 +608,13 @@
 </li>
 <li><p>Windows 10 两种设置方法：</p>
 <ul>
-<li><p>方法一：在注册表：<code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session ManagerMemory\</code> 下新建一个 <code>DWORD</code> 键值对 <code>MoveImages = 0</code>。需重启后生效。</p>
+<li><p>方法一：在注册表：<code>HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session ManagerMemory\</code> 下新建一个 <code>DWORD</code> 键值对 <code>MoveImages = 0</code>（该键值默认不存在）。需重启后生效。</p>
 <ul>
-<li><p><code>MoveImages == 0</code>：禁用映像随机化。</p>
+<li><p><code>MoveImages == 0</code>：禁用映像随机化，总是按照 PE 文件头中指定的基址来加载。</p>
 </li>
-<li><p><code>MoveImages &gt; 0</code>：启用映像随机化。</p>
+<li><p><code>MoveImages == 0xFFFFFFFF(-1)</code>：总是强制随机化有<code>.reloc</code> 节的PE文件。</p>
+</li>
+<li><p>其他值：随机化开启ASLR并且有<code>.reloc</code>的PE文件。</p>
 <p><img data-src="https://s2.loli.net/2022/09/05/efIwmF41KrRaPvW.png" alt="11.png"></p>
 </li>
 </ul>
@@ -622,6 +625,91 @@
 </ul>
 </li>
 </ol>
+<p><strong>现象</strong>：</p>
+<ol>
+<li>每次重启电脑，EXE才会被加载到不同的基地址。</li>
+<li>32位程序在关闭<code>/dynamicbase链接</code>后还有<code>.reloc</code>区段，64位相同条件下没有该区段（只有在开启随机地址后编译的64位程序才有该区段）。</li>
+<li>Windows 10虽然有强制ASLR功能，但是仅对PE文件中含有<code>.reloc</code>区段的程序有用。</li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.mandiant.com/resources/blog/six-facts-about-address-space-layout-randomization-on-windows">还应该注意</a>：</p>
+<ul>
+<li>如果EXE中的两个函数位于地址0x401000和0x401100，即使在镜像重新定位后，它们也将保持0x100字节的距离。显然，由于x86代码中相对调用和jmp指令的普遍性，这一点很重要。同样，0x401000的函数将从镜像的基本地址保持0x1000字节，无论它在哪里。</li>
+<li>同样，如果镜像中相邻两个静态或全局变量，则在应用ASLR后，它们将保持相邻。</li>
+<li>相反，堆栈和堆栈变量以及内存映射文件不是镜像的一部分，可以随意随机化，而无需考虑选择的基本地址。</li>
+</ul>
+<p>对于可执行文件 <strong>EXE</strong>，通过计算它每次加载时的 Delta 值（差值或增量）来得出加载偏移量（load Offset），它是介于 0x10000 到 0xFE0000 之间的 8 位的伪随机数（Delta取值都在 16 MB 范围内），加载偏移量具体的计算方法是（Windows 7）：</p>
+<ol>
+<li>取得当前处理器的时间戳计数器（TSC），将其右移 4 位；</li>
+<li>执行一次除以 254 的求模运算后再加 1；</li>
+<li>将得出的数字乘以 64 KB 的分配粒度。</li>
+</ol>
+<p><strong>说明</strong>：</p>
+<ul>
+<li>这个8位伪随机数取值范围是 <code>1~0xFE</code>，共256个数值，地址随机化的分配粒度以64KB（0x10000）为单位。</li>
+<li><mark class="label danger">随机化后的加载基址 = PEFileHeader.ImageBase</mark> <mark class="label success">±</mark> <mark class="label danger">Delta</mark>。</li>
+</ul>
+<p>对于32位系统，<a target="_blank" rel="noopener" href="https://www.mandiant.com/resources/blog/six-facts-about-address-space-layout-randomization-on-windows">事实上，Windows只尝试随机化32位地址的8位。这些是第16位至第23位，仅影响地址的页面目录条目和页表条目部分(PTE)。因此，在暴力的情况下，攻击者枚举256个值会猜测中EXE的基本地址</a>。</p>
+<p>当将ASLR应用于64位二进制文件时，Windows能够<a target="_blank" rel="noopener" href="https://msrc-blog.microsoft.com/2013/12/11/software-defense-mitigating-common-exploitation-techniques/">随机化17-19位的地址</a>（取决于它是DLL还是EXE）。图2显示了64位代码的可能基本地址数量，以及相应地所需的蛮力猜测数量如何大幅增加。这可以允许端点保护软件或系统管理员在攻击成功之前检测到攻击。</p>
+<p>在暴力攻击中，ASLR使攻击64位程序的强度至少是攻击完全相同程序的32位版本的512倍。</p>
+<p><img data-src="https://s2.loli.net/2022/09/06/1EB8XIoLJwG6Kcg.png" alt="13.png"></p>
+<ol>
+<li><p>对于系统DLL，使用另外的计算方法来求加载基址偏移量。每次系统启动引导过程中，会产生一个系统宽度的大小的值，称为<code>image bias</code>。该值由函数<code>MiInitializeRelocations</code>计算并返回得到，保存在内核全局变量 <code>MiImageBias</code> 中（Windows 7-8.x）–<code>MiState.Sections.ImageBias</code>成员中（Windows 10 1507-1809,从1903开始扩充了非常多成员<code>ImageBiasNative</code>）这里的 <code>MiState</code> 是 <code>_MI_SYSTEM_INFORMATION</code> 结构参考<a target="_blank" rel="noopener" href="https://kernelstruct.gitee.io/kernels/x64/Windows%2010%20|%202016/1809%20Redstone%205%20(October%20Update)/_MI_SYSTEM_INFORMATION">Windows 10 | 2016 1809 Redstone 5 (October Update)</a>。该值在系统启动期间调用 <code>MiInitializeRelocations</code>返回的当前 CPU 的时间戳计数器。然后同样的将其移位，屏蔽成一个 8 位的值，这就提供了 256 种可能的取值。（ 加载偏移量 <code>MiImageBias</code> 的取值从 <code>0x1~0xFF</code>）<br>与可执行文件不同的是，每次启动时只计算一次这个加载偏移量，并且被整个系统共享，从而允许系统 DLL 在物理内存中保持共享，或者仅重定位一次。对于后者，假设系统 DLL 被重新映射到不同进程内部的不同区域，那么系统 DLL 中的代码就无法被共享。映像加载器将不得不为每个进程修正地址引用的差别，从而将原本可共享的只读代码转变为进程私有的数据。在这种情况下，每个进程加载的这个系统 DLL 都会在物理内存中有多份。（<strong>这里指的是系统DLL，用户DLL的重定位方法同EXE</strong>）</p>
+</li>
+<li><p>一旦偏移量Delta被计算出来后，内存管理器会初始化一个叫作<code>MilmageBitMap</code>的位图。该位图被用来表示从<code>0x50000000</code>到<code>0x78000000</code>的范围，每个位代表一个分配单位（64KB）。每当内存管理器加载一个DLL时，相应的位就会被设置，以便标记出它在系统中的位置；当同一个系统DLL被再次加载时，内存管理器会共享它的内存区（Section）对象，此对象包含有经过重定位的信息。简单地讲，位图 <code>MiImageBitMap</code> 就是用来描述 <code>0x78000000~0x50000000</code> 这片地址空间使用情况的内核变量。</p>
+</li>
+<li><p>当每个DLL被加载时，系统将<code>MilmageBias</code>作为索引，会自顶部往底部扫描位图来查找空闲位。由于在首个 DLL （<code>Ntdll.dll</code>）加载时，<code>MiImageBitMap</code> 将完全是空的，<code>Ntdll.dll</code> 的加载地址可以容易地计算得出：<mark class="label danger">0x78000000 – (MiImageBias * 0x10000)</mark> 。可以每个后续DLL将会在下一个64KB段被加载。正因为如此，如果<code>ntdll</code>的地址被获知，其他DLL的地址就容易被计算出来。<br>为了缓解这种可能性，当Smss加载时，会话管理器在初始化过程中对己知DLL的映射顺序也会随机化。（Smss.exe 是在执行体初始化过程的最后阶段，由 System 进程创建第一个用户模式进程，smss.exe 本身仅使用 Windows 原生系统调用服务——仅导入了 ntdll.dll 中的本机 API 用户模式代理，因此它加载的 DLL 只有少数几个）。</p>
+</li>
+<li><p>最后，假设 <code>MiImageBitMap</code> 位图中没有可用的空闲空间（这意味着为 ASLR 而定义的绝大多数区域都被使用了），系统DLL 重定位将会使用EXE重定位的方法。</p>
+</li>
+</ol>
+<p><strong>这样一来，每个 DLL 就不一定在地址空间中都间隔 64 KB，但会是 64 KB 的整数倍</strong>。</p>
+<blockquote>
+<p>Windows7-Windows8.x：MilmageBitMap。</p>
+<p>Windows 10 1507-1809：_MI_SECTION_STATE.ImageBitMap</p>
+<p>Windows 10 1903-21H2：_MI_SECTION_STATE.ImageBitMapNative</p>
+</blockquote>
+<div class="note danger"><p>在Windows 10中的计算方法：</p>
+<ul>
+<li>32 bit：$0x78000000 - (ImageBias + NtDllSizein64KBChunks) * 0x10000$</li>
+<li>64 bit：$0x7FFF’FFFF0000-(ImageBias64High + NtDllSizein64KBChunks) * 0x10000$</li>
+</ul>
+<p>这里<code>NtDllSizein64KBChunks</code> 计算方法：假设 <code>ntdll.dll</code> 文件总大小为1547KB，则<code>1547/64=24.17</code>，向上取整得<code>25 = 0x19</code>。则<code>NtDllSizein64KBChunks = 0x19</code>（表示25个64KB大小）。Windbg双机调试时<code>?nt!mistate</code>可查看ImageBias大小。<code>0x78000000-(0x6E + 0x19) * 0x10000 = 0x77790000</code>。</p>
+</div>
+
+
+
+<p>以下是<a target="_blank" rel="noopener" href="https://kernelstruct.gitee.io/kernels/x64/Windows%2010%20|%202016/1809%20Redstone%205%20(October%20Update)">Windows 10 1809 x64</a>结构：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x3180 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">MI_SYSTEM_INFORMATION</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_POOL_STATE</span> <span class="title">Pools</span>;</span>                                            <span class="comment">//0x0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_SECTION_STATE</span> <span class="title">Sections</span>;</span>                                      <span class="comment">//0x180</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_SYSTEM_IMAGE_STATE</span> <span class="title">SystemImages</span>;</span>                             <span class="comment">//0x4c0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_SESSION_STATE</span> <span class="title">Sessions</span>;</span>                                      <span class="comment">//0x580</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_PROCESS_STATE</span> <span class="title">Processes</span>;</span>                                     <span class="comment">//0x1608</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_HARDWARE_STATE</span> <span class="title">Hardware</span>;</span>                                     <span class="comment">//0x1680</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_SYSTEM_VA_STATE</span> <span class="title">SystemVa</span>;</span>                                    <span class="comment">//0x1800</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_COMBINE_STATE</span> <span class="title">PageCombines</span>;</span>                                  <span class="comment">//0x1d00</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_PAGELIST_STATE</span> <span class="title">PageLists</span>;</span>                                    <span class="comment">//0x1d18</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_PARTITION_STATE</span> <span class="title">Partitions</span>;</span>                                  <span class="comment">//0x1d40</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_SHUTDOWN_STATE</span> <span class="title">Shutdowns</span>;</span>                                    <span class="comment">//0x1da0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_ERROR_STATE</span> <span class="title">Errors</span>;</span>                                          <span class="comment">//0x1e18</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_ACCESS_LOG_STATE</span> <span class="title">AccessLog</span>;</span>                                  <span class="comment">//0x1f00</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_DEBUGGER_STATE</span> <span class="title">Debugger</span>;</span>                                     <span class="comment">//0x1f80</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_STANDBY_STATE</span> <span class="title">Standby</span>;</span>                                       <span class="comment">//0x20a0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_SYSTEM_PTE_STATE</span> <span class="title">SystemPtes</span>;</span>                                 <span class="comment">//0x2140</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_IO_PAGE_STATE</span> <span class="title">IoPages</span>;</span>                                       <span class="comment">//0x2340</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_PAGING_IO_STATE</span> <span class="title">PagingIo</span>;</span>                                    <span class="comment">//0x23b0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_COMMON_PAGE_STATE</span> <span class="title">CommonPages</span>;</span>                               <span class="comment">//0x2400</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_SYSTEM_TRIM_STATE</span> <span class="title">Trims</span>;</span>                                     <span class="comment">//0x24c0</span></span><br><span class="line">    ULONGLONG Cookie;                                                       <span class="comment">//0x2500</span></span><br><span class="line">    VOID* <span class="keyword">volatile</span>* BootRegistryRuns;                                       <span class="comment">//0x2508</span></span><br><span class="line">    <span class="keyword">volatile</span> LONG ZeroingDisabled;                                          <span class="comment">//0x2510</span></span><br><span class="line">    UCHAR FullyInitialized;                                                 <span class="comment">//0x2514</span></span><br><span class="line">    UCHAR SafeBooted;                                                       <span class="comment">//0x2515</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">TlgProvider_t</span>* <span class="title">TraceLogging</span>;</span>                                    <span class="comment">//0x2518</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MI_VISIBLE_STATE</span> <span class="title">Vs</span>;</span>                                            <span class="comment">//0x2540</span></span><br><span class="line">&#125;; </span><br><span class="line"><span class="comment">//0x340 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">MI_SECTION_STATE</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">volatile</span> LONG SectionObjectPointersLock;                                <span class="comment">//0x0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_AVL_TREE</span> <span class="title">SectionBasedRoot</span>;</span>                                  <span class="comment">//0x8</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">EX_PUSH_LOCK</span> <span class="title">SectionBasedLock</span>;</span>                                  <span class="comment">//0x10</span></span><br><span class="line">    <span class="keyword">volatile</span> ULONGLONG UnusedSegmentPagedPool;                              <span class="comment">//0x18</span></span><br><span class="line">    ULONG DataSectionProtectionMask;                                        <span class="comment">//0x20</span></span><br><span class="line">    VOID* HighSectionBase;                                                  <span class="comment">//0x28</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MSUBSECTION</span> <span class="title">PhysicalSubsection</span>;</span>                                 <span class="comment">//0x30</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">CONTROL_AREA</span> <span class="title">PhysicalControlArea</span>;</span>                               <span class="comment">//0xc0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MMPFNLIST</span> <span class="title">PurgingExtentPages</span>;</span>                                   <span class="comment">//0x140</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MMPFN</span>* <span class="title">DanglingExtentPages</span>;</span>                                     <span class="comment">//0x168</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">WORK_QUEUE_ITEM</span> <span class="title">DanglingExtentsWorkItem</span>;</span>                        <span class="comment">//0x170</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">KEVENT</span> <span class="title">DanglingExtentsDeletionComplete</span>;</span>                         <span class="comment">//0x190</span></span><br><span class="line">    UCHAR DanglingExtentsWorkerActive;                                      <span class="comment">//0x1a8</span></span><br><span class="line">    UCHAR PurgingExtentsNeedWatchdog;                                       <span class="comment">//0x1a9</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_AVL_TREE</span> <span class="title">PrototypePtesTree</span>;</span>                                 <span class="comment">//0x1b0</span></span><br><span class="line">    <span class="keyword">volatile</span> LONG PrototypePtesTreeSpinLock;                                <span class="comment">//0x1b8</span></span><br><span class="line">    ULONG ImageBias;                                                        <span class="comment">//0x1bc</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">EX_PUSH_LOCK</span> <span class="title">RelocateBitmapsLock</span>;</span>                               <span class="comment">//0x1c0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_BITMAP</span> <span class="title">ImageBitMap</span>;</span>                                         <span class="comment">//0x1c8</span></span><br><span class="line">    ULONG ImageBias64Low;                                                   <span class="comment">//0x1d8</span></span><br><span class="line">    ULONG ImageBias64High;                                                  <span class="comment">//0x1dc</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_BITMAP</span> <span class="title">ImageBitMap64Low</span>;</span>                                    <span class="comment">//0x1e0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_BITMAP</span> <span class="title">ImageBitMap64High</span>;</span>                                   <span class="comment">//0x1f0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_BITMAP</span> <span class="title">ImageBitMapWow64Dll</span>;</span>                                 <span class="comment">//0x200</span></span><br><span class="line">    VOID* ApiSetSection;                                                    <span class="comment">//0x210</span></span><br><span class="line">    VOID* ApiSetSchema;                                                     <span class="comment">//0x218</span></span><br><span class="line">    ULONGLONG ApiSetSchemaSize;                                             <span class="comment">//0x220</span></span><br><span class="line">    ULONG LostDataFiles;                                                    <span class="comment">//0x228</span></span><br><span class="line">    ULONG LostDataPages;                                                    <span class="comment">//0x22c</span></span><br><span class="line">    ULONG ImageFailureReason;                                               <span class="comment">//0x230</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">SECTION</span>* <span class="title">CfgBitMapSection32</span>;</span>                                    <span class="comment">//0x238</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">CONTROL_AREA</span>* <span class="title">CfgBitMapControlArea32</span>;</span>                           <span class="comment">//0x240</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">SECTION</span>* <span class="title">CfgBitMapSection64</span>;</span>                                    <span class="comment">//0x248</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">CONTROL_AREA</span>* <span class="title">CfgBitMapControlArea64</span>;</span>                           <span class="comment">//0x250</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_BITMAP_EX</span> <span class="title">KernelCfgBitMap</span>;</span>                                  <span class="comment">//0x258</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">EX_PUSH_LOCK</span> <span class="title">KernelCfgBitMapLock</span>;</span>                               <span class="comment">//0x268</span></span><br><span class="line">    ULONG ImageCfgFailure;                                                  <span class="comment">//0x270</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MDL</span>* <span class="title">RetpolineStubMdl</span>;</span>                                          <span class="comment">//0x278</span></span><br><span class="line">    VOID* RetpolineStubStart;                                               <span class="comment">//0x280</span></span><br><span class="line">    ULONG RetpolineStubPages;                                               <span class="comment">//0x288</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_BITMAP_EX</span> <span class="title">KernelRetpolineBitMap</span>;</span>                            <span class="comment">//0x290</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">RTL_RETPOLINE_ROUTINES</span> <span class="title">RetpolineRoutines</span>;</span>                       <span class="comment">//0x2a0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">MMPTE</span>* <span class="title">RetpolineRevertPte</span>;</span>                                      <span class="comment">//0x2f0</span></span><br><span class="line">    ULONG ImageChecksumBreakpoint;                                          <span class="comment">//0x2f8</span></span><br><span class="line">    ULONG ImageSizeBreakpoint;                                              <span class="comment">//0x2fc</span></span><br><span class="line">    <span class="keyword">volatile</span> LONG ImageValidationFailed;                                    <span class="comment">//0x300</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p>以下列出几个关键点：</p>
+<ol>
+<li><p>随机数<code>ImageBias</code>在启动阶段，在<code>MiInitializeRelocations</code>函数获取。<strong>取值从 0x1~0xFF</strong>。</p>
+</li>
+<li><p>Windows 8以前，获取CPU时间戳使用<code>rdtsc</code>指令，在 x86 体系结构上，<code>rdtsc</code>指令会把一个64位的值写入<code>EDX : EAX</code>寄存器组。由于该值可预测，在 Windows 8 及以后系统中，使用了更安全的 Intel CPU 指令<code>rdrand</code>。</p>
+</li>
+<li><p>关于EXE获取Delta：</p>
+<ul>
+<li><p>Windows 7：</p>
+<ul>
+<li>取得当前处理器的时间戳计数器（TSC），将其右移 4 位；</li>
+<li>执行一次除以 254 的求模运算后再加 1；</li>
+<li>将得出的数字乘以 64 KB 的分配粒度。</li>
+</ul>
+</li>
+<li><p>Windows Vista：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TSCStart = ReadTimeStampCounter(); 	<span class="comment">//rdtsc把一个64位的值写入EDX:EAX寄存器组。</span></span><br><span class="line">Delta = (ULONG)((TSCStart &amp; <span class="number">0xFF</span>)*<span class="number">0x10000</span>); <span class="comment">//随机的时间戳值和255按位与运算</span></span><br><span class="line"> <span class="keyword">if</span> (Delta == <span class="number">0</span>) </span><br><span class="line"> &#123;</span><br><span class="line">   Delta = <span class="number">0x10000</span>;	<span class="comment">//对应于Windows 7的模254再加1，让Delta != 0</span></span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>获取随机化地址的函数是 <code>MiSelectImageBase</code>。</p>
+</li>
+<li><p>MiImageBitMap 的大小为 0x2800 字节（10240 字节），因此它能够表示的部分地址空间大小为 0x28000000 字节（0x2800 * 0x10000），也就是从 0x78000000 到 0x50000000 这一部分。</p>
+</li>
+</ol>
+<p>由于64位暂时还没好好研究，这部分内容先暂时放一下，以后将会单独研究一个模块从<code>loadLibray</code>开始一直到选择加载基址<code>MiSelectImageBase</code>进行分析。</p>
+<p>这部分内容可以参考：</p>
+<p>Windows 7、Vista：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-206911.htm">《深入解析windows操作系统第6版下册》第10章:内存管理（第三部分）</a></p>
+<p>Windows 8：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-208278.htm">Windows 8 ASLR Internals（Windows 8 地址空间布局随机化揭秘）</a></p>
+<p>Windows 10：<a target="_blank" rel="noopener" href="https://empyreal96.github.io/nt-info-depot/Windows-Internals-PDFs/Windows%20System%20Internals%207e%20Part%201.pdf">Windows Internals 7 Part1</a></p>
 <h4 id="2-3-2-堆栈随机化"><a href="#2-3-2-堆栈随机化" class="headerlink" title="2.3.2 堆栈随机化"></a>2.3.2 堆栈随机化</h4><p>这项措施是在程序运行时随机的选择堆栈的基址，与映像基址随机化不同的是<strong>堆栈的基址不是在系统启动的时候确定的</strong>，而是在打开程序的时候确定的，也就是说<strong>同一个程序任意两次运行时的堆栈基址都是不同的</strong>，进而各变量在内存中的位置也就是不确定的。</p>
 <h4 id="2-3-3-TEB-和-PEB-随机化"><a href="#2-3-3-TEB-和-PEB-随机化" class="headerlink" title="2.3.3 TEB 和 PEB 随机化"></a>2.3.3 TEB 和 PEB 随机化</h4><p>微软在 XP SP2 之后不再使用固定的 PEB 基址 <code>0x7FFDF000</code> 和 TEB 基址 <code>0x7FFDE000</code>，而是使用具有一定随机性的基址，这就增加了攻击 PEB 中的函数指针的难度。</p>
 <p>获取当前进程的 TEB 和 PEB很简单，TEB 存放在<code>FS:0</code> 和 <code>FS:[0x18]</code> 处，PEB 存放在 TEB偏移 0x30 的位置。</p>
@@ -754,7 +842,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">25:06</span>
+    <span title="站点阅读时长">25:12</span>
   </span>
 </div>
 <div class="busuanzi-count">
