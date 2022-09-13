@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Parallels-Windbg-Win10x64-Win10x86">
+<meta property="og:url" content="https://directoree.github.io/post/Parallels-Windbg-Win10x64-Win10x86/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="ʕ •̀ o •́ ʔ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/3jBcXoeQmLU56Jq.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/s7wx4ev8HyFCunW.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/bUneK97vr26CPaL.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/CqTDtmVBQnXP9GI.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/kO8NYLV6bWH95cy.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/DWG3aYjIBS8ETxr.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/MJA1oSZvjmFxO7w.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/ZdShyBUkRWCVKOI.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/q3d1l9Am6SiCsYt.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/11/KWJyTdUe21YHsEO.png">
+<meta property="article:published_time" content="2022-09-13T11:14:05.000Z">
+<meta property="article:modified_time" content="2022-09-13T11:15:43.056Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="环境搭建">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/09/11/3jBcXoeQmLU56Jq.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Parallels-Windbg-Win10x64-Win10x86/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Parallels-Windbg-Win10x64-Win10x86 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Windows-10%E5%8F%8C%E6%9C%BAPD%E6%90%AD%E5%BB%BA%E8%B0%83%E8%AF%95"><span class="nav-text">1 Windows 10双机PD搭建调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-VS-2019-%E5%BC%80%E5%8F%91%E9%A9%B1%E5%8A%A8%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85"><span class="nav-text">2 VS 2019 开发驱动环境安装</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">132</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">69</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Parallels-Windbg-Win10x64-Win10x86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Parallels-Windbg-Win10x64-Win10x86
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-09-13 19:14:05 / 修改时间：19:15:43" itemprop="dateCreated datePublished" datetime="2022-09-13T19:14:05+08:00">2022-09-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x86%E8%B0%83%E8%AF%95/" itemprop="url" rel="index"><span itemprop="name">x86调试</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Parallels-Windbg-Win10x64-Win10x86/" class="post-meta-item leancloud_visitors" data-flag-title="Parallels-Windbg-Win10x64-Win10x86" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Parallels-Windbg-Win10x64-Win10x86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Parallels-Windbg-Win10x64-Win10x86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="https://unicode-table.com/cn/kaomoji/">ʕ •̀ o •́ ʔ </a></p>
+<span id="more"></span>
+
+
+
+<h2 id="1-Windows-10双机PD搭建调试"><a href="#1-Windows-10双机PD搭建调试" class="headerlink" title="1 Windows 10双机PD搭建调试"></a>1 Windows 10双机PD搭建调试</h2><p>被调试系统：Windows x86 21H2</p>
+<p>主机：Windows 10 x64 21H2</p>
+<p><strong>在被调试系统里:</strong></p>
+<ol>
+<li><p>设置系统调试选项</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.设置端口1（该处的“1”，对应com接口1）</span></span><br><span class="line">bcdedit /dbgsettings serial baudrate:<span class="number">115200</span> debugport:<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.复制开机选项（这里我命名为：&quot;DebugMe&quot;，可任意修改）</span></span><br><span class="line">bcdedit /copy &#123;current&#125; /d DebugMe</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 3.增加开机引导项（ID填写上一条命令生成的字符串）</span></span><br><span class="line">bcdedit /displayorder &#123;current&#125; &#123;ID&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4.激活debug（ID填写上上一条命令生成的字符串）</span></span><br><span class="line">bcdedit /debug &#123;ID&#125; ON</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>关机。</p>
+</li>
+<li><p>设置-硬件-添加串行口-com1-客户端。</p>
+</li>
+<li><p>设置单核。</p>
+</li>
+</ol>
+<p><strong>主机：</strong></p>
+<ol>
+<li>关机。设置-硬件-添加串行口-com1-服务器。</li>
+<li>开机。在Windbg快捷方式右键设置启动参数：<code>&quot;C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\windbg.exe&quot; -b -k com:port=com1,baud=115200,reconnect -y</code>。</li>
+<li>Clash梯子搭好<ul>
+<li>Profiles：到<a target="_blank" rel="noopener" href="https://glados.one/console/clash">GlaDOS</a>复制链接粘贴后，点击Download，然后选择刚下载的配置。</li>
+<li>General：勾选“System proxy”、“Start with Windows”，并记好“Port”是多少。</li>
+<li>Edge浏览器直接测试Google能否访问。</li>
+</ul>
+</li>
+<li>Windows环境变量，在用户变量下添加<ul>
+<li>在本地先随便建立一个空文件夹，如<code>C:\Symbolsx86</code>。</li>
+<li>_NT_SYMBOL_PATH：C:\Symbolsx86。</li>
+<li>_NT_SYMBOL_PROXY：127.0.0.1:Port。</li>
+</ul>
+</li>
+<li>打开Windbg，设置符号路径<code>srv*C:\Symbolsx86*https://msdl.microsoft.com/download/symbols</code>。<ul>
+<li>关闭防火墙。</li>
+<li>设置符号链接：<code>.sympath srv*C:\Symbolsx86*https://msdl.microsoft.com/download/symbols</code>（https不是http）。</li>
+<li>Windbg命令行输入：!sym moisy（查看下载时的日志）。</li>
+<li>Windbg命令行输入：.reload &#x2F;f。查看C:\Symbolsx86已经下载好了一些.pdb符号了（如果一次不成功就重启Windbg，多试几次），可以时不时的进行reload。</li>
+</ul>
+</li>
+</ol>
+<p>参考：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-261326.htm">双机内核调试入门</a>。</p>
+<h2 id="2-VS-2019-开发驱动环境安装"><a href="#2-VS-2019-开发驱动环境安装" class="headerlink" title="2 VS 2019 开发驱动环境安装"></a>2 VS 2019 开发驱动环境安装</h2><p>本机系统版本：Windows 10 教育版本，版本号21H2，内部版本19044.1889。安装步骤参考：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/other-wdk-downloads">https://docs.microsoft.com/zh-cn/windows-hardware/drivers/other-wdk-downloads</a></p>
+<ol>
+<li><p><a target="_blank" href="https://visualstudio.microsoft.com/zh-hans/thank-you-downloading-visual-studio/?sku=Community&rel=16">安装 VS 2019</a>（安装 Visual Studio 时，选择“使用 C++ 的桌面开发”工作负载。 Windows 10 软件开发工具包 (SDK) 会自动包括在内，并显示在右侧的“摘要”窗格中。）所以在安装VS 2019时选中如下图。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/3jBcXoeQmLU56Jq.png" alt="1.png"></p>
+</li>
+<li><p>打开VS 2019，找到如下图，进去之后安装下面第二个图的组件，参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/Kwansy/article/details/111051265?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522166289981116781432932646%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=166289981116781432932646&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-6-111051265-null-null.nonecase&utm_term=vs&spm=1018.2226.3001.4450">vs2019+wdk10开发 xp, win7, win10 驱动</a>。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/s7wx4ev8HyFCunW.png" alt="2.png"></p>
+<p><img data-src="https://s2.loli.net/2022/09/11/bUneK97vr26CPaL.png" alt="3.png"></p>
+</li>
+<li><p>安装 WDK，注意安装的 WDK 版本要和 SDK 版本一致。如下图在“控制面板-卸载程序”找到第一步安装 VS 2019 时安装的 SDK 版本。然后到<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/other-wdk-downloads">其他 WDK 下载</a>安装如下第二图的 WDK。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/CqTDtmVBQnXP9GI.png" alt="4.png"></p>
+<p><img data-src="https://s2.loli.net/2022/09/11/kO8NYLV6bWH95cy.png" alt="5.png"></p>
+</li>
+<li><p>安装好 WDK 后，点击“Close”前，勾选上安装 WDK 的扩展，然后会安装 WDK VS（这个东西就是让每次使用VS 2019创建项目时能够选择创建驱动程序），如果没有自动安装，可以到存放 WDK 得目录下找到WDK.vsix双击安装—<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40468982/article/details/115038483">vs2017安装驱动环境，安装wdk.vsix插件采坑指南</a>。</p>
+</li>
+<li><p>安装好 WDK 后，到“控制面板-卸载程序”查看 WDK 和 SDK 版本是否对应上，如上面第二张图都是10.0.19041.685。</p>
+</li>
+</ol>
+<p>开发 Windows 10 平台 x64 驱动：</p>
+<ol>
+<li><p>新建<strong>Empty WDM Driver</strong>项目。</p>
+</li>
+<li><p>在“Resource Files”右键添加新建项，新建 <code>.c</code>文件。</p>
+</li>
+<li><p>修改项目属性：</p>
+<ol>
+<li><p>项目属性-Driver setting-General-<strong>Target OS Version:Windows 10</strong>，Target Platform:Desktop。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/DWG3aYjIBS8ETxr.png" alt="6.png"></p>
+</li>
+<li><p>项目属性-Inf2Cat-General-<strong>Run Inf2Cat:否</strong>。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/MJA1oSZvjmFxO7w.png" alt="7.png"></p>
+</li>
+<li><p>项目属性-Driver Sining-General-<strong>Sign Mode:Off</strong>。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/ZdShyBUkRWCVKOI.png" alt="8.png"></p>
+</li>
+<li><p>项目属性-C&#x2F;C++-常规-警告等级:3，将警告视为错误:否。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/q3d1l9Am6SiCsYt.png" alt="9.png"></p>
+</li>
+<li><p>项目属性-链接器-常规-将链接器警告视为错误:否。</p>
+<p><img data-src="https://s2.loli.net/2022/09/11/KWJyTdUe21YHsEO.png" alt="11.png"></p>
+</li>
+<li><p>禁用驱动数字签名！！！！！！参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/sanqiuai/article/details/119452511?ops_request_misc=&request_id=&biz_id=102&utm_term=%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%A6%81%E7%94%A8Windows%2010%E9%A9%B1%E5%8A%A8%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-119452511.142%5Ev47%5Epc_rank_34_default_2,201%5Ev3%5Econtrol_2&spm=1018.2226.3001.4187">win10虚拟机环境下运行驱动程序</a></p>
+</li>
+<li><p>DbgView无法输出！！</p>
+</li>
+</ol>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Parallels-Windbg-Win10x64-Win10x86/" title="Parallels-Windbg-Win10x64-Win10x86">https://directoree.github.io/post/Parallels-Windbg-Win10x64-Win10x86/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA/" rel="tag"><i class="fa fa-tag"></i> 环境搭建</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/WinXp-Memory/" rel="prev" title="x86 内存管理（一）">
+                  <i class="fa fa-chevron-left"></i> x86 内存管理（一）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/x86-Memory2/" rel="next" title="x86 内存管理（二）">
+                  x86 内存管理（二） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.7m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">25:37</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Parallels-Windbg-Win10x64-Win10x86/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

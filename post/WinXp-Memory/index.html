@@ -24,7 +24,7 @@
 
   <meta name="description" content="ʕ •̀ o •́ ʔ">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows XP 内存管理（一）">
+<meta property="og:title" content="x86 内存管理（一）">
 <meta property="og:url" content="https://directoree.github.io/post/WinXp-Memory/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="ʕ •̀ o •́ ʔ">
@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/efIwmF41KrRaPvW.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/05/6NihJSAQoEqnPyG.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/06/1EB8XIoLJwG6Kcg.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/13/cEGwYRgCIs184dD.png">
+<meta property="og:image" content="https://s2.loli.net/2022/09/13/TthKbnJSZPdGljV.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/13/n4sjCLeIMi97hfQ.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/11/qTaRMbBW2zip314.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/11/8SQWtEi4rGDj3mZ.png">
@@ -55,21 +55,11 @@
 <meta property="og:image" content="https://s2.loli.net/2022/09/12/drCz3UFZy7qiQ9v.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/10/eolMhDuAF924ZUE.png">
 <meta property="og:image" content="https://s2.loli.net/2022/09/12/9LmPQo8XeE5HhBD.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/3jBcXoeQmLU56Jq.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/s7wx4ev8HyFCunW.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/bUneK97vr26CPaL.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/CqTDtmVBQnXP9GI.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/kO8NYLV6bWH95cy.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/DWG3aYjIBS8ETxr.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/MJA1oSZvjmFxO7w.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/ZdShyBUkRWCVKOI.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/q3d1l9Am6SiCsYt.png">
-<meta property="og:image" content="https://s2.loli.net/2022/09/11/KWJyTdUe21YHsEO.png">
 <meta property="article:published_time" content="2022-09-04T05:12:37.000Z">
-<meta property="article:modified_time" content="2022-09-12T16:34:50.242Z">
+<meta property="article:modified_time" content="2022-09-13T14:22:57.381Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="WinXP内核">
-<meta property="article:tag" content="X86内存管理">
+<meta property="article:tag" content="x86内存管理">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2022/09/05/127h6mwWNQyXZoi.png">
 
@@ -87,7 +77,7 @@
   };
 </script>
 
-  <title>Windows XP 内存管理（一） | Catecat</title>
+  <title>x86 内存管理（一） | Catecat</title>
   
 
 
@@ -194,7 +184,7 @@
   </li>
         <li class="menu-item menu-item-categories">
 
-    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
 
   </li>
         <li class="menu-item menu-item-about">
@@ -268,7 +258,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">1 内存基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-MMU"><span class="nav-text">1.1 MMU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B8%8E%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-text">1.2  虚拟内存与物理内存交换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-x86-%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2 x86 地址空间布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.1 系统地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%94%A8%E6%88%B7%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.2 用户地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-ASLR"><span class="nav-text">2.3 ASLR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-%E6%98%A0%E5%83%8F%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.1 映像随机化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-%E6%A0%88%E3%80%81%E5%A0%86%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.2 栈、堆随机化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-TEB-%E5%92%8C-PEB-%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.3 TEB 和 PEB 随机化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E7%A9%BA%E9%97%B4%E5%9C%B0%E5%9D%80%E7%AE%A1%E7%90%86"><span class="nav-text">3 系统空间地址管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">4 用户空间内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-0-%E5%86%85%E5%AD%98%E7%94%B3%E8%AF%B7%E5%87%BD%E6%95%B0"><span class="nav-text">4.0 内存申请函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-VAD%E6%A0%91%E4%BB%8B%E7%BB%8D"><span class="nav-text">4.1 VAD树介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-RTL-AVL-TREE"><span class="nav-text">4.2 _RTL_AVL_TREE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-MMVAD"><span class="nav-text">4.3 _MMVAD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-1-Vad-Tags"><span class="nav-text">4.3.1 Vad Tags</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-2-FLAGSx"><span class="nav-text">4.3.2 FLAGSx</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-MMVAD-SHORT"><span class="nav-text">4.4 _MMVAD_SHORT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-MMVAD-FLAGS"><span class="nav-text">4.5 _MMVAD_FLAGS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-1-Protection"><span class="nav-text">4.5.1 Protection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-2-PrivateMemory"><span class="nav-text">4.5.2 PrivateMemory</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-MMVAD-FLAGS1"><span class="nav-text">4.6 _MMVAD_FLAGS1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-SUBSECTION"><span class="nav-text">4.7 _SUBSECTION</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-CONTROL-AREA"><span class="nav-text">4.8 _CONTROL_AREA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-9-EX-FAST-REF"><span class="nav-text">4.9 _EX_FAST_REF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-10-VAD-%E4%BD%8D%E5%9B%BE"><span class="nav-text">4.10 VAD 位图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Windows-10%E5%8F%8C%E6%9C%BAPD%E6%90%AD%E5%BB%BA%E8%B0%83%E8%AF%95"><span class="nav-text">5 Windows 10双机PD搭建调试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-VS-2019-%E5%BC%80%E5%8F%91%E9%A9%B1%E5%8A%A8%E7%8E%AF%E5%A2%83%E5%AE%89%E8%A3%85"><span class="nav-text">6 VS 2019 开发驱动环境安装</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E5%AD%98%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">1 内存基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-MMU"><span class="nav-text">1.1 MMU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%99%9A%E6%8B%9F%E5%86%85%E5%AD%98%E4%B8%8E%E7%89%A9%E7%90%86%E5%86%85%E5%AD%98%E4%BA%A4%E6%8D%A2"><span class="nav-text">1.2  虚拟内存与物理内存交换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-x86-%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2 x86 地址空间布局</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%B3%BB%E7%BB%9F%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.1 系统地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E7%94%A8%E6%88%B7%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4%E5%B8%83%E5%B1%80"><span class="nav-text">2.2 用户地址空间布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-ASLR"><span class="nav-text">2.3 ASLR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-%E6%98%A0%E5%83%8F%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.1 映像随机化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-%E6%A0%88%E3%80%81%E5%A0%86%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.2 栈、堆随机化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-3-TEB-%E5%92%8C-PEB-%E9%9A%8F%E6%9C%BA%E5%8C%96"><span class="nav-text">2.3.3 TEB 和 PEB 随机化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E7%A9%BA%E9%97%B4%E5%9C%B0%E5%9D%80%E7%AE%A1%E7%90%86"><span class="nav-text">3 系统空间地址管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%94%A8%E6%88%B7%E7%A9%BA%E9%97%B4%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-text">4 用户空间内存管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-0-%E5%86%85%E5%AD%98%E7%94%B3%E8%AF%B7%E5%87%BD%E6%95%B0"><span class="nav-text">4.0 内存申请函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-VAD%E6%A0%91%E4%BB%8B%E7%BB%8D"><span class="nav-text">4.1 VAD树介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-RTL-AVL-TREE"><span class="nav-text">4.2 _RTL_AVL_TREE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-MMVAD"><span class="nav-text">4.3 _MMVAD</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-1-Vad-Tags"><span class="nav-text">4.3.1 Vad Tags</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-3-2-FLAGSx"><span class="nav-text">4.3.2 FLAGSx</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-MMVAD-SHORT"><span class="nav-text">4.4 _MMVAD_SHORT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-MMVAD-FLAGS"><span class="nav-text">4.5 _MMVAD_FLAGS</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-1-Protection"><span class="nav-text">4.5.1 Protection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-5-2-PrivateMemory"><span class="nav-text">4.5.2 PrivateMemory</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-MMVAD-FLAGS1"><span class="nav-text">4.6 _MMVAD_FLAGS1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-SUBSECTION"><span class="nav-text">4.7 _SUBSECTION</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-CONTROL-AREA"><span class="nav-text">4.8 _CONTROL_AREA</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-9-EX-FAST-REF"><span class="nav-text">4.9 _EX_FAST_REF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-10-VAD-%E4%BD%8D%E5%9B%BE"><span class="nav-text">4.10 VAD 位图</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -284,20 +274,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">130</span>
+          <span class="site-state-item-count">132</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-            <a href="/categories/">
+            <a href="/newcategories/">
           
-        <span class="site-state-item-count">57</span>
+        <span class="site-state-item-count">58</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-count">69</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -374,7 +364,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Windows XP 内存管理（一）
+          x86 内存管理（一）
         </h1>
 
         <div class="post-meta-container">
@@ -392,7 +382,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-09-13 00:34:50" itemprop="dateModified" datetime="2022-09-13T00:34:50+08:00">2022-09-13</time>
+        <time title="修改时间：2022-09-13 22:22:57" itemprop="dateModified" datetime="2022-09-13T22:22:57+08:00">2022-09-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -400,12 +390,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/X86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">X86内存管理</span></a>
+          <a href="/categories/x86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">x86内存管理</span></a>
         </span>
     </span>
 
   
-    <span id="/post/WinXp-Memory/" class="post-meta-item leancloud_visitors" data-flag-title="Windows XP 内存管理（一）" title="阅读次数">
+    <span id="/post/WinXp-Memory/" class="post-meta-item leancloud_visitors" data-flag-title="x86 内存管理（一）" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -433,14 +423,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>39k</span>
+      <span>37k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>35 分钟</span>
+      <span>34 分钟</span>
     </span>
 </div>
 
@@ -775,7 +765,7 @@
 </blockquote>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PVOID __stdcall <span class="title">VirtualAllocEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN HANDLE hProcess,		<span class="comment">// 目标进程句柄</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID lpAddress,		<span class="comment">// 指定分配的起始地址</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T dwSize,		<span class="comment">// 指定分配内存大小（字节单位）</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN DWORD flAllocationType,	<span class="comment">// 内存分配的类型：MEM_COMMIT、MEM_RESERVE、MEM_RESET、MEM_RESET_UNDO</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN DWORD flProtect		<span class="comment">// 要分配的页面区域的内存保护方式：PAGE_EXECUTE_READWRITE、PAGE_READWRITE、PAGE_NOACCESS</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">BOOL __stdcall <span class="title">VirtualFreeEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    HANDLE hProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    LPVOID lpAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    SIZE_T dwSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    DWORD dwFreeType	<span class="comment">//内存释放的属性：MEM_DECOMMIT(仅解除已提交)、MEM_RELEASE(使内存成为空闲页)</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function">  </span></span><br><span class="line"><span class="function">BOOL __stdcall <span class="title">VirtualProtectEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN HANDLE hProcess,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID lpAddress,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN SIZE_T dwSize,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN DWORD flNewProtect,	<span class="comment">// 新的保护方式</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PDWORD lpflOldProtect	<span class="comment">// 用来接收先前访问保护的变量的指针。如果此参数为NULL或没有指向有效变量，则该函数失败。</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
 
-<h3 id="4-0-内存申请函数"><a href="#4-0-内存申请函数" class="headerlink" title="4.0 内存申请函数"></a>4.0 内存申请函数</h3><p><img data-src="https://s2.loli.net/2022/09/13/cEGwYRgCIs184dD.png" alt="23.png"></p>
+<h3 id="4-0-内存申请函数"><a href="#4-0-内存申请函数" class="headerlink" title="4.0 内存申请函数"></a>4.0 内存申请函数</h3><p><img data-src="https://s2.loli.net/2022/09/13/TthKbnJSZPdGljV.png" alt="23.png"></p>
 <p><img data-src="https://s2.loli.net/2022/09/13/n4sjCLeIMi97hfQ.png" alt="24.png"></p>
 <h3 id="4-1-VAD树介绍"><a href="#4-1-VAD树介绍" class="headerlink" title="4.1 VAD树介绍"></a>4.1 VAD树介绍</h3><p>内存管理器使用一个<strong>按需换页</strong>（demand-paging）的算法来计算何时将页面加载到内存中，它要等到有一个线程引用一个地址并且招致一个页面错误时，才从磁盘中获取该页面的数据。如同写时复制一样，按需换页也是一种<strong>延迟计算</strong>（lazy evaluation ）– 即等待到真正需要的时候才执行一项任务。</p>
 <p><code>VirtualAlloc</code> 或 <code>VirtualAllocEx</code> 来提交内存时，该内存的PTE并不会被立即分出来，内存管理器会等待创建页表的时机，一直等到有一个线程引发了一个页面错误时，再为该页面创建一个页表。这种方法可以大大地提高性能。</p>
@@ -1026,95 +1016,6 @@
 <p>由于位图中每一个位表示64KB，<code>VirtualAllocEx</code> 等函数的分配粒度就是64k，起始地址不满足的话，地址范围将不会被使用——<a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1611807-1-1.html">用户范围内存管理-3.2.1 用户模式地址空间位图</a>。</p>
 <p>涉及 VAD 位图的两数主要有 4 个：MmCreateProcessAddressSpace、MilnsertVadCharges、 MiRetumPageTablePageCommitment 和 MiFindEmptyAddressRange。</p>
 <p>MiFindEmptyAddressRange 函数本质上是扫描位图的过程。如果要找的地址范围正好是 64 KB 的倍数，则首先尝试在进程的 VAD 位图中找到连续的位。若不成功，则退回到 VAD 树，利用 MiFindEmptyAddressRangelnTree 函数在 VAD 树中查找相邻两个 VAD 之间有足<br>够的地址间隔。《Windows内核原理与实现p240》。</p>
-<h2 id="5-Windows-10双机PD搭建调试"><a href="#5-Windows-10双机PD搭建调试" class="headerlink" title="5 Windows 10双机PD搭建调试"></a>5 Windows 10双机PD搭建调试</h2><p>被调试系统：Windows x86 21H2</p>
-<p>主机：Windows 10 x64 21H2</p>
-<p><strong>在被调试系统里:</strong></p>
-<ol>
-<li><p>设置系统调试选项</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1.设置端口1（该处的“1”，对应com接口1）</span></span><br><span class="line">bcdedit /dbgsettings serial baudrate:<span class="number">115200</span> debugport:<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 2.复制开机选项（这里我命名为：&quot;DebugMe&quot;，可任意修改）</span></span><br><span class="line">bcdedit /copy &#123;current&#125; /d DebugMe</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 3.增加开机引导项（ID填写上一条命令生成的字符串）</span></span><br><span class="line">bcdedit /displayorder &#123;current&#125; &#123;ID&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4.激活debug（ID填写上上一条命令生成的字符串）</span></span><br><span class="line">bcdedit /debug &#123;ID&#125; ON</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p>关机。</p>
-</li>
-<li><p>设置-硬件-添加串行口-com1-客户端。</p>
-</li>
-<li><p>设置单核。</p>
-</li>
-</ol>
-<p><strong>主机：</strong></p>
-<ol>
-<li>关机。设置-硬件-添加串行口-com1-服务器。</li>
-<li>开机。在Windbg快捷方式右键设置启动参数：<code>&quot;C:\Program Files (x86)\Windows Kits\10\Debuggers\x86\windbg.exe&quot; -b -k com:port=com1,baud=115200,reconnect -y</code>。</li>
-<li>Clash梯子搭好<ul>
-<li>Profiles：到<a target="_blank" rel="noopener" href="https://glados.one/console/clash">GlaDOS</a>复制链接粘贴后，点击Download，然后选择刚下载的配置。</li>
-<li>General：勾选“System proxy”、“Start with Windows”，并记好“Port”是多少。</li>
-<li>Edge浏览器直接测试Google能否访问。</li>
-</ul>
-</li>
-<li>Windows环境变量，在用户变量下添加<ul>
-<li>在本地先随便建立一个空文件夹，如<code>C:\Symbolsx86</code>。</li>
-<li>_NT_SYMBOL_PATH：C:\Symbolsx86。</li>
-<li>_NT_SYMBOL_PROXY：127.0.0.1:Port。</li>
-</ul>
-</li>
-<li>打开Windbg，设置符号路径<code>srv*C:\Symbolsx86*https://msdl.microsoft.com/download/symbols</code>。<ul>
-<li>关闭防火墙。</li>
-<li>设置符号链接：<code>.sympath srv*C:\Symbolsx86*https://msdl.microsoft.com/download/symbols</code>（https不是http）。</li>
-<li>Windbg命令行输入：!sym moisy（查看下载时的日志）。</li>
-<li>Windbg命令行输入：.reload &#x2F;f。查看C:\Symbolsx86已经下载好了一些.pdb符号了（如果一次不成功就重启Windbg，多试几次），可以时不时的进行reload。</li>
-</ul>
-</li>
-</ol>
-<p>参考：<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-261326.htm">双机内核调试入门</a>。</p>
-<h2 id="6-VS-2019-开发驱动环境安装"><a href="#6-VS-2019-开发驱动环境安装" class="headerlink" title="6 VS 2019 开发驱动环境安装"></a>6 VS 2019 开发驱动环境安装</h2><p>本机系统版本：Windows 10 教育版本，版本号21H2，内部版本19044.1889。安装步骤参考：<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/other-wdk-downloads">https://docs.microsoft.com/zh-cn/windows-hardware/drivers/other-wdk-downloads</a></p>
-<ol>
-<li><p><a target="_blank" href="https://visualstudio.microsoft.com/zh-hans/thank-you-downloading-visual-studio/?sku=Community&rel=16">安装 VS 2019</a>（安装 Visual Studio 时，选择“使用 C++ 的桌面开发”工作负载。 Windows 10 软件开发工具包 (SDK) 会自动包括在内，并显示在右侧的“摘要”窗格中。）所以在安装VS 2019时选中如下图。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/3jBcXoeQmLU56Jq.png" alt="1.png"></p>
-</li>
-<li><p>打开VS 2019，找到如下图，进去之后安装下面第二个图的组件，参考<a target="_blank" rel="noopener" href="https://blog.csdn.net/Kwansy/article/details/111051265?ops_request_misc=%257B%2522request%255Fid%2522%253A%2522166289981116781432932646%2522%252C%2522scm%2522%253A%252220140713.130102334.pc%255Fblog.%2522%257D&request_id=166289981116781432932646&biz_id=0&utm_medium=distribute.pc_search_result.none-task-blog-2~blog~first_rank_ecpm_v1~rank_v31_ecpm-6-111051265-null-null.nonecase&utm_term=vs&spm=1018.2226.3001.4450">vs2019+wdk10开发 xp, win7, win10 驱动</a>。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/s7wx4ev8HyFCunW.png" alt="2.png"></p>
-<p><img data-src="https://s2.loli.net/2022/09/11/bUneK97vr26CPaL.png" alt="3.png"></p>
-</li>
-<li><p>安装 WDK，注意安装的 WDK 版本要和 SDK 版本一致。如下图在“控制面板-卸载程序”找到第一步安装 VS 2019 时安装的 SDK 版本。然后到<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows-hardware/drivers/other-wdk-downloads">其他 WDK 下载</a>安装如下第二图的 WDK。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/CqTDtmVBQnXP9GI.png" alt="4.png"></p>
-<p><img data-src="https://s2.loli.net/2022/09/11/kO8NYLV6bWH95cy.png" alt="5.png"></p>
-</li>
-<li><p>安装好 WDK 后，点击“Close”前，勾选上安装 WDK 的扩展，然后会安装 WDK VS（这个东西就是让每次使用VS 2019创建项目时能够选择创建驱动程序），如果没有自动安装，可以到存放 WDK 得目录下找到WDK.vsix双击安装—<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40468982/article/details/115038483">vs2017安装驱动环境，安装wdk.vsix插件采坑指南</a>。</p>
-</li>
-<li><p>安装好 WDK 后，到“控制面板-卸载程序”查看 WDK 和 SDK 版本是否对应上，如上面第二张图都是10.0.19041.685。</p>
-</li>
-</ol>
-<p>开发 Windows 10 平台 x64 驱动：</p>
-<ol>
-<li><p>新建<strong>Empty WDM Driver</strong>项目。</p>
-</li>
-<li><p>在“Resource Files”右键添加新建项，新建 <code>.c</code>文件。</p>
-</li>
-<li><p>修改项目属性：</p>
-<ol>
-<li><p>项目属性-Driver setting-General-<strong>Target OS Version:Windows 10</strong>，Target Platform:Desktop。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/DWG3aYjIBS8ETxr.png" alt="6.png"></p>
-</li>
-<li><p>项目属性-Inf2Cat-General-<strong>Run Inf2Cat:否</strong>。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/MJA1oSZvjmFxO7w.png" alt="7.png"></p>
-</li>
-<li><p>项目属性-Driver Sining-General-<strong>Sign Mode:Off</strong>。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/ZdShyBUkRWCVKOI.png" alt="8.png"></p>
-</li>
-<li><p>项目属性-C&#x2F;C++-常规-警告等级:3，将警告视为错误:否。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/q3d1l9Am6SiCsYt.png" alt="9.png"></p>
-</li>
-<li><p>项目属性-链接器-常规-将链接器警告视为错误:否。</p>
-<p><img data-src="https://s2.loli.net/2022/09/11/KWJyTdUe21YHsEO.png" alt="11.png"></p>
-</li>
-<li><p>禁用驱动数字签名！！！！！！参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/sanqiuai/article/details/119452511?ops_request_misc=&request_id=&biz_id=102&utm_term=%E8%99%9A%E6%8B%9F%E6%9C%BA%E4%B8%AD%E7%A6%81%E7%94%A8Windows%2010%E9%A9%B1%E5%8A%A8%E6%95%B0%E5%AD%97%E7%AD%BE%E5%90%8D&utm_medium=distribute.pc_search_result.none-task-blog-2~all~sobaiduweb~default-0-119452511.142%5Ev47%5Epc_rank_34_default_2,201%5Ev3%5Econtrol_2&spm=1018.2226.3001.4187">win10虚拟机环境下运行驱动程序</a></p>
-</li>
-<li><p>DbgView无法输出！！</p>
-</li>
-</ol>
-</li>
-</ol>
 
     </div>
 
@@ -1150,7 +1051,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/WinXp-Memory/" title="Windows XP 内存管理（一）">https://directoree.github.io/post/WinXp-Memory/</a>
+      <a href="https://directoree.github.io/post/WinXp-Memory/" title="x86 内存管理（一）">https://directoree.github.io/post/WinXp-Memory/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -1160,7 +1061,7 @@
 
           <div class="post-tags">
               <a href="/tags/WinXP%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> WinXP内核</a>
-              <a href="/tags/X86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> X86内存管理</a>
+              <a href="/tags/x86%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> x86内存管理</a>
           </div>
 
         
@@ -1172,8 +1073,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
-                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                <a href="/post/Parallels-Windbg-Win10x64-Win10x86/" rel="next" title="Parallels-Windbg-Win10x64-Win10x86">
+                  Parallels-Windbg-Win10x64-Win10x86 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -1242,7 +1143,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">25:35</span>
+    <span title="站点阅读时长">25:37</span>
   </span>
 </div>
 <div class="busuanzi-count">
