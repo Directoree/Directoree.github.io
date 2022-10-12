@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows-GUI-Subsystem2">
+<meta property="og:url" content="https://directoree.github.io/post/Windows-GUI-Subsystem2/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/10/12/4vUDqb9rZhN7E1c.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/13/vxgZjEQTqakSVMe.png">
+<meta property="article:published_time" content="2022-10-12T15:38:47.000Z">
+<meta property="article:modified_time" content="2022-10-12T17:20:44.693Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="GUI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/10/12/4vUDqb9rZhN7E1c.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Windows-GUI-Subsystem2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows-GUI-Subsystem2 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%92%A9%E5%AD%90%EF%BC%88Hook%EF%BC%89"><span class="nav-text">1 钩子（Hook）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%B6%88%E6%81%AF%E9%92%A9%E5%AD%90"><span class="nav-text">1.1 消息钩子</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%92%A9%E5%AD%90%E5%87%BD%E6%95%B0"><span class="nav-text">钩子函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%92%A9%E5%AD%90%E7%9A%84%E5%AE%89%E8%A3%85%E3%80%81%E4%BC%A0%E9%80%92%E3%80%81%E5%8D%B8%E8%BD%BD"><span class="nav-text">钩子的安装、传递、卸载</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%92%A9%E5%AD%90%E9%93%BE%E8%A1%A8"><span class="nav-text">钩子链表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B6%88%E6%81%AF%E9%92%A9%E5%AD%90%E7%BB%93%E6%9E%84TagHOOK"><span class="nav-text">消息钩子结构TagHOOK</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%9A%E4%B8%BE%E6%89%80%E6%9C%89%E6%B6%88%E6%81%AF%E6%8C%82%E9%92%A9"><span class="nav-text">枚举所有消息挂钩</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%BA%8B%E4%BB%B6%E9%92%A9%E5%AD%90"><span class="nav-text">1.2 事件钩子</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">135</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">59</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows-GUI-Subsystem2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows-GUI-Subsystem2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-12 23:38:47" itemprop="dateCreated datePublished" datetime="2022-10-12T23:38:47+08:00">2022-10-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-10-13 01:20:44" itemprop="dateModified" datetime="2022-10-13T01:20:44+08:00">2022-10-13</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/GUI/" itemprop="url" rel="index"><span itemprop="name">GUI</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Windows-GUI-Subsystem2/" class="post-meta-item leancloud_visitors" data-flag-title="Windows-GUI-Subsystem2" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Windows-GUI-Subsystem2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows-GUI-Subsystem2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-钩子（Hook）"><a href="#1-钩子（Hook）" class="headerlink" title="1 钩子（Hook）"></a>1 钩子（Hook）</h2><h3 id="1-1-消息钩子"><a href="#1-1-消息钩子" class="headerlink" title="1.1 消息钩子"></a>1.1 消息钩子</h3><p>Windows 中 GUI 应用程序都是基于消息机制的，它们都有一个消息处理回调函数，根据不同的消息完成不同的功能。而消息钩子是Windows 提供的一种消息过滤和预处理机制，可以用来<strong>截获</strong>和<strong>监视</strong>系统中的消息。按照钩子作用范围不同，又可以分为局部钩子和全局钩子。局部钩子是针对某个线程的，而全局钩子是作用于<strong>同一桌面</strong>上的所有基于消息的应用线程。全局钩子需要使用 DLL 文件，将钩子函数放在 DLL 文件中。</p>
+<p><strong>消息钩子可以在窗口消息到达目标窗口过程之前拦截它们</strong>。消息钩子可以在窗口消息到达目标窗口过程之前拦截它们。 例如，攻击者可以监视所有与键盘相关的消息，包括 <code>WM_KEYDOMN</code>，以便记录它们，然后将它们传递给预期的应用程序，或者阻止它们到达正确的位置。 这是在基于 Windows 的系统上记录击键的最古老和最有效的方法之一。</p>
+<p>当钩子函数钩到预期的消息后，可以决定是否将消息继续往后传递（传给下一个钩子函数或传给目标窗口回调函数）。</p>
+<p>消息传递，无钩子情况：</p>
+<p><img data-src="https://s2.loli.net/2022/10/12/4vUDqb9rZhN7E1c.png" alt="28.png"></p>
+<p>有全局钩子的情况：</p>
+<p><img data-src="https://s2.loli.net/2022/10/13/vxgZjEQTqakSVMe.png" alt="29.png"></p>
+<p>全局钩子和局部钩子：</p>
+<ul>
+<li><strong>局部钩子</strong>：仅监控指定线程的消息。</li>
+<li><strong>全局钩子</strong>：监控当前桌面中所有处理消息的线程（Affect all GUI threads in the same desktop）。</li>
+</ul>
+<h4 id="钩子函数"><a href="#钩子函数" class="headerlink" title="钩子函数"></a>钩子函数</h4><p>钩子处理回调函数，参数由系统提供，可参阅<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644975(v=vs.85)">CallWndProc</a>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LRESULT CALLBACK <span class="title">HookProc</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  _In_ <span class="keyword">int</span> nCode, </span></span></span><br><span class="line"><span class="function"><span class="params">  _In_ WPARAM wParam, </span></span></span><br><span class="line"><span class="function"><span class="params">  _In_ LPARAM lParam</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">   <span class="comment">// process message</span></span><br><span class="line">   ...</span><br><span class="line"></span><br><span class="line">   <span class="keyword">return</span> CallNextHookEx(<span class="literal">NULL</span>, nCode, wParam, lParam);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><em>nCode</em>：指定钩子过程是否必须处理消息。如果<em>nCode</em>是<strong>HC_ACTION</strong>，钩子过程必须处理消息。如果<em>nCode</em>小于零，钩子过程必须将消息传递给<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/ms644974(v=vs.85)"><strong>CallNextHookEx</strong></a>函数，而无需进一步处理，并且必须返回<strong>CallNextHookEx</strong>返回的值。</li>
+<li><em>wParam</em> 和 <em>lParam</em> ：值依赖于钩子码，但是它们一般包含着与发送或投递的消息相关的信息。</li>
+</ul>
+<p><strong>返回值</strong>：</p>
+<p>如果<em>nCode</em>小于零，钩子过程必须返回<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/ms644974(v=vs.85)"><strong>CallNextHookEx</strong></a>返回的值。</p>
+<p>如果<em>nCode</em>大于或等于零，强烈建议您调用<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/ms644974(v=vs.85)"><strong>CallNextHookEx</strong></a>并返回其返回的值；否则，安装了<a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/ms644959(v=vs.85)"><strong>WH_CALLWNDPROC</strong></a>钩子的其他应用程序将不会收到钩子通知，因此行为不正确。如果钩子过程不调用<strong>CallNextHookEx</strong>，则返回值应为零。</p>
+<ol>
+<li><code>return CallNextHookEx</code>，表示将消息继续往下传递。</li>
+<li><code>return 0</code>，表示对当前消息已经处理了，并且屏蔽了，消息就不会传递了。目标窗口也不会再收到该消息。</li>
+</ol>
+<h4 id="钩子的安装、传递、卸载"><a href="#钩子的安装、传递、卸载" class="headerlink" title="钩子的安装、传递、卸载"></a>钩子的安装、传递、卸载</h4><p>钩子的安装函数是 <code>SetWindowsHookEx</code>。在钩子的处理回调函数中，如果对钩到的消息处理后，还要继续往后传递该消息，可以调用 <code>CallNextHookEx</code> 函数。钩子的卸载函数是 <code>UnhookWindowsHookEx</code>。</p>
+<p><strong>安装钩子函数</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">HHOOK <span class="title">SetWindowsHookEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] <span class="keyword">int</span>       idHook,</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] HOOKPROC  lpfn,</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] HINSTANCE hmod,</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] DWORD     dwThreadId</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>参数</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>idHook</td>
+<td>钩子类型，即要钩取什么类型的消息，以 <code>WH_</code> 下标开始。目前有 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowshookexa">15 种</a>。</td>
+</tr>
+<tr>
+<td>lpfn</td>
+<td>钩子函数的地址。局部钩子：当前进程中定义的钩子函数地址。全局钩子：DLL 中导出的钩子函数地址。</td>
+</tr>
+<tr>
+<td>hmod</td>
+<td>钩子函数所在模块的基地址。局部钩子：如果钩子函数在当前进程中进行定义的，该值为 <code>NULL</code>。全局钩子：该值为 DLL 的加载基址，此 DLL 加载到拥有目标窗口的线程的地址空间中。</td>
+</tr>
+<tr>
+<td>dwThreadId</td>
+<td>钩子线程 TID。局部钩子：<code>GetCurrentThreadId()</code>。全局钩子：<code>0</code>。</td>
+</tr>
+</tbody></table>
+<p><strong>传递钩子函数</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">LRESULT <span class="title">CallNextHookEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in, optional] HHOOK  hhk,	<span class="comment">//钩子的句柄，由SetWindowsHookEx()函数返回。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]           <span class="keyword">int</span>    nCode,	<span class="comment">//钩子函数的nCode</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]           WPARAM wParam,	<span class="comment">//钩子函数的wParam</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]           LPARAM lParam	<span class="comment">//钩子函数的lParam</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>卸载钩子函数</strong>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL <span class="title">UnhookWindowsHookEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] HHOOK hhk	<span class="comment">//钩子的句柄，由SetWindowsHookEx()函数返回。</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="钩子链表"><a href="#钩子链表" class="headerlink" title="钩子链表"></a>钩子链表</h4><p>将钩住不同消息的钩子回调函数存储在不同的链表中（根据钩子类型 <code>idHook</code> 共15个链表），默认的钩子安装到链表的方式是“队列式”，<strong>后安装的钩子回调函数总是在链表最前面</strong>。</p>
+<p>实际上桌面堆中有 16 个钩子类型空间。桌面堆信息 <code>tagDESKTOPINFO记录了这一事实：</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt tagDESKTOPINFO</span><br><span class="line">win32k!tagDESKTOPINFO</span><br><span class="line">...</span><br><span class="line">  +<span class="number">0x020</span> aphkStart : [<span class="number">16</span>] Ptr64 tagHOOK</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="消息钩子结构TagHOOK"><a href="#消息钩子结构TagHOOK" class="headerlink" title="消息钩子结构TagHOOK"></a>消息钩子结构TagHOOK</h4><p>消息钩子结构为 <code>win32k!tagHOOK</code>：（Windows7 SP1 x64）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt tagHOOK</span><br><span class="line">win32k!tagHOOK</span><br><span class="line">   +<span class="number">0x000</span> head             : _THRDESKHEAD</span><br><span class="line">   +<span class="number">0x028</span> phkNext          : Ptr64 tagHOOK</span><br><span class="line">   +<span class="number">0x030</span> iHook            : Int4B</span><br><span class="line">   +<span class="number">0x038</span> offPfn           : Uint8B</span><br><span class="line">   +<span class="number">0x040</span> flags            : Uint4B</span><br><span class="line">   +<span class="number">0x044</span> ihmod            : Int4B</span><br><span class="line">   +<span class="number">0x048</span> ptiHooked        : Ptr64 tagTHREADINFO</span><br><span class="line">   +<span class="number">0x050</span> rpdesk           : Ptr64 tagDESKTOP</span><br><span class="line">   +<span class="number">0x058</span> nTimeout         : Pos <span class="number">0</span>, <span class="number">7</span> Bits</span><br><span class="line">   +<span class="number">0x058</span> fLastHookHung    : Pos <span class="number">7</span>, <span class="number">1</span> Bit</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>偏移</th>
+<th>成员</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>+0x000</td>
+<td>head</td>
+<td>GUI 用户对象公共头结构，此处为 <code>_THRDESKHEAD</code>，表示桌面堆头结构，且钩子相关信息在桌面堆信息 <code>tagDESKTOPINFO</code> 结构中有所体现。<mark class="label success">钩子结构是和桌面相关的</mark></td>
+</tr>
+<tr>
+<td>+0x028</td>
+<td>phkNext</td>
+<td>指向同一个类型钩子链中下一个钩子的指针。 当挂钩过程调用 <code>CallNextHookEx</code> 时，系统会使用该成员定位下一个挂钩。</td>
+</tr>
+<tr>
+<td>+0x030</td>
+<td>iHook</td>
+<td>函数 <code>SetWindowsHookEx</code> 的参数一指定的钩子类型。</td>
+</tr>
+<tr>
+<td>+0x038</td>
+<td>offPfn</td>
+<td>挂钩过程的相对虚拟地址（RVA）。 局部钩子：与调用 <code>SetwindowsHookEx</code> 的代码位于同一模块中，则为模块基址的偏移，在这种情况下成员 <code>ihmod = -1</code>。 全局挂钩，钩子函数位于 DLL 中，<code>offPfn</code> 是相对于该 DLL 加载基地的偏移量。而 <code>ihmod</code> 是 <code>win32k!_aatomsysLoaded</code> 原子数组的索引（该DLL路径在原子表中）。 要确定 DLL 的名称，您必须将 <code>ihmod</code> 转换为原子，然后获取原子名称。</td>
+</tr>
+<tr>
+<td>+0x048</td>
+<td>ptiHooked</td>
+<td>这个值可以用来标识被钩住的线程。</td>
+</tr>
+<tr>
+<td>+0x050</td>
+<td>rpdesk</td>
+<td>钩子所属的桌面。 钩子 Hooks 不能跨越桌面边界。</td>
+</tr>
+</tbody></table>
+<h4 id="枚举所有消息挂钩"><a href="#枚举所有消息挂钩" class="headerlink" title="枚举所有消息挂钩"></a>枚举所有消息挂钩</h4><p>需要使用到 <code>tagDESKTOP</code> 结构，或者如果已知某个钩子 <code>tagHOOK</code> 结构的地址，<code>tagHOOK.head</code>（<code>tagTHREADINFO</code>）也可以枚举当前桌面中所有的已安装的钩子。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//桌面堆头结构</span></span><br><span class="line">kd&gt; dt _THRDESKHEAD</span><br><span class="line">win32k!_THRDESKHEAD</span><br><span class="line">   +<span class="number">0x000</span> h                : Ptr64 Void</span><br><span class="line">   +<span class="number">0x008</span> cLockObj         : Uint4B</span><br><span class="line">   +<span class="number">0x010</span> pti              : Ptr64 tagTHREADINFO</span><br><span class="line">   +<span class="number">0x018</span> rpdesk           : Ptr64 tagDESKTOP</span><br><span class="line">   +<span class="number">0x020</span> pSelf            : Ptr64 UChar</span><br><span class="line"></span><br><span class="line">kd&gt; dt tagDESKTOPINFO</span><br><span class="line">win32k!tagDESKTOPINFO</span><br><span class="line">   +<span class="number">0x000</span> pvDesktopBase    : Ptr64 Void</span><br><span class="line">   +<span class="number">0x008</span> pvDesktopLimit   : Ptr64 Void</span><br><span class="line">   +<span class="number">0x010</span> spwnd            : Ptr64 tagWND</span><br><span class="line">   +<span class="number">0x018</span> fsHooks          : Uint4B</span><br><span class="line">   +<span class="number">0x020</span> aphkStart        : [<span class="number">16</span>] Ptr64 tagHOOK</span><br><span class="line">   +<span class="number">0x0a0</span> spwndShell       : Ptr64 tagWND</span><br><span class="line">   +<span class="number">0x0a8</span> ppiShellProcess  : Ptr64 tagPROCESSINFO</span><br><span class="line">   +<span class="number">0x0b0</span> spwndBkGnd       : Ptr64 tagWND</span><br><span class="line">   +<span class="number">0x0b8</span> spwndTaskman     : Ptr64 tagWND</span><br><span class="line">   +<span class="number">0x0c0</span> spwndProgman     : Ptr64 tagWND</span><br><span class="line">   +<span class="number">0x0c8</span> pvwplShellHook   : Ptr64 VWPL</span><br><span class="line">   +<span class="number">0x0d0</span> cntMBox          : Int4B</span><br><span class="line">   +<span class="number">0x0d8</span> spwndGestureEngine : Ptr64 tagWND</span><br><span class="line">   +<span class="number">0x0e0</span> pvwplMessagePPHandler : Ptr64 VWPL</span><br><span class="line">   +<span class="number">0x0e8</span> fComposited      : Pos <span class="number">0</span>, <span class="number">1</span> Bit</span><br><span class="line">   +<span class="number">0x0e8</span> fIsDwmDesktop    : Pos <span class="number">1</span>, <span class="number">1</span> Bit</span><br></pre></td></tr></table></figure>
+
+<p>桌面堆信息存储在 <code>tagDESKTOPINFO</code> 结构中。该结构可以在内核空间 <code>win32k!tagCLIENTINFO.pDeskInfo</code> ，或用户空间 <code>Teb.Win32ClientInfo.pDesklnfo</code> 中找到， 则 <code>Teb.Win32ClientInfo</code> 是 <code>tagCLIENTINFO</code> 结构。</p>
+<h3 id="1-2-事件钩子"><a href="#1-2-事件钩子" class="headerlink" title="1.2 事件钩子"></a>1.2 事件钩子</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Windows-GUI-Subsystem2/" title="Windows-GUI-Subsystem2">https://directoree.github.io/post/Windows-GUI-Subsystem2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/GUI/" rel="tag"><i class="fa fa-tag"></i> GUI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Windows-GUI-Subsystem/" rel="prev" title="Windows-GUI-Subsystem">
+                  <i class="fa fa-chevron-left"></i> Windows-GUI-Subsystem
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.8m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">27:09</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Windows-GUI-Subsystem2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
