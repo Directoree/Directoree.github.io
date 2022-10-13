@@ -58,7 +58,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/10/11/AwLPe4ivaGQR9dK.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/11/I4nGykYT8LMexQS.png">
 <meta property="article:published_time" content="2022-09-28T13:50:46.000Z">
-<meta property="article:modified_time" content="2022-10-12T15:39:49.650Z">
+<meta property="article:modified_time" content="2022-10-13T14:08:26.963Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="GUI">
@@ -384,7 +384,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-10-12 23:39:49" itemprop="dateModified" datetime="2022-10-12T23:39:49+08:00">2022-10-12</time>
+        <time title="修改时间：2022-10-13 22:08:26" itemprop="dateModified" datetime="2022-10-13T22:08:26+08:00">2022-10-13</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -678,7 +678,7 @@
 <p>窗口站数据结构：《<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/145025">通过对比 5 月补丁分析 win32k 空指针解引用漏洞</a>》</p>
 <h3 id="2-3-桌面对象"><a href="#2-3-桌面对象" class="headerlink" title="2.3 桌面对象"></a>2.3 桌面对象</h3><p>在用户通过快速用户切换、RDP（远程登录） 或终端服务（TS） 登录时会创建具有唯一 ID 的会话。会话与特定用户关联，并且在一个会话中，与之关联的许多资源就可以被该用户使用，这些资源包括：<strong>Atoms Table</strong>（原子表，会话中的应用程序之间全局共享的一组字符串）、一个或多个<strong>窗口站</strong>（称为安全边界）、<strong>窗口对象的句柄表</strong>（不是内核对象句柄表）。</p>
 <div class="note default"><p>每个窗口工作站都有自己的：原子表、剪贴板、一个或多个桌面。</p>
-<p>桌面包含用户界面对象，如窗口、菜单、挂钩（Hooks）以及用于分配和存储此类对象的堆。</p>
+<p>桌面包含用户界面对象，如窗口、菜单、钩子（Hooks）以及用于分配和存储此类对象的堆。</p>
 </div>
 
 <p>需要参考：<a target="_blank" rel="noopener" href="http://www.netfairy.net/content/uploadfile/201604/b01b1461332479.pdf">基于用户模式回调函数的内核漏洞分析、利用与防范</a>、<a target="_blank" rel="noopener" href="https://xiaodaozhi.com/exploit/29.html">通过 Windows 用户模式回调实施的内核攻击</a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_38025365/article/details/106368058">Kernel Attacks through User-Mode Callbacks</a>分析桌面对象。</p>
@@ -722,7 +722,7 @@
 <p><a target="_blank" rel="noopener" href="https://kernelstruct.gitee.io/kernels/x86/Windows%2010">https://kernelstruct.gitee.io/kernels/x86/Windows%2010</a></p>
 <h3 id="3-2-窗口站（Window-Station）"><a href="#3-2-窗口站（Window-Station）" class="headerlink" title="3.2 窗口站（Window Station）"></a>3.2 窗口站（Window Station）</h3><p>窗口站是和当前进程和会话（Session）相关联的一个内核对象，它包含剪贴板(clipboard)、原子表、一个或多个桌面（Desktop）对象等。</p>
 <div class="note default"><p>每个窗口工作站都有自己的：原子表、剪贴板、一个或多个桌面。</p>
-<p>桌面包含用户界面对象，如窗口、菜单、挂钩（Hooks）以及用于分配和存储此类对象的堆。</p>
+<p>桌面包含用户界面对象，如窗口、菜单、钩子（Hooks）以及用于分配和存储此类对象的堆。</p>
 </div>
 
 <p>窗口站的主要结构是 <code>tagWINDOWSTATION</code>，位于 <code>win32k</code> 中，没有相关符号导出。与大多数其他窗口对象不同，<strong>窗口站</strong>（和<strong>桌面</strong>）是安全的对象，不是窗口类型的用户对象。这意味着它们的分配、管理和释放是与进程、线程、互斥体和注册表等对象是一样的。因此，他们具有 <code>_POOL_HEADER</code>、<code>_OBJECT _HEADER</code> 等对象头。</p>
@@ -807,7 +807,7 @@
 <p>可以使用 Volatility 的 wintree 插件来查看有多少个窗口使用了 <code>CLIPBRDWNDCLASS</code> 结构，就表示使用了剪切板。</p>
 <p><img data-src="https://s2.loli.net/2022/10/09/2M9kOJ7IZAFyxfP.png" alt="19.png"></p>
 <h3 id="3-3-桌面（Desktop）"><a href="#3-3-桌面（Desktop）" class="headerlink" title="3.3 桌面（Desktop）"></a>3.3 桌面（Desktop）</h3><p><strong>窗口站</strong>（和<strong>桌面</strong>）是安全的内核对象，不是窗口类型的用户对象。<strong>窗口站</strong>和<strong>桌面</strong>具有 <code>_POOL_HEADER</code>、<code>_OBJECT _HEADER</code> 等对象头。</p>
-<p>桌面是属于窗口站的内核对象。 它包含一个逻辑显示表面和 GUl Objects，如窗口、菜单或挂钩 （Windows, Menus, Hooks ）。 窗口消息只能在同一桌面上的进程之间发送，桌面也是消息挂钩的边界。参考《<a target="_blank" rel="noopener" href="https://omeg.pl/papers/A%20crack%20on%20the%20glass.pdf">A crack on the glass</a>》。</p>
+<p>桌面是属于窗口站的内核对象。 它包含一个逻辑显示表面和 GUl Objects，如窗口、菜单或钩子 （Windows, Menus, Hooks ）。 窗口消息只能在同一桌面上的进程之间发送，桌面也是消息钩子的边界。参考《<a target="_blank" rel="noopener" href="https://omeg.pl/papers/A%20crack%20on%20the%20glass.pdf">A crack on the glass</a>》。</p>
 <p>桌面是应用程序窗口和用户界面对象的容器。恶意软件以各种方式利用桌面，从在备用桌面中启动应用程序（使当前登录的用户看不到它们），到勒索软件将用户锁定在自己的桌面之外，直到支付费用。</p>
 <div class="note default"><p>学习桌面相关结构主要是为了：</p>
 <ul>
@@ -839,7 +839,7 @@
 <tr>
 <td align="center">+0x008</td>
 <td align="center"><strong>pDeskInfo</strong>（tagDESKTOPINFO）</td>
-<td>指向 <code>tagDESKTOPINFO</code> 结构——这是存储桌面全局挂钩（HOOK）信息的地方。后面对该结构进行讲解 。 <code>Spwnd</code> 字段还标识活动的前景窗口。</td>
+<td>指向 <code>tagDESKTOPINFO</code> 结构——这是存储桌面全局钩子（HOOK）信息的地方。后面对该结构进行讲解 。 <code>Spwnd</code> 字段还标识活动的前景窗口。</td>
 </tr>
 <tr>
 <td align="center">+0x018</td>
@@ -867,7 +867,7 @@
 <li>Winlogon 桌面显示登录提示，您可以在其中输入用户名和密码。 如果成功，系统会将您切换到默认桌面。 正如预期的那样，explorer.exe 在默认桌面上运行（也称为外壳 Shell）；请注意，有六个不同的资源管理器线程都在同一个桌面上运行。</li>
 <li>默认桌面中的窗口数量比其他桌面多得多（238 个，而 Disconnect 中为 25 个，winlogon 中为 6 个）。 为了允许创建更多的窗口和其他对象，默认桌面的堆大小也更大（0x300000 与 0x10000 和 0x20000 相比）是有意义的。</li>
 <li>Winlogon 桌面中唯一的线程实际上属于 winlogon.exe。 如果您曾在此桌面中看到属于不同进程的线程，则可能表明有人试图窃取登录凭据。</li>
-<li>唯一安装了全局挂钩的桌面是 Default，因为 fsHooks 值非零。 这个值在第 15 章中有更多的解释，但现在只知道它表示桌面中的线程可以在窗口消息到达目标窗口之前截获它们，例如击键和鼠标移动。</li>
+<li>唯一安装了全局钩子的桌面是 Default，因为 fsHooks 值非零。 这个值在第 15 章中有更多的解释，但现在只知道它表示桌面中的线程可以在窗口消息到达目标窗口之前截获它们，例如击键和鼠标移动。</li>
 </ol>
 </div>
 
@@ -947,7 +947,7 @@
 <ul>
 <li>检测窗口类名：当应用程序使用 <code>RegisterclasgEx</code> 注册一个新的窗口类时，<strong>该类的名称被添加到一个全局原子表中</strong>。</li>
 <li>检测窗口消息名称：当应用程序通过调用 <code>RegisterWindowMessage</code> 注册窗口消息时，该名称被添加到全局原子表中。</li>
-<li>识别注入的 DLL：当恶意软件使用 <code>SetWindowsHookEx</code> 或 <code>SetWinEventHook</code> 分别安装消息挂钩或事件挂钩时，磁盘上包含挂钩函数的 DLL 的路径将添加到全局原子表中。 将在后面详细解释。</li>
+<li>识别注入的 DLL：当恶意软件使用 <code>SetWindowsHookEx</code> 或 <code>SetWinEventHook</code> 分别安装消息钩子或事件钩子时，磁盘上包含钩子函数的 DLL 的路径将添加到全局原子表中。 将在后面详细解释。</li>
 <li>系统存在标记：一些恶意软件家族使用原子将系统标记为受感染，与通常使用互斥锁的方式相同。</li>
 </ul>
 </div>
@@ -1464,7 +1464,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">27:09</span>
+    <span title="站点阅读时长">27:15</span>
   </span>
 </div>
 <div class="busuanzi-count">
