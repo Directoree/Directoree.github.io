@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64 汇编基础">
+<meta property="og:url" content="https://directoree.github.io/post/x64Kernel/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/UaKTG3kXQRfpnu5.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/19/crasH9Yuk1dTtpb.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/20/xipeXTMdJuj1trK.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/20/ZjeHX4Qvk8cIlPL.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/20/rmagwlj4vJe8LPE.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/20/X4y13LsQ5JGnRAt.png">
+<meta property="article:published_time" content="2022-10-20T11:02:41.000Z">
+<meta property="article:modified_time" content="2022-10-19T17:46:37.338Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64汇编">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/10/19/UaKTG3kXQRfpnu5.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/x64Kernel/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>x64 汇编基础 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-VS%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">1 VS内联汇编</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2 寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%88GPRs%EF%BC%89"><span class="nav-text">2.1 通用寄存器（GPRs）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-RFLAGS"><span class="nav-text">2.2 RFLAGS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="nav-text">3 常用指令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%87%BD%E6%95%B0%E6%93%8D%E4%BD%9C"><span class="nav-text">4 函数操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%AA%E5%8F%82%E6%95%B0Debug"><span class="nav-text">3 个参数Debug</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E4%B8%AA%E5%8F%82%E6%95%B0Release"><span class="nav-text">3 个参数Release</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E4%B8%AA%E5%8F%82%E6%95%B0Debug"><span class="nav-text">6个参数Debug</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E4%B8%AA%E5%8F%82%E6%95%B0Release"><span class="nav-text">6个参数Release</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="nav-text">4.1 调用约定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%A0%86%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="nav-text">4.2 堆栈操作</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">136</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">71</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64Kernel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64 汇编基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-10-20 19:02:41 / 修改时间：01:46:37" itemprop="dateCreated datePublished" datetime="2022-10-20T19:02:41+08:00">2022-10-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E6%B1%87%E7%BC%96/" itemprop="url" rel="index"><span itemprop="name">x64汇编</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/x64Kernel/" class="post-meta-item leancloud_visitors" data-flag-title="x64 汇编基础" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/x64Kernel/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/x64Kernel/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>14k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>13 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-VS内联汇编"><a href="#1-VS内联汇编" class="headerlink" title="1 VS内联汇编"></a>1 VS内联汇编</h2><p>在编译 32 位程序的时候，直接 <code>__asm</code> 内联汇编即可使用，但是当目标平台为 x64 时，微软不再允许直接内联汇编了，可通过在 64 位程序中内联汇编代码。</p>
+<p>IDE：VS 2019</p>
+<p>OS：Windows 10 21H2（19044.2130）</p>
+<ol>
+<li><p>创建控制台项目。</p>
+</li>
+<li><p><em>源文件</em>右键—<em>添加</em>—<em>新建项</em>—<em>C++文件</em>，命名为 <code>First_Inline_Asm.asm</code>。</p>
+</li>
+<li><p>在源文件 <code>First_Inline_Asm.asm</code> 右键—<em>属性</em>—<em>项类型</em>—<em>自定义生成工具</em>—应用（然后属性上就多出来了“自定义生成工具”）。</p>
+</li>
+<li><p>在上一步骤基础上，<em>自定义常规工具</em>—<em>常规</em>—*命令行：<code>ml64 /c %(filename).asm</code><em>；</em>输出：<code>%(filename).obj;%(Outputs)</code>*。</p>
+</li>
+<li><p>在上一步骤基础上，*平台：<code>活动x64</code>*。</p>
+</li>
+<li><p>汇编文件的<em>配置属性</em>—<em>从中生成排除：否</em>。</p>
+</li>
+<li><p><code>.asm</code> 里面函数的写法：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.CODE</span><br><span class="line">  </span><br><span class="line">GetPebLdr PROC</span><br><span class="line">	mov rax, gs:[<span class="number">60</span>h];</span><br><span class="line">	add rax, <span class="number">18</span>h;</span><br><span class="line">	mov rax, [rax];</span><br><span class="line">	ret;</span><br><span class="line">GetPebLdr ENDP</span><br><span class="line">  </span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在主文件中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span>  <span class="function">ULONGLONG _fastcall <span class="title">MyFunction</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>注意这种内联汇编<strong>源操作数如果是十六进制数</strong>，写法如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 错误，不识别 0x</span></span><br><span class="line">mov rax, <span class="number">0xFFEEDDCC01234567</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 错误，不识别 F</span></span><br><span class="line">mov rax, FFEEDDCC01234567h;</span><br><span class="line"></span><br><span class="line"><span class="comment">//正确，在十六进制数前加 0</span></span><br><span class="line">mov rax, <span class="number">0F</span>FEEDDCC01234567h;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>完整 Demo：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// First_Inline_Asm.asm</span></span><br><span class="line">.CODE</span><br><span class="line">  </span><br><span class="line">GetPebLdr PROC</span><br><span class="line">	mov rax, gs:[<span class="number">60</span>h];</span><br><span class="line">	add rax, <span class="number">18</span>h;</span><br><span class="line">	mov rax, [rax];</span><br><span class="line">	ret;</span><br><span class="line">GetPebLdr ENDP</span><br><span class="line">  </span><br><span class="line">END</span><br><span class="line"></span><br><span class="line"><span class="comment">// main.cpp</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span>  <span class="function">PVOID64 _fastcall <span class="title">GetPebLdr</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PVOID64 pRet = GetPebLdr();</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, pRet);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<p>参考：<a target="_blank" rel="noopener" href="https://www.kn0sky.com/?p=68">使用VS2019写64位内联汇编</a>。</p>
+<h2 id="2-寄存器"><a href="#2-寄存器" class="headerlink" title="2 寄存器"></a>2 寄存器</h2><h3 id="2-1-通用寄存器（GPRs）"><a href="#2-1-通用寄存器（GPRs）" class="headerlink" title="2.1 通用寄存器（GPRs）"></a>2.1 通用寄存器（GPRs）</h3><p>x64 下指针和地址都是 8 字节（64位）。</p>
+<ul>
+<li>x64 增加了8个通用寄存器：R8~R15，它们都是64位的。</li>
+<li>另外还增加了 8 个 128 位 XMM 寄存器。</li>
+<li>64 位寄存器与 x86 下的 32 位寄存器兼容，例如 RAX（64位）、EAX（低32）、AX（低16位）、AL（低8位）、AH（8到15位），相应的有R8、R8D、R8W和R8B。</li>
+<li>不要在程序中使用如 <code>AH</code> 之类的寄存器，因为在 AMD 的 CPU 上这种用法会与某些指令产生冲突。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/10/19/UaKTG3kXQRfpnu5.png" alt="1.png"></p>
+<p><img data-src="https://s2.loli.net/2022/10/19/crasH9Yuk1dTtpb.png" alt="2.png"></p>
+<p>通用寄存器（General-Purpose Registers, GPRs），参考 Intel 手册卷 1 3.4.1。</p>
+<p>64 位通用寄存器共 18 个（包含 RIP，Rflags）。在 x64 中关于 RSP、RBP：</p>
+<ul>
+<li><mark class="label warning">RSP</mark>  ：用来进行相对寻址（RIP-relative addressing）来找到堆栈上的参数、局部变量。不像 x86 基于 EBP 寻址。</li>
+<li><mark class="label success">RBP</mark>  ：仍可做 Base Frame Point，但是常被用来当通用寄存器使用（GPRs）。</li>
+</ul>
+<h3 id="2-2-RFLAGS"><a href="#2-2-RFLAGS" class="headerlink" title="2.2 RFLAGS"></a>2.2 RFLAGS</h3><p>在 x64 中，将 <code>EFLAGS</code> 扩展成 64 位，但是高 32 位保留。所以对于 x64 来说，<code>RFLAGS</code> 和 <code>EFLAGS</code> 是一样的。</p>
+<p><code>RFLAGS</code> 的位受算术&#x2F;逻辑运算影响，同时 <code>RFLAGS</code>  的位也影响 CPU 的执行。如 <code>TF</code> 置位时 CPU 单步运行。</p>
+<p>具体标识为可看 <strong>Intel 手册卷 1 3.4.3</strong> 和 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/Reverse-xiaoyu/p/11397584.html">EFLAGS寄存器（标志寄存器）</a>。</p>
+<ul>
+<li>将 EFLAG 移入和移出堆栈或 EAX 寄存器：LAHF、SAHF、PUSHF、PUSHFD、POPF 和 POPFD。</li>
+<li>修改 EFLAG 标识位的指令：<a href="https://directoree.github.io/post/WinXP-Struct/">BT、BTS、BTR 和 BTC</a>。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png" alt="58.png"></p>
+<p><img data-src="https://s2.loli.net/2022/10/20/xipeXTMdJuj1trK.png" alt="3.png"></p>
+<p>下面罗列一些与算术、逻辑运算相关的位：</p>
+<table>
+<thead>
+<tr>
+<th>标志位</th>
+<th>位置</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CF（Carry flag）</td>
+<td>Bit 0</td>
+<td>进位标志。<strong>负数</strong>计算溢出时置位。<br /><code>mov al, 0FFh  ; CF = 0</code><br /><code>add al, 1     ; CF = 1</code></td>
+</tr>
+<tr>
+<td>OF（Overflow flag ）</td>
+<td>Bit 11</td>
+<td>溢出标志。操作发生溢出，导致符号改变（<strong>仅对有符号数</strong>）。<br /><code>mov cl, 07Fh   ; OF = 0</code><br ><code>add cl, 1      ; OF = 1</code></td>
+</tr>
+<tr>
+<td>ZF（Zero flag）</td>
+<td>Bit 6</td>
+<td>零标志。当算术或逻辑运算的结果为零时设置该标志。 这也可以使用比较指令进行设置。</td>
+</tr>
+<tr>
+<td>SF（Sign flag）</td>
+<td>Bit 7</td>
+<td>负数符号标志。运算结果是<strong>负数</strong>时置 1。</td>
+</tr>
+</tbody></table>
+<h2 id="3-常用指令"><a href="#3-常用指令" class="headerlink" title="3 常用指令"></a>3 常用指令</h2><p>这部分后续专门学习硬编码（<strong>Intel 手册卷2</strong>）。如下 <code>mul</code> 指令为无符号乘法。</p>
+<p><img data-src="https://s2.loli.net/2022/10/20/ZjeHX4Qvk8cIlPL.png" alt="4.png"></p>
+<p>r - 通用寄存器<br>m - 内存<br>imm - 立即数<br>r8 - 8位通用寄存器<br>m8 - 8位内存<br>imm8 - 8位立即数</p>
+<p><code>mul</code> 指令：执行第一个操作数（目标操作数）和第二个操作数（源操作数）的无符号乘法，并将结果存储在目标操作数中。 目标操作数是位于寄存器 AL、AX 或 EAX 中的隐含操作数（取决于操作数的大小）； 源操作数位于通用寄存器或内存位置。 该指令的动作和结果的位置取决于操作码和操作数大小，如表 3-69 所示（Operand操作数）。</p>
+<p><img data-src="https://s2.loli.net/2022/10/20/rmagwlj4vJe8LPE.png" alt="5.png"></p>
+<p>如下为计算过程：</p>
+<p><img data-src="https://s2.loli.net/2022/10/20/X4y13LsQ5JGnRAt.png" alt="6.png"></p>
+<h2 id="4-函数操作"><a href="#4-函数操作" class="headerlink" title="4 函数操作"></a>4 函数操作</h2><h3 id="3-个参数Debug"><a href="#3-个参数Debug" class="headerlink" title="3 个参数Debug"></a>3 个参数Debug</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">__int64 <span class="title">Test3Parameters</span><span class="params">(__int64* arg_1, __int64 arg_2, __int64 arg_3)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    __int64 iLocal = <span class="number">0</span>;</span><br><span class="line">    iLocal = *arg_1;</span><br><span class="line">    <span class="keyword">return</span> iLocal + arg_2 + arg_3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    __int64 arg = <span class="number">2</span>;</span><br><span class="line">    arg = Test3Parameters(&amp;arg, <span class="number">5</span>, <span class="number">9</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%lld\n&quot;</span>, arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>main:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main</span></span><br><span class="line">.text:<span class="number">00000001400118E0</span> ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">00000001400118E0</span></span><br><span class="line">.text:<span class="number">00000001400118E0</span> ; Attributes: bp-based frame fpd=<span class="number">0F</span>0h</span><br><span class="line">.text:<span class="number">00000001400118E0</span></span><br><span class="line">.text:<span class="number">00000001400118E0</span> sub_1400118E0   proc near               ; CODE XREF: sub_1400112C1↑j</span><br><span class="line">.text:<span class="number">00000001400118E0</span></span><br><span class="line">.text:<span class="number">00000001400118E0</span> var_110         = byte ptr <span class="number">-110</span>h</span><br><span class="line">.text:<span class="number">00000001400118E0</span> var_F0          = byte ptr <span class="number">-0F</span>0h</span><br><span class="line">.text:<span class="number">00000001400118E0</span> var_E8          = qword ptr <span class="number">-0E8</span>h</span><br><span class="line">.text:<span class="number">00000001400118E0</span> var_18          = qword ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">00000001400118E0</span></span><br><span class="line">.text:<span class="number">00000001400118E0</span> ; __unwind &#123; <span class="comment">// 14001119F</span></span><br><span class="line">.text:<span class="number">00000001400118E0</span>                 push    rbp</span><br><span class="line">.text:<span class="number">00000001400118E2</span>                 push    rdi</span><br><span class="line">.text:<span class="number">00000001400118E3</span>                 sub     rsp, <span class="number">108</span>h</span><br><span class="line">.text:<span class="number">00000001400118</span>EA                 lea     rbp, [rsp+<span class="number">20</span>h]</span><br><span class="line">.text:<span class="number">00000001400118</span>EF                 lea     rdi, [rsp+<span class="number">110</span>h+var_F0]</span><br><span class="line">.text:<span class="number">00000001400118F</span>4                 mov     ecx, <span class="number">0</span>Ah</span><br><span class="line">.text:<span class="number">00000001400118F</span>9                 mov     eax, <span class="number">0</span>CCCCCCCCh</span><br><span class="line">.text:<span class="number">00000001400118F</span>E                 rep stosd</span><br><span class="line">.text:<span class="number">0000000140011900</span>                 mov     rax, cs:__security_cookie</span><br><span class="line">.text:<span class="number">0000000140011907</span>                 <span class="keyword">xor</span>     rax, rbp</span><br><span class="line">.text:<span class="number">000000014001190</span>A                 mov     [rbp+<span class="number">0F</span>0h+var_18], rax</span><br><span class="line">.text:<span class="number">0000000140011911</span>                 lea     rcx, unk_140023035</span><br><span class="line">.text:<span class="number">0000000140011918</span>                 call    sub_1400113CF</span><br><span class="line">.text:<span class="number">000000014001191</span>D                 mov     [rbp+<span class="number">0F</span>0h+var_E8], <span class="number">2</span></span><br><span class="line">.text:<span class="number">0000000140011925</span>                 mov     r8d, <span class="number">9</span></span><br><span class="line">.text:<span class="number">000000014001192B</span>                 mov     edx, <span class="number">5</span></span><br><span class="line">.text:<span class="number">0000000140011930</span>                 lea     rcx, [rbp+<span class="number">0F</span>0h+var_E8]</span><br><span class="line">.text:<span class="number">0000000140011934</span>                 call    sub_140011136</span><br><span class="line">.text:<span class="number">0000000140011939</span>                 mov     [rbp+<span class="number">0F</span>0h+var_E8], rax</span><br><span class="line">.text:<span class="number">000000014001193</span>D                 mov     rdx, [rbp+<span class="number">0F</span>0h+var_E8]</span><br><span class="line">.text:<span class="number">0000000140011941</span>                 lea     rcx, aLld       ; <span class="string">&quot;%lld\n&quot;</span></span><br><span class="line">.text:<span class="number">0000000140011948</span>                 call    sub_14001143D</span><br><span class="line">.text:<span class="number">000000014001194</span>D                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">000000014001194F</span>                 mov     edi, eax</span><br><span class="line">.text:<span class="number">0000000140011951</span>                 lea     rcx, [rbp+<span class="number">0F</span>0h+var_110]</span><br><span class="line">.text:<span class="number">0000000140011955</span>                 lea     rdx, unk_14001B850</span><br><span class="line">.text:<span class="number">000000014001195</span>C                 call    sub_14001135C</span><br><span class="line">.text:<span class="number">0000000140011961</span>                 mov     eax, edi</span><br><span class="line">.text:<span class="number">0000000140011963</span>                 mov     rcx, [rbp+<span class="number">0F</span>0h+var_18]</span><br><span class="line">.text:<span class="number">000000014001196</span>A                 <span class="keyword">xor</span>     rcx, rbp        ; StackCookie</span><br><span class="line">.text:<span class="number">000000014001196</span>D                 call    j___security_check_cookie</span><br><span class="line">.text:<span class="number">0000000140011972</span>                 lea     rsp, [rbp+<span class="number">0E8</span>h]</span><br><span class="line">.text:<span class="number">0000000140011979</span>                 pop     rdi</span><br><span class="line">.text:<span class="number">000000014001197</span>A                 pop     rbp</span><br><span class="line">.text:<span class="number">000000014001197B</span>                 retn</span><br><span class="line">.text:<span class="number">000000014001197B</span> ; &#125; <span class="comment">// starts at 1400118E0</span></span><br><span class="line">.text:<span class="number">000000014001197B</span> sub_1400118E0   endp</span><br></pre></td></tr></table></figure>
+
+<p>子函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140011870</span> ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">0000000140011870</span></span><br><span class="line">.text:<span class="number">0000000140011870</span> ; Attributes: bp-based frame fpd=<span class="number">0F</span>0h</span><br><span class="line">.text:<span class="number">0000000140011870</span></span><br><span class="line">.text:<span class="number">0000000140011870</span> sub_140011870   proc near               ; CODE XREF: .text:<span class="number">0000000140011087</span>↑j</span><br><span class="line">.text:<span class="number">0000000140011870</span>                                         ; sub_140011136↑j</span><br><span class="line">.text:<span class="number">0000000140011870</span></span><br><span class="line">.text:<span class="number">0000000140011870</span> var_E8          = qword ptr <span class="number">-0E8</span>h</span><br><span class="line">.text:<span class="number">0000000140011870</span> arg_0           = qword ptr  <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">0000000140011870</span> arg_8           = qword ptr  <span class="number">18</span>h</span><br><span class="line">.text:<span class="number">0000000140011870</span> arg_10          = qword ptr  <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">0000000140011870</span></span><br><span class="line">.text:<span class="number">0000000140011870</span>                 mov     [rsp<span class="number">-8</span>+arg_10], r8</span><br><span class="line">.text:<span class="number">0000000140011875</span>                 mov     [rsp<span class="number">-8</span>+arg_8], rdx</span><br><span class="line">.text:<span class="number">000000014001187</span>A                 mov     [rsp<span class="number">-8</span>+arg_0], rcx</span><br><span class="line">.text:<span class="number">000000014001187F</span>                 push    rbp</span><br><span class="line">.text:<span class="number">0000000140011880</span>                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140011881</span>                 sub     rsp, <span class="number">108</span>h</span><br><span class="line">.text:<span class="number">0000000140011888</span>                 lea     rbp, [rsp+<span class="number">20</span>h]</span><br><span class="line">.text:<span class="number">000000014001188</span>D                 lea     rcx, unk_140023035</span><br><span class="line">.text:<span class="number">0000000140011894</span>                 call    sub_1400113CF</span><br><span class="line">.text:<span class="number">0000000140011899</span>                 mov     [rbp+<span class="number">0F</span>0h+var_E8], <span class="number">0</span></span><br><span class="line">.text:<span class="number">00000001400118</span>A1                 mov     rax, [rbp+<span class="number">0F</span>0h+arg_0]</span><br><span class="line">.text:<span class="number">00000001400118</span>A8                 mov     rax, [rax]</span><br><span class="line">.text:<span class="number">00000001400118</span>AB                 mov     [rbp+<span class="number">0F</span>0h+var_E8], rax</span><br><span class="line">.text:<span class="number">00000001400118</span>AF                 mov     rax, [rbp+<span class="number">0F</span>0h+arg_8]</span><br><span class="line">.text:<span class="number">00000001400118B</span>6                 mov     rcx, [rbp+<span class="number">0F</span>0h+var_E8]</span><br><span class="line">.text:<span class="number">00000001400118B</span>A                 add     rcx, rax</span><br><span class="line">.text:<span class="number">00000001400118B</span>D                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">00000001400118</span>C0                 add     rax, [rbp+<span class="number">0F</span>0h+arg_10]</span><br><span class="line">.text:<span class="number">00000001400118</span>C7                 lea     rsp, [rbp+<span class="number">0E8</span>h]</span><br><span class="line">.text:<span class="number">00000001400118</span>CE                 pop     rdi</span><br><span class="line">.text:<span class="number">00000001400118</span>CF                 pop     rbp</span><br><span class="line">.text:<span class="number">00000001400118</span>D0                 retn</span><br><span class="line">.text:<span class="number">00000001400118</span>D0 sub_140011870   endp</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-个参数Release"><a href="#3-个参数Release" class="headerlink" title="3 个参数Release"></a>3 个参数Release</h3><p>main</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001070</span> ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">0000000140001070</span></span><br><span class="line">.text:<span class="number">0000000140001070</span></span><br><span class="line">.text:<span class="number">0000000140001070</span> sub_140001070   proc near               ; CODE XREF: sub_1400011A4+<span class="number">107</span>↓p</span><br><span class="line">.text:<span class="number">0000000140001070</span>                                         ; DATA XREF: .pdata:<span class="number">000000014000400</span>C↓o</span><br><span class="line">.text:<span class="number">0000000140001070</span>                 sub     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">0000000140001074</span>                 mov     edx, <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">0000000140001079</span>                 lea     rcx, aLld       ; <span class="string">&quot;%lld\n&quot;</span></span><br><span class="line">.text:<span class="number">0000000140001080</span>                 call    sub_140001010</span><br><span class="line">.text:<span class="number">0000000140001085</span>                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">0000000140001087</span>                 add     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">000000014000108B</span>                 retn</span><br><span class="line">.text:<span class="number">000000014000108B</span> sub_140001070   endp</span><br></pre></td></tr></table></figure>
+
+<p>子函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001010</span> ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span> sub_140001010   proc near               ; CODE XREF: sub_140001070+<span class="number">10</span>↓p</span><br><span class="line">.text:<span class="number">0000000140001010</span>                                         ; DATA XREF: .pdata:ExceptionDir↓o</span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span> var_28          = qword ptr <span class="number">-28</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_0           = qword ptr  <span class="number">8</span></span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_8           = qword ptr  <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_10          = qword ptr  <span class="number">18</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_18          = qword ptr  <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span>                 mov     [rsp+arg_0], rcx</span><br><span class="line">.text:<span class="number">0000000140001015</span>                 mov     [rsp+arg_8], rdx</span><br><span class="line">.text:<span class="number">000000014000101</span>A                 mov     [rsp+arg_10], r8</span><br><span class="line">.text:<span class="number">000000014000101F</span>                 mov     [rsp+arg_18], r9</span><br><span class="line">.text:<span class="number">0000000140001024</span>                 push    rbx</span><br><span class="line">.text:<span class="number">0000000140001025</span>                 push    rsi</span><br><span class="line">.text:<span class="number">0000000140001026</span>                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140001027</span>                 sub     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">000000014000102B</span>                 mov     rdi, rcx</span><br><span class="line">.text:<span class="number">000000014000102</span>E                 lea     rsi, [rsp+<span class="number">48</span>h+arg_8]</span><br><span class="line">.text:<span class="number">0000000140001033</span>                 mov     ecx, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0000000140001038</span>                 call    cs:__acrt_iob_func</span><br><span class="line">.text:<span class="number">000000014000103</span>E                 mov     rbx, rax</span><br><span class="line">.text:<span class="number">0000000140001041</span>                 call    sub_140001000</span><br><span class="line">.text:<span class="number">0000000140001046</span>                 <span class="keyword">xor</span>     r9d, r9d</span><br><span class="line">.text:<span class="number">0000000140001049</span>                 mov     [rsp+<span class="number">48</span>h+var_28], rsi</span><br><span class="line">.text:<span class="number">000000014000104</span>E                 mov     r8, rdi</span><br><span class="line">.text:<span class="number">0000000140001051</span>                 mov     rdx, rbx</span><br><span class="line">.text:<span class="number">0000000140001054</span>                 mov     rcx, [rax]</span><br><span class="line">.text:<span class="number">0000000140001057</span>                 call    cs:__stdio_common_vfprintf</span><br><span class="line">.text:<span class="number">000000014000105</span>D                 add     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">0000000140001061</span>                 pop     rdi</span><br><span class="line">.text:<span class="number">0000000140001062</span>                 pop     rsi</span><br><span class="line">.text:<span class="number">0000000140001063</span>                 pop     rbx</span><br><span class="line">.text:<span class="number">0000000140001064</span>                 retn</span><br><span class="line">.text:<span class="number">0000000140001064</span> sub_140001010   endp</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h3 id="6个参数Debug"><a href="#6个参数Debug" class="headerlink" title="6个参数Debug"></a>6个参数Debug</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">__int64 <span class="title">Test3Parameters</span><span class="params">(__int64* arg_1, __int64 arg_2, __int64 arg_3, __int64 arg_4, __int64 arg_5, __int64 arg_6)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    __int64 iLocal = <span class="number">0</span>;</span><br><span class="line">    iLocal = *arg_1;</span><br><span class="line">    <span class="keyword">return</span> iLocal + arg_2 + arg_3 - arg_4 + arg_5 + arg_6;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    __int64 arg = <span class="number">2</span>;</span><br><span class="line">    arg = Test3Parameters(&amp;arg, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">8</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%lld\n&quot;</span>, arg);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>main</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140011</span>AC0 ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 ; Attributes: bp-based frame fpd=<span class="number">0F</span>0h</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 sub_140011AC0   proc near               ; CODE XREF: sub_1400112C1↑j</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 var_120         = byte ptr <span class="number">-120</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 var_100         = qword ptr <span class="number">-100</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 var_F8          = qword ptr <span class="number">-0F</span>8h</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 var_F0          = byte ptr <span class="number">-0F</span>0h</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 var_E8          = qword ptr <span class="number">-0E8</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 var_18          = qword ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0</span><br><span class="line">.text:<span class="number">0000000140011</span>AC0 ; __unwind &#123; <span class="comment">// 14001119F</span></span><br><span class="line">.text:<span class="number">0000000140011</span>AC0                 push    rbp</span><br><span class="line">.text:<span class="number">0000000140011</span>AC2                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140011</span>AC3                 sub     rsp, <span class="number">118</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>ACA                 lea     rbp, [rsp+<span class="number">30</span>h]</span><br><span class="line">.text:<span class="number">0000000140011</span>ACF                 lea     rdi, [rsp+<span class="number">120</span>h+var_F0]</span><br><span class="line">.text:<span class="number">0000000140011</span>AD4                 mov     ecx, <span class="number">0</span>Ah</span><br><span class="line">.text:<span class="number">0000000140011</span>AD9                 mov     eax, <span class="number">0</span>CCCCCCCCh</span><br><span class="line">.text:<span class="number">0000000140011</span>ADE                 rep stosd</span><br><span class="line">.text:<span class="number">0000000140011</span>AE0                 mov     rax, cs:__security_cookie</span><br><span class="line">.text:<span class="number">0000000140011</span>AE7                 <span class="keyword">xor</span>     rax, rbp</span><br><span class="line">.text:<span class="number">0000000140011</span>AEA                 mov     [rbp+<span class="number">0F</span>0h+var_18], rax</span><br><span class="line">.text:<span class="number">0000000140011</span>AF1                 lea     rcx, unk_140023035</span><br><span class="line">.text:<span class="number">0000000140011</span>AF8                 call    sub_1400113CF</span><br><span class="line">.text:<span class="number">0000000140011</span>AFD                 mov     [rbp+<span class="number">0F</span>0h+var_E8], <span class="number">2</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>05                 mov     [rsp+<span class="number">120</span>h+var_F8], <span class="number">8</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>0E                 mov     [rsp+<span class="number">120</span>h+var_100], <span class="number">6</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>17                 mov     r9d, <span class="number">5</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>1D                 mov     r8d, <span class="number">4</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>23                 mov     edx, <span class="number">3</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>28                 lea     rcx, [rbp+<span class="number">0F</span>0h+var_E8]</span><br><span class="line">.text:<span class="number">0000000140011B</span>2C                 call    sub_14001144C</span><br><span class="line">.text:<span class="number">0000000140011B</span>31                 mov     [rbp+<span class="number">0F</span>0h+var_E8], rax</span><br><span class="line">.text:<span class="number">0000000140011B</span>35                 mov     rdx, [rbp+<span class="number">0F</span>0h+var_E8]</span><br><span class="line">.text:<span class="number">0000000140011B</span>39                 lea     rcx, aLld       ; <span class="string">&quot;%lld\n&quot;</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>40                 call    sub_14001143D</span><br><span class="line">.text:<span class="number">0000000140011B</span>45                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">0000000140011B</span>47                 mov     edi, eax</span><br><span class="line">.text:<span class="number">0000000140011B</span>49                 lea     rcx, [rbp+<span class="number">0F</span>0h+var_120]</span><br><span class="line">.text:<span class="number">0000000140011B</span>4D                 lea     rdx, unk_14001B850</span><br><span class="line">.text:<span class="number">0000000140011B</span>54                 call    sub_14001135C</span><br><span class="line">.text:<span class="number">0000000140011B</span>59                 mov     eax, edi</span><br><span class="line">.text:<span class="number">0000000140011B</span>5B                 mov     rcx, [rbp+<span class="number">0F</span>0h+var_18]</span><br><span class="line">.text:<span class="number">0000000140011B</span>62                 <span class="keyword">xor</span>     rcx, rbp        ; StackCookie</span><br><span class="line">.text:<span class="number">0000000140011B</span>65                 call    j___security_check_cookie</span><br><span class="line">.text:<span class="number">0000000140011B</span>6A                 lea     rsp, [rbp+<span class="number">0E8</span>h]</span><br><span class="line">.text:<span class="number">0000000140011B</span>71                 pop     rdi</span><br><span class="line">.text:<span class="number">0000000140011B</span>72                 pop     rbp</span><br><span class="line">.text:<span class="number">0000000140011B</span>73                 retn</span><br><span class="line">.text:<span class="number">0000000140011B</span>73 ; &#125; <span class="comment">// starts at 140011AC0</span></span><br><span class="line">.text:<span class="number">0000000140011B</span>73 sub_140011AC0   endp</span><br></pre></td></tr></table></figure>
+
+<p>子函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140011</span>A40 sub_140011A40   proc near               ; CODE XREF: sub_14001144C↑j</span><br><span class="line">.text:<span class="number">0000000140011</span>A40</span><br><span class="line">.text:<span class="number">0000000140011</span>A40 var_E8          = qword ptr <span class="number">-0E8</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A40 arg_0           = qword ptr  <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A40 arg_8           = qword ptr  <span class="number">18</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A40 arg_10          = qword ptr  <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A40 arg_18          = qword ptr  <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A40 arg_20          = qword ptr  <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A40 arg_28          = qword ptr  <span class="number">38</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A40</span><br><span class="line">.text:<span class="number">0000000140011</span>A40                 mov     [rsp<span class="number">-8</span>+arg_18], r9</span><br><span class="line">.text:<span class="number">0000000140011</span>A45                 mov     [rsp<span class="number">-8</span>+arg_10], r8</span><br><span class="line">.text:<span class="number">0000000140011</span>A4A                 mov     [rsp<span class="number">-8</span>+arg_8], rdx</span><br><span class="line">.text:<span class="number">0000000140011</span>A4F                 mov     [rsp<span class="number">-8</span>+arg_0], rcx</span><br><span class="line">.text:<span class="number">0000000140011</span>A54                 push    rbp</span><br><span class="line">.text:<span class="number">0000000140011</span>A55                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140011</span>A56                 sub     rsp, <span class="number">108</span>h</span><br><span class="line">.text:<span class="number">0000000140011</span>A5D                 lea     rbp, [rsp+<span class="number">20</span>h]</span><br><span class="line">.text:<span class="number">0000000140011</span>A62                 lea     rcx, unk_140023035</span><br><span class="line">.text:<span class="number">0000000140011</span>A69                 call    sub_1400113CF</span><br><span class="line">.text:<span class="number">0000000140011</span>A6E                 mov     [rbp+<span class="number">0F</span>0h+var_E8], <span class="number">0</span></span><br><span class="line">.text:<span class="number">0000000140011</span>A76                 mov     rax, [rbp+<span class="number">0F</span>0h+arg_0]</span><br><span class="line">.text:<span class="number">0000000140011</span>A7D                 mov     rax, [rax]</span><br><span class="line">.text:<span class="number">0000000140011</span>A80                 mov     [rbp+<span class="number">0F</span>0h+var_E8], rax</span><br><span class="line">.text:<span class="number">0000000140011</span>A84                 mov     rax, [rbp+<span class="number">0F</span>0h+arg_8]</span><br><span class="line">.text:<span class="number">0000000140011</span>A8B                 mov     rcx, [rbp+<span class="number">0F</span>0h+var_E8]</span><br><span class="line">.text:<span class="number">0000000140011</span>A8F                 add     rcx, rax</span><br><span class="line">.text:<span class="number">0000000140011</span>A92                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">0000000140011</span>A95                 add     rax, [rbp+<span class="number">0F</span>0h+arg_10]</span><br><span class="line">.text:<span class="number">0000000140011</span>A9C                 sub     rax, [rbp+<span class="number">0F</span>0h+arg_18]</span><br><span class="line">.text:<span class="number">0000000140011</span>AA3                 add     rax, [rbp+<span class="number">0F</span>0h+arg_20]</span><br><span class="line">.text:<span class="number">0000000140011</span>AAA                 add     rax, [rbp+<span class="number">0F</span>0h+arg_28]</span><br><span class="line">.text:<span class="number">0000000140011</span>AB1                 lea     rsp, [rbp+<span class="number">0E8</span>h]</span><br><span class="line">.text:<span class="number">0000000140011</span>AB8                 pop     rdi</span><br><span class="line">.text:<span class="number">0000000140011</span>AB9                 pop     rbp</span><br><span class="line">.text:<span class="number">0000000140011</span>ABA                 retn</span><br><span class="line">.text:<span class="number">0000000140011</span>ABA sub_140011A40   endp</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="6个参数Release"><a href="#6个参数Release" class="headerlink" title="6个参数Release"></a>6个参数Release</h3><p>main</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001070</span> sub_140001070   proc near               ; CODE XREF: sub_1400011A4+<span class="number">107</span>↓p</span><br><span class="line">.text:<span class="number">0000000140001070</span>                                         ; DATA XREF: .pdata:<span class="number">000000014000400</span>C↓o</span><br><span class="line">.text:<span class="number">0000000140001070</span>                 sub     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">0000000140001074</span>                 mov     edx, <span class="number">12</span>h</span><br><span class="line">.text:<span class="number">0000000140001079</span>                 lea     rcx, aLld       ; <span class="string">&quot;%lld\n&quot;</span></span><br><span class="line">.text:<span class="number">0000000140001080</span>                 call    sub_140001010</span><br><span class="line">.text:<span class="number">0000000140001085</span>                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">0000000140001087</span>                 add     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">000000014000108B</span>                 retn</span><br><span class="line">.text:<span class="number">000000014000108B</span> sub_140001070   endp</span><br></pre></td></tr></table></figure>
+
+<p>子函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001010</span> ; =============== S U B R O U T I N E =======================================</span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span> sub_140001010   proc near               ; CODE XREF: sub_140001070+<span class="number">10</span>↓p</span><br><span class="line">.text:<span class="number">0000000140001010</span>                                         ; DATA XREF: .pdata:ExceptionDir↓o</span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span> var_28          = qword ptr <span class="number">-28</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_0           = qword ptr  <span class="number">8</span></span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_8           = qword ptr  <span class="number">10</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_10          = qword ptr  <span class="number">18</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span> arg_18          = qword ptr  <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">0000000140001010</span></span><br><span class="line">.text:<span class="number">0000000140001010</span>                 mov     [rsp+arg_0], rcx</span><br><span class="line">.text:<span class="number">0000000140001015</span>                 mov     [rsp+arg_8], rdx</span><br><span class="line">.text:<span class="number">000000014000101</span>A                 mov     [rsp+arg_10], r8</span><br><span class="line">.text:<span class="number">000000014000101F</span>                 mov     [rsp+arg_18], r9</span><br><span class="line">.text:<span class="number">0000000140001024</span>                 push    rbx</span><br><span class="line">.text:<span class="number">0000000140001025</span>                 push    rsi</span><br><span class="line">.text:<span class="number">0000000140001026</span>                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140001027</span>                 sub     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">000000014000102B</span>                 mov     rdi, rcx</span><br><span class="line">.text:<span class="number">000000014000102</span>E                 lea     rsi, [rsp+<span class="number">48</span>h+arg_8]</span><br><span class="line">.text:<span class="number">0000000140001033</span>                 mov     ecx, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0000000140001038</span>                 call    cs:__acrt_iob_func</span><br><span class="line">.text:<span class="number">000000014000103</span>E                 mov     rbx, rax</span><br><span class="line">.text:<span class="number">0000000140001041</span>                 call    sub_140001000</span><br><span class="line">.text:<span class="number">0000000140001046</span>                 <span class="keyword">xor</span>     r9d, r9d</span><br><span class="line">.text:<span class="number">0000000140001049</span>                 mov     [rsp+<span class="number">48</span>h+var_28], rsi</span><br><span class="line">.text:<span class="number">000000014000104</span>E                 mov     r8, rdi</span><br><span class="line">.text:<span class="number">0000000140001051</span>                 mov     rdx, rbx</span><br><span class="line">.text:<span class="number">0000000140001054</span>                 mov     rcx, [rax]</span><br><span class="line">.text:<span class="number">0000000140001057</span>                 call    cs:__stdio_common_vfprintf</span><br><span class="line">.text:<span class="number">000000014000105</span>D                 add     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">0000000140001061</span>                 pop     rdi</span><br><span class="line">.text:<span class="number">0000000140001062</span>                 pop     rsi</span><br><span class="line">.text:<span class="number">0000000140001063</span>                 pop     rbx</span><br><span class="line">.text:<span class="number">0000000140001064</span>                 retn</span><br><span class="line">.text:<span class="number">0000000140001064</span> sub_140001010   endp</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="4-1-调用约定"><a href="#4-1-调用约定" class="headerlink" title="4.1 调用约定"></a>4.1 调用约定</h3><h3 id="4-2-堆栈操作"><a href="#4-2-堆栈操作" class="headerlink" title="4.2 堆栈操作"></a>4.2 堆栈操作</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/x64Kernel/" title="x64 汇编基础">https://directoree.github.io/post/x64Kernel/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64%E6%B1%87%E7%BC%96/" rel="tag"><i class="fa fa-tag"></i> x64汇编</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Windows-GUI-Subsystem2/" rel="prev" title="Windows-GUI-Subsystem2">
+                  <i class="fa fa-chevron-left"></i> Windows-GUI-Subsystem2
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.9m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">28:17</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/x64Kernel/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
