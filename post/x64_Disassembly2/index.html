@@ -25,7 +25,7 @@
   <meta name="description" content="😄">
 <meta property="og:type" content="article">
 <meta property="og:title" content="x64 汇编基础">
-<meta property="og:url" content="https://directoree.github.io/post/x64Kernel/index.html">
+<meta property="og:url" content="https://directoree.github.io/post/x64_Disassembly2/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
@@ -36,14 +36,12 @@
 <meta property="og:image" content="https://s2.loli.net/2022/10/20/HbloO1uRwiaNLrV.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/20/lxurpwdD5zV7I6t.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/20/5NrYf29H6eqTlFG.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/20/ZjeHX4Qvk8cIlPL.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/20/rmagwlj4vJe8LPE.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/20/X4y13LsQ5JGnRAt.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/20/Kv4gouzc5q2DJ9P.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/21/sXxizOSp8Bt29IY.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/21/zhYATa5xWXg4StV.png">
-<meta property="article:published_time" content="2022-10-19T11:02:41.000Z">
-<meta property="article:modified_time" content="2022-10-20T16:42:58.280Z">
+<meta property="og:image" content="https://s2.loli.net/2022/10/21/zkRAXMj547wSmY3.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/21/JcjZklFoROsMVhm.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/21/gjaq7AeTv6COWsF.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/21/lSwWe6EZsJdIzqT.png">
+<meta property="article:published_time" content="2022-10-21T11:07:41.000Z">
+<meta property="article:modified_time" content="2022-10-28T17:07:54.903Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="x64汇编">
@@ -51,7 +49,7 @@
 <meta name="twitter:image" content="https://s2.loli.net/2022/10/19/UaKTG3kXQRfpnu5.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/x64Kernel/">
+<link rel="canonical" href="https://directoree.github.io/post/x64_Disassembly2/">
 
 
 <script class="page-configurations">
@@ -245,7 +243,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-VS%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">1 VS内联汇编</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2 寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%88GPRs%EF%BC%89"><span class="nav-text">2.1 通用寄存器（GPRs）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-RFLAGS"><span class="nav-text">2.2 RFLAGS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%87%BD%E6%95%B0%E6%93%8D%E4%BD%9C"><span class="nav-text">3 函数操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="nav-text">3.1 调用约定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%A0%86%E6%A0%88%E5%AF%B9%E9%BD%90"><span class="nav-text">3.2 堆栈对齐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-x64-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%A4%A7%E5%B0%8F"><span class="nav-text">3.3 x64 数据类型大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%A0%86%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="nav-text">3.4 堆栈操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E4%B8%AA%E5%8F%82%E6%95%B0Debug"><span class="nav-text">3个参数Debug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%B8%AA%E5%8F%82%E6%95%B0Release"><span class="nav-text">3 个参数Release</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6%E4%B8%AA%E5%8F%82%E6%95%B0Debug"><span class="nav-text">6个参数Debug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6%E4%B8%AA%E5%8F%82%E6%95%B0Release"><span class="nav-text">6个参数Release</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4"><span class="nav-text">4 常用指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mul%E3%80%81div"><span class="nav-text">mul、div</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shl%E3%80%81shr%E3%80%81sal%E3%80%81sar%E3%80%81rol%E3%80%81ror%E3%80%81rcl%E3%80%81rcr"><span class="nav-text">shl、shr、sal、sar、rol、ror、rcl、rcr</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#movsx%E3%80%81movsz"><span class="nav-text">movsx、movsz</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pushad%E3%80%81popad"><span class="nav-text">pushad、popad</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lodsb%E3%80%81lodsw%E3%80%81lodsd%E3%80%81lodsq"><span class="nav-text">lodsb、lodsw、lodsd、lodsq</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stosb%E3%80%81stosw%E3%80%81stosd%E3%80%81stosq"><span class="nav-text">stosb、stosw、stosd、stosq</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#movsb%E3%80%81movsw%E3%80%81movsd%E3%80%81movsq"><span class="nav-text">movsb、movsw、movsd、movsq</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ret-n"><span class="nav-text">ret n</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#loop%E3%80%81rep"><span class="nav-text">loop、rep</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%86%85%E6%A0%B8%E5%88%A9%E7%94%A8Github"><span class="nav-text">0 内核利用Github</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-VS%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">1 VS内联汇编</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2 寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E9%80%9A%E7%94%A8%E5%AF%84%E5%AD%98%E5%99%A8%EF%BC%88GPRs%EF%BC%89"><span class="nav-text">2.1 通用寄存器（GPRs）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%98%93%E5%A4%B1-x2F-%E9%9D%9E%E6%98%93%E5%A4%B1%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">2.2 易失&#x2F;非易失寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-RFLAGS"><span class="nav-text">2.3 RFLAGS</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%87%BD%E6%95%B0%E6%93%8D%E4%BD%9C"><span class="nav-text">3 函数操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%B0%83%E7%94%A8%E7%BA%A6%E5%AE%9A"><span class="nav-text">3.1 调用约定</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%A0%86%E6%A0%88%E5%AF%B9%E9%BD%90"><span class="nav-text">3.2 堆栈对齐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-x64-%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E5%A4%A7%E5%B0%8F"><span class="nav-text">3.3 x64 数据类型大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%A0%86%E6%A0%88%E6%93%8D%E4%BD%9C"><span class="nav-text">3.4 堆栈操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3%E4%B8%AA%E5%8F%82%E6%95%B0Debug"><span class="nav-text">3个参数Debug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E4%B8%AA%E5%8F%82%E6%95%B0Release"><span class="nav-text">3 个参数Release</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6%E4%B8%AA%E5%8F%82%E6%95%B0Debug"><span class="nav-text">6个参数Debug</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6%E4%B8%AA%E5%8F%82%E6%95%B0Release"><span class="nav-text">6个参数Release</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%85%B6%E4%BB%96%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-text">4 其他知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-0-x64%E5%AF%84%E5%AD%98%E5%99%A8%E4%BD%BF%E7%94%A8%E6%B3%A8%E6%84%8F"><span class="nav-text">4.0 x64寄存器使用注意</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-ASCII"><span class="nav-text">4.1 ASCII</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%B0%8F%E7%AB%AF%E5%AD%98%E5%82%A8"><span class="nav-text">4.2 小端存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E6%B1%87%E7%BC%96%E7%BC%96%E8%AF%91%E5%99%A8"><span class="nav-text">4.3 汇编编译器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%95%B4%E6%95%B0%E5%8F%96%E5%80%BC%E8%8C%83%E5%9B%B4"><span class="nav-text">4.4 整数取值范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-x64%E5%9C%B0%E5%9D%80%E8%8C%83%E5%9B%B4"><span class="nav-text">4.5 x64地址范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E7%BA%BF%E6%80%A7%E5%9C%B0%E5%9D%80"><span class="nav-text">4.6 线性地址</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-RIP-Relative"><span class="nav-text">4.7 RIP-Relative</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -261,20 +259,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">136</span>
+          <span class="site-state-item-count">139</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/newcategories/">
           
-        <span class="site-state-item-count">60</span>
+        <span class="site-state-item-count">62</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">71</span>
+        <span class="site-state-item-count">73</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -338,7 +336,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64Kernel/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64_Disassembly2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -362,14 +360,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-10-19 19:02:41" itemprop="dateCreated datePublished" datetime="2022-10-19T19:02:41+08:00">2022-10-19</time>
+      <time title="创建时间：2022-10-21 19:07:41" itemprop="dateCreated datePublished" datetime="2022-10-21T19:07:41+08:00">2022-10-21</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-10-21 00:42:58" itemprop="dateModified" datetime="2022-10-21T00:42:58+08:00">2022-10-21</time>
+        <time title="修改时间：2022-10-29 01:07:54" itemprop="dateModified" datetime="2022-10-29T01:07:54+08:00">2022-10-29</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -382,7 +380,7 @@
     </span>
 
   
-    <span id="/post/x64Kernel/" class="post-meta-item leancloud_visitors" data-flag-title="x64 汇编基础" title="阅读次数">
+    <span id="/post/x64_Disassembly2/" class="post-meta-item leancloud_visitors" data-flag-title="x64 汇编基础" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -397,8 +395,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/x64Kernel/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/x64Kernel/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/x64_Disassembly2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/x64_Disassembly2/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -410,14 +408,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>13k</span>
+      <span>15k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
+      <span>14 分钟</span>
     </span>
 </div>
 
@@ -431,6 +429,7 @@
         <p>😄</p>
 <span id="more"></span>
 
+<h2 id="0-内核利用Github"><a href="#0-内核利用Github" class="headerlink" title="0 内核利用Github"></a>0 内核利用Github</h2><p><a target="_blank" rel="noopener" href="https://github.com/ExpLife0011/awesome-windows-kernel-security-development">awesome-windows-kernel-security-development</a>。</p>
 <h2 id="1-VS内联汇编"><a href="#1-VS内联汇编" class="headerlink" title="1 VS内联汇编"></a>1 VS内联汇编</h2><p>在编译 32 位程序的时候，直接 <code>__asm</code> 内联汇编即可使用，但是当目标平台为 x64 时，微软不再允许直接内联汇编了，可通过在 64 位程序中内联汇编代码。</p>
 <p>IDE：VS 2019</p>
 <p>OS：Windows 10 21H2（19044.2130）</p>
@@ -441,14 +440,14 @@
 </li>
 <li><p>在源文件 <code>First_Inline_Asm.asm</code> 右键—<em>属性</em>—<em>项类型</em>—<em>自定义生成工具</em>—应用（然后属性上就多出来了“自定义生成工具”）。</p>
 </li>
-<li><p>在上一步骤基础上，<em>自定义常规工具</em>—<em>常规</em>—*命令行：<code>ml64 /c %(filename).asm</code><em>；</em>输出：<code>%(filename).obj;%(Outputs)</code>*。</p>
+<li><p>在上一步骤基础上，<em>自定义常规工具</em>—<em>常规</em>—命令行：<code>ml64 /c %(filename).asm</code><em>；</em>输出：<code>%(filename).obj;%(Outputs)</code>。</p>
 </li>
-<li><p>在上一步骤基础上，*平台：<code>活动x64</code>*。</p>
+<li><p>在上一步骤基础上，平台：<code>活动x64</code>。</p>
 </li>
 <li><p>汇编文件的<em>配置属性</em>—<em>从中生成排除：否</em>。</p>
 </li>
 <li><p><code>.asm</code> 里面函数的写法：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">.CODE</span><br><span class="line">  </span><br><span class="line">GetPebLdr PROC</span><br><span class="line">	mov rax, gs:[<span class="number">60</span>h];</span><br><span class="line">	add rax, <span class="number">18</span>h;</span><br><span class="line">	mov rax, [rax];</span><br><span class="line">	ret;</span><br><span class="line">GetPebLdr ENDP</span><br><span class="line">  </span><br><span class="line">END</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">; 指定代码编译（可省略）bit <span class="number">16</span>, bit <span class="number">32</span>, bit <span class="number">64</span> </span><br><span class="line">.CODE</span><br><span class="line">  </span><br><span class="line">GetPebLdr PROC</span><br><span class="line">	mov rax, gs:[<span class="number">60</span>h];</span><br><span class="line">	add rax, <span class="number">18</span>h;</span><br><span class="line">	mov rax, [rax];</span><br><span class="line">	ret;</span><br><span class="line">GetPebLdr ENDP</span><br><span class="line">  </span><br><span class="line">END</span><br></pre></td></tr></table></figure>
 
 
 </li>
@@ -480,17 +479,23 @@
 <p><img data-src="https://s2.loli.net/2022/10/19/UaKTG3kXQRfpnu5.png" alt="1.png"></p>
 <p><img data-src="https://s2.loli.net/2022/10/19/crasH9Yuk1dTtpb.png" alt="2.png"></p>
 <p>通用寄存器（General-Purpose Registers, GPRs），参考 Intel 手册卷 1 3.4.1。</p>
-<p>64 位通用寄存器共 18 个（包含 RIP，Rflags）。在 x64 中关于 RSP、RBP：</p>
+<p>64 位通用寄存器共 16 个（不包含 RIP，Rflags）。在 x64 中关于 RSP、RBP：</p>
 <ul>
 <li><mark class="label warning">RSP</mark>  ：用来进行相对寻址（RIP-relative addressing）来找到堆栈上的参数、局部变量。不像 x86 基于 EBP 寻址。</li>
 <li><mark class="label success">RBP</mark>  ：仍可做 Base Frame Point，但是常被用来当通用寄存器使用（GPRs）。</li>
 </ul>
-<h3 id="2-2-RFLAGS"><a href="#2-2-RFLAGS" class="headerlink" title="2.2 RFLAGS"></a>2.2 RFLAGS</h3><p>在 x64 中，将 <code>EFLAGS</code> 扩展成 64 位，但是高 32 位保留。所以对于 x64 来说，<code>RFLAGS</code> 和 <code>EFLAGS</code> 是一样的。</p>
+<h3 id="2-2-易失-x2F-非易失寄存器"><a href="#2-2-易失-x2F-非易失寄存器" class="headerlink" title="2.2 易失&#x2F;非易失寄存器"></a>2.2 易失&#x2F;非易失寄存器</h3><p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/build/x64-software-conventions?view=msvc-170">易失寄存器</a>是由调用方假想的临时寄存器，并要在调用过程中销毁。 <strong>非易失寄存器需要在整个函数调用过程中保留其值，并且一旦使用，则必须由被调用方保存</strong>（所以常会看到堆栈中保存 <code>rbp, rdi</code>）。</p>
+<ul>
+<li>易变寄存器：RAX, RCX, RDX, R8-R11</li>
+<li>非易变寄存器：RBP, RBX, RSI, RDI, R12-R15</li>
+</ul>
+<h3 id="2-3-RFLAGS"><a href="#2-3-RFLAGS" class="headerlink" title="2.3 RFLAGS"></a>2.3 RFLAGS</h3><p>在 x64 中，将 <code>EFLAGS</code> 扩展成 64 位，但是高 32 位保留。所以对于 x64 来说，<code>RFLAGS</code> 和 <code>EFLAGS</code> 是一样的。</p>
 <p><code>RFLAGS</code> 的位受算术&#x2F;逻辑运算影响，同时 <code>RFLAGS</code>  的位也影响 CPU 的执行。如 <code>TF</code> 置位时 CPU 单步运行。</p>
 <p>具体标识为可看 <strong>Intel 手册卷 1 3.4.3</strong> 和 <a target="_blank" rel="noopener" href="https://www.cnblogs.com/Reverse-xiaoyu/p/11397584.html">EFLAGS寄存器（标志寄存器）</a>。</p>
 <ul>
-<li>将 EFLAG 移入和移出堆栈或 EAX 寄存器：LAHF、SAHF、PUSHF、PUSHFD、POPF 和 POPFD。</li>
+<li>将 EFLAG 移入和移出堆栈或 EAX 寄存器：LAHF、SAHF、PUSHF、PUSHFD、PUSHFQ、POPF、POPFD 和 POPFQ。</li>
 <li>修改 EFLAG 标识位的指令：<a href="https://directoree.github.io/post/WinXP-Struct/">BT、BTS、BTR 和 BTC</a>。</li>
+<li><strong>IA-32e 模式下，不允许修改 VM、NT 位</strong>（Intel 手册卷3 2.3.1）。</li>
 </ul>
 <p><img data-src="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png" alt="58.png"></p>
 <p><img data-src="https://s2.loli.net/2022/10/20/xipeXTMdJuj1trK.png" alt="3.png"></p>
@@ -533,8 +538,18 @@
 <li>x86：8 字节。</li>
 <li>x64：16 字节。</li>
 </ul>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/build/prolog-and-epilog?view=msvc-170">x64 prolog 和 epilog</a>：</p>
+<p>分配堆栈空间、调用其他函数、保存非易失性寄存器或使用异常处理的每个函数都必须具有 <code>prolog</code>，其地址限制在与相应函数表条目关联的展开数据中进行了描述。 与之对应的是 epilog。有了这两部分，x64 函数和 x86 函数在堆栈平衡的处理上有了较大的区别。<strong>x64 的函数内在一开始使用 prolog 来开辟堆栈，在最后时才使用 epilog 来平衡堆栈。而不像是 x86 中的 <code>__cdecl</code> 调用约定那样每次调用完函数立即要平衡堆栈。x64 是在函数最后的 epilog 来平衡堆栈</strong>。</p>
+<p>函数结构中典型 prolog 和 epilog 的代码可能是（类似于 x86 异常处理中的安装 SEH）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> prolog:</span><br><span class="line">    mov    [RSP + <span class="number">8</span>], RCX	</span><br><span class="line">    push   R15	<span class="comment">// 保存非易失性寄存器</span></span><br><span class="line">    push   R14</span><br><span class="line">    push   R13</span><br><span class="line">    sub    RSP, fixed-allocation-size	<span class="comment">// 分配堆栈</span></span><br><span class="line">    lea    R13, <span class="number">128</span>[RSP]</span><br><span class="line">    </span><br><span class="line">    函数主体...</span><br><span class="line"></span><br><span class="line">epilog:</span><br><span class="line">    add      RSP, fixed-allocation-size</span><br><span class="line">    pop      R13</span><br><span class="line">    pop      R14</span><br><span class="line">    pop      R15</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+
+
+
+
 <h3 id="3-1-调用约定"><a href="#3-1-调用约定" class="headerlink" title="3.1 调用约定"></a>3.1 调用约定</h3><p>x64 仅使用 <code>__fastcall</code> 函数调用约定。</p>
 <p>x86 使用 <code>__cdecl</code>、<code>__stdcall</code>、<code>__fastcall</code>、<code>__thiscall</code>。</p>
+<p>x64 中不管在函数前面声明哪一种调用约定，编译器都只会只用 <code>__fastcall</code>。</p>
 <p>Visual C&#x2F;C++ 编译器支持下列<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/cpp/argument-passing-and-naming-conventions?view=msvc-170">调用约定</a>。</p>
 <table>
 <thead>
@@ -701,61 +716,86 @@
 
 
 
-<h2 id="4-常用指令"><a href="#4-常用指令" class="headerlink" title="4 常用指令"></a>4 常用指令</h2><h3 id="mul、div"><a href="#mul、div" class="headerlink" title="mul、div"></a>mul、div</h3><p>这部分后续专门学习硬编码（<strong>Intel 手册卷2</strong>）。如下 <code>mul</code> 指令为无符号乘法。</p>
-<p><img data-src="https://s2.loli.net/2022/10/20/ZjeHX4Qvk8cIlPL.png" alt="4.png"></p>
-<p>r - 通用寄存器<br>m - 内存<br>imm - 立即数<br>r8 - 8位通用寄存器<br>m8 - 8位内存<br>imm8 - 8位立即数</p>
-<p><code>mul</code> 指令：执行第一个操作数（目标操作数）和第二个操作数（源操作数）的无符号乘法，并将结果存储在目标操作数中。 目标操作数是位于寄存器 AL、AX 或 EAX 中的隐含操作数（取决于操作数的大小）； 源操作数位于通用寄存器或内存位置。 该指令的动作和结果的位置取决于操作码和操作数大小，如表 3-69 所示（Operand操作数）。</p>
-<p><img data-src="https://s2.loli.net/2022/10/20/rmagwlj4vJe8LPE.png" alt="5.png"></p>
-<p>如下为计算过程：</p>
-<p><img data-src="https://s2.loli.net/2022/10/20/X4y13LsQ5JGnRAt.png" alt="6.png"></p>
-<p><img data-src="https://s2.loli.net/2022/10/20/Kv4gouzc5q2DJ9P.png" alt="10.png"></p>
-<h3 id="shl、shr、sal、sar、rol、ror、rcl、rcr"><a href="#shl、shr、sal、sar、rol、ror、rcl、rcr" class="headerlink" title="shl、shr、sal、sar、rol、ror、rcl、rcr"></a>shl、shr、sal、sar、rol、ror、rcl、rcr</h3><table>
-<thead>
-<tr>
-<th>指令</th>
-<th>指令格式</th>
-<th>解释</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>shl</td>
-<td>SHL r&#x2F;m, r&#x2F;imm</td>
-<td>逻辑左移。低位补0。对于 x64 来说，将最高位 Bit 63 置入 <code>CF</code>。</td>
-</tr>
-<tr>
-<td>sal</td>
-<td>SAL r&#x2F;m, r&#x2F;imm</td>
-<td>算术左移。<strong>等价于逻辑左移</strong>。<img data-src="https://s2.loli.net/2022/10/21/sXxizOSp8Bt29IY.png" alt="11.png"></td>
-</tr>
-<tr>
-<td>shr</td>
-<td>SHR r&#x2F;m, r&#x2F;imm</td>
-<td>逻辑右移。高位补0。对于 x64 来说，将最低位 Bit 0 置入 <code>CF</code>。</td>
-</tr>
-<tr>
-<td>sar</td>
-<td>SAR r&#x2F;m, r&#x2F;imm</td>
-<td>算术右移。高位补符号位。对于 x64 来说，将最低位 Bit 0 置入 <code>CF</code>。<img data-src="https://s2.loli.net/2022/10/21/zhYATa5xWXg4StV.png" alt="12.png"></td>
-</tr>
-<tr>
-<td>rcl</td>
-<td>SCL r&#x2F;m, r&#x2F;imm</td>
-<td>带进位循环左移。将最高位移入 CF，其余位移入最后。intel 卷1 Chapter 7。</td>
-</tr>
-<tr>
-<td>scr</td>
-<td>SCR r&#x2F;m, r&#x2F;imm</td>
-<td>带进位循环右移。</td>
-</tr>
-<tr>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>SHL、SHR：用于无符号乘法（<code>MUL</code>）、无符号除法（<code>DIV</code>）。</p>
-<p>SAL、SAR：用于有符号乘法（<code>MUL</code>）、有符号除法（<code>IDIV</code>）。</p>
-<h3 id="movsx、movsz"><a href="#movsx、movsz" class="headerlink" title="movsx、movsz"></a>movsx、movsz</h3><h3 id="pushad、popad"><a href="#pushad、popad" class="headerlink" title="pushad、popad"></a>pushad、popad</h3><h3 id="lodsb、lodsw、lodsd、lodsq"><a href="#lodsb、lodsw、lodsd、lodsq" class="headerlink" title="lodsb、lodsw、lodsd、lodsq"></a>lodsb、lodsw、lodsd、lodsq</h3><h3 id="stosb、stosw、stosd、stosq"><a href="#stosb、stosw、stosd、stosq" class="headerlink" title="stosb、stosw、stosd、stosq"></a>stosb、stosw、stosd、stosq</h3><h3 id="movsb、movsw、movsd、movsq"><a href="#movsb、movsw、movsd、movsq" class="headerlink" title="movsb、movsw、movsd、movsq"></a>movsb、movsw、movsd、movsq</h3><h3 id="ret-n"><a href="#ret-n" class="headerlink" title="ret n"></a>ret n</h3><h3 id="loop、rep"><a href="#loop、rep" class="headerlink" title="loop、rep"></a>loop、rep</h3>
+<h2 id="4-其他知识点"><a href="#4-其他知识点" class="headerlink" title="4 其他知识点"></a>4 其他知识点</h2><h3 id="4-0-x64寄存器使用注意"><a href="#4-0-x64寄存器使用注意" class="headerlink" title="4.0 x64寄存器使用注意"></a>4.0 x64寄存器使用注意</h3><ol>
+<li><p>寄存器的使用。</p>
+<div class="note success"><ol>
+<li>对 32 位寄存器的<strong>写操作</strong>（包括运算结果），会自动<strong>对相应的 64 位寄存器的高 32 位清 0</strong>。</li>
+<li>但是对 16 位的寄存器进行操作，是不会影响高位的，不会自动清零。</li>
+</ol>
+</div>
+
+<p>如下指令：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 操作 32 位寄存器，如下两个 xor 指令等价</span></span><br><span class="line"><span class="keyword">xor</span> eax, eax;</span><br><span class="line"><span class="keyword">xor</span> rax, rax;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 操作 32 位寄存器，如下指令最后 rbx 寄存器的值为 1 </span></span><br><span class="line"><span class="comment">// 结果为 0x0000000000000001</span></span><br><span class="line">mov rbx, <span class="number">0xFFEEDDCCAABB2230</span>;</span><br><span class="line">mov ebx, <span class="number">0x1</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 操作 16 位寄存器，如下指令最后 rbx 寄存器的值不为 1 </span></span><br><span class="line"><span class="comment">// 结果为 0xFFEEDDCCAABB0001</span></span><br><span class="line">mov rbx, <span class="number">0xFFEEDDCCAABB2230</span>;</span><br><span class="line">mov bx, <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
+
+
+
+
+</li>
+<li><p>立即数的使用。</p>
+<p>立即数的使用，优先使用 32 位寄存器（因为 64 位指令较长）。如操作数位宽不超过 32 位，硬尽量使用 32 位的寄存器。</p>
+<blockquote>
+<p>参数长度不超过4个字节的时候，分别使用32位的寄存器进行传参，这个是编译器做的处理，长度足够存储数据的情况下，优先使用32位寄存器，因为操作64位寄存器(如MOV指令)的指令占4个字节，多一个48前缀指令，说明操作数是64位的，而32位寄存器只需要3个字节的指令长度《<a target="_blank" rel="noopener" href="https://jhinxs.com/x64%E7%9A%84%E4%B8%80%E4%BA%9B%E7%89%B9%E6%80%A7/">x64的一些特性</a>》</p>
+</blockquote>
+</li>
+<li><p>x64 指令限制。</p>
+<ul>
+<li><p><code>push/pop</code> 的操作数只能是 32 位，无法操作 64 位操作数。<code>pushad/popad</code> 在 x64 中就完全不支持。但是可以使用 <code>pushfq/popfq</code>。</p>
+</li>
+<li><p>如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">push <span class="number">0x123456789</span>;	<span class="comment">// 该指令不支持</span></span><br><span class="line"><span class="comment">// 可以替换为</span></span><br><span class="line">mov rax, <span class="number">0x123456789</span>;</span><br><span class="line">push rax;</span><br><span class="line"></span><br><span class="line">mov qword ptr ds:[rax], <span class="number">0x123456789</span>;	<span class="comment">//	不支持</span></span><br><span class="line">mov qword ptr ds:[rax], <span class="number">0x12345678</span>;	<span class="comment">//	支持</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>访问 <mark class="label success">RIP-2GB~RIP+2GB</mark> 范围的地址都会使用 <code>RIP-Relative</code>（这里的 RIP 为当前指令的地址）来进行寻址。</p>
+<p>如<code>48:8B05</code> 前缀使用 RIP-Relative（这里的 RIP 为当前指令的地址）：x64 中，如果要访问的内存地址范围在 <strong><code>RIP-2GB~RIP+2GB</code></strong> ，则硬编码会使用相对寻址的方式编码。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 前缀后面是 00000000 则访问的地址为：当前指令地址+当前指令长度(7) +00000000</span></span><br><span class="line"><span class="comment">// 前缀后面是 01000000 则访问的地址为：当前指令地址+当前指令长度(7) +00000001</span></span><br><span class="line"><span class="number">00007F</span>F92E0D0F20 | <span class="number">48</span>:<span class="number">8B</span>05 <span class="number">00000000</span>         | mov rax,qword ptr ds:[<span class="number">7F</span>F92E0D0F27]  </span><br><span class="line"><span class="number">00007F</span>F92E0D0F27 | <span class="number">0048</span> <span class="number">85</span>                  | add byte ptr ds:[rax<span class="number">-7B</span>],cl       </span><br><span class="line"><span class="number">00007F</span>F92E0D0F2A | <span class="number">48</span>:<span class="number">8B</span>05 <span class="number">01000000</span>         | mov rax,qword ptr ds:[<span class="number">7F</span>F92E0D0F32] </span><br><span class="line"><span class="number">00007F</span>F92E0D0F31 | <span class="number">81</span>C1 F0040000            | add ecx,<span class="number">4F</span>0                                          </span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><code>jmp</code> 硬编码。</p>
+<p>可看 Intel 手册卷1</p>
+<p>EB：jmp rel8，Jump short，<code>RIP = RIP+当前指令长度 +(FF~7F)</code>。</p>
+<p>E9：jmp rel16，在 x64 下不支持。</p>
+<p>E9：jmp rel32，Jump near，<code>RIP = RIP+当前指令长度 +(-2G~2G)</code>。</p>
+</li>
+</ul>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-222788.htm">64位下的inline Hook</a>、<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-270901.htm">R3 下常用Hook技术</a>。</p>
+</li>
+<li><p>在 x86 CPU 上，FS 段寄存器指向线程环境块 (TEB) 和处理器控制区域 (KPCR)，但在 x64 上，GS 寄存器在用户模式下指向 TEB，在内核中指向 KPCR 的新模式。然而，当运行 WOW64 应用程序（即 x64 系统上的 32 位应用程序）时，FS 寄存器继续指向 32 位版本的 TEB。<code>x64</code>上的陷阱帧结构体<code>nt!_KTRAP_FRAME</code>不包含非易失性寄存器的有效内容。如果打算修改非易失性寄存器，<code>X64</code>函数的<code>prolog</code>会保存非易失性寄存器的值。调试器始终可以从堆栈中提取这些非易失性寄存器的保存值，而不必从陷阱帧中获取它们。 在<code>x64</code>上的内核模式调试期间，<code>.trap</code>命令的输出会打印一条注释，突出显示从陷阱中检索到的所有寄存器的值可能不准确的事实，如下所示。此规则有例外，例如，为用户到内核模式转换生成的陷阱帧确实包含所有寄存器的正确值。</p>
+</li>
+<li><p>内存优先使用相对偏移寻址，直接寻址指令较少。</p>
+</li>
+</ol>
+<h3 id="4-1-ASCII"><a href="#4-1-ASCII" class="headerlink" title="4.1 ASCII"></a>4.1 ASCII</h3><p>ASCII 表的 <a target="_blank" rel="noopener" href="https://github.com/corkami/pics">Github 项目</a>：</p>
+<p><img data-src="https://s2.loli.net/2022/10/21/zkRAXMj547wSmY3.png" alt="14.png"></p>
+<h3 id="4-2-小端存储"><a href="#4-2-小端存储" class="headerlink" title="4.2 小端存储"></a>4.2 小端存储</h3><p><img data-src="https://s2.loli.net/2022/10/21/JcjZklFoROsMVhm.png" alt="13.png"></p>
+<h3 id="4-3-汇编编译器"><a href="#4-3-汇编编译器" class="headerlink" title="4.3 汇编编译器"></a>4.3 汇编编译器</h3><ol>
+<li>nasm, fasm, yas：免费开源汇编编译器，都是使用 Intel 语法。</li>
+<li>yasm 在 nasm 基础上开发，使用 Intel 语法。 </li>
+<li>masm：微软发布的汇编编译器，已集合在 VS 中，使用 Intel 语法。</li>
+<li>gas：linux 免费开源汇编编译器，使用 AT&amp;T 语法。</li>
+</ol>
+<h3 id="4-4-整数取值范围"><a href="#4-4-整数取值范围" class="headerlink" title="4.4 整数取值范围"></a>4.4 整数取值范围</h3><p>在计算机处理中，整数会区分 signed（有符号数）和 unsigned（无符号数）两种情 况，数值的 MSB 值被作为符号位。每个数值类型有自己的取值范围，如下所示。</p>
+<p><img data-src="https://s2.loli.net/2022/10/21/gjaq7AeTv6COWsF.png" alt="15.png"></p>
+<h3 id="4-5-x64地址范围"><a href="#4-5-x64地址范围" class="headerlink" title="4.5 x64地址范围"></a>4.5 x64地址范围</h3><p>x64 体系里只实现了48 位的虚拟地址，高16 位被用做<strong>符号</strong>扩展。这高 16 位必须全是 0 或者全是 1，这种形式的地址被称为 <code>canonical</code> 地址。</p>
+<p>处理器会对软件上的 <code>non-canonical </code> 地址形式进行检查，程序中访问了<code>non-canonical </code> 地址会产生 <code>#GP</code> 异常。 </p>
+<p><img data-src="https://s2.loli.net/2022/10/21/lSwWe6EZsJdIzqT.png" alt="16.png"></p>
+<h3 id="4-6-线性地址"><a href="#4-6-线性地址" class="headerlink" title="4.6 线性地址"></a>4.6 线性地址</h3><p>在 x86 保护模式下：</p>
+<p>逻辑地址：0x23:00400000。<code>0x23</code> 为段选择子，<code>0x00400000</code> 为段基址。</p>
+<p>线性地址：在分页模式下使用，MMU 将逻辑地址可转换为线性地址。由于除了 <code>FS</code> 其余段基址为 <code>0</code>，所以逻辑地址等于线性地址。</p>
+<p>虚拟地址：逻辑地址和线性地址都是虚拟地址。</p>
+<p>在 x64 下，只有线性地址（虚拟地址）。</p>
+<ul>
+<li>实模式、保护模式下的逻辑地址：$segment:offset$。<ul>
+<li>实模式：$linear\_address &#x3D; segment &lt;&lt; 4 + offset$</li>
+<li>保护模式：$linear\_address &#x3D; segment\_base + offset$</li>
+</ul>
+</li>
+<li>x64：$linear\_address &#x3D; offset$</li>
+</ul>
+<p>在 x64 下，除了 FS 与GS 段可以使用非 0 值的 base 外，其余的 ES、 CS、 DS 及 SS 段的 base 值强制为 <code>0</code> 值。因此，实际上线性地址就等于代码中的 offset 值。</p>
+<h3 id="4-7-RIP-Relative"><a href="#4-7-RIP-Relative" class="headerlink" title="4.7 RIP-Relative"></a>4.7 RIP-Relative</h3>
     </div>
 
     
@@ -790,7 +830,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/x64Kernel/" title="x64 汇编基础">https://directoree.github.io/post/x64Kernel/</a>
+      <a href="https://directoree.github.io/post/x64_Disassembly2/" title="x64 汇编基础">https://directoree.github.io/post/x64_Disassembly2/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -807,13 +847,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/post/Windows-GUI-Subsystem2/" rel="prev" title="Windows-GUI-Subsystem2">
-                  <i class="fa fa-chevron-left"></i> Windows-GUI-Subsystem2
+                <a href="/post/x64_Disassembly/" rel="prev" title="x64 常用指令">
+                  <i class="fa fa-chevron-left"></i> x64 常用指令
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
-                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                <a href="/post/x64_Disassembly3/" rel="next" title="x64 异常处理">
+                  x64 异常处理 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -882,7 +922,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">28:16</span>
+    <span title="站点阅读时长">28:47</span>
   </span>
 </div>
 <div class="busuanzi-count">
@@ -1033,7 +1073,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/x64Kernel/",
+      path: "/post/x64_Disassembly2/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);

@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64 异常处理">
+<meta property="og:url" content="https://directoree.github.io/post/x64_Disassembly3/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/10/24/zdUJXADSMcZ7oRh.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/25/yQKnSvhNlAVUi1j.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/24/XlPBxk7STz9CLKM.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/24/RmPadEeVi5xy4wu.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/26/lToEdBCway8bctH.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/24/4bMW1qHsR3QKNny.png">
+<meta property="article:published_time" content="2022-10-23T16:03:07.000Z">
+<meta property="article:modified_time" content="2022-10-28T18:17:29.224Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 异常处理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/10/24/zdUJXADSMcZ7oRh.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/x64_Disassembly3/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>x64 异常处理 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%9F%BA%E7%A1%80"><span class="nav-text">1 异常处理基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%8F%B6%E5%87%BD%E6%95%B0%E4%B8%8E%E9%9D%9E%E5%8F%B6%E5%87%BD%E6%95%B0"><span class="nav-text">1.1 叶函数与非叶函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-prolog-%E5%92%8C-epilog"><span class="nav-text">1.2 prolog 和 epilog</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-RUNTIME-FUNCTION"><span class="nav-text">2 RUNTIME_FUNCTION</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-UNWIND-INFO"><span class="nav-text">2.1 UNWIND_INFO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-UNWIND-CODE"><span class="nav-text">2.2 UNWIND_CODE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-x64%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3 x64堆栈回滚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Windbg%E8%B0%83%E8%AF%95%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3.1 Windbg调试堆栈回滚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-UNWIND-INFO%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3.2 UNWIND_INFO堆栈回滚</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4 异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%BC%82%E5%B8%B8%E4%BA%A7%E7%94%9F%E4%B8%8E%E9%87%87%E9%9B%86"><span class="nav-text">4.1 异常产生与采集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">4.2 异常分发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4.3 内核异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4.4 用户异常处理</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">62</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64_Disassembly3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64 异常处理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-24 00:03:07" itemprop="dateCreated datePublished" datetime="2022-10-24T00:03:07+08:00">2022-10-24</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-10-29 02:17:29" itemprop="dateModified" datetime="2022-10-29T02:17:29+08:00">2022-10-29</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">x64 异常处理</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/x64_Disassembly3/" class="post-meta-item leancloud_visitors" data-flag-title="x64 异常处理" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/x64_Disassembly3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/x64_Disassembly3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>23k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>21 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-异常处理基础"><a href="#1-异常处理基础" class="headerlink" title="1 异常处理基础"></a>1 异常处理基础</h2><h3 id="1-1-叶函数与非叶函数"><a href="#1-1-叶函数与非叶函数" class="headerlink" title="1.1 叶函数与非叶函数"></a>1.1 叶函数与非叶函数</h3><ul>
+<li><mark class="label warning">非叶函数</mark>：在函数中调用其他函数（子函数）、在函数中开辟栈空间、保存非易失寄存器、使用 SEH 等行为的函数（每个“、”表示”或“）。</li>
+<li><mark class="label success">叶函数</mark>：既不调用函数，又没有修改栈指针 RSP，也没有使用 SEH 的函数就叫做叶函数。</li>
+</ul>
+<p>易失寄存器与非失变寄存器寄存器：</p>
+<ul>
+<li>易失寄存器：RAX, RCX, RDX, R8-R11</li>
+<li>非失变寄存器：RBP, RBX, RSI, RDI, R12-R15</li>
+</ul>
+<h3 id="1-2-prolog-和-epilog"><a href="#1-2-prolog-和-epilog" class="headerlink" title="1.2 prolog 和 epilog"></a>1.2 prolog 和 epilog</h3><p>x64 中的函数被分成三个结构：<strong>prolog — 函数体 — epilog</strong>。</p>
+<p>x64 的函数内在一开始使用 <code>prolog</code> 来开辟堆栈，在最后时才使用 <code>epilog</code> 来平衡堆栈。而不像是 x86 中的 <code>__cdecl</code> 调用约定那样每次调用完函数立即要平衡堆栈。<strong>x64 是在函数最后的 <code>epilog</code> 来平衡堆栈</strong>。</p>
+<p><img data-src="https://s2.loli.net/2022/10/24/zdUJXADSMcZ7oRh.png" alt="21.png"></p>
+<div class="note danger"><p><code>x64</code> 函数将 <code>push</code> 和 <code>pop</code> 指令分别限制在 <code>prolog</code> 和 <code>epilog</code>中使用。堆栈指针在 <code>prolog</code> 和 <code>epilog</code> 之间一定保持不变这一事实是 <code>x64</code> 函数的一个特征。</p>
+</div>
+
+<p>函数的整体结构如下：</p>
+<p><img data-src="https://s2.loli.net/2022/10/25/yQKnSvhNlAVUi1j.png" alt="25.png"></p>
+<p>代码如下，实际上其中函数1调用2，但是都已经优化在 <code>main</code> 函数中进行调用，这样的好处是调用者和被调用者共享同一个栈帧，减少开销。 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001070</span> <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">0000000140001070</span></span><br><span class="line">.text:<span class="number">0000000140001070</span></span><br><span class="line">.text:<span class="number">0000000140001070</span> sub_140001070   proc near               <span class="comment">// CODE XREF: sub_1400011F4+107↓p</span></span><br><span class="line">.text:<span class="number">0000000140001070</span>                                         <span class="comment">// DATA XREF: .pdata:000000014000400C↓o</span></span><br><span class="line">.text:<span class="number">0000000140001070</span>                 push    rbx</span><br><span class="line">.text:<span class="number">0000000140001072</span>                 sub     rsp, <span class="number">20</span>h	<span class="comment">//prolog 到此行</span></span><br><span class="line">.text:<span class="number">0000000140001076</span>                 call    sub_1400010C0</span><br><span class="line">.text:<span class="number">000000014000107B</span>                 mov     rdx, rax</span><br><span class="line">.text:<span class="number">000000014000107</span>E                 lea     rcx, unk_140002240</span><br><span class="line">.text:<span class="number">0000000140001085</span>                 mov     rbx, rax</span><br><span class="line">.text:<span class="number">0000000140001088</span>                 call    sub_140001010</span><br><span class="line">.text:<span class="number">000000014000108</span>D                 lea     rdx, [rbx+<span class="number">10</span>h]</span><br><span class="line">.text:<span class="number">0000000140001091</span>                 lea     rcx, a0xLlx     <span class="comment">// &quot;0x%llx\n&quot;</span></span><br><span class="line">.text:<span class="number">0000000140001098</span>                 call    sub_140001010</span><br><span class="line">.text:<span class="number">000000014000109</span>D                 lea     rcx, Command    <span class="comment">// &quot;pause&quot;</span></span><br><span class="line">.text:<span class="number">00000001400010</span>A4                 call    cs:system</span><br><span class="line">.text:<span class="number">00000001400010</span>AA                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">00000001400010</span>AC                 add     rsp, <span class="number">20</span>h	<span class="comment">//epilog 从此行开始</span></span><br><span class="line">.text:<span class="number">00000001400010B</span>0                 pop     rbx</span><br><span class="line">.text:<span class="number">00000001400010B</span>1                 retn</span><br><span class="line">.text:<span class="number">00000001400010B</span>1 sub_140001070   endp</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>在 x86 CPU 上，FS 段寄存器指向线程环境块 (TEB) 和处理器控制区域 (<code>KPCR</code>)，但在 x64 上，GS 寄存器在用户模式下指向 TEB，在内核中指向 KPCR 的新模式。然而，当运行 WOW64 应用程序（即 x64 系统上的 32 位应用程序）时，FS 寄存器继续指向 32 位版本的 TEB。<code>x64</code>上的陷阱帧结构体 <code>nt!_KTRAP_FRAME</code> <mark class="label danger">不包含非易失性寄存器的有效内容</mark>。如果打算修改非易失性寄存器，<code>X64</code>函数的<code>prolog</code>会保存非易失性寄存器的值。调试器始终可以从堆栈中提取这些非易失性寄存器的保存值，而不必从陷阱帧中获取它们。 在<code>x64</code>上的内核模式调试期间，<code>.trap</code>命令的输出会打印一条注释，突出显示从陷阱中检索到的所有寄存器的值可能不准确的事实，如下所示。此规则有例外，例如，为用户到内核模式转换生成的陷阱帧确实包含所有寄存器的正确值。</p>
+</blockquote>
+<h2 id="2-RUNTIME-FUNCTION"><a href="#2-RUNTIME-FUNCTION" class="headerlink" title="2 RUNTIME_FUNCTION"></a>2 RUNTIME_FUNCTION</h2><p>x64 的 PE32+ 可执行文件中比 32 位的 PE 文件多一个 <code>.pdata</code> 节区，同时还会使用<strong>异常目录</strong>数据表。</p>
+<p><img data-src="https://s2.loli.net/2022/10/24/XlPBxk7STz9CLKM.png" alt="22.png"></p>
+<p><strong>每个非叶函数都有一个 <code>RUNTIME_FUNCTION</code> 结构</strong>。<code>RUNTIME_FUNCTION</code> 结构描述了非叶函数信息及 <code>prolog</code> 中相关的操作（包括堆栈提升和非叶函数是否安装了 SEH等）。按 <code>BeginAddress</code> 升序排列。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IMAGE_RUNTIME_FUNCTION_ENTRY</span> &#123;</span></span><br><span class="line">  ULONG BeginAddress;	<span class="comment">// RVA</span></span><br><span class="line">  ULONG EndAddress;	<span class="comment">// RVA</span></span><br><span class="line">  <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">    ULONG UnwindInfoAddress;</span><br><span class="line">    ULONG UnwindData;	<span class="comment">// RVA</span></span><br><span class="line">  &#125; DUMMYUNIONNAME;</span><br><span class="line">&#125; RUNTIME_FUNCTION, *PRUNTIME_FUNCTION, _IMAGE_RUNTIME_FUNCTION_ENTRY, *_PIMAGE_RUNTIME_FUNCTION_ENTRY;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>BeginAddress：当前非叶函数第一条指令相对于 <code>ImageBase</code> 的 <code>RVA</code> 起始地址。</li>
+<li>EndAddress：当前非叶函数最后一条指令相对于 <code>ImageBase</code> 的 <code>RVA</code> 终止地址。</li>
+<li>UnwindInfoAddress：一个指向展开信息结构（<code>UNWIND_INFO </code>）的指针 <code>RVA</code>，该结构描述了在发生异常时如何展开函数的调用堆栈。</li>
+</ul>
+<div class="note success"><p>当函数发生异常时，系统会使用当前 <code>RIP</code> 到 <code>RUNTIME_FUNCTION</code> 表中使用二分查找定位到当前函数的栈展开信息 <code>UNWIND_INFO</code>。</p>
+</div>
+
+
+
+<p><strong>练习：查看指定函数的 RUNTIME_FUNCTION</strong></p>
+<p><code>.fnent </code>命令显示有关给定函数的 <code>RUNTIME_FUNCTION</code> 结构的信息。</p>
+<p>用户模式的顶层处理函数 SEH 安装在 <code>ntdll!RtlUserThreadStart</code> 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; .fnent ntdll!RtlUserThreadStart</span><br><span class="line">Debugger function entry <span class="number">00000137</span>`<span class="number">838</span>a88d8 <span class="keyword">for</span>:</span><br><span class="line">(<span class="number">00007f</span>f9`<span class="number">40</span>ec2680)   ntdll!RtlUserThreadStart   |  (<span class="number">00007f</span>f9`<span class="number">40</span>ec26d0)   ntdll!TpReleaseCleanupGroupMembers</span><br><span class="line">Exact matches:</span><br><span class="line"></span><br><span class="line">BeginAddress      = <span class="number">00000000</span>`<span class="number">00052680</span></span><br><span class="line">EndAddress        = <span class="number">00000000</span>`<span class="number">000526</span>c9</span><br><span class="line">UnwindInfoAddress = <span class="number">00000000</span>`<span class="number">0014763</span>c</span><br><span class="line"></span><br><span class="line">Unwind info at <span class="number">00007f</span>f9`<span class="number">40f</span>b763c, <span class="number">10</span> bytes</span><br><span class="line">  version <span class="number">1</span>, flags <span class="number">1</span>, prolog <span class="number">4</span>, codes <span class="number">1</span></span><br><span class="line">  handler routine: ntdll!_C_specific_handler (<span class="number">00007f</span>f9`<span class="number">40</span>efc720), data <span class="number">1</span></span><br><span class="line">  <span class="number">00</span>: offs <span class="number">4</span>, unwind op <span class="number">2</span>, op info e	UWOP_ALLOC_SMALL.</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>查看函数的 <code>BeginAddress</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; lm ntdll</span><br><span class="line">Unknown option <span class="string">&#x27;d&#x27;</span></span><br><span class="line">start             end                 <span class="keyword">module</span> name</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40e70000</span> <span class="number">00007f</span>f9`<span class="number">41068000</span>   ntdll    ntdll.<span class="function">dll    <span class="title">FE96C48E</span> <span class="params">(This is a reproducible build file hash, <span class="keyword">not</span> a timestamp)</span></span></span><br><span class="line">fffff801`78600000 fffff801`79646000   nt       ntkrnlmp.exe 2FF0D722 (This is a reproducible build file hash, not a timestamp)</span><br><span class="line"></span><br><span class="line"><span class="number">0</span>: kd&gt; u <span class="number">0x00007ff9</span>`<span class="number">40e70000</span>+<span class="number">0x00000000</span>`<span class="number">00052680</span></span><br><span class="line">ntdll!RtlUserThreadStart:</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec2680 <span class="number">4883</span>ec78        sub     rsp,<span class="number">78</span>h</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec2684 <span class="number">4</span>c8bc9          mov     r9,rcx</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec2687 <span class="number">488b</span>0562991100  mov     rax,qword ptr [ntdll!Kernel32ThreadInitThunkFunction (<span class="number">00007f</span>f9`<span class="number">40f</span>dbff0)]</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec268e <span class="number">4885</span>c0          test    rax,rax</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec2691 <span class="number">7410</span>            je      ntdll!RtlUserThreadStart+<span class="number">0x23</span> (<span class="number">00007f</span>f9`<span class="number">40</span>ec26a3)</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec2693 <span class="number">4</span>c8bc2          mov     r8,rdx</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec2696 <span class="number">488b</span>d1          mov     rdx,rcx</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec2699 <span class="number">33</span>c9            <span class="keyword">xor</span>     ecx,ecx</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>查看函数的 <code>EndAddress</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; ub <span class="number">0x00007ff9</span>`<span class="number">40e70000</span>+<span class="number">0x00000000</span>`<span class="number">000526</span>c9</span><br><span class="line">ntdll!RtlUserThreadStart+<span class="number">0x36</span>:</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26b6 <span class="number">90</span>              nop</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26b7 <span class="number">8b</span>d0            mov     edx,eax</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26b9 <span class="number">4883</span>c9ff        <span class="keyword">or</span>      rcx,<span class="number">0F</span>FFFFFFFFFFFFFFFh</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26bd e8aeae0400      call    ntdll!NtTerminateProcess (<span class="number">00007f</span>f9`<span class="number">40f</span>0d570)</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26c2 <span class="number">90</span>              nop</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26c3 <span class="number">4883</span>c478        add     rsp,<span class="number">78</span>h</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26c7 c3              ret</span><br><span class="line"><span class="number">00007f</span>f9`<span class="number">40</span>ec26c8 cc              <span class="keyword">int</span>     <span class="number">3</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><img data-src="https://s2.loli.net/2022/10/24/RmPadEeVi5xy4wu.png" alt="24.png"></p>
+<h3 id="2-1-UNWIND-INFO"><a href="#2-1-UNWIND-INFO" class="headerlink" title="2.1 UNWIND_INFO"></a>2.1 UNWIND_INFO</h3><p><code>RUNTIME_FUNCTION</code> 结构的 <code>UnwindInfoAddress</code> 字段是一个 <code>UNWIND_INFO</code> 结构的偏移量，它告诉操作系统运行时它应该如何展开堆栈。<code>UNWIND_INFO</code> 结构包含数量不定的 <code>UNWIND_CODE</code> 结构，每个结构都存储着对应非叶函数 <code>prolog</code> 对堆栈相关操作的信息。</p>
+<p><strong><code>UNWIND_INFO</code> 结构体保存了异常处理的信息</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_NHANDLER 0x0		<span class="comment">// 没有安装SEH，既没有 EXCEPT_FILTER 也没有 EXCEPT_HANDLER</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_EHANDLER 0x1		<span class="comment">// 表示该函数有 EXCEPT_FILTER &amp; EXCEPT_HANDLER</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_UHANDLER 0x2		<span class="comment">// 表示该函数有 FINALLY_HANDLER</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_CHAININFO 0x4		<span class="comment">// 表示该函数有多个 UNWIND_INFO，它们串接在一起（所谓的 chain链）</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">UNWIND_INFO</span> &#123;</span></span><br><span class="line"><span class="comment">/* +00 */</span>        UCHAR Version : <span class="number">3</span>;	<span class="comment">// 低3位（版本号），目前为1</span></span><br><span class="line"><span class="comment">/* +00 */</span>        UCHAR Flags : <span class="number">5</span>;	<span class="comment">// 高5位（标志）值为上述define定义中的一个</span></span><br><span class="line"><span class="comment">/* +01 */</span>        UCHAR SizeOfProlog;	<span class="comment">// prolog 的大小（字节单位）</span></span><br><span class="line"><span class="comment">/* +02 */</span>        UCHAR CountOfCodes;	<span class="comment">// 表示当前 UNWIND_INFO 包含多少个 UNWIND_CODE 结构</span></span><br><span class="line"><span class="comment">/* +03 */</span>        UCHAR FrameRegister : <span class="number">4</span>;<span class="comment">// 如果函数建立了栈帧，它表示栈帧的索引（相对于 CONTEXT::RAX 的偏移）。否则该成员的值为0</span></span><br><span class="line"><span class="comment">/* +03 */</span>        UCHAR FrameOffset : <span class="number">4</span>;	<span class="comment">// 表示FrameRegister距离函数最初栈顶（完成prolog，没有执行其他指令时的栈顶）偏移</span></span><br><span class="line"><span class="comment">/* +04 */</span>        UNWIND_CODE UnwindCode[<span class="number">1</span>];<span class="comment">// UnwindCode 数组详细记录了函数修改栈、保存非易失性寄存器的指令</span></span><br><span class="line">     </span><br><span class="line">     		<span class="comment">//如果Flags设置了UNW_FLAG_EHANDLER或UNW_FLAG_UHANDLER，下面存放ExceptionHandler、ExceptionData</span></span><br><span class="line">     		<span class="comment">//如果Flags设置了UNW_FLAG_CHAININFO，则下面存放的是RUNTIME_FUNCTION结构</span></span><br><span class="line">     		<span class="class"><span class="keyword">union</span>&#123;</span></span><br><span class="line">       		<span class="class"><span class="keyword">struct</span>&#123;</span></span><br><span class="line"><span class="comment">/* +08 */</span>          		OPTIONAL ULONG ExceptionHandler;    <span class="comment">// RVA, Exception handler routine</span></span><br><span class="line"><span class="comment">/* +0C */</span>          		OPTIONAL ULONG ExceptionData[];     <span class="comment">// RVA, Scope table structure</span></span><br><span class="line">            		&#125;;</span><br><span class="line">		</span><br><span class="line"><span class="comment">/* +08 */</span> OPTIONAL RUNTIME_FUNCTION RuntimeFunctionChain;</span><br><span class="line">     		&#125;; </span><br><span class="line">  </span><br><span class="line">&#125; UNWIND_INFO, *PUNWIND_INFO;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">SCOPE_TABLE</span> &#123;</span></span><br><span class="line">        ULONG Count;		<span class="comment">// 下面 ScopeRecord 结构数组元素个数</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">        &#123;</span></span><br><span class="line">            ULONG BeginAddress;	<span class="comment">// RVA,__try块的开始地址</span></span><br><span class="line">            ULONG EndAddress;	<span class="comment">// RVA,__try块的结束地址</span></span><br><span class="line">            ULONG HandlerAddress;<span class="comment">// 相对于BeginAddress的RVA</span></span><br><span class="line">          			<span class="comment">// __try__except:过滤表达式，__try__finally:FINALLY_HANDLER</span></span><br><span class="line">            ULONG JumpTarget;	<span class="comment">// RVA__try__except:EXCEPT_HANDLER，__try__finally:0</span></span><br><span class="line">        &#125; ScopeRecord[<span class="number">1</span>];</span><br><span class="line">    &#125; SCOPE_TABLE, *PSCOPE_TABLE;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>SCOPE_TABLE</strong>：</p>
+<p><code>SCOPE_TABLE</code> 是一个变长的结构体，用来描述每一个<code>__try__except </code> 或 <code>__try__finally</code> 的位置，每一个表项对应一个 <code>__try</code> 语句。</p>
+<ol>
+<li><p>在 IDA 中对安装了 SEH 的函数进行交叉引用，可以看到 <code>UNWIND_INFO.ExceptionHandler</code> 都是为 <code>__C_specific_hander</code> 函数，这相当于 x86 SEH 处理的 <code>__except_hander3</code> 函数，即统一的异常处理分发入口。</p>
+<p><img data-src="https://s2.loli.net/2022/10/26/lToEdBCway8bctH.png" alt="26.png"></p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/devnotes/--c-specific-handler2">__C_specific_handler</a> 函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_CRTIMP  __C_specific_handler(</span><br><span class="line">  _In_    struct _EXCEPTION_RECORD   *ExceptionRecord,</span><br><span class="line">  _In_    <span class="keyword">void</span>                       *EstablisherFrame,</span><br><span class="line">  _Inout_ struct _CONTEXT            *ContextRecord,</span><br><span class="line">  _Inout_ struct _DISPATCHER_CONTEXT *DispatcherContext</span><br><span class="line">);</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+</li>
+<li><p><code>SCOPE_TABLE.JumpTarget</code> 对应的就是 <code>__except</code> 处理函数。</p>
+<p>参考<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/build/exception-handling-x64?view=msvc-170">MSDN-x64 异常处理</a>函数原型如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">EXCEPTION_DISPOSITION</span> <span class="params">(*PEXCEPTION_ROUTINE)</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  IN PEXCEPTION_RECORD ExceptionRecord;</span></span></span><br><span class="line"><span class="function"><span class="params">  IN ULONG64 EstablisherFrame,</span></span></span><br><span class="line"><span class="function"><span class="params">  IN OUT PCONTEXT ContextRecord,</span></span></span><br><span class="line"><span class="function"><span class="params">  IN OUT PDISPATCHER_CONTEXT Dispatchercontext</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ExceptionRecord：异常采集信息，该指针指向具有标准 Win64 定义的异常记录。</li>
+<li>EstablisherFrame：是此异常发生函数的固定堆栈分配的基址。</li>
+<li>ContextRecord：指向引发异常时的异常上下文（在异常处理程序的情况下）或当前的展开上下文（在终止处理程序的情况下）。</li>
+<li>DispatcherContext：指向此函数的调度程序上下文。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_RECORD64</span> &#123;</span></span><br><span class="line">  NTSTATUS ExceptionCode;</span><br><span class="line">  ULONG ExceptionFlags;</span><br><span class="line">  ULONG64 ExceptionRecord;</span><br><span class="line">  ULONG64 ExceptionAddress;</span><br><span class="line">  ULONG NumberParameters;</span><br><span class="line">  ULONG __unusedAlignment;</span><br><span class="line">  ULONG64 ExceptionInformation[EXCEPTION_MAXIMUM_PARAMETERS];</span><br><span class="line">&#125; EXCEPTION_RECORD64, *PEXCEPTION_RECORD64;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">EXCEPTION_POINTERS</span> &#123;</span></span><br><span class="line">  PEXCEPTION_RECORD ExceptionRecord;</span><br><span class="line">  PCONTEXT ContextRecord;</span><br><span class="line">&#125; EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><code>PEXCEPTION_ROUTINE</code> 的 <code>Dispatchercontext(PDISPATCHER_CONTEXT)</code> 参数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">DISPATCHER_CONTEXT</span> &#123;</span></span><br><span class="line">    ULONG64 ControlPc;</span><br><span class="line">    ULONG64 ImageBase;</span><br><span class="line">    PRUNTIME_FUNCTION FunctionEntry;</span><br><span class="line">    ULONG64 EstablisherFrame;</span><br><span class="line">    ULONG64 TargetIp;</span><br><span class="line">    PCONTEXT ContextRecord;</span><br><span class="line">    PEXCEPTION_ROUTINE LanguageHandler;</span><br><span class="line">    PVOID HandlerData;</span><br><span class="line">&#125; DISPATCHER_CONTEXT, *PDISPATCHER_CONTEXT;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ControlPc：是此函数中的 RIP 值（异常触发点）。此值可以是异常地址，也可以是控制离开建立函数的地址。</li>
+<li>ImageBase：是包含此函数的模块的映像基（加载地址），将其添加到函数入口使用的32位偏移，以记录相对地址。</li>
+<li>FunctionEntry：提供一个指针，该指针指向保存此函数的函数和展开信息图像基相对地址的 <code>RUNTIME_FUNCTION</code> 函数项。</li>
+<li>EstablisherFrame：<code>ControlPc</code> 所在函数的栈帧（如果建立了栈帧）或 RSP。</li>
+<li>TargetIp：处理异常的 <code>__except</code> 代码块（由 <code>__C_specific_hander</code> 来负责调用）。如果未指定 EstablisherFrame，则忽略此地址。</li>
+<li>ContextRecord：指向异常上下文，供系统异常调度&#x2F;展开代码使用。</li>
+<li>LanguageHandler：指向调用的异常处理程序例程（<code>UNWIND_INFO.ExceptionHandler</code>，即 <code>__C_specific_hander</code>）。</li>
+<li>HandlerData：指向此函数的异常处理程序数据（<code>UNWIND_INFO.ExceptionData</code> 中 <code>SCOPE_TABLE.ScopeRecord</code>）。</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-2-UNWIND-CODE"><a href="#2-2-UNWIND-CODE" class="headerlink" title="2.2 UNWIND_CODE"></a>2.2 UNWIND_CODE</h3><p><code>UNWIND_CODE</code> 结构用来恢复函数 prolog 对堆栈执行的操作，每个 <code>UNWIND_CODE</code>  结构仅对应一个操作，要么是开辟堆栈空间、要么是 <code>push</code> 非易失寄存器。</p>
+<p><code>UNWIND_CODE</code> 结构的内容是包含在 <code>UNWIND_INFO</code> 里面的，不是通过 RVA 得到的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">UNWIND_OP_CODES</span> &#123;</span></span><br><span class="line">    UWOP_PUSH_NONVOL = <span class="number">0</span>,   <span class="comment">// 0, 压入非易失性整数寄存器，具体压入取决于OpInfo值</span></span><br><span class="line">    UWOP_ALLOC_LARGE,       <span class="comment">// 1</span></span><br><span class="line">    UWOP_ALLOC_SMALL,       <span class="comment">// 2</span></span><br><span class="line">    UWOP_SET_FPREG,         <span class="comment">// 3</span></span><br><span class="line">    UWOP_SAVE_NONVOL,       <span class="comment">// 4</span></span><br><span class="line">    UWOP_SAVE_NONVOL_FAR,   <span class="comment">// 5</span></span><br><span class="line">    UWOP_SPARE_CODE1,       <span class="comment">// 6</span></span><br><span class="line">    UWOP_SPARE_CODE2,       <span class="comment">// 7</span></span><br><span class="line">    UWOP_SAVE_XMM128,       <span class="comment">// 8</span></span><br><span class="line">    UWOP_SAVE_XMM128_FAR,   <span class="comment">// 9</span></span><br><span class="line">    UWOP_PUSH_MACHFRAME     <span class="comment">// 10</span></span><br><span class="line">&#125; UNWIND_OP_CODES, *PUNWIND_OP_CODES;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> _<span class="title">UNWIND_CODE</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        UCHAR CodeOffset;</span><br><span class="line">        UCHAR UnwindOp : <span class="number">4</span>;</span><br><span class="line">        UCHAR OpInfo : <span class="number">4</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    USHORT FrameOffset;</span><br><span class="line">&#125; UNWIND_CODE, *PUNWIND_CODE;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>CodeOffset：当前指令到 prolog 第一条指令的偏移。</li>
+<li>UnwindOp：展开操作码，为 <code>UNWIND_OP_CODES</code> 枚举值之一。具体含义可以参考<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/build/exception-handling-x64?view=msvc-170">MSDN-x64 异常处理-展开操作代码</a>。</li>
+<li>OpInfo：展开信息，取决于 UnwindOp，具体参考<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/cpp/build/exception-handling-x64?view=msvc-170">MSDN-x64 异常处理-操作信息</a>。</li>
+</ul>
+<p><strong>注意</strong>：在每一个 <code>UNWIND_INFO</code> 下的多个 <code>UNWIND_CODE</code> 中，<code>UNWIND_CODE</code> <mark class="label danger">表示的操作与实际 prolog 对堆栈执行的操作是相反的</mark>。如下图。</p>
+<p><img data-src="https://s2.loli.net/2022/10/24/4bMW1qHsR3QKNny.png" alt="23.png"></p>
+<p>对 <code>Exception Directory</code> 的解析：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tchar.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> DEBUG</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DEBUG</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_NHANDLER 0x0		<span class="comment">// 没有安装SEH，既没有 EXCEPT_FILTER 也没有 EXCEPT_HANDLER</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_EHANDLER 0x1		<span class="comment">// 表示该函数有 EXCEPT_FILTER &amp; EXCEPT_HANDLER</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_UHANDLER 0x2		<span class="comment">// 表示该函数有 FINALLY_HANDLER</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> UNW_FLAG_CHAININFO 0x4		<span class="comment">// 表示该函数有多个 UNWIND_INFO，它们串接在一起（所谓的 chain链）</span></span></span><br><span class="line"></span><br><span class="line">CHAR File_Name[] = <span class="string">&quot;C:\\Users\\alvin\\Desktop\\VS2019项目文件夹\\x64\\First_Inline_x64\\x64\\Release\\First_Inline_x64.exe&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> _<span class="title">UNWIND_CODE</span> &#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">		UCHAR CodeOffset;</span><br><span class="line">		UCHAR UnwindOp : <span class="number">4</span>;</span><br><span class="line">		UCHAR OpInfo : <span class="number">4</span>;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">	USHORT FrameOffset;</span><br><span class="line">&#125; UNWIND_CODE, * PUNWIND_CODE;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">UNWIND_INFO</span> &#123;</span></span><br><span class="line">	<span class="comment">/* +00 */</span>        UCHAR Version : <span class="number">3</span>;	<span class="comment">// 低3位（版本号），目前为1</span></span><br><span class="line">	<span class="comment">/* +00 */</span>        UCHAR Flags : <span class="number">5</span>;	<span class="comment">// 高5位（标志）值为上述define定义中的一个</span></span><br><span class="line">	<span class="comment">/* +01 */</span>        UCHAR SizeOfProlog;	<span class="comment">// prolog 的大小（字节单位）</span></span><br><span class="line">	<span class="comment">/* +02 */</span>        UCHAR CountOfCodes;	<span class="comment">// 表示当前 UNWIND_INFO 包含多少个 UNWIND_CODE 结构</span></span><br><span class="line">	<span class="comment">/* +03 */</span>        UCHAR FrameRegister : <span class="number">4</span>;<span class="comment">// 如果函数建立了栈帧，它表示栈帧的索引（相对于 CONTEXT::RAX 的偏移）。否则该成员的值为0</span></span><br><span class="line">	<span class="comment">/* +03 */</span>        UCHAR FrameOffset : <span class="number">4</span>;	<span class="comment">// 表示FrameRegister距离函数最初栈顶（完成prolog，没有执行其他指令时的栈顶）偏移</span></span><br><span class="line">	<span class="comment">/* +04 */</span>        UNWIND_CODE UnwindCode[<span class="number">1</span>];<span class="comment">// UnwindCode 数组详细记录了函数修改栈、保存非易失性寄存器的指令</span></span><br><span class="line"></span><br><span class="line">				<span class="comment">//如果Flags设置了UNW_FLAG_EHANDLER或UNW_FLAG_UHANDLER，下面存放ExceptionHandler、ExceptionData</span></span><br><span class="line">				<span class="comment">//如果Flags设置了UNW_FLAG_CHAININFO，则下面存放的是RUNTIME_FUNCTION结构</span></span><br><span class="line">	<span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">		<span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">			<span class="comment">/* +08 */</span>          		OPTIONAL ULONG ExceptionHandler;    <span class="comment">// RVA, Exception handler routine</span></span><br><span class="line">			<span class="comment">/* +0C */</span>          		OPTIONAL ULONG ExceptionData[];     <span class="comment">// RVA, Scope table structure</span></span><br><span class="line">		&#125;;</span><br><span class="line"></span><br><span class="line">		<span class="comment">/* +08 */</span> OPTIONAL RUNTIME_FUNCTION RuntimeFunctionChain;</span><br><span class="line">	&#125;;</span><br><span class="line"></span><br><span class="line">&#125; UNWIND_INFO, * PUNWIND_INFO;</span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">ReadPEFile</span><span class="params">(IN LPCSTR lpszFile, OUT PVOID64* pFileBuffer, OUT PULONG64 FileSize)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	FILE* pFile = <span class="literal">NULL</span>;</span><br><span class="line">	ULONG uError = <span class="number">0</span>;</span><br><span class="line">	ULONG64 fileSize = <span class="number">0</span>;        				</span><br><span class="line">	PVOID64 pTempFileBuffer = <span class="literal">NULL</span>; 	</span><br><span class="line"></span><br><span class="line">	<span class="comment">//打开文件	</span></span><br><span class="line">	uError = fopen_s(&amp;pFile, lpszFile, <span class="string">&quot;rb&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (uError || pFile == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot; 无法打开 EXE 文件! uError = %d, pFile = %llx\n&quot;</span>, uError, (ULONG64)pFile);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">//读取文件大小		</span></span><br><span class="line">	fseek(pFile, <span class="number">0</span>, SEEK_END);	</span><br><span class="line">	fileSize = ftell(pFile);	</span><br><span class="line">	fseek(pFile, <span class="number">0</span>, SEEK_SET);</span><br><span class="line">	<span class="comment">//分配缓冲区</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> DEBUG</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;读取的文件大小：0x%llx字节\n&quot;</span>, fileSize);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">	<span class="keyword">if</span> (fileSize &lt;= <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot; 文件读取失败! &quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	pTempFileBuffer = <span class="built_in">malloc</span>(fileSize);</span><br><span class="line">	<span class="keyword">if</span> (!pTempFileBuffer)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot; 分配空间失败! &quot;</span>);</span><br><span class="line">		fclose(pFile);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">memset</span>(pTempFileBuffer, <span class="number">0</span>, fileSize);</span><br><span class="line">	<span class="comment">//将文件数据读取到缓冲区	</span></span><br><span class="line">	ULONG64 n = fread(pTempFileBuffer, fileSize, <span class="number">1</span>, pFile);</span><br><span class="line">	<span class="keyword">if</span> (!n)</span><br><span class="line">	&#123;         </span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot; 读取数据失败! &quot;</span>);</span><br><span class="line">		<span class="built_in">free</span>(pTempFileBuffer);</span><br><span class="line">		fclose(pFile);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	*pFileBuffer = pTempFileBuffer;</span><br><span class="line">	*FileSize = fileSize;</span><br><span class="line">	<span class="comment">//关闭文件	</span></span><br><span class="line">	fclose(pFile);</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ULONG64 <span class="title">RVAToFOA</span><span class="params">(IN ULONG64 RVA, IN PVOID64 pFileBuffer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PIMAGE_DOS_HEADER pDosHeader = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_NT_HEADERS64  pNTHeader = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_FILE_HEADER pFileHeader = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_OPTIONAL_HEADER64 pOptionHeader64 = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_SECTION_HEADER pSectionHeader = <span class="literal">NULL</span>;</span><br><span class="line">	ULONG dwSizeOfHeaders = <span class="number">0</span>;</span><br><span class="line">	BYTE uSignature[<span class="number">4</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (pFileBuffer == <span class="literal">NULL</span>) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;pImageBuffer缓冲区指针出错...\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	uSignature[<span class="number">0</span>] = *(PBYTE)pFileBuffer;</span><br><span class="line">	uSignature[<span class="number">1</span>] = *(PBYTE)((BYTE*)pFileBuffer+<span class="number">1</span>);</span><br><span class="line">	<span class="comment">//判断是否含有有效MZ和PE标志</span></span><br><span class="line">	<span class="keyword">if</span> (*(PUSHORT)uSignature != IMAGE_DOS_SIGNATURE) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;非有效的MZ标志\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	pDosHeader = (PIMAGE_DOS_HEADER)pFileBuffer;</span><br><span class="line">	<span class="keyword">if</span> (*((PDWORD)((BYTE*)pDosHeader + pDosHeader-&gt;e_lfanew)) != IMAGE_NT_SIGNATURE) &#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;非有效的PE标志\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//找到所有PE文件结构的头地址</span></span><br><span class="line">	pNTHeader = (PIMAGE_NT_HEADERS64)((BYTE*)pDosHeader + pDosHeader-&gt;e_lfanew);</span><br><span class="line">	pFileHeader = (PIMAGE_FILE_HEADER)((BYTE*)pNTHeader + <span class="keyword">sizeof</span>(DWORD));</span><br><span class="line">	pOptionHeader64 = (PIMAGE_OPTIONAL_HEADER64)((BYTE*)pFileHeader + IMAGE_SIZEOF_FILE_HEADER);</span><br><span class="line">	pSectionHeader = (PIMAGE_SECTION_HEADER)((BYTE*)pOptionHeader64 + pFileHeader-&gt;SizeOfOptionalHeader);</span><br><span class="line">	dwSizeOfHeaders = pOptionHeader64-&gt;SizeOfHeaders;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (RVA &lt; dwSizeOfHeaders)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">return</span> RVA;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		<span class="comment">//循环判断RVA在哪个节表内</span></span><br><span class="line">		DWORD i = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (; i &lt; pNTHeader-&gt;FileHeader.NumberOfSections; i++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">if</span> ((pSectionHeader[i].VirtualAddress &lt;= RVA) &amp;&amp; (RVA &lt; (pSectionHeader[i].VirtualAddress + pSectionHeader[i].Misc.VirtualSize)))</span><br><span class="line">			&#123;</span><br><span class="line">				<span class="comment">//在某个节中，终止循环</span></span><br><span class="line">				<span class="keyword">break</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="comment">//找到RVA相对该节表的偏移，偏移+该节表在文件内的起始地址则为FOA</span></span><br><span class="line">		<span class="keyword">return</span> RVA - pSectionHeader[i].VirtualAddress + pSectionHeader[i].PointerToRawData;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">BOOL <span class="title">ParserExceptionDirectory</span><span class="params">(PVOID64 pFileBuffer)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PIMAGE_DOS_HEADER pDosHeader = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_NT_HEADERS64  pNTHeader = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_FILE_HEADER pFileHeader = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_OPTIONAL_HEADER64 pOptionHeader64 = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_SECTION_HEADER pSectionHeader = <span class="literal">NULL</span>;</span><br><span class="line">	PIMAGE_DATA_DIRECTORY pDataDirectory = <span class="literal">NULL</span>;</span><br><span class="line">	PRUNTIME_FUNCTION pRuntimeFunction = <span class="literal">NULL</span>;</span><br><span class="line">	PUNWIND_INFO pUnwindInfo = <span class="literal">NULL</span>;</span><br><span class="line">	PUNWIND_CODE pUnwindCode = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	pDosHeader = (PIMAGE_DOS_HEADER)pFileBuffer;</span><br><span class="line">	pNTHeader = (PIMAGE_NT_HEADERS64)((BYTE*)pFileBuffer + pDosHeader-&gt;e_lfanew);</span><br><span class="line">	pOptionHeader64 = (PIMAGE_OPTIONAL_HEADER64)((BYTE*)pNTHeader + IMAGE_SIZEOF_FILE_HEADER + <span class="keyword">sizeof</span>(DWORD));</span><br><span class="line">	pSectionHeader = (PIMAGE_SECTION_HEADER)((BYTE*)pOptionHeader64 + pNTHeader-&gt;FileHeader.SizeOfOptionalHeader);</span><br><span class="line">	pDataDirectory = (PIMAGE_DATA_DIRECTORY)(pOptionHeader64-&gt;DataDirectory);</span><br><span class="line">	pRuntimeFunction = (PRUNTIME_FUNCTION)((BYTE*)pDosHeader + RVAToFOA(pDataDirectory[<span class="number">3</span>].VirtualAddress, pFileBuffer));</span><br><span class="line"></span><br><span class="line">	ULONG j = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">while</span>(pRuntimeFunction[j].BeginAddress)</span><br><span class="line">	&#123;</span><br><span class="line">		j++;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; --j &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">while</span> (pRuntimeFunction-&gt;BeginAddress)</span><br><span class="line">	&#123;</span><br><span class="line">		pUnwindInfo = (PUNWIND_INFO)((BYTE*)pDosHeader + RVAToFOA(pRuntimeFunction-&gt;UnwindInfoAddress, pFileBuffer));</span><br><span class="line">		pUnwindCode = (PUNWIND_CODE)(pUnwindInfo-&gt;UnwindCode);</span><br><span class="line"></span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;-------------------------------------------------------------------------&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;UNWIND_INFO:&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Version = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;Version) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;Flags = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;Flags) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;SizeOfProlog = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;SizeOfProlog) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;CountOfCodes = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;CountOfCodes) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;FrameRegister = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;FrameRegister) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;FrameOffset = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;FrameOffset) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;UnwindCode = &quot;</span> &lt;&lt; hex &lt;&lt; (ULONG)(pUnwindInfo-&gt;UnwindCode) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		<span class="keyword">if</span> ((ULONG)(pUnwindInfo-&gt;Flags) &amp; (UNW_FLAG_EHANDLER | UNW_FLAG_UHANDLER))</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ExceptionHandler(RVA) = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;ExceptionHandler) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;ExceptionData(RVA,Scopetable) = &quot;</span> &lt;&lt; (ULONG)(pUnwindInfo-&gt;ExceptionData) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span> ((ULONG)(pUnwindInfo-&gt;Flags) == UNW_FLAG_CHAININFO)</span><br><span class="line">		&#123;</span><br><span class="line">			RUNTIME_FUNCTION RuntimeFuntion = pUnwindInfo-&gt;RuntimeFunctionChain;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;BeginAddress(RVA) = &quot;</span> &lt;&lt; (ULONG64)(RuntimeFuntion.BeginAddress) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;EndAddress(RVA) = &quot;</span> &lt;&lt; (ULONG64)(RuntimeFuntion.EndAddress) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;UnwindInfoAddress(RVA) = &quot;</span> &lt;&lt; (ULONG64)(RuntimeFuntion.UnwindInfoAddress) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;-------------------------------------------------------------------------&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (ULONG i = <span class="number">0</span>; i &lt; (ULONG)(pUnwindInfo-&gt;CountOfCodes); i++)</span><br><span class="line">		&#123;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;UNWIND_CODE:&quot;</span> &lt;&lt; i + <span class="number">1</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;CodeOffset = &quot;</span> &lt;&lt; (ULONG)(pUnwindCode[i].CodeOffset) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;UnwindOp = &quot;</span> &lt;&lt; (ULONG)(pUnwindCode[i].UnwindOp) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;OpInfo = &quot;</span> &lt;&lt; (ULONG)(pUnwindCode[i].OpInfo) &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">			<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;FrameOffset = &quot;</span> &lt;&lt; (ULONG)(pUnwindCode[i].FrameOffset) &lt;&lt; <span class="built_in">endl</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="built_in">cout</span> &lt;&lt; <span class="string">&quot;-------------------------------------------------------------------------&quot;</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">		pRuntimeFunction++;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">int</span> _tmain(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span><br><span class="line">&#123;</span><br><span class="line">	PVOID64 pFileBuffer = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	ULONG64 uFileSize = <span class="number">0</span>;</span><br><span class="line">	BOOL bRet = FALSE;</span><br><span class="line"></span><br><span class="line">	bRet = ReadPEFile(File_Name, &amp;pFileBuffer, &amp;uFileSize);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;The file buffer : 0x%llx\n&quot;</span>, (ULONG64)pFileBuffer);</span><br><span class="line">	bRet = ParserPEFile(pFileBuffer);	</span><br><span class="line"></span><br><span class="line">	getchar();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-x64堆栈回滚"><a href="#3-x64堆栈回滚" class="headerlink" title="3 x64堆栈回滚"></a>3 x64堆栈回滚</h2><h3 id="3-1-Windbg调试堆栈回滚"><a href="#3-1-Windbg调试堆栈回滚" class="headerlink" title="3.1 Windbg调试堆栈回滚"></a>3.1 Windbg调试堆栈回滚</h3><p>如下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span>  <span class="function">PVOID64 _fastcall <span class="title">GetPebLdr</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"><span class="function">__int64 <span class="title">Test3Parameters</span><span class="params">(__int64* arg_1, __int64 arg_2, __int64 arg_3, OUT PVOID64* OutAddress)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    __int64 iLocal = <span class="number">0</span>;</span><br><span class="line">    iLocal = *arg_1;</span><br><span class="line">    DebugBreak();</span><br><span class="line">    *OutAddress = GetPebLdr();</span><br><span class="line">    <span class="keyword">return</span> iLocal + arg_2 + arg_3 + (ULONG64)*OutAddress;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PVOID64 OutAddress = <span class="literal">NULL</span>;</span><br><span class="line">    INT64 Temp = <span class="number">2</span>;</span><br><span class="line">    __try</span><br><span class="line">    &#123;</span><br><span class="line">        INT64 Test = Test3Parameters(&amp;Temp, <span class="number">5</span>, <span class="number">9</span>, &amp;OutAddress);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, OutAddress);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;0x%llx\n&quot;</span>, Test);</span><br><span class="line">    &#125;</span><br><span class="line">    __except(<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, TEXT(<span class="string">&quot;发生异常&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line">    system(<span class="string">&quot;pause&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>函数调用关系：main — Test3Parameters — DebugBreak(int 3)。</p>
+<p>在 Release 版本下面查看此时断点断下来后的堆栈：</p>
+<p><code>knf</code> 命令显示调用堆栈以及堆栈中每一帧使用的堆栈空间量 <code>Memory</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; .process ffff998de9a560c0</span><br><span class="line">Implicit process is now ffff998d`e9a560c0</span><br><span class="line">WARNING: .cache forcedecodeuser is <span class="keyword">not</span> enabled</span><br><span class="line"><span class="number">0</span>: kd&gt; knf</span><br><span class="line"> #   Memory  Child-SP          RetAddr               Call Site</span><br><span class="line"><span class="number">00</span>           <span class="number">00000008</span>`f531fa08 <span class="number">00007f</span>f6`<span class="number">8306107</span>c     KERNELBASE!wil::details::DebugBreak+<span class="number">0x2</span></span><br><span class="line"><span class="number">01</span>         <span class="number">8</span> (Inline Function) --------`--------     First_Inline_x64!Test3Parameters+<span class="number">0x6</span> </span><br><span class="line"><span class="number">02</span>         <span class="number">0</span> <span class="number">00000008</span>`f531fa10 <span class="number">00007f</span>f6`<span class="number">83061310</span>     First_Inline_x64!main+<span class="number">0xc</span>  </span><br><span class="line"><span class="number">03</span>        <span class="number">30</span> (Inline Function) --------`--------     First_Inline_x64!invoke_main+<span class="number">0x22</span> </span><br><span class="line"><span class="number">04</span>         <span class="number">0</span> <span class="number">00000008</span>`f531fa40 <span class="number">00007f</span>ff`bad37034     First_Inline_x64!__scrt_common_main_seh+<span class="number">0x10c</span> </span><br><span class="line"><span class="number">05</span>        <span class="number">40</span> <span class="number">00000008</span>`f531fa80 <span class="number">00007f</span>ff`bb5426a1     KERNEL32!BaseThreadInitThunk+<span class="number">0x14</span></span><br><span class="line"><span class="number">06</span>        <span class="number">30</span> <span class="number">00000008</span>`f531fab0 <span class="number">00000000</span>`<span class="number">00000000</span>     ntdll!RtlUserThreadStart+<span class="number">0x21</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>Memory：子函数堆栈大小。</li>
+<li>Child-SP：当前函数 RSP 位置。</li>
+<li>RetAddr：当前函数的返回地址。</li>
+<li>Call Site：子函数的返回地址。</li>
+<li>Args to Child：当前函数的实参。</li>
+</ol>
+<ul>
+<li><p><strong>Call Site</strong>：调用子函数的位置。<strong>实际为子函数返回地址</strong>。<mark class="label primary">需要从整个列倒序来看函数调用顺序</mark>。</p>
+<p>如 <mark class="label info">#01</mark> 号帧，<code>Call Site = First_Inline_x64!Test3Parameters+0x6</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; u First_Inline_x64!Test3Parameters</span><br><span class="line">First_Inline_x64!Test3Parameters:</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">83061076</span> ff15840f0000    call    qword ptr [First_Inline_x64!_imp_DebugBreak (<span class="number">00007f</span>f6`<span class="number">83062000</span>)]</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">8306107</span>c e84f000000      call    First_Inline_x64!GetPebLdr (<span class="number">00007f</span>f6`<span class="number">830610</span>d0)</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">83061081</span> <span class="number">488</span>d5810        lea     rbx,[rax+<span class="number">10</span>h]</span><br></pre></td></tr></table></figure>
+
+<p>但是实际上 <code>00007ff6&#39;83061076 + 6 = 00007ff6&#39;8306107c</code> 为子函数的返回地址。</p>
+</li>
+<li><p><strong>Memory</strong>：<strong>子函数</strong>栈帧的大小<strong>，单位是字节，</strong>十六进制。<mark class="label primary">需要从上下两行来看子函数堆栈使用了多少字节，如 #05 号帧的 0x40 字节表示子函数的堆栈使用情况</mark>。</p>
+<p>$函数栈帧的大小\ &#x3D;\ 返回地址（8 个字节）+ 非易失变寄存器 + 局部变量 + 基于栈的参数 + 预留的 0x20 字节（shadow space）$<br>$函数栈帧的大小\ &#x3D;\ 返回地址（8个字节）+\ unwind\_code$</p>
+<p>公式的返回地址是调用者函数的返回地址，其余值都是子函数的。</p>
+<p>结论：<strong>当前函数栈帧的大小位于下一帧的 Memory 中</strong>。</p>
+</li>
+<li><p><strong>Child-SP</strong>：表示<mark class="label danger">当前函数</mark>初始化完成后的 RSP 状态值，当前函数中此时的 RSP 已经完成 prolog 操作。</p>
+<p>如 <mark class="label info">#04</mark> 号帧，此时 Child-SP 指针指向的内容就表示函数 <code>__scrt_common_main_seh</code> 完成 prolog 后的 RSP 的位置。<mark class="label primary">需要从整个列来看 RSP 实际变化情况</mark>。如 #04 号帧到 #05 号帧的 RSP 变化为 0x40 字节，表示 #04 号帧用了 0x40 字节。</p>
+<ol>
+<li><p>先来验证 #04 号帧 Memory，其对应的值为父函数帧的 0x40 字节。</p>
+<ul>
+<li><p>返回地址：8 字节。</p>
+</li>
+<li><p>分析函数：提升堆栈为 8+0x30 &#x3D; 0x38 字节。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; u __scrt_common_main_seh</span><br><span class="line">First_Inline_x64!__scrt_common_main_seh:</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">83061204</span> <span class="number">48895</span>c2408      mov     qword ptr [rsp+<span class="number">8</span>],rbx</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">83061209</span> <span class="number">4889742410</span>      mov     qword ptr [rsp+<span class="number">10</span>h],rsi</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">8306120</span>e <span class="number">57</span>              push    rdi</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">8306120f</span> <span class="number">4883</span>ec30        sub     rsp,<span class="number">30</span>h</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">83061213</span> b901000000      mov     ecx,<span class="number">1</span></span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">83061218</span> e82f030000      call    First_Inline_x64!__scrt_initialize_crt (<span class="number">00007f</span>f6`<span class="number">8306154</span>c)</span><br><span class="line"><span class="number">00007f</span>f6`<span class="number">8306121</span>d <span class="number">84</span>c0            test    al,al</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>则总共为 <code>8 + 8 + 0x30 = 0x40</code> 字节，与 Memory 对应上了。</p>
+</li>
+</ul>
+</li>
+<li><p>此时 <mark class="label info">#04</mark> 号帧 Child-SP：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; dq <span class="number">00000008</span>`f531fa40</span><br><span class="line"><span class="number">00000008</span>`f531fa40  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line"><span class="number">00000008</span>`f531fa50  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line"><span class="number">00000008</span>`f531fa60  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line"><span class="number">00000008</span>`f531fa70  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00007f</span>ff`bad37034 &lt;--RetAddr </span><br><span class="line"><span class="number">00000008</span>`f531fa80  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+</ul>
+<p><strong>注意</strong>：<code>.frame /r 02</code> 表示列出 <code>#02</code> 号帧的寄存器的值，此时的寄存器保存的值是从 <code>#01</code> 号帧 prolog 保存非易失寄存器的时得到的。也就是说 <code>.frame /r 02</code> 的寄存器状态是调用子函数时的寄存器，不是进入 <code>#02</code> 号帧时的寄存器。</p>
+<h3 id="3-2-UNWIND-INFO堆栈回滚"><a href="#3-2-UNWIND-INFO堆栈回滚" class="headerlink" title="3.2 UNWIND_INFO堆栈回滚"></a>3.2 UNWIND_INFO堆栈回滚</h3><p>x64 的函数栈回溯，无需借助程序的符号表。只需要借助 <code>RUNTIME_FUNCTION</code>、<code>UNWIND_INFO</code> 和 <code>UNWIND_CODE</code> 结构即可从 <code>PE</code> 文件本身中的信息来得出每个函数堆栈上分配的空间。</p>
+<p>$函数栈帧的大小\ &#x3D;\ 返回地址（8 个字节）+ 非易失变寄存器 + 局部变量 + 基于栈的参数 + 预留的 0x20 字节（shadow space）$<br>$函数栈帧的大小\ &#x3D;\ 返回地址（8个字节）+\ unwind\_code$</p>
+<p>本节实验还是借助 Windbg，在 IDA 中其实更好分析。参考《<a target="_blank" rel="noopener" href="https://www.cnblogs.com/khacker/p/12164723.html">深入X64架构(翻译）</a>》、《<a target="_blank" rel="noopener" href="https://v2as.com/article/6565511d-265a-48bb-a073-33808b564e94">深入 x64</a>》。</p>
+<p>本节还是以上面提到的 <code>#04</code> 号帧做例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; knf</span><br><span class="line"> #   Memory  Child-SP          RetAddr               Call Site</span><br><span class="line"><span class="number">00</span>           <span class="number">00000008</span>`f531fa08 <span class="number">00007f</span>f6`<span class="number">8306107</span>c     KERNELBASE!wil::details::DebugBreak+<span class="number">0x2</span></span><br><span class="line"><span class="number">01</span>         <span class="number">8</span> (Inline Function) --------`--------     First_Inline_x64!Test3Parameters+<span class="number">0x6</span> </span><br><span class="line"><span class="number">02</span>         <span class="number">0</span> <span class="number">00000008</span>`f531fa10 <span class="number">00007f</span>f6`<span class="number">83061310</span>     First_Inline_x64!main+<span class="number">0xc</span>  </span><br><span class="line"><span class="number">03</span>        <span class="number">30</span> (Inline Function) --------`--------     First_Inline_x64!invoke_main+<span class="number">0x22</span> </span><br><span class="line"><span class="number">04</span>         <span class="number">0</span> <span class="number">00000008</span>`f531fa40 <span class="number">00007f</span>ff`bad37034     First_Inline_x64!__scrt_common_main_seh+<span class="number">0x10c</span> </span><br><span class="line"><span class="number">05</span>        <span class="number">40</span> <span class="number">00000008</span>`f531fa80 <span class="number">00007f</span>ff`bb5426a1     KERNEL32!BaseThreadInitThunk+<span class="number">0x14</span></span><br><span class="line"><span class="number">06</span>        <span class="number">30</span> <span class="number">00000008</span>`f531fab0 <span class="number">00000000</span>`<span class="number">00000000</span>     ntdll!RtlUserThreadStart+<span class="number">0x21</span></span><br></pre></td></tr></table></figure>
+
+<p>查看函数 <code>UNWIND_INFO</code> 情况。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span>: kd&gt; .fnent First_Inline_x64!__scrt_common_main_seh</span><br><span class="line">Debugger function entry <span class="number">00000228</span>`<span class="number">6b</span>61eb38 <span class="keyword">for</span>:</span><br><span class="line">(<span class="number">00007f</span>f6`<span class="number">83061204</span>)   First_Inline_x64!__scrt_common_main_seh   |  (<span class="number">00007f</span>f6`<span class="number">83061380</span>)   First_Inline_x64!mainCRTStartup</span><br><span class="line">Exact matches:</span><br><span class="line">    First_Inline_x64!__scrt_common_main_seh (<span class="keyword">void</span>)</span><br><span class="line"></span><br><span class="line">BeginAddress      = <span class="number">00000000</span>`<span class="number">00001204</span></span><br><span class="line">EndAddress        = <span class="number">00000000</span>`<span class="number">00001380</span></span><br><span class="line">UnwindInfoAddress = <span class="number">00000000</span>`<span class="number">00002814</span></span><br><span class="line"></span><br><span class="line">Unwind info at <span class="number">00007f</span>f6`<span class="number">83062814</span>, <span class="number">18</span> bytes</span><br><span class="line">  version <span class="number">1</span>, flags <span class="number">1</span>, prolog f, codes <span class="number">6</span></span><br><span class="line">  handler routine: First_Inline_x64!_C_specific_handler (<span class="number">00007f</span>f6`<span class="number">83061</span>cc0), data <span class="number">2</span></span><br><span class="line">  <span class="number">00</span>: offs f, unwind op <span class="number">4</span>, op info <span class="number">6</span>	UWOP_SAVE_NONVOL FrameOffset: <span class="number">48</span> reg: rsi.</span><br><span class="line">  <span class="number">02</span>: offs f, unwind op <span class="number">4</span>, op info <span class="number">3</span>	UWOP_SAVE_NONVOL FrameOffset: <span class="number">40</span> reg: rbx.</span><br><span class="line">  <span class="number">04</span>: offs f, unwind op <span class="number">2</span>, op info <span class="number">5</span>	UWOP_ALLOC_SMALL.</span><br><span class="line">  <span class="number">05</span>: offs b, unwind op <span class="number">0</span>, op info <span class="number">7</span>	UWOP_PUSH_NONVOL reg: rdi.</span><br></pre></td></tr></table></figure>
+
+<p>正常来说 <code>UNWIND_CODE</code> 应该是逆序排序的。</p>
+<ul>
+<li>UWOP_SAVE_NONVOL：<code>mov qword ptr[rsp+0x8], rbx</code>，0 bytes。</li>
+<li>UWOP_SAVE_NONVOL：<code>mov qword ptr[rsp+0x10], rsi</code>，0 bytes。</li>
+<li>UWOP_PUSH_NONVOL：<code>push rdi</code>，8 bytes。</li>
+<li>UWOP_ALLOC_SMALL：<code>sub rsp, 5*8+8</code>，0x30 bytes。</li>
+</ul>
+<p>函数栈帧的大小 &#x3D; 返回地址（8 bytes）+unwind_code(0x38) &#x3D; 0x40字节。和 #05 帧的 Memory 对上。</p>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/khacker/p/12164723.html">深入X64架构(翻译）</a></li>
+<li><a target="_blank" rel="noopener" href="https://v2as.com/article/6565511d-265a-48bb-a073-33808b564e94">深入 x64</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/247688#h3-10">如何分析X64的SEH</a></li>
+<li><a target="_blank" rel="noopener" href="https://jhinxs.com/x86%E4%B8%8Ex64%E6%A0%88%E5%9B%9E%E6%BA%AF/#x64-%E6%A0%88%E5%9B%9E%E6%BA%AF">x86与x64栈回溯</a></li>
+<li><a target="_blank" rel="noopener" href="http://uninformed.org/index.cgi?v=4&a=1&p=11">Exception Handling on x64</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/19808172/struct-runtime-function"><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/19808172/struct-runtime-function">Struct RUNTIME_FUNCTION</a></a></li>
+</ul>
+<h2 id="4-异常处理"><a href="#4-异常处理" class="headerlink" title="4 异常处理"></a>4 异常处理</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.pediy.com/kssd/pediy12/142371.html">SEH分析笔记（X64篇）</a></li>
+<li><a target="_blank" rel="noopener" href="https://dbgtech.github.io/2017/08/04/Windows-X64-Try-Except-Finally.html">Windows X64的Ring3层异常处理机制</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.talosintelligence.com/2014/06/exceptional-behavior-windows-81-x64-seh.html">Exceptional behavior: the Windows 8.1 X64 SEH Implementation</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1663524-1-1.html">Windows 10 x64 异常分发</a></li>
+<li><a target="_blank" rel="noopener" href="https://revers.engineering/applied-re-exceptions/">Applied Reverse Engineering: Exceptions And Interrupts</a></li>
+</ul>
+<h3 id="4-1-异常产生与采集"><a href="#4-1-异常产生与采集" class="headerlink" title="4.1 异常产生与采集"></a>4.1 异常产生与采集</h3><h3 id="4-2-异常分发"><a href="#4-2-异常分发" class="headerlink" title="4.2 异常分发"></a>4.2 异常分发</h3><h3 id="4-3-内核异常处理"><a href="#4-3-内核异常处理" class="headerlink" title="4.3 内核异常处理"></a>4.3 内核异常处理</h3><h3 id="4-4-用户异常处理"><a href="#4-4-用户异常处理" class="headerlink" title="4.4 用户异常处理"></a>4.4 用户异常处理</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/x64_Disassembly3/" title="x64 异常处理">https://directoree.github.io/post/x64_Disassembly3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> x64 异常处理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/x64_Disassembly2/" rel="prev" title="x64 汇编基础">
+                  <i class="fa fa-chevron-left"></i> x64 汇编基础
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/x64-Kernel/" rel="next" title="x64 内核（一）IA-32e 研究">
+                  x64 内核（一）IA-32e 研究 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.9m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">28:47</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/x64_Disassembly3/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

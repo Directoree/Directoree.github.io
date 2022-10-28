@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64 内核（一）IA-32e 研究">
+<meta property="og:url" content="https://directoree.github.io/post/x64-Kernel/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/10/27/HMZLU4l6PQtB5R9.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/27/yPSInXpHElB4oMu.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/27/KsHglWfajrZxNIA.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/27/KM1HJnaDbx53piy.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/28/tE7oDxIYqVznf3X.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/28/N4FDLAXkPabEfx5.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/28/Nmxlb18PavMritT.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/28/xjegTFM83AUKy4n.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/28/W7XEsZA5SM3Fz2t.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/28/phYe13MV5UF4xt9.png">
+<meta property="article:published_time" content="2022-10-27T08:24:49.000Z">
+<meta property="article:modified_time" content="2022-10-28T18:16:21.109Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 内核GDT">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/10/27/HMZLU4l6PQtB5R9.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/x64-Kernel/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>x64 内核（一）IA-32e 研究 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-IA-32-%E5%92%8C-IA-32e-%E6%9E%B6%E6%9E%84"><span class="nav-text">1 IA-32 和 IA-32e 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-IA-32e-%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 IA-32e 架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-IA-32e-%E9%97%A8%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-text">1.2 IA-32e 门的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-IA-32e-%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.3 IA-32e 运行模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-IA32-EFER-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">1.4 IA32_EFER 寄存器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-CPUID-%E6%8C%87%E4%BB%A4"><span class="nav-text">2 CPUID 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-CPUID-%E6%8C%87%E4%BB%A4%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-text">2.1 CPUID 指令的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-CPUID-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-text">2.2 CPUID 的使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CRx-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">3 CRx 寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-CR0"><span class="nav-text">3.1 CR0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-CR2"><span class="nav-text">3.2 CR2</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">62</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64-Kernel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64 内核（一）IA-32e 研究
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-10-27 16:24:49" itemprop="dateCreated datePublished" datetime="2022-10-27T16:24:49+08:00">2022-10-27</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-10-29 02:16:21" itemprop="dateModified" datetime="2022-10-29T02:16:21+08:00">2022-10-29</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64-%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64 内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/x64-Kernel/" class="post-meta-item leancloud_visitors" data-flag-title="x64 内核（一）IA-32e 研究" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/x64-Kernel/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/x64-Kernel/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+
+
+<h2 id="1-IA-32-和-IA-32e-架构"><a href="#1-IA-32-和-IA-32e-架构" class="headerlink" title="1 IA-32 和 IA-32e 架构"></a>1 IA-32 和 IA-32e 架构</h2><h3 id="1-1-IA-32e-架构"><a href="#1-1-IA-32e-架构" class="headerlink" title="1.1 IA-32e 架构"></a>1.1 IA-32e 架构</h3><ol>
+<li><p>从 32 位系统过渡到 64 位系统初期，Intel 开发了 IA-64，仅支持 64 位指令集，不支持原先的 x86（IA-32）指令集。而 AMD 开发了能支持 IA-32 指令集的 CPU，称之为 x86-64 或 AMD64（简称 x64）。之后由于市场的因素，Intel 跟着 AMD 也在自己的 x86 基础上开发出兼容 IA-32的 CPU，称 IA-32e 或者 Intel64。</p>
+<ul>
+<li><p>x86：IA-32</p>
+</li>
+<li><p>AMD64</p>
+</li>
+<li><p>Intel64：IA-32e</p>
+</li>
+</ul>
+</li>
+<li><p>IA-32e 模式下支持两种子模式的软件运行。</p>
+<ul>
+<li>64-bit mode：Run 64 bit Apps。</li>
+<li>Compatibility mode（兼容模式）：Run 64 bit Apps，run legacy software。（<strong>Legacy Mode</strong>：Real mode、Protected mode、Virtual 8086 mode，称为传统模式）</li>
+</ul>
+</li>
+<li><p>64 位模式。</p>
+<ul>
+<li>AMD：Long Mode</li>
+<li>Intel：IA-32e</li>
+</ul>
+</li>
+<li><p>32、64 位。</p>
+<ul>
+<li>Legacy Mode（传统模式）：内核 32 位，用户 32 位。</li>
+<li>64-bit mode：内核 64 位，用户 64 位。</li>
+<li>Compatibility mode（兼容模式）：内核 64 位，用户 64&#x2F;32 位。</li>
+</ul>
+</li>
+</ol>
+<div class="note primary"><p>IA-32e 模式下，系统级的寄存器如下：</p>
+<ul>
+<li>Model-specific registers（<strong>MSR</strong>）：用于 R0 代码的寄存器（驱动可访问），用于控制——调试扩展、性能监控计数器、机器检查架构和内存类型范围 (MTRRs) 等。MSR 很复杂，Intel 专门出了<a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">手册卷 4</a> 来进行说明。</li>
+<li>描述符寄存器：GDTR、IDTR、LDTR 和 TR。</li>
+<li>标志寄存器：RFLAGS，64 位中高 32 位保留未使用。R0、R3 都可直接访问和修改（R3仅可修改部分位，如ZF）。</li>
+<li>调试寄存器：DR0~DR7，64 位。</li>
+<li>控制寄存器：CR0~CR4，CR8，都是 64 位。</li>
+<li>CPUID 指令，不是寄存器。</li>
+</ul>
+</div>
+
+<p>开机后，模式启动顺序：实模式 — 保护模式 — IA-32e 模式。</p>
+<p>下图 2-1 表示 IA-32，图 2-2 表示 IA-32e。</p>
+<p><img data-src="https://s2.loli.net/2022/10/27/HMZLU4l6PQtB5R9.png" alt="1"></p>
+<p><img data-src="https://s2.loli.net/2022/10/27/yPSInXpHElB4oMu.png" alt="2.png"></p>
+<h3 id="1-2-IA-32e-门的支持"><a href="#1-2-IA-32e-门的支持" class="headerlink" title="1.2 IA-32e 门的支持"></a>1.2 IA-32e 门的支持</h3><p>IA-32e <mark class="label success">取消了任务门</mark>， TSS 还存在（取消了大部分成员），但是系统调用时不会从 TSS 中获取 RSP0。</p>
+<p><strong>支持</strong>：调用门、中断门、陷阱门。</p>
+<p>最新的手册：<a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel® 64 and IA-32 Architectures Software Developer Manuals</a>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x68 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">KTSS64</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ULONG Reserved0;                                                        <span class="comment">//0x0</span></span><br><span class="line">    ULONGLONG Rsp0;                                                         <span class="comment">//0x4</span></span><br><span class="line">    ULONGLONG Rsp1;                                                         <span class="comment">//0xc</span></span><br><span class="line">    ULONGLONG Rsp2;                                                         <span class="comment">//0x14</span></span><br><span class="line">    ULONGLONG Ist[<span class="number">8</span>];                                                       <span class="comment">//0x1c</span></span><br><span class="line">    ULONGLONG Reserved1;                                                    <span class="comment">//0x5c</span></span><br><span class="line">    USHORT Reserved2;                                                       <span class="comment">//0x64</span></span><br><span class="line">    USHORT IoMapBase;                                                       <span class="comment">//0x66</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-3-IA-32e-运行模式"><a href="#1-3-IA-32e-运行模式" class="headerlink" title="1.3 IA-32e 运行模式"></a>1.3 IA-32e 运行模式</h3><p>x86 支持三种模式：实模式、保护模式、虚拟8086模式。</p>
+<p>Intel 64 可以切换到 x86 的模式中，同时还支持 IA-32e 模式。在 IA-32e 模式下，处理器支持两种子模式（Sub-modes）：</p>
+<ol>
+<li>64-bit 模式（不支持运行32位程序）</li>
+<li>Compatibility mode，兼容模式（支持运行32位程序）。</li>
+</ol>
+<p>在 IA-32e 下区分 64 位模式和还是兼容模式：查看 CS 段寄存器的 <mark class="label danger">CL</mark> 位。（代码段描述符增加一个L属性位，用于表明这个是要一个64位代码段）</p>
+<ul>
+<li>L &#x3D; 1 : 64位代码段</li>
+<li>L &#x3D; 0:<ul>
+<li>D &#x3D; 1 32位代码段</li>
+<li>D &#x3D; 0 16位代码段</li>
+</ul>
+</li>
+</ul>
+<div class="note default"><p><strong>注意</strong>：兼容模式（Compatibility mode）并不是切换到保护模式，是在 IA-32e 模式下。同时 IA-32e 不支持虚拟 8086 模式。</p>
+</div>
+
+<p>关于运行模式的切换需要看 <a target="_blank" rel="noopener" href="https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html">Intel 手册卷2 9.9</a>：</p>
+<p><img data-src="https://s2.loli.net/2022/10/27/KsHglWfajrZxNIA.png" alt="3.png"></p>
+<h3 id="1-4-IA32-EFER-寄存器"><a href="#1-4-IA32-EFER-寄存器" class="headerlink" title="1.4 IA32_EFER 寄存器"></a>1.4 IA32_EFER 寄存器</h3><p>MSR 是包含控制寄存器和状态寄存器两类功能的一组寄存器。它即可以控制CPU的一些行为，也存储一些CPU的状态。MSR每个寄存器是64位宽的，MSR是一组寄存器，他们没有自己的名字，他们的访问方式和使用 <code>IN/OUT</code> 指令的 I&#x2F;O 操作是一样的都是使用地址来进行访问。</p>
+<p>使用 <code>RDMSR</code> 和 <code>WRMSR</code> 两个指令来进行读写，相当于 I&#x2F;O 操作的 <code>IN/OUT</code> 指令，</p>
+<p>MSR 寄存器中提供了一些特殊的寄存器，如 <code>IA32_EFER</code> 寄存器：它提供了几个与 IA-32e 的模式启用与操作相关的字段（<strong>控制着是否进入64位模式</strong>）。 它还提供了一个与页面访问权限修改相关的字段 <code>IA32_EFER</code> MSR 的布局下图所示。</p>
+<p><img data-src="https://s2.loli.net/2022/10/27/KM1HJnaDbx53piy.png" alt="4.png"></p>
+<ul>
+<li>Bit 11：控制每级页表项的最高位 <code>XD</code> 位，使用 <code>或(||)</code> 关系。</li>
+</ul>
+<div class="note danger"><p>IA-32e 模式的启用条件是：</p>
+<p>　　1. 启用段内存管理进入保护模式 CR0.PE &#x3D; 1</p>
+<p>　　2. 启用PAE内存分页管理模式 CR4.PAE &#x3D; 1</p>
+<p>　　3. 启用64位模式 EFER.LME &#x3D; 1 </p>
+<p>　　4. 启用页内存管理 CR0.PG &#x3D; 1 </p>
+<p>　　5. 上述四点必须按照上面的顺序启用</p>
+<p>　　如果条件全部满足，CPU会置 EFER.LMA &#x3D; 1表示 IA-32e 位模式启动了 。然后在 IA-32e 下区分 64 位模式和还是兼容模式：查看 CS 段寄存器的 <mark class="label default">CL</mark> 位。</p>
+</div>
+
+<p>可参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/alwaysking/p/12439207.html">汇编学习笔记(24) - x64位的世界</a></li>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-260848.htm">对比总结32位和64位下,IDT,GDT,DS,CS,TSS,FS,GS的异同</a></li>
+</ul>
+<h2 id="2-CPUID-指令"><a href="#2-CPUID-指令" class="headerlink" title="2 CPUID 指令"></a>2 CPUID 指令</h2><p><code>CPUID</code> 是一个指令，用来得到 CPU 处理器的身份信息（如型号、家族等）、特征和状态，还能得到 CPU 的一些其他扩展信息。</p>
+<table>
+<thead>
+<tr>
+<th>Opcode</th>
+<th>Instruction</th>
+<th>Op&#x2F;En</th>
+<th>64-Bit Mode</th>
+<th>Compat&#x2F;Leg Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0F A2</td>
+<td>CPUID</td>
+<td>ZO</td>
+<td>Valid</td>
+<td>Valid</td>
+<td>根据输入的 EAX（在某些情况下，ECX 也作为输入）的不同，将不同的身份&#x2F;特征信息返回到 EAX、EBX、ECX、EDX 中。</td>
+</tr>
+</tbody></table>
+<p>指令操作数：</p>
+<table>
+<thead>
+<tr>
+<th>Op&#x2F;En</th>
+<th>Operand 1</th>
+<th>Operand 2</th>
+<th>Operand 3</th>
+<th>Operand 4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ZO</td>
+<td>NA</td>
+<td>NA</td>
+<td>NA</td>
+<td>NA</td>
+</tr>
+</tbody></table>
+<h3 id="2-1-CPUID-指令的支持"><a href="#2-1-CPUID-指令的支持" class="headerlink" title="2.1 CPUID 指令的支持"></a>2.1 CPUID 指令的支持</h3><ol>
+<li><p><code>CPUID</code> 指令从 Intel 486 开始引入支持。</p>
+</li>
+<li><p>判断 CPU 是否支持 <code>CPUID</code> 指令：使用 RFLAGS 寄存器的 Bit-21（ID位）。</p>
+<p>在代码中，如果能设置或者清除 <code>rflags.ID</code> 位的值，则表示 CPU 支持 <code>CPUID</code> 指令。</p>
+</li>
+<li><p>在 IA-32e 模式下，CPUID 指令<strong>会清除 rax&#x2F;rbx&#x2F;rcx&#x2F;rdx 的高 32 位</strong>，仅使用低 32 位。</p>
+</li>
+</ol>
+<h3 id="2-2-CPUID-的使用"><a href="#2-2-CPUID-的使用" class="headerlink" title="2.2 CPUID 的使用"></a>2.2 CPUID 的使用</h3><p>Intel 将要查询的<strong>功能号</strong>放入 RAX 寄存器中（对于较复杂的信息查询，会使用到 RCX 作为输入寄存器）。</p>
+<p>输入分为两部分，主叶为必须值。</p>
+<ul>
+<li>RAX：主叶，<code>leaf</code> 或 <code>main-leaf</code></li>
+<li>RCX：子叶，<code>sub-leaf</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mov rax, <span class="number">0B</span>h;</span><br><span class="line">mov rcx, <span class="number">0</span>;</span><br><span class="line">cpuid;</span><br></pre></td></tr></table></figure>
+
+<p>指令语法：</p>
+<p><img data-src="https://s2.loli.net/2022/10/28/tE7oDxIYqVznf3X.png" alt="5.png"></p>
+<p>CPUID 返回的信息分为两大类：<strong>基本信息</strong>、<strong>扩展信息</strong>。每类信息都有最大功能号（<code>main</code>）限制。</p>
+<p>目前 Intel 手册上这两类信息的输入功能号范围：</p>
+<ul>
+<li>基本功能号：0～0x1F</li>
+<li>扩展功能号：0x80000000～0x80000008</li>
+</ul>
+<p>下面分别查询 <em>Intel(R) Core(TM) i5-8279U CPU @ 2.40GHz   2.40 GHz——MacBook Pro (13-inch, 2019, Four Thunderbolt 3 ports)</em> 支持的最大基本功能号和最大扩展功能号：</p>
+<ol>
+<li><p>查询最大基本功能号：使用 <code>00h leaf</code> 来查询。 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mov rax, <span class="number">0</span>h;</span><br><span class="line">cpuid;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出如下</span></span><br><span class="line">RAX	<span class="number">0000000000000016</span>	<span class="comment">//最大基本功能号0x16</span></span><br><span class="line">RBX	<span class="number">00007F</span>FA756E6547	<span class="comment">//Genu</span></span><br><span class="line">RCX	<span class="number">00007F</span>FA6C65746E	<span class="comment">//ntel</span></span><br><span class="line">RDX	<span class="number">0000000049656E69</span>	<span class="comment">//inel</span></span><br></pre></td></tr></table></figure>
+
+<p>RBX+RDX+RCX：Genuntelinel。AMD为 AuthenticAMD。</p>
+<p><img data-src="https://s2.loli.net/2022/10/28/N4FDLAXkPabEfx5.png" alt="6.png"></p>
+</li>
+<li><p>查询最大扩展功能号：使用 <code>80000000h leaf</code> 来查询。 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mov rax, <span class="number">80000000</span>h;</span><br><span class="line">cpuid;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出如下</span></span><br><span class="line">RAX	<span class="number">0000000080000008</span>	<span class="comment">//最大扩展功能号0x80000008</span></span><br><span class="line">RBX	<span class="number">00007F</span>FA00000000	<span class="comment">//Reserved</span></span><br><span class="line">RCX	<span class="number">00007F</span>FA00000000	<span class="comment">//Reserved</span></span><br><span class="line">RDX	<span class="number">0000000000000000</span>	<span class="comment">//Reserved</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/10/28/Nmxlb18PavMritT.png" alt="7.png"></p>
+</li>
+</ol>
+<p><strong>如果输入</strong>：功能号 &lt;&#x3D; 最大功能号，但是 CPU 不支持该功能号，则所有寄存器的返回值为 0。</p>
+<p><strong>如果输入</strong>：功能号 &gt; 最大功能号，则返回 CPU 支持的最大功能号的信息。如上面实验 CPU 的 <code>0x16/0x80000008</code> 的信息。</p>
+<p>除此之外还有几个常用的指令：</p>
+<ol>
+<li><p>查询处理器型号（Family, model, stepping）：<code>CPUID.01H:EAX</code>。</p>
+</li>
+<li><p>最大的物理地址和线性地址：<code>CPUID.80000008H:EAX[0~7:Physical,8~15:Linear]</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mov rax, <span class="number">80000008</span>h;</span><br><span class="line">cpuid;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出如下</span></span><br><span class="line">RAX	<span class="number">0000000000003024</span>	<span class="comment">//Linear:0x24=36, 0x30=48</span></span><br><span class="line">RBX	<span class="number">00007F</span>FA00000000	<span class="comment">//Reserved</span></span><br><span class="line">RCX	<span class="number">00007F</span>FA00000000	<span class="comment">//Reserved</span></span><br><span class="line">RDX	<span class="number">0000000000000000</span>	<span class="comment">//Reserved</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p><img data-src="https://s2.loli.net/2022/10/28/xjegTFM83AUKy4n.png" alt="8.png"></p>
+</li>
+<li><p>查询 MONOTOR&#x2F;MWAIT 信息：<code>CPUID.01H:ECX.[3]</code>。</p>
+<p><code>monitor/mwait</code> 指令的使用情形有些与 <code>pause</code> 指令类似，在 Idle-Loop（空闲的循环）中用来提高处理器的性能和减少能耗。<code>pause</code> 常用于 OS 的自旋锁，<code>monitor/mwait</code> 对某个地址范围做监控，这个地址范围内没发生写操作就进入优化（空闲）的状态，由 <code>mwait</code> 等待某些事件而退出，因地址 store 操作而退出或者因某些中断类的事件发生。由 IA32_MISC_ENABLE 开启这个功能。</p>
+</li>
+<li><p>查看 syscall&#x2F;sysret 指令是否可用：<code>CPUID.80000001H:EDX.[11] = 1</code>。</p>
+</li>
+</ol>
+<p>更多信息参考：</p>
+<ul>
+<li>Intel 64 and IA-32 Architectures Software Developer’s Manual Volume 2 (2A, 2B, 2C &amp; 2D): Instruction Set Reference, A-Z</li>
+<li>x86&#x2F;x64 体系探索及编程</li>
+</ul>
+<h2 id="3-CRx-寄存器"><a href="#3-CRx-寄存器" class="headerlink" title="3 CRx 寄存器"></a>3 CRx 寄存器</h2><p>控制着 CPU 处理器的工作模式，限制着 CPU 的功能。</p>
+<p>IA-32e 模式下 CR0～CR15 控制寄存器被扩展为 64 位，但是仅使用 CR0、CR2、CR3、CR4，还有专用于 IA-32e 模式下的 CR8。</p>
+<p><img data-src="https://s2.loli.net/2022/10/28/W7XEsZA5SM3Fz2t.png" alt="9.png"></p>
+<ul>
+<li>CR0：包含系统控制位、操作模式位、处理器状态位。</li>
+<li>CR1：保留。</li>
+<li>CR2：发生页面异常（Page-fault）时，用来存放页面异常的线性地址。<strong>注意</strong>：<code>mov cr2,xx</code> 指令并不会检查地址是否规范。</li>
+<li>CR3：唯一存放物理地址的寄存器。保存的物理地址为 PML4&#x2F;PML5 表基址。</li>
+<li>CR4：提供一些扩展的控制功能。</li>
+<li>CR8：仅在 IA-32e 模式下可用。控制着对 Task Priority Register (TPR) 的读写。</li>
+</ul>
+<p><strong>注意</strong>：通用寄存器的访问和写入<mark class="label danger">仅在内核模式</mark>下才可以使用。</p>
+<h3 id="3-1-CR0"><a href="#3-1-CR0" class="headerlink" title="3.1 CR0"></a>3.1 CR0</h3><p><img data-src="https://s2.loli.net/2022/10/28/phYe13MV5UF4xt9.png" alt="10.png"></p>
+<table>
+<thead>
+<tr>
+<th>标志</th>
+<th>位</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>PE</td>
+<td>0</td>
+<td>启用保护模式（Protection Enable）<br />PE &#x3D; 1，开启保护模式。<br />PE &#x3D; 0，实模式。<br />要开启分页模式需要 CR0.PG &#x3D; 1。<br />PG &#x3D; 0 且 PE &#x3D; 0 ，处理器工作在<strong>实地址模式</strong>下。 <br />PG &#x3D; 0 且 PE &#x3D; 1，处理器工作在<strong>没有开启分页机制的保护模式下</strong>。（目前没有这样的操作系统） <br />PG &#x3D; 1 且 PE &#x3D; 0 ，在PE没有开启的情况下，无法开启PG。（没有这样的状态） <br />PG &#x3D; 1 且 PE &#x3D; 1，<strong>处理器工作在开启了分页机制的保护模式下</strong>。</td>
+</tr>
+<tr>
+<td>MP, EM, TS, NE</td>
+<td>1, 2, 3, 5</td>
+<td>用于 x87 FPU 浮点运算。</td>
+</tr>
+<tr>
+<td>ET</td>
+<td>4</td>
+<td>对齐类型（Extension Type）。在 Pentium 4、Intel Xeon、P6 系列和 Pentium 处理器中保留。 在 Pentium 4 Intel Xeon 和 P6 系列处理器中，此标志被硬编码为 1。在 Intel386 和 Intel486 处理器中，此标志在设置时表示支持 Intel 387 DX 数学协处理器指令。手册中没提到其他使用方式。</td>
+</tr>
+<tr>
+<td>WP</td>
+<td>16</td>
+<td>写保护（Write Protect）<br />WP &#x3D; 1，supervisor 权限的程序禁止修改 only-read 页面。<br />WP &#x3D; 0，supervisor 权限的程序允许修改 only-read 页面。<br />页面 supervisor 权限指 R0～R2，user 指 R3。<br />在 CR4.CET 置1前必须先将该为置1，当 CR4.CET 置1后不允许将该位清零。</td>
+</tr>
+<tr>
+<td>AM</td>
+<td>18</td>
+<td>对齐掩码（Alignment Mask）<br />只有 CPL &#x3D;&#x3D; 3，运行在用户模式或者虚拟8086模式，才会对地址进行边界对齐检查。不对齐产生#AC异常。<br />AM &#x3D; 1 &amp;&amp; rflags.AC &#x3D; 1，启用自动对齐检查。<br />AM &#x3D; 0 || rflags.AC &#x3D; 0，禁用自动对齐检查。</td>
+</tr>
+<tr>
+<td>NW, CD</td>
+<td>29, 30</td>
+<td>NW：Not Write-through（不可直写）, CD：Cache Disable。Write-back 回写。跟 Memory Cache 有关。<br />NW 和 CD 标志被清零时，回写（对于奔腾4,英特尔至强,P6系列和奔腾处理器）或直写（对于Intel486处理器）被启用以用于命中缓存和失效周期的写入。</td>
+</tr>
+<tr>
+<td>PG</td>
+<td>31</td>
+<td>分页（Paging）。<br />开启页式管理前必须要打开保护模式 PE 位，否则将产生 #GP 异常。<br />PG &#x3D; 0 且 PE &#x3D; 0 ，处理器工作在<strong>实地址模式</strong>下。 <br />PG &#x3D; 0 且 PE &#x3D; 1，处理器工作在<strong>没有开启分页机制的保护模式下</strong>。（目前没有这样的操作系统） <br />PG &#x3D; 1 且 PE &#x3D; 0 ，在PE没有开启的情况下，无法开启PG。（没有这样的状态） <br />PG &#x3D; 1 且 PE &#x3D; 1，<strong>处理器工作在开启了分页机制的保护模式下</strong>。</td>
+</tr>
+</tbody></table>
+<p>本机测试：<code>CR0 = c0050033</code>。</p>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://cdrdv2.intel.com/v1/dl/getContent/671447">Intel® 64 and IA-32 Architectures Software Developer’s Manual Combined Volumes 3A, 3B, 3C, and 3D: System Programming Guide</a></li>
+<li>x86&#x2F;x64 体系探索及编程</li>
+<li><a target="_blank" rel="noopener" href="http://www.woaidaima.com/thread-95349-1-1.html">控制寄存器 CR0-CR4</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/ComputerInBook/article/details/122955217">X64汇编语言寄存器结构及其与X86架构编程区别</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/alwaysking/p/12439207.html">汇编学习笔记(24) - x64位的世界</a></li>
+</ul>
+<h3 id="3-2-CR2"><a href="#3-2-CR2" class="headerlink" title="3.2 CR2"></a>3.2 CR2</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/x64-Kernel/" title="x64 内核（一）IA-32e 研究">https://directoree.github.io/post/x64-Kernel/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-%E5%86%85%E6%A0%B8GDT/" rel="tag"><i class="fa fa-tag"></i> x64 内核GDT</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/x64_Disassembly3/" rel="prev" title="x64 异常处理">
+                  <i class="fa fa-chevron-left"></i> x64 异常处理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.9m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">28:47</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/x64-Kernel/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
