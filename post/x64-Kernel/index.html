@@ -22,12 +22,12 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="😄">
+  <meta name="description" content="title: x64 内核（一）IA-32e 研究date: 2022-10-27 16:24:49tags:     - Windows内核          - x64 内核GDTcategories:          - x64 内核hide: false 😄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="x64 内核（一）IA-32e 研究">
+<meta property="og:title" content="Catecat">
 <meta property="og:url" content="https://directoree.github.io/post/x64-Kernel/index.html">
 <meta property="og:site_name" content="Catecat">
-<meta property="og:description" content="😄">
+<meta property="og:description" content="title: x64 内核（一）IA-32e 研究date: 2022-10-27 16:24:49tags:     - Windows内核          - x64 内核GDTcategories:          - x64 内核hide: false 😄">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/10/27/HMZLU4l6PQtB5R9.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/27/yPSInXpHElB4oMu.png">
@@ -47,22 +47,13 @@
 <meta property="og:image" content="https://s2.loli.net/2022/10/29/AzkJNaL81hPxyMR.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/29/e1NswtKadYvLrRc.png">
 <meta property="og:image" content="https://s2.loli.net/2022/01/09/Dw7epWShPrCFKXg.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/4xl9G5RDBCen2LM.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/Oq51Z9CkzMxXuVf.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/h45V762FTy8puOj.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/fimpX7IK4eHRvnM.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/tCrVcMgBDFXTndW.png">
-<meta property="og:image" content="https://s2.loli.net/2021/12/14/hjy1X9lCY3OULfi.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/31/qDkld37xCTfgGH5.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/30/ciyfgjrLDOl4d1C.png">
-<meta property="og:image" content="https://s2.loli.net/2022/10/31/QXtUG2jZPrkYI39.png">
-<meta property="article:published_time" content="2022-10-27T08:24:49.000Z">
-<meta property="article:modified_time" content="2022-10-31T14:49:00.013Z">
+<meta property="og:image" content="https://s2.loli.net/2022/11/01/evWKZTc7oPVwbgq.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/27/KM1HJnaDbx53piy.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/31/L3aZAyUODI5CRbn.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/01/LHXVAFy2dhCrknv.png">
+<meta property="article:published_time" content="2022-10-27T08:24:50.004Z">
+<meta property="article:modified_time" content="2022-11-01T16:11:22.048Z">
 <meta property="article:author" content="Catecat">
-<meta property="article:tag" content="Windows内核">
-<meta property="article:tag" content="x64 内核GDT">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2022/10/27/HMZLU4l6PQtB5R9.png">
 
@@ -80,7 +71,7 @@
   };
 </script>
 
-  <title>x64 内核（一）IA-32e 研究 | Catecat</title>
+  <title> | Catecat</title>
   
 
 
@@ -261,7 +252,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-IA-32-%E5%92%8C-IA-32e-%E6%9E%B6%E6%9E%84"><span class="nav-text">1 IA-32 和 IA-32e 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-IA-32e-%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 IA-32e 架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-IA-32e-%E9%97%A8%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-text">1.2 IA-32e 门的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-IA-32e-%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.3 IA-32e 运行模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-IA32-EFER-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">1.4 IA32_EFER 寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E6%BF%80%E6%B4%BB-IA-32e-%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.5 激活 IA-32e 模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-64-bit%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%85%BC%E5%AE%B9%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.6 64-bit模式和兼容模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-CPUID-%E6%8C%87%E4%BB%A4"><span class="nav-text">2 CPUID 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-CPUID-%E6%8C%87%E4%BB%A4%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-text">2.1 CPUID 指令的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-CPUID-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-text">2.2 CPUID 的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-CPUID-01H-CPUID-80000001H"><span class="nav-text">2.3 CPUID.01H, CPUID.80000001H</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CRx-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">3 CRx 寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-CR0"><span class="nav-text">3.1 CR0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-CR2"><span class="nav-text">3.2 CR2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-CR3"><span class="nav-text">3.3 CR3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-CR4"><span class="nav-text">3.4 CR4</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">4 分段架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-IA-32-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">4.1 IA-32 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-IA-32e-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">4.2 IA-32e 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-text">4.3 物理地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">4.4 段寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="nav-text">4.5 段选择子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">5  段描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="nav-text">5.1 段描述符表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-Limit%E3%80%81G-%E4%BD%8D"><span class="nav-text">5.2 Limit、G 位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32-%E6%9E%B6%E6%9E%84"><span class="nav-text">IA-32 架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32e-%E6%9E%B6%E6%9E%84"><span class="nav-text">IA-32e 架构</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-IA-32-%E5%92%8C-IA-32e-%E6%9E%B6%E6%9E%84"><span class="nav-text">1 IA-32 和 IA-32e 架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-IA-32e-%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 IA-32e 架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-IA-32e-%E9%97%A8%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-text">1.2 IA-32e 门的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-IA-32e-%E8%BF%90%E8%A1%8C%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.3 IA-32e 运行模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-IA32-EFER-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">1.4 IA32_EFER 寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E6%BF%80%E6%B4%BB-IA-32e-%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.5 激活 IA-32e 模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-6-64-bit%E6%A8%A1%E5%BC%8F%E5%92%8C%E5%85%BC%E5%AE%B9%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.6 64-bit模式和兼容模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-CPUID-%E6%8C%87%E4%BB%A4"><span class="nav-text">2 CPUID 指令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-CPUID-%E6%8C%87%E4%BB%A4%E7%9A%84%E6%94%AF%E6%8C%81"><span class="nav-text">2.1 CPUID 指令的支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-CPUID-%E7%9A%84%E4%BD%BF%E7%94%A8"><span class="nav-text">2.2 CPUID 的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-CPUID-01H-CPUID-80000001H"><span class="nav-text">2.3 CPUID.01H, CPUID.80000001H</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CRx-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">3 CRx 寄存器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-CR0"><span class="nav-text">3.1 CR0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-CR2"><span class="nav-text">3.2 CR2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-CR3"><span class="nav-text">3.3 CR3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-CR4"><span class="nav-text">3.4 CR4</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-MSR"><span class="nav-text">4 MSR</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-MSR-%E6%A0%BC%E5%BC%8F"><span class="nav-text">4.1 MSR 格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-rdmsr%E3%80%81wrmsr-%E6%8C%87%E4%BB%A4"><span class="nav-text">4.2 rdmsr、wrmsr 指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-IA32-EFER-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">4.3 IA32_EFER 寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E6%94%AF%E6%8C%81-sysenter-x2F-sysexit-%E6%8C%87%E4%BB%A4%E7%9A%84-MSR"><span class="nav-text">4.4 支持 sysenter&#x2F;sysexit 指令的 MSR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32"><span class="nav-text">IA-32</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32e"><span class="nav-text">IA-32e</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E6%94%AF%E6%8C%81-syscall-x2F-sysret-%E6%8C%87%E4%BB%A4%E7%9A%84-MSR"><span class="nav-text">4.5 支持 syscall&#x2F;sysret 指令的 MSR</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E6%94%AF%E6%8C%81-swapgs-%E6%8C%87%E4%BB%A4%E7%9A%84-MSR"><span class="nav-text">4.6 支持 swapgs 指令的 MSR</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -277,7 +268,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">139</span>
+          <span class="site-state-item-count">140</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -367,7 +358,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          x64 内核（一）IA-32e 研究
+          
         </h1>
 
         <div class="post-meta-container">
@@ -378,27 +369,18 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-10-27 16:24:49" itemprop="dateCreated datePublished" datetime="2022-10-27T16:24:49+08:00">2022-10-27</time>
+      <time title="创建时间：2022-10-27 16:24:50" itemprop="dateCreated datePublished" datetime="2022-10-27T16:24:50+08:00">2022-10-27</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-10-31 22:49:00" itemprop="dateModified" datetime="2022-10-31T22:49:00+08:00">2022-10-31</time>
+        <time title="修改时间：2022-11-02 00:11:22" itemprop="dateModified" datetime="2022-11-02T00:11:22+08:00">2022-11-02</time>
       </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/x64-%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64 内核</span></a>
-        </span>
-    </span>
 
   
-    <span id="/post/x64-Kernel/" class="post-meta-item leancloud_visitors" data-flag-title="x64 内核（一）IA-32e 研究" title="阅读次数">
+    <span id="/post/x64-Kernel/" class="post-meta-item leancloud_visitors" data-flag-title="" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -426,14 +408,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>16k</span>
+      <span>14k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>15 分钟</span>
+      <span>13 分钟</span>
     </span>
 </div>
 
@@ -444,7 +426,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>😄</p>
+        <p>title: x64 内核（一）IA-32e 研究<br>date: 2022-10-27 16:24:49<br>tags:<br>     - Windows内核<br>          - x64 内核GDT<br>categories:<br>          - x64 内核<br>hide: false</p>
+<p>😄</p>
 <span id="more"></span>
 
 
@@ -463,20 +446,20 @@
 <li><p>IA-32e 模式下支持两种子模式的软件运行。</p>
 <ul>
 <li>64-bit mode：Run 64 bit Apps。</li>
-<li>Compatibility mode（兼容模式）：Run 64 bit Apps，run legacy software。（<strong>Legacy Mode</strong>：Real mode、Protected mode、Virtual 8086 mode，称为传统模式）</li>
+<li>Compatibility mode（兼容模式）：Run 16&#x2F;32 bit Apps，run legacy software。（<strong>Legacy Mode</strong>：Real mode、Protected mode、Virtual 8086 mode，称为传统模式）</li>
 </ul>
 </li>
 <li><p>64 位模式。</p>
 <ul>
 <li>AMD：Long Mode</li>
-<li>Intel：IA-32e</li>
+<li>Intel：IA-32e 下 64-bit Mode</li>
 </ul>
 </li>
 <li><p>32、64 位。</p>
 <ul>
 <li>Legacy Mode（传统模式）：内核 32 位，用户 32 位。</li>
 <li>64-bit mode：内核 64 位，用户 64 位。</li>
-<li>Compatibility mode（兼容模式）：内核 64 位，用户 64&#x2F;32 位。</li>
+<li>Compatibility mode（兼容模式）：内核 64 位，用户 16&#x2F;32 位。</li>
 </ul>
 </li>
 </ol>
@@ -583,6 +566,7 @@
 
 <p>参考《64-Bit Extension Technology Software Developer’s Guide》。</p>
 <h2 id="2-CPUID-指令"><a href="#2-CPUID-指令" class="headerlink" title="2 CPUID 指令"></a>2 CPUID 指令</h2><p><code>CPUID</code> 是一个指令，用来得到 CPU 处理器的身份信息（如型号、家族等）、特征和状态，还能得到 CPU 的一些其他扩展信息。</p>
+<p><strong>可以在用户模式下使用</strong>。</p>
 <table>
 <thead>
 <tr>
@@ -893,169 +877,121 @@
 </tr>
 </tbody></table>
 <p>先试用 CPUID 查询 CRx 寄存的位是否被启用，CRx 位启用后，PDE、PTE 中的控制位才被启用。</p>
-<p>10-1KB</p>
-<p>20-2^10^*2^10^——1MB</p>
-<p>30——1GB</p>
-<p>40——1TB</p>
-<p>48——256TB</p>
-<p>50——1MTB</p>
-<p>57——128MTB</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dq fffff8025a003fb0</span><br><span class="line">fffff802`<span class="number">5</span>a003fb0  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003fc0  <span class="number">00209b</span>00`<span class="number">00000000</span> <span class="number">00409300</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003fd0  <span class="number">00</span>cffb00`<span class="number">0000f</span>fff <span class="number">00</span>cff300`<span class="number">0000f</span>fff</span><br><span class="line">fffff802`<span class="number">5</span>a003fe0  <span class="number">0020f</span>b00`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003ff0  <span class="number">5</span>a008b00`<span class="number">20000067</span> <span class="number">00000000</span>`fffff802</span><br><span class="line">fffff802`<span class="number">5</span>a004000  <span class="number">0040f</span>300`<span class="number">00003</span>c00 <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a004010  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a004020  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="4-分段架构"><a href="#4-分段架构" class="headerlink" title="4 分段架构"></a>4 分段架构</h2><h3 id="4-1-IA-32-分段架构"><a href="#4-1-IA-32-分段架构" class="headerlink" title="4.1 IA-32 分段架构"></a>4.1 IA-32 分段架构</h3><p>IA-32 架构中，内存管理功能分为：段（Segment）、页（Page）。</p>
-<p>段地址格式，也叫做<strong>逻辑地址</strong>或远指针（Far point）：<code>Sengment-Selector: Offset</code>（如 <code>CS:Offset</code>）。</p>
-<p>如果不启用分页，如下图，处理器的线性地址将直接映射到处理器的物理地址空间。 </p>
-<p><img data-src="https://s2.loli.net/2022/10/30/4xl9G5RDBCen2LM.png" alt="17.png"></p>
-<p>IA-32 支持三种分段方式：</p>
+<p>快速计算内存大小：</p>
+<table>
+<thead>
+<tr>
+<th>bits</th>
+<th>大小</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10</td>
+<td>1 KB，2^10^ * 1 Byte &#x3D; 1KB。</td>
+</tr>
+<tr>
+<td>20</td>
+<td>1 MB，2^20^ &#x3D; 2^10^ * 1 KB &#x3D; 1 MB。</td>
+</tr>
+<tr>
+<td>30</td>
+<td>1 GB，2^30^ &#x3D; 2^10^ * 1 MB &#x3D; 1 GB。</td>
+</tr>
+<tr>
+<td>32</td>
+<td>4 GB，2^32^ &#x3D; 2^2^ * 1 GB &#x3D; 4 GB。</td>
+</tr>
+<tr>
+<td>40</td>
+<td>1 TB，2^40^ &#x3D; 2^10^ * 1 GB &#x3D; 1 TB。</td>
+</tr>
+<tr>
+<td>48</td>
+<td>256 TB，2^48^ &#x3D; 2^8^ * 1 TB &#x3D; 256 TB。</td>
+</tr>
+<tr>
+<td>50</td>
+<td>1 PB，2^50^ &#x3D; 2^10^ * 1TB &#x3D; 1 PB。</td>
+</tr>
+<tr>
+<td>57</td>
+<td>128 PB，2^57^ &#x3D; 2^7^ * 1TB &#x3D; 128 PB。</td>
+</tr>
+</tbody></table>
+<h2 id="4-MSR"><a href="#4-MSR" class="headerlink" title="4 MSR"></a>4 MSR</h2><h3 id="4-1-MSR-格式"><a href="#4-1-MSR-格式" class="headerlink" title="4.1 MSR 格式"></a>4.1 MSR 格式</h3><p>MSR（Model-Specific Register）特定模式寄存器，MSR 提供对硬件和软件一些相关功能的控制和设置。跟 CPU 的Model（型号）相关。MSR 在 AMD 和 Intel 的处理器上实现不同，并且在 Intel 不同的架构上实现也不完全相同。所以在查询 MSR功能表之前，需要先使用 <code>CPUID.01H:EAX[bits 27-20,bits 19-16]</code> 然后到卷4查看一下当前CPU型号（Family, Model）。</p>
+<p>每个 MSR 都有自己的地址值（或者称为编号），且每个 MSR 都有一个用于助记的名称，如 <code>IA32_EFER</code>（0xC0000080）。由于 MSR 是从 IA-32 延续而来，所以每个 MSR的名称都是以 <code>IA32_</code> 为前缀。 MSR的读写使用 rdmsr、wrmsr 指令。MSR在 IA-32 和 IA-32e 都是64位的。</p>
+<p>类似于 <code>CPUID</code> 指令，MSR 的格式如下 <code>IA32_MISC_ENABLE.ENABLEFOPCODE[bit 2] = 1</code> 。</p>
+<p><img data-src="https://s2.loli.net/2022/11/01/evWKZTc7oPVwbgq.png" alt="27.png"></p>
+<h3 id="4-2-rdmsr、wrmsr-指令"><a href="#4-2-rdmsr、wrmsr-指令" class="headerlink" title="4.2 rdmsr、wrmsr 指令"></a>4.2 rdmsr、wrmsr 指令</h3><p><strong>特权指令</strong>。</p>
+<p>MSR在 IA-32 和 IA-32e 都是64位的。在 64 位环境，会将 RCX、RDX 高 32 位清 0，使用 RAX，也只会取 EAX 中的 32 位。</p>
 <ol>
-<li><p>基础平坦模式（Basic Flat Model）</p>
-<p>这种模式下，至少存在两种段描述符：代码段描述符、数据段描述符（段基址都为 0，Limit 都为 4GB）。任何尝试访问不存在的内存时不会产生异常。</p>
-<p><img data-src="https://s2.loli.net/2022/10/30/Oq51Z9CkzMxXuVf.png" alt="18.png"></p>
+<li><p><code>rdmsr</code> 指令使用。</p>
+<ul>
+<li>ECX：指出要读 MSR 哪个地址的值。</li>
+<li>EDX:EAX：读出来的高低 32 位值。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 输入</span></span><br><span class="line">mov ecx, <span class="number">0</span>C0000082h;	<span class="comment">// IA32 LSTAR,IA-32e Mode System Call Target Address</span></span><br><span class="line">rdmsr;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 输出</span></span><br><span class="line">RDX = <span class="number">0xFFFFF800</span></span><br><span class="line">RAX = <span class="number">0x67427180</span></span><br><span class="line">  </span><br><span class="line"><span class="comment">// 等同于</span></span><br><span class="line">kd&gt; rdmsr C0000082</span><br><span class="line">msr[c0000082] = fffff800`<span class="number">67427180</span></span><br></pre></td></tr></table></figure>
+
+
 </li>
-<li><p>受保护的平坦模式（Protected Flat Model）</p>
-<p>定义了 R0 权限的代码段和数据段，以及 R3 权限的代码段和数据段。任何尝试访问不存在的内存时都会生成通用保护异常 (#GP)。</p>
-<p><img data-src="https://s2.loli.net/2022/10/30/h45V762FTy8puOj.png" alt="19.png"></p>
-</li>
-<li><p>多分段模式（Multi-Segment Model）</p>
-<p>Windows 使用该分段机制，访问段内存时会执行段权限检查。</p>
-<p><img data-src="https://s2.loli.net/2022/10/30/fimpX7IK4eHRvnM.png" alt="20.png"></p>
-</li>
+<li><p><code>wrmsr</code> 指令使用。</p>
+<ul>
+<li>ECX：指出要往 MSR 哪个地址写入值。</li>
+<li>EDX:EAX：指出要写入的高低 32 位值。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mov ecx, <span class="number">176</span>h;	<span class="comment">//IA32_SYSENTER_EIP 寄存器的地址</span></span><br><span class="line">mov rdx, <span class="number">0xFFFF123412345678</span>;</span><br><span class="line">mov rax, rdx;</span><br><span class="line">shr rdx, <span class="number">32</span>;</span><br><span class="line">wrmsr;	<span class="comment">//运行后蓝屏</span></span><br></pre></td></tr></table></figure></li>
 </ol>
-<p>分段模式下，将段地址（逻辑地址）转换为线性地址如下图：</p>
-<p><img data-src="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png" alt="21.png"></p>
-<h3 id="4-2-IA-32e-分段架构"><a href="#4-2-IA-32e-分段架构" class="headerlink" title="4.2 IA-32e 分段架构"></a>4.2 IA-32e 分段架构</h3><p>IA-32e 模式下，分段的效果取决于处理器是以兼容模式（Compatibility-mode）还是 64 位模式（64-bit mode）运行。</p>
-<ul>
-<li>兼容模式：不会禁用，依然存在分段，分段的方式和 IA-32 下方式一样（请注意并不是直接使用 IA-32 的分段）。</li>
-<li>64 位模式：<strong>分段通常被禁用</strong>（但不是完全禁用），从而创建一个平坦的 64 位线性地址空间。处理器将CS、DS、ES、SS的段基址视为零，创建一个等于有效地址的线性地址。<strong>FS 段和 GS 段基址不为 0</strong>。<strong>处理器在 64 位模式下运行时不执行段Limit检查</strong>。由于 64 位模式下的平坦地址空间，线性地址等于有效地址。 <strong>如果 FS 或 GS 段与非零段基址一起使用，则此规则不成立</strong>。</li>
-</ul>
-<p>段基址（Segment.Base）有区别：</p>
-<ul>
-<li>IA-32：段基址为 32 位。</li>
-<li>IA-32e：段基址为 64 位（其实主要是兼容模式下使用）。</li>
-</ul>
-<p>IA-32e 模式下将逻辑地址转换为线性地址的方式相同，如下图：</p>
-<p><img data-src="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png" alt="21.png"></p>
-<p>在 IA-32e 模式下的代码段描述符的 <code>L</code> 位用来标志一个代码段按何种模式来运行代码：</p>
-<ul>
-<li>L &#x3D; 1：64 位代码段。</li>
-<li>L &#x3D; 0：<ul>
-<li>D&#x2F;B &#x3D; 1：32 位代码段。</li>
-<li>D&#x2F;B &#x3D; 0：16 位代码段。</li>
-</ul>
-</li>
-</ul>
-<h3 id="4-3-物理地址空间"><a href="#4-3-物理地址空间" class="headerlink" title="4.3 物理地址空间"></a>4.3 物理地址空间</h3><div class="note danger"><ol>
-<li><p>IA-32 架构保护模式下：</p>
-<ul>
-<li><p><strong>物理地址是一个平坦的地址空间，未进行分段</strong>。</p>
-</li>
-<li><p>物理地址范围为 4GB，启用物理地址扩展（PAE）或页面大小扩展 (PSE-36) 功能后，物理地址空间为范围 64 GB。</p>
-</li>
-</ul>
-</li>
-<li><p>IA-32e 架构处理器：物理地址范围的大小在不同 CPU 上支持不同。大小由 <code>CPUID.80000008H:EAX[bits 7-0]</code> 指出，如 2.2 实验中我的电脑最大就是 36 位（64GB）。</p>
-</li>
-</ol>
+<h3 id="4-3-IA32-EFER-寄存器"><a href="#4-3-IA32-EFER-寄存器" class="headerlink" title="4.3 IA32_EFER 寄存器"></a>4.3 IA32_EFER 寄存器</h3><p>它提供了几个与 IA-32e 的模式启用与操作相关的字段（<strong>控制着是否进入64位模式</strong>）。 它还提供了一个与页面访问权限修改相关的字段 <code>IA32_EFER</code> MSR 的布局下图所示。</p>
+<p><img data-src="https://s2.loli.net/2022/10/27/KM1HJnaDbx53piy.png" alt="4.png"></p>
+<p><strong>Bit 11</strong>：控制每级页表项的最高位 <code>XD</code> 位，使用 <code>或(||)</code> 关系。</p>
+<div class="note danger"><p>IA-32e 模式的启用条件是：</p>
+<p>  　　1. 启用段内存管理进入保护模式 CR0.PE &#x3D; 1</p>
+<p>  　　2. 启用PAE内存分页管理模式 CR4.PAE &#x3D; 1</p>
+<p>  　　3. 启用64位模式 EFER.LME &#x3D; 1 </p>
+<p>  　　4. 启用页内存管理 CR0.PG &#x3D; 1 </p>
+<p>  　　5. 上述四点必须按照上面的顺序启用</p>
+<p>如果条件全部满足，CPU会置 EFER.LMA &#x3D; 1表示 IA-32e 位模式启动了 。然后在 IA-32e 下区分 64 位模式和还是兼容模式：查看 CS 段寄存器的 <mark class="label default">L</mark> 位。</p>
 </div>
 
-
-
-<h3 id="4-4-段寄存器"><a href="#4-4-段寄存器" class="headerlink" title="4.4 段寄存器"></a>4.4 段寄存器</h3><p>CPU 处理器提供了 6 个段寄存器：CS、DS、ES、FS、GS、SS。</p>
-<p>段寄存器分为可见部分（段选择子）和隐藏部分：</p>
+<p>IA-32e 模式下寄存器的设置：</p>
+<p><img data-src="https://s2.loli.net/2022/10/31/L3aZAyUODI5CRbn.png" alt="25.png"></p>
+<h3 id="4-4-支持-sysenter-x2F-sysexit-指令的-MSR"><a href="#4-4-支持-sysenter-x2F-sysexit-指令的-MSR" class="headerlink" title="4.4 支持 sysenter&#x2F;sysexit 指令的 MSR"></a>4.4 支持 sysenter&#x2F;sysexit 指令的 MSR</h3><p><code>sysenter/sysexit</code> 在 IA-32 和 IA-32e 下都可以使用，但是不支持在 AMD 的 Long mode 下使用。</p>
+<p>与之相关的 3 个 MSR 寄存器：</p>
 <ul>
-<li>IA-32：共 96 位<ul>
-<li>可见部分：16 位</li>
-<li>隐藏部分：80 位</li>
+<li>0x174：IA32_SYSENTER_CS</li>
+<li>0x175：IA32_SYSENTER_ESP</li>
+<li>0x176：IA32_SYSENTER_EIP</li>
 </ul>
-</li>
-<li>IA-32e：共 128 位<ul>
-<li>可见部分：16 位</li>
-<li>隐藏部分：112 位</li>
-</ul>
-</li>
-</ul>
-<p>变化是 IA-32e 下段基址变为 64 位。</p>
-<p><img data-src="https://s2.loli.net/2022/10/30/tCrVcMgBDFXTndW.png" alt="22.png"></p>
-<p><strong>注意</strong>：在段寄存器内 Limit 占 32 位，在段描述符内只有 20 位。</p>
-<p>当G&#x3D;0时，Limit的范围是0x00000000-0x000FFFFF，其中，段描述符的20位在低位，高位补0。<br>当G&#x3D;1时，Limit的范围是0x00000FFF-0xFFFFFFFF，其中，段描述符的20位在高位，低位补F。</p>
-<div class="note warning"><p><strong>IA-32e 的 64 位模式下不使用 ES、DS 和 SS 段寄存器</strong>，所以它们在段描述符寄存器中的字段（Base、Limit和Attribute）被忽略。某些形式的段加载指令也是无效的（例如， LDS，POP ES）。 引用 ES、DS 或 SS 段的地址计算被视为段基址为零。                           </p>
-</div>
-
-<p>FS.base 和 GS.base 的隐藏描述符寄存器字段物理映射到 MSR，以便加载 64 位实现支持的所有地址位。</p>
-<p>R3:CS &#x3D; 33, DS &#x3D; 2B, ES &#x3D; 2B, FS &#x3D; 53, GS &#x3D; 2B, SS &#x3D; 2B</p>
-<p>R0:cs&#x3D;0010  ss&#x3D;0018  ds&#x3D;002b  es&#x3D;002b  fs&#x3D;0053  gs&#x3D;002b </p>
-<h3 id="4-5-段选择子"><a href="#4-5-段选择子" class="headerlink" title="4.5 段选择子"></a>4.5 段选择子</h3><p>段选择子是一个 16 位数，该数决定了取 GDT 表中查哪一个条目数据。</p>
-<p><img data-src="https://s2.loli.net/2021/12/14/hjy1X9lCY3OULfi.png" alt="5.png"></p>
-<p><strong>注意</strong>：处理器不使用 GDT 的第一个条目，第一项是全 <code>0</code> 的值。 指向 GDT 第一项的段选择子（即 Index &#x3D; 0 且 TI &#x3D; 0）被称为“空段选择子” 。段寄存器加载空段选择子时，处理器不会产生异常寄存器（除了 CS 或 SS 段寄存器）。但是，当使用包含空选择子的段寄存器访问内存时，它会生成异常。<strong>空选择子可用于初始化未使用的段寄存器，但不能加载来访问内存</strong>。 使用空段选择子加载 CS 或 SS 寄存器会导致生成通用保护异常（#GP）。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; r gdtr</span><br><span class="line">gdtr=fffff8025a003fb0</span><br><span class="line">kd&gt; dq fffff8025a003fb0</span><br><span class="line">fffff802`<span class="number">5</span>a003fb0  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003fc0  <span class="number">00209b</span>00`<span class="number">00000000</span> <span class="number">00409300</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003fd0  <span class="number">00</span>cffb00`<span class="number">0000f</span>fff <span class="number">00</span>cff300`<span class="number">0000f</span>fff</span><br><span class="line">fffff802`<span class="number">5</span>a003fe0  <span class="number">0020f</span>b00`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003ff0  <span class="number">5</span>a008b00`<span class="number">20000067</span> <span class="number">00000000</span>`fffff802</span><br><span class="line">fffff802`<span class="number">5</span>a004000  <span class="number">0040f</span>300`<span class="number">00003</span>c00 <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a004010  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a004020  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+<p><img data-src="https://s2.loli.net/2022/11/01/LHXVAFy2dhCrknv.png" alt="28.png"></p>
+<h4 id="IA-32"><a href="#IA-32" class="headerlink" title="IA-32"></a>IA-32</h4><p><strong>R3 进入 R0</strong>：使用 <code>sysenter</code> 进入 0 环时，CS0 寄存器的段选择子来自 <code>IA32_SYSENTER_CS</code>，<code>SS = CS.Selector + 8</code>。EIP0 来自于 <code>IA32_SYSENTER_EIP(0x176)</code>。但是 ESP0 是来自于 <code>TSS.ESP0</code>，不是来自于 <code>IA32_SYSENTER_ESP(0x175)</code>。</p>
+<p><strong>R0 返回 R3</strong>：使用 <code>sysexit</code> 返回 3 环时，EDX 存放 EIP3，ECX 存放 ESP3。</p>
+<h4 id="IA-32e"><a href="#IA-32e" class="headerlink" title="IA-32e"></a>IA-32e</h4><p><strong>R3 进入 R0</strong>：使用 <code>sysenter</code> 进入 0 环时，CS 寄存器的段选择子 来自 <code>IA32_SYSENTER_CS</code>，<code>SS = CS.Selector + 8</code>。RIP0 来自于 <code>IA32_SYSENTER_EIP(0x176)</code>。但是 RSP0 是来自于 <code>TSS.RSP0</code>，不是来自于 <code>IA32_SYSENTER_ESP(0x175)</code>。</p>
+<h3 id="4-5-支持-syscall-x2F-sysret-指令的-MSR"><a href="#4-5-支持-syscall-x2F-sysret-指令的-MSR" class="headerlink" title="4.5 支持 syscall&#x2F;sysret 指令的 MSR"></a>4.5 支持 syscall&#x2F;sysret 指令的 MSR</h3><p>SYSCALL 和 SYSRET 指令专为使用平坦内存模式且不使用分段的操作系统而设计。 这些指令（连同 <code>SYSENTER/SYSEXIT</code>）非常适合 IA-32e 模式操作。 兼容模式不支持 SYSCALL 和 SYSRET。 有关检测 SYSCALL 和 SYSRET 可用性的更多详细信息，请参阅 CPUID。</p>
+<p>SYSCALL 和 SYSRET 指定 64 位代码偏移量。 在 IA-32e 模式下，清除 EFLAGS 中的位是可编程的，而不是固定的； SYSCALL 和 SYSRET 保存和恢复 EFLAGS 寄存器。</p>
+<h3 id="4-6-支持-swapgs-指令的-MSR"><a href="#4-6-支持-swapgs-指令的-MSR" class="headerlink" title="4.6 支持 swapgs 指令的 MSR"></a>4.6 支持 swapgs 指令的 MSR</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; rdmsr <span class="number">0xC0000100</span></span><br><span class="line">msr[c0000100] = <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000101</span></span><br><span class="line">msr[c0000101] = fffff800`<span class="number">65642000</span></span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000102</span></span><br><span class="line">msr[c0000102] = <span class="number">0000004</span>d`<span class="number">0668b</span>000</span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000103</span></span><br><span class="line">msr[c0000103] = <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure>
 
 
 
 
 
-<h2 id="5-段描述符"><a href="#5-段描述符" class="headerlink" title="5  段描述符"></a>5  段描述符</h2><h3 id="5-1-段描述符表"><a href="#5-1-段描述符表" class="headerlink" title="5.1 段描述符表"></a>5.1 段描述符表</h3><p>段描述符表（Segment Descriptor Tables）：是一个数组，每个元素为 8 字节，表中的每个元素叫做段描述符。一共有两种段描述符表：</p>
-<ul>
-<li>全局描述符表 GDT（Global Descriptor Table）</li>
-<li>局部描述符表 LDT（Local Descriptor Table）</li>
-</ul>
-<p>另外还有两个系统段描述符 IDT、TR。</p>
-<p>段描述符表结构如下：</p>
-<p><img data-src="https://s2.loli.net/2022/10/31/qDkld37xCTfgGH5.png" alt="24.png"></p>
-<p>LDT 一般是用来帮助进行任务切换，但是在 32 位的 Windows 中使用线程切换并不使用任务，所以基本没有使用到 LDT。在 IA-32e 模式下，Intel 直接就取消了任务门，所以 LDT 表基本也就没啥研究的意义了。</p>
-<p>段描述符是 GDT 表和 LDT 表的元素表示，它为段寄存器提供隐藏的字段：Base、Limit、Attribute。（<strong>注意</strong>：在段寄存器内 Limit 占 32 位，在段描述符内只有 20 位。）</p>
-<p>在 IA-32e 模式下，除了<mark class="label success">系统段描述符为 16 字节 128 位</mark>以外，其余的段描述符都是 8 字节 64 位。</p>
-<p>下图为段描述符的通用格式：</p>
-<p><img data-src="https://s2.loli.net/2022/10/30/ciyfgjrLDOl4d1C.png" alt="23.png"></p>
-<div class="note success"><p><strong>注意</strong>：GDT、IDT 不被视为段，它只是用来描述段描述符。段寄存器分为两部分：base、limit。（这一这不是段描述符中的Base和Limit）</p>
-<ul>
-<li>IA-32：GDTR 寄存器为 48 位，低 16 位表明 GDT 表的字节总数，高 32 位为 GDT 表在内存中的起始线性地址。</li>
-<li>IA-32e：GDTR 寄存器为 80 位，低 16 位表明 GDT 表的字节总数，高 64 位为 GDT 表在内存中的起始线性地址。</li>
-</ul>
-<p><img data-src="https://s2.loli.net/2022/10/31/QXtUG2jZPrkYI39.png" alt="26.png"></p>
-</div>
 
 
 
-<h3 id="5-2-Limit、G-位"><a href="#5-2-Limit、G-位" class="headerlink" title="5.2 Limit、G 位"></a>5.2 Limit、G 位</h3><p>在逻辑地址的表示为：<code>Seg.Selector:Offset</code>。</p>
-<h4 id="IA-32-架构"><a href="#IA-32-架构" class="headerlink" title="IA-32 架构"></a>IA-32 架构</h4><p>在 IA-32 下 <code>Offset</code> 是 32 位，以及段寄存器隐藏部分的 Limit 也是 32 位，但是在段描述符中仅有 20 位。所以需要根据段描述符的 G、D&#x2F;B、以及代码段的 E 位来将 20 位扩展成 32 位。</p>
-<p>Limit：20-bits，用来指定段的大小范围。</p>
-<ul>
-<li><p>G &#x3D; 1，段的范围是 0x00000FFF～0x<strong>FFFFF</strong>FFF（4KB～4GB），以 4KB 大小为增量，增加到 32 位。</p>
-</li>
-<li><p>G &#x3D; 0，段的范围是 0x00000000～0x000FFFFF（0～1MB），以 1Byte 大小为增量，此时只使用段描述符中的 20 位。</p>
-</li>
-</ul>
-<p><code>G</code> 位只是指定了段的大小范围，但是 <code>D/B</code> 则指定了数据段最大上限（适用于向下扩展的数据段）：</p>
-<ul>
-<li>D&#x2F;B &#x3D; 1，段的最大上限值为 4GB（0xFFFFFFFF）。</li>
-<li>D&#x2F;B &#x3D; 0，段的最大上限值为 64KB（0x0000FFFF）。</li>
-</ul>
-<p>注意：除了代码段 CS，其他 DS、ES、FS、GS、SS 都可以归为数据段。数据段是有方向的，即向下扩展（Expand-down）还是向上扩展（Expand-up）。<mark class="label danger">IA-32 架构使用的是向下扩展</mark>。</p>
-<div class="note primary"><p>向上扩展、向下扩展、D&#x2F;B 位的关系：</p>
-<p>逻辑地址的表示为：<code>Seg.Selector:Offset</code>。其中 <code>offset</code> 取值范围就是依赖于向上扩展还是向下扩展。</p>
-<ul>
-<li>向上扩展：<code>0 &lt;= Offset &lt; Limit</code></li>
-<li>向下扩展：<code>Limit+1 &lt;= Offset &lt; 0xFFFFF/0xFFFFFFFF</code>（最大值取决于D&#x2F;B位的值）</li>
-</ul>
-<p>要使 <code>Offset</code> 取值范围尽可能的大，也就是可使用的内存尽可能的多：</p>
-<ul>
-<li>对于向上扩展，需要不断增大 <code>Limit</code> 的值，所以”向上扩展“因此而得名。</li>
-<li>对于向下扩展，需要不断减小 <code>Limit</code> 的值，所以”向下扩展“因此而得名。</li>
-</ul>
-</div>
 
-<p><strong>段权限检查</strong>：</p>
-<p>IA-32 使用向下扩展的数据段，</p>
-<h4 id="IA-32e-架构"><a href="#IA-32e-架构" class="headerlink" title="IA-32e 架构"></a>IA-32e 架构</h4><ul>
-<li>兼容模式：会像 Legacy 模式一样进行段 <code>Limit</code> 检查。</li>
-<li>64-bit 模式：在 4.2 中说过：<strong>分段通常被禁用</strong>（但不是完全禁用），从而创建一个平坦的 64 位线性地址空间。所以段描述符的 <code>Limit</code> 在 IA-32e 模式下不会对段描述符的 Limit 进行越界检查，但是会对段寄存器的 Limit（段描述符表的字节数）进行检查。</li>
-</ul>
-<p>在 IA-32e 模式中，CS 描述符的 DPL 用于执行权限检查，就像在传统模式中一样。</p>
-<p>继续分析 Intel 手册 3.4.5 GDT 的每个字段，每个字段分析时结合 Chapter5 分析权限。（结合前面x86的文章和x86&#x2F;64体系探索及编程、软件调试第二版卷1）</p>
-<p>然后分析 IA-32e 分页。</p>
-<p>总的看来，IA-32e 模式下的 IDT 变得更简单了，不再有任务门，只有中断门和陷阱门， 断门和陷阱门都支持通过它们中的 IST 位域来指定是否要切换栈——软件调试第二版卷1 3.5.3。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     </div>
 
@@ -1091,7 +1027,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/x64-Kernel/" title="x64 内核（一）IA-32e 研究">https://directoree.github.io/post/x64-Kernel/</a>
+      <a href="https://directoree.github.io/post/x64-Kernel/" title="">https://directoree.github.io/post/x64-Kernel/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -1099,10 +1035,6 @@
 </ul>
 </div>
 
-          <div class="post-tags">
-              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
-              <a href="/tags/x64-%E5%86%85%E6%A0%B8GDT/" rel="tag"><i class="fa fa-tag"></i> x64 内核GDT</a>
-          </div>
 
         
 
@@ -1113,8 +1045,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
-                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                <a href="/post/x64-Kernel2/" rel="next" title="x64 内核（二）IA-32e 研究">
+                  x64 内核（二）IA-32e 研究 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -1183,7 +1115,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">28:56</span>
+    <span title="站点阅读时长">28:58</span>
   </span>
 </div>
 <div class="busuanzi-count">

@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64 内核（二）IA-32e 研究">
+<meta property="og:url" content="https://directoree.github.io/post/x64-Kernel2/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/4xl9G5RDBCen2LM.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/Oq51Z9CkzMxXuVf.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/h45V762FTy8puOj.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/fimpX7IK4eHRvnM.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/tCrVcMgBDFXTndW.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/14/hjy1X9lCY3OULfi.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/31/qDkld37xCTfgGH5.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/ciyfgjrLDOl4d1C.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/31/QXtUG2jZPrkYI39.png">
+<meta property="article:published_time" content="2022-11-01T11:43:19.000Z">
+<meta property="article:modified_time" content="2022-11-01T11:45:53.156Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 内核分段">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/10/30/4xl9G5RDBCen2LM.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/x64-Kernel2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>x64 内核（二）IA-32e 研究 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1 分段架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-IA-32-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 IA-32 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-IA-32e-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1.2 IA-32e 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-text">1.3 物理地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">1.4 段寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="nav-text">1.5 段选择子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">2  段描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="nav-text">2.1 段描述符表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Limit%E3%80%81G-%E4%BD%8D"><span class="nav-text">2.2 Limit、G 位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32"><span class="nav-text">IA-32</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32e"><span class="nav-text">IA-32e</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Base-%E5%9F%9F"><span class="nav-text">2.3 Base 域</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32-1"><span class="nav-text">IA-32</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32e-1"><span class="nav-text">IA-32e</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-P%E3%80%81DPL-%E4%BD%8D"><span class="nav-text">2.4 P、DPL 位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-S-%E4%BD%8D"><span class="nav-text">2.5 S 位</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">62</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64-Kernel2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64 内核（二）IA-32e 研究
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-11-01 19:43:19 / 修改时间：19:45:53" itemprop="dateCreated datePublished" datetime="2022-11-01T19:43:19+08:00">2022-11-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64-%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64 内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/x64-Kernel2/" class="post-meta-item leancloud_visitors" data-flag-title="x64 内核（二）IA-32e 研究" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/x64-Kernel2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/x64-Kernel2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+
+
+<h2 id="1-分段架构"><a href="#1-分段架构" class="headerlink" title="1 分段架构"></a>1 分段架构</h2><h3 id="1-1-IA-32-分段架构"><a href="#1-1-IA-32-分段架构" class="headerlink" title="1.1 IA-32 分段架构"></a>1.1 IA-32 分段架构</h3><p>IA-32 架构中，内存管理功能分为：段（Segment）、页（Page）。</p>
+<p>段地址格式，也叫做<strong>逻辑地址</strong>或远指针（Far point）：<code>Sengment-Selector: Offset</code>（如 <code>CS:Offset</code>）。</p>
+<p>如果不启用分页，如下图，处理器的线性地址将直接映射到处理器的物理地址空间。 </p>
+<p><img data-src="https://s2.loli.net/2022/10/30/4xl9G5RDBCen2LM.png" alt="17.png"></p>
+<p>IA-32 支持三种分段方式：</p>
+<ol>
+<li><p>基础平坦模式（Basic Flat Model）</p>
+<p>这种模式下，至少存在两种段描述符：代码段描述符、数据段描述符（段基址都为 0，Limit 都为 4GB）。任何尝试访问不存在的内存时不会产生异常。</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/Oq51Z9CkzMxXuVf.png" alt="18.png"></p>
+</li>
+<li><p>受保护的平坦模式（Protected Flat Model）</p>
+<p>定义了 R0 权限的代码段和数据段，以及 R3 权限的代码段和数据段。任何尝试访问不存在的内存时都会生成通用保护异常 (#GP)。</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/h45V762FTy8puOj.png" alt="19.png"></p>
+</li>
+<li><p>多分段模式（Multi-Segment Model）</p>
+<p>Windows 使用该分段机制，访问段内存时会执行段权限检查。</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/fimpX7IK4eHRvnM.png" alt="20.png"></p>
+</li>
+</ol>
+<p>分段模式下，将段地址（逻辑地址）转换为线性地址如下图：</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png" alt="21.png"></p>
+<h3 id="1-2-IA-32e-分段架构"><a href="#1-2-IA-32e-分段架构" class="headerlink" title="1.2 IA-32e 分段架构"></a>1.2 IA-32e 分段架构</h3><p>IA-32e 模式下，分段的效果取决于处理器是以兼容模式（Compatibility-mode）还是 64 位模式（64-bit mode）运行。</p>
+<ul>
+<li>兼容模式：不会禁用，依然存在分段，分段的方式和 IA-32 下方式一样（请注意并不是直接使用 IA-32 的分段）。</li>
+<li>64 位模式：<strong>分段通常被禁用</strong>（但不是完全禁用），从而创建一个平坦的 64 位线性地址空间。处理器将CS、DS、ES、SS的段基址视为零，创建一个等于有效地址的线性地址。<strong>FS 段和 GS 段基址不为 0</strong>。<strong>处理器在 64 位模式下运行时不执行段Limit检查</strong>。由于 64 位模式下的平坦地址空间，线性地址等于有效地址。 <strong>如果 FS 或 GS 段与非零段基址一起使用，则此规则不成立</strong>。</li>
+</ul>
+<p>段基址（Segment.Base）有区别：</p>
+<ul>
+<li>IA-32：段基址为 32 位。</li>
+<li>IA-32e：段基址为 64 位（其实主要是兼容模式下使用）。</li>
+</ul>
+<p>IA-32e 模式下将逻辑地址转换为线性地址的方式相同，如下图：</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/EsQ7atUPAcSXN1M.png" alt="21.png"></p>
+<p>在 IA-32e 模式下的代码段描述符的 <code>L</code> 位用来标志一个代码段按何种模式来运行代码：</p>
+<ul>
+<li>L &#x3D; 1：64 位代码段。</li>
+<li>L &#x3D; 0：<ul>
+<li>D&#x2F;B &#x3D; 1：32 位代码段。</li>
+<li>D&#x2F;B &#x3D; 0：16 位代码段。</li>
+</ul>
+</li>
+</ul>
+<h3 id="1-3-物理地址空间"><a href="#1-3-物理地址空间" class="headerlink" title="1.3 物理地址空间"></a>1.3 物理地址空间</h3><div class="note danger"><ol>
+<li><p>IA-32 架构保护模式下：</p>
+<ul>
+<li><p><strong>物理地址是一个平坦的地址空间，未进行分段</strong>。</p>
+</li>
+<li><p>物理地址范围为 4GB，启用物理地址扩展（PAE）或页面大小扩展 (PSE-36) 功能后，物理地址空间为范围 64 GB。</p>
+</li>
+</ul>
+</li>
+<li><p>IA-32e 架构处理器：物理地址范围的大小在不同 CPU 上支持不同。大小由 <code>CPUID.80000008H:EAX[bits 7-0]</code> 指出，如 2.2 实验中我的电脑最大就是 36 位（64GB）。</p>
+</li>
+</ol>
+</div>
+
+
+
+<h3 id="1-4-段寄存器"><a href="#1-4-段寄存器" class="headerlink" title="1.4 段寄存器"></a>1.4 段寄存器</h3><p>CPU 处理器提供了 6 个段寄存器：CS、DS、ES、FS、GS、SS。</p>
+<p>段寄存器分为可见部分（段选择子）和隐藏部分：</p>
+<ul>
+<li>IA-32：共 96 位<ul>
+<li>可见部分：16 位</li>
+<li>隐藏部分：80 位</li>
+</ul>
+</li>
+<li>IA-32e：共 128 位<ul>
+<li>可见部分：16 位</li>
+<li>隐藏部分：112 位</li>
+</ul>
+</li>
+</ul>
+<p>变化是 IA-32e 下段基址变为 64 位。</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/tCrVcMgBDFXTndW.png" alt="22.png"></p>
+<p><strong>注意</strong>：在段寄存器内 Limit 占 32 位，在段描述符内只有 20 位。根据 G、D&#x2F;B 标志来将段描述符的 20 位扩展到段寄存器的 32 位。</p>
+<div class="note warning"><p><strong>IA-32e 的 64 位模式下不使用 ES、DS 和 SS 段寄存器</strong>，所以它们在段描述符寄存器中的字段（Base、Limit和Attribute）被忽略。某些形式的段加载指令也是无效的（例如， LDS，POP ES）。 引用 ES、DS 或 SS 段的地址计算被视为段基址为零。                           </p>
+</div>
+
+<p>FS.base 和 GS.base 的隐藏描述符寄存器字段物理映射到 MSR，以便加载 64 位实现支持的所有地址位。</p>
+<p>R3:CS &#x3D; 33, DS &#x3D; 2B, ES &#x3D; 2B, FS &#x3D; 53, GS &#x3D; 2B, SS &#x3D; 2B</p>
+<p>R0:cs&#x3D;0010  ss&#x3D;0018  ds&#x3D;002b  es&#x3D;002b  fs&#x3D;0053  gs&#x3D;002b </p>
+<h3 id="1-5-段选择子"><a href="#1-5-段选择子" class="headerlink" title="1.5 段选择子"></a>1.5 段选择子</h3><p>段选择子是一个 16 位数，该数决定了取 GDT 表中查哪一个条目数据。</p>
+<p><img data-src="https://s2.loli.net/2021/12/14/hjy1X9lCY3OULfi.png" alt="5.png"></p>
+<p><strong>注意</strong>：处理器不使用 GDT 的第一个条目，第一项是全 <code>0</code> 的值。 指向 GDT 第一项的段选择子（即 Index &#x3D; 0 且 TI &#x3D; 0）被称为“空段选择子” 。段寄存器加载空段选择子时，处理器不会产生异常寄存器（除了 CS 或 SS 段寄存器）。但是，当使用包含空选择子的段寄存器访问内存时，它会生成异常。<strong>空选择子可用于初始化未使用的段寄存器，但不能加载来访问内存</strong>。 使用空段选择子加载 CS 或 SS 寄存器会导致生成通用保护异常（#GP）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; r gdtr</span><br><span class="line">gdtr=fffff8025a003fb0</span><br><span class="line">kd&gt; dq fffff8025a003fb0</span><br><span class="line">fffff802`<span class="number">5</span>a003fb0  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003fc0  <span class="number">00209b</span>00`<span class="number">00000000</span> <span class="number">00409300</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003fd0  <span class="number">00</span>cffb00`<span class="number">0000f</span>fff <span class="number">00</span>cff300`<span class="number">0000f</span>fff</span><br><span class="line">fffff802`<span class="number">5</span>a003fe0  <span class="number">0020f</span>b00`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a003ff0  <span class="number">5</span>a008b00`<span class="number">20000067</span> <span class="number">00000000</span>`fffff802</span><br><span class="line">fffff802`<span class="number">5</span>a004000  <span class="number">0040f</span>300`<span class="number">00003</span>c00 <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a004010  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">5</span>a004020  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="2-段描述符"><a href="#2-段描述符" class="headerlink" title="2  段描述符"></a>2  段描述符</h2><h3 id="2-1-段描述符表"><a href="#2-1-段描述符表" class="headerlink" title="2.1 段描述符表"></a>2.1 段描述符表</h3><p>段描述符表（Segment Descriptor Tables）：是一个数组，每个元素为 8 字节，表中的每个元素叫做段描述符。一共有两种段描述符表：</p>
+<ul>
+<li>全局描述符表 GDT（Global Descriptor Table）</li>
+<li>局部描述符表 LDT（Local Descriptor Table）</li>
+</ul>
+<p>段描述符表结构如下：</p>
+<p><img data-src="https://s2.loli.net/2022/10/31/qDkld37xCTfgGH5.png" alt="24.png"></p>
+<p>LDT 一般是用来帮助进行任务切换，但是在 32 位的 Windows 中使用线程切换并不使用任务，所以基本没有使用到 LDT。在 IA-32e 模式下，Intel 直接就取消了任务门，所以 LDT 表基本也就没啥研究的意义了。</p>
+<p>段描述符是 GDT 表和 LDT 表的元素表示，它为段寄存器提供隐藏的字段：Base、Limit、Attribute。（<strong>注意</strong>：在段寄存器内 Limit 占 32 位，在段描述符内只有 20 位。）</p>
+<div class="note default"><p>在 IA-32e 模式下，除了<mark class="label success">系统段描述符为 16 字节 128 位</mark>以外，其余的段描述符都是 8 字节 64 位。</p>
+<p><strong>系统段描述符包括</strong>：调用门描述符、IDT 描述符、LDT 描述符、TSS 描述符。</p>
+</div>
+
+<p>下图为段描述符的通用格式：</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/ciyfgjrLDOl4d1C.png" alt="23.png"></p>
+<div class="note success"><p><strong>注意</strong>：GDT、IDT 不被视为段，它只是用来描述段描述符。<strong>段描述符</strong>寄存器分为两部分：base、limit。（不是<strong>段寄存器</strong>的Base和Limit，注意区分段寄存器和段描述符寄存器）</p>
+<ul>
+<li>IA-32：GDTR 寄存器为 48 位，低 16 位表明 GDT 表的字节总数，高 32 位为 GDT 表在内存中的起始线性地址。</li>
+<li>IA-32e：GDTR 寄存器为 80 位，低 16 位表明 GDT 表的字节总数，高 64 位为 GDT 表在内存中的起始线性地址。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/10/31/QXtUG2jZPrkYI39.png" alt="26.png"></p>
+</div>
+
+
+
+<h3 id="2-2-Limit、G-位"><a href="#2-2-Limit、G-位" class="headerlink" title="2.2 Limit、G 位"></a>2.2 Limit、G 位</h3><p>逻辑地址格式为：<code>Seg.Selector:Offset</code>。</p>
+<h4 id="IA-32"><a href="#IA-32" class="headerlink" title="IA-32"></a>IA-32</h4><p>在 IA-32 下 <code>Offset</code> 取值由段寄存器隐藏部分的 <code>Limit</code> 进行限制，<code>Limit</code> 可以从20 位扩展到 32 位，这是根据段描述符的 G、D&#x2F;B、以及代码段的 E 位来将 20 位扩展成 32 位的。</p>
+<p>Limit：用来指定段的大小范围。</p>
+<ul>
+<li><p>G &#x3D; 1，段的范围是 <code>0x00000FFF &lt;= Limit &lt;= 0xFFFFFFFF</code>（4KB～4GB），以 4KB 大小为增量，增加到 32 位。</p>
+</li>
+<li><p>G &#x3D; 0，段的范围是 <code>0x00000000 &lt;= Limit &lt;= 0x000FFFFF</code>（0～1MB），以 1Byte 大小为增量，此时只使用段描述符中的 20 位。</p>
+</li>
+</ul>
+<p><code>G</code> 位只是指定了段的大小范围，但是 <code>D/B</code> 则指定了数据段最大上限：</p>
+<ul>
+<li>D&#x2F;B &#x3D; 1，段的最大上限值为 4GB（0xFFFFFFFF）。</li>
+<li>D&#x2F;B &#x3D; 0，段的最大上限值为 64KB（0x0000FFFF）。</li>
+</ul>
+<p><strong>注意</strong>：除了代码段 CS 不是数据段，其他 DS、ES、FS、GS、SS 都可以归为数据段。数据段是有方向的，即向下扩展（Expand-down）还是向上扩展（Expand-up）。IA-32 架构使用的是向下扩展。<mark class="label danger">IA-32 架构使用的是向下扩展</mark>。</p>
+<div class="note primary"><p>向上扩展、向下扩展、D&#x2F;B 位的关系：</p>
+<p>逻辑地址的表示为：<code>Seg.Selector:Offset</code>。其中 <code>offset</code> 取值范围就是依赖于向上扩展还是向下扩展。</p>
+<ul>
+<li>向上扩展：<code>0 &lt;= Offset &lt; Limit</code></li>
+<li>向下扩展：<code>Limit+1 &lt;= Offset &lt; 0xFFFFF/0xFFFFFFFF</code>（最大值取决于D&#x2F;B位的值）</li>
+</ul>
+<p>要使 <code>Offset</code> 取值范围尽可能的大，也就是可使用的内存尽可能的多：</p>
+<ul>
+<li>对于向上扩展，需要不断增大 <code>Limit</code> 的值，所以”向上扩展“因此而得名。</li>
+<li>对于向下扩展，需要不断减小 <code>Limit</code> 的值，所以”向下扩展“因此而得名。</li>
+</ul>
+</div>
+
+<p><strong>段权限检查</strong>：</p>
+<ol>
+<li><p>检查 <code>Offset</code> 是否合法：IA-32 使用<strong>向下扩展的数据段</strong>，有效限制指定了段内不允许访问的最后一个地址。</p>
+<ul>
+<li>D&#x2F;B &#x3D; 1，<code>Limit+1 &lt;= Offset &lt; 0xFFFFFFFF(4GB)</code></li>
+<li>D&#x2F;B &#x3D; 0，<code>Limit+1 &lt;= Offset &lt; 0x000FFFFF(64KB)</code></li>
+</ul>
+<p><code>Limit == 0</code> 时，向下扩展的段有最大范围。</p>
+</li>
+<li><p>检查段描述符表的 <code>Limit</code>，即 GDTR 寄存器的 <code>Limit</code>（表述GDT表的字节数）。</p>
+</li>
+</ol>
+<h4 id="IA-32e"><a href="#IA-32e" class="headerlink" title="IA-32e"></a>IA-32e</h4><p><strong>段权限检查</strong>：</p>
+<ul>
+<li>兼容模式：会像 Legacy 模式一样进行段 <code>Limit</code> 检查。</li>
+<li>64-bit 模式：在 4.2 中说过，<strong>分段通常被禁用</strong>（但不是完全禁用），从而创建一个平坦的 64 位线性地址空间。所以在 IA-32e 模式下不会对段描述符的 Limit 进行越界检查（Limit被忽略，不使用），但是会对段描述符寄存器 GDTR 的 Limit（段描述符表的字节数）进行检查。</li>
+</ul>
+<h3 id="2-3-Base-域"><a href="#2-3-Base-域" class="headerlink" title="2.3 Base 域"></a>2.3 Base 域</h3><h4 id="IA-32-1"><a href="#IA-32-1" class="headerlink" title="IA-32"></a>IA-32</h4><p><code>0 &lt;= Base &lt;= 4GB</code>，Base为32位。 </p>
+<h4 id="IA-32e-1"><a href="#IA-32e-1" class="headerlink" title="IA-32e"></a>IA-32e</h4><ul>
+<li>兼容模式：<code>0 &lt;= Base &lt;= 4GB</code>，Base为32位。 </li>
+<li>64-bit模式：<strong>64 位模式下不使用 ES、DS 和 SS 段寄存器</strong>，所以它们在段描述符寄存器中的字段（Base、Limit和Attribute）被忽略。 处理器将<strong>CS、DS、ES、SS的段基址视为零</strong>，创建一个等于有效地址的线性地址。<strong>FS 段和 GS 段基址不为 0</strong>。Base为64位。</li>
+</ul>
+<h3 id="2-4-P、DPL-位"><a href="#2-4-P、DPL-位" class="headerlink" title="2.4 P、DPL 位"></a>2.4 P、DPL 位</h3><p>P：指示当前段是否已经映射到物理内存。</p>
+<p>P &#x3D; 0 时，将该段描述符加载到段寄存器时会产生 #NP 异常，将转到异常处理。</p>
+<p>DPL：指定当前段的特权级别。如一个数据段的 DPL &#x3D; 3，表示用户模式的数据段。</p>
+<ul>
+<li>CPL：当前特权级别。</li>
+<li>RPL：我以什么权限级别去访问你。</li>
+<li>DPL：你应该以什么样的权限来访问我。</li>
+</ul>
+<h3 id="2-5-S-位"><a href="#2-5-S-位" class="headerlink" title="2.5 S 位"></a>2.5 S 位</h3><p>在 IA-32e 模式中，CS 描述符的 DPL 用于执行权限检查，就像在传统模式中一样。</p>
+<p>继续分析 Intel 手册 3.4.5 GDT 的每个字段，每个字段分析时结合 Chapter5 分析权限。（结合前面x86的文章和x86&#x2F;64体系探索及编程、软件调试第二版卷1）</p>
+<p>然后分析 IA-32e 分页。</p>
+<p>总的看来，IA-32e 模式下的 IDT 变得更简单了，不再有任务门，只有中断门和陷阱门， 断门和陷阱门都支持通过它们中的 IST 位域来指定是否要切换栈——软件调试第二版卷1 3.5.3。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/x64-Kernel2/" title="x64 内核（二）IA-32e 研究">https://directoree.github.io/post/x64-Kernel2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-%E5%86%85%E6%A0%B8%E5%88%86%E6%AE%B5/" rel="tag"><i class="fa fa-tag"></i> x64 内核分段</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/x64-Kernel/" rel="prev" title="">
+                  <i class="fa fa-chevron-left"></i> 
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.9m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">28:58</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/x64-Kernel2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
