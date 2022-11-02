@@ -40,8 +40,11 @@
 <meta property="og:image" content="https://s2.loli.net/2022/10/31/qDkld37xCTfgGH5.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/30/ciyfgjrLDOl4d1C.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/31/QXtUG2jZPrkYI39.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/29/p7igRC5t3NfzAFy.png">
+<meta property="og:image" content="https://s2.loli.net/2022/01/29/niLUjlR5sg4Q6JD.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/02/GOMJoH3khj72dKx.png">
 <meta property="article:published_time" content="2022-11-01T11:43:19.000Z">
-<meta property="article:modified_time" content="2022-11-01T11:45:53.156Z">
+<meta property="article:modified_time" content="2022-11-02T16:15:50.551Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="x64 内核分段">
@@ -243,7 +246,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1 分段架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-IA-32-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 IA-32 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-IA-32e-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1.2 IA-32e 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-text">1.3 物理地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">1.4 段寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="nav-text">1.5 段选择子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">2  段描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="nav-text">2.1 段描述符表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Limit%E3%80%81G-%E4%BD%8D"><span class="nav-text">2.2 Limit、G 位</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32"><span class="nav-text">IA-32</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32e"><span class="nav-text">IA-32e</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Base-%E5%9F%9F"><span class="nav-text">2.3 Base 域</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32-1"><span class="nav-text">IA-32</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IA-32e-1"><span class="nav-text">IA-32e</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-P%E3%80%81DPL-%E4%BD%8D"><span class="nav-text">2.4 P、DPL 位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-S-%E4%BD%8D"><span class="nav-text">2.5 S 位</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1 分段架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-IA-32-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 IA-32 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-IA-32e-%E5%88%86%E6%AE%B5%E6%9E%B6%E6%9E%84"><span class="nav-text">1.2 IA-32e 分段架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E7%A9%BA%E9%97%B4"><span class="nav-text">1.3 物理地址空间</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E6%AE%B5%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">1.4 段寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E6%AE%B5%E9%80%89%E6%8B%A9%E5%AD%90"><span class="nav-text">1.5 段选择子</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">2  段描述符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%AE%B5%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="nav-text">2.1 段描述符表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-Limit%E3%80%81G-%E4%BD%8D"><span class="nav-text">2.2 Limit、G 位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Base-%E5%9F%9F"><span class="nav-text">2.3 Base 域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-P%E3%80%81DPL-%E4%BD%8D"><span class="nav-text">2.4 P、DPL 位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-S-%E4%BD%8D%E3%80%81Type-%E5%9F%9F"><span class="nav-text">2.5 S 位、Type 域</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-1-%E4%BB%A3%E7%A0%81%E6%AE%B5-x2F-%E6%95%B0%E6%8D%AE%E6%AE%B5"><span class="nav-text">2.5.1 代码段&#x2F;数据段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-2-%E7%B3%BB%E7%BB%9F%E6%8F%8F%E8%BF%B0%E7%AC%A6"><span class="nav-text">2.5.2 系统描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-3-64-bit%E6%A8%A1%E5%BC%8F%E4%BB%A3%E7%A0%81%E6%AE%B5"><span class="nav-text">2.5.3 64-bit模式代码段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-5-4-64-bit%E6%A8%A1%E5%BC%8F%E6%95%B0%E6%8D%AE%E6%AE%B5"><span class="nav-text">2.5.4 64-bit模式数据段</span></a></li></ol></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -359,10 +362,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2022-11-01 19:43:19 / 修改时间：19:45:53" itemprop="dateCreated datePublished" datetime="2022-11-01T19:43:19+08:00">2022-11-01</time>
+      <time title="创建时间：2022-11-01 19:43:19" itemprop="dateCreated datePublished" datetime="2022-11-01T19:43:19+08:00">2022-11-01</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-11-03 00:15:50" itemprop="dateModified" datetime="2022-11-03T00:15:50+08:00">2022-11-03</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -402,14 +411,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>4.9k</span>
+      <span>6.4k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -524,7 +533,7 @@
 <p><img data-src="https://s2.loli.net/2022/10/31/qDkld37xCTfgGH5.png" alt="24.png"></p>
 <p>LDT 一般是用来帮助进行任务切换，但是在 32 位的 Windows 中使用线程切换并不使用任务，所以基本没有使用到 LDT。在 IA-32e 模式下，Intel 直接就取消了任务门，所以 LDT 表基本也就没啥研究的意义了。</p>
 <p>段描述符是 GDT 表和 LDT 表的元素表示，它为段寄存器提供隐藏的字段：Base、Limit、Attribute。（<strong>注意</strong>：在段寄存器内 Limit 占 32 位，在段描述符内只有 20 位。）</p>
-<div class="note default"><p>在 IA-32e 模式下，除了<mark class="label success">系统段描述符为 16 字节 128 位</mark>以外，其余的段描述符都是 8 字节 64 位。</p>
+<div class="note default"><p>在 IA-32e 模式下，除了<mark class="label success">系统描述符为 16 字节 128 位</mark>以外，其余的段描述符都是 8 字节 64 位。</p>
 <p><strong>系统段描述符包括</strong>：调用门描述符、IDT 描述符、LDT 描述符、TSS 描述符。</p>
 </div>
 
@@ -541,7 +550,8 @@
 
 
 <h3 id="2-2-Limit、G-位"><a href="#2-2-Limit、G-位" class="headerlink" title="2.2 Limit、G 位"></a>2.2 Limit、G 位</h3><p>逻辑地址格式为：<code>Seg.Selector:Offset</code>。</p>
-<h4 id="IA-32"><a href="#IA-32" class="headerlink" title="IA-32"></a>IA-32</h4><p>在 IA-32 下 <code>Offset</code> 取值由段寄存器隐藏部分的 <code>Limit</code> 进行限制，<code>Limit</code> 可以从20 位扩展到 32 位，这是根据段描述符的 G、D&#x2F;B、以及代码段的 E 位来将 20 位扩展成 32 位的。</p>
+<p><strong>一、IA-32</strong></p>
+<p>在 IA-32 下 <code>Offset</code> 取值由段寄存器隐藏部分的 <code>Limit</code> 进行限制，<code>Limit</code> 可以从20 位扩展到 32 位，这是根据段描述符的 G、D&#x2F;B、以及代码段的 E 位来将 20 位扩展成 32 位的。</p>
 <p>Limit：用来指定段的大小范围。</p>
 <ul>
 <li><p>G &#x3D; 1，段的范围是 <code>0x00000FFF &lt;= Limit &lt;= 0xFFFFFFFF</code>（4KB～4GB），以 4KB 大小为增量，增加到 32 位。</p>
@@ -580,13 +590,16 @@
 <li><p>检查段描述符表的 <code>Limit</code>，即 GDTR 寄存器的 <code>Limit</code>（表述GDT表的字节数）。</p>
 </li>
 </ol>
-<h4 id="IA-32e"><a href="#IA-32e" class="headerlink" title="IA-32e"></a>IA-32e</h4><p><strong>段权限检查</strong>：</p>
+<p><strong>二、IA-32e</strong></p>
+<p><strong>段权限检查</strong>：</p>
 <ul>
 <li>兼容模式：会像 Legacy 模式一样进行段 <code>Limit</code> 检查。</li>
 <li>64-bit 模式：在 4.2 中说过，<strong>分段通常被禁用</strong>（但不是完全禁用），从而创建一个平坦的 64 位线性地址空间。所以在 IA-32e 模式下不会对段描述符的 Limit 进行越界检查（Limit被忽略，不使用），但是会对段描述符寄存器 GDTR 的 Limit（段描述符表的字节数）进行检查。</li>
 </ul>
-<h3 id="2-3-Base-域"><a href="#2-3-Base-域" class="headerlink" title="2.3 Base 域"></a>2.3 Base 域</h3><h4 id="IA-32-1"><a href="#IA-32-1" class="headerlink" title="IA-32"></a>IA-32</h4><p><code>0 &lt;= Base &lt;= 4GB</code>，Base为32位。 </p>
-<h4 id="IA-32e-1"><a href="#IA-32e-1" class="headerlink" title="IA-32e"></a>IA-32e</h4><ul>
+<h3 id="2-3-Base-域"><a href="#2-3-Base-域" class="headerlink" title="2.3 Base 域"></a>2.3 Base 域</h3><p><strong>一、IA-32</strong></p>
+<p><code>0 &lt;= Base &lt;= 4GB</code>，Base为32位。 </p>
+<p><strong>二、IA-32e</strong></p>
+<ul>
 <li>兼容模式：<code>0 &lt;= Base &lt;= 4GB</code>，Base为32位。 </li>
 <li>64-bit模式：<strong>64 位模式下不使用 ES、DS 和 SS 段寄存器</strong>，所以它们在段描述符寄存器中的字段（Base、Limit和Attribute）被忽略。 处理器将<strong>CS、DS、ES、SS的段基址视为零</strong>，创建一个等于有效地址的线性地址。<strong>FS 段和 GS 段基址不为 0</strong>。Base为64位。</li>
 </ul>
@@ -594,12 +607,84 @@
 <p>P &#x3D; 0 时，将该段描述符加载到段寄存器时会产生 #NP 异常，将转到异常处理。</p>
 <p>DPL：指定当前段的特权级别。如一个数据段的 DPL &#x3D; 3，表示用户模式的数据段。</p>
 <ul>
-<li>CPL：当前特权级别。</li>
-<li>RPL：我以什么权限级别去访问你。</li>
-<li>DPL：你应该以什么样的权限来访问我。</li>
+<li>CPL：当前特权级别，当前 CS、SS 的 bit 0 和 bit 1。</li>
+<li>RPL：我以什么权限级别去访问你，段选择子的 bit 0 和 bit 1。</li>
+<li>DPL：你应该以什么样的权限来访问我。DPL 是段或门的特权级别，当当前执行的代码段试图访问一个段或门时，段或门的 DPL 会与当前 CPL、段选择子 RPL 进行比较。<ul>
+<li>数据段：DPL &gt;&#x3D; CPL。</li>
+<li>非一致性代码段（Nonconforming code segment）：CPL &#x3D; DPL 并且 RPL &lt;&#x3D; DPL。</li>
+<li>调用门、中断门：DPL &gt;&#x3D; CPL（RPL 随意，不检查）。是DPL要为3，否则在3环无法访问到门描述符。</li>
+<li>TSS：DPL &gt;&#x3D; CPL。</li>
 </ul>
-<h3 id="2-5-S-位"><a href="#2-5-S-位" class="headerlink" title="2.5 S 位"></a>2.5 S 位</h3><p>在 IA-32e 模式中，CS 描述符的 DPL 用于执行权限检查，就像在传统模式中一样。</p>
-<p>继续分析 Intel 手册 3.4.5 GDT 的每个字段，每个字段分析时结合 Chapter5 分析权限。（结合前面x86的文章和x86&#x2F;64体系探索及编程、软件调试第二版卷1）</p>
+</li>
+</ul>
+<h3 id="2-5-S-位、Type-域"><a href="#2-5-S-位、Type-域" class="headerlink" title="2.5 S 位、Type 域"></a>2.5 S 位、Type 域</h3><p>段描述符中分为三种类型：代码段描述符、数据段描述符、系统描述符。</p>
+<ul>
+<li>S &#x3D; 1，GDT 段描述符属于<strong>代码段&#x2F;数据段</strong>。</li>
+<li>S &#x3D; 0，GDT 段描述符属于<strong>系统描述符</strong>。</li>
+</ul>
+<p>系统描述符分为两类：系统段描述符、门描述符。</p>
+<ol>
+<li>系统段描述符：LDT、TSS。</li>
+<li>门描述符：调用门、中断门、陷阱门、任务门。</li>
+</ol>
+<h4 id="2-5-1-代码段-x2F-数据段"><a href="#2-5-1-代码段-x2F-数据段" class="headerlink" title="2.5.1 代码段&#x2F;数据段"></a>2.5.1 代码段&#x2F;数据段</h4><p><strong>S &#x3D; 1，代码段&#x2F;数据段</strong></p>
+<p>S 位决定 Type 域的取值</p>
+<ul>
+<li>S &#x3D; 1，Type 域最高位 &#x3D; <strong>1</strong>，<strong>代码段</strong>。</li>
+<li>S &#x3D; 1，Type 域最高位 &#x3D; <strong>0</strong>，<strong>数据段</strong>。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>段类型</th>
+<th>Type 域</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>代码段（CODE）</td>
+<td><strong>A：段描述符是否被访问过</strong> <br />1：已访问过 <br />0：未访问过 <br /><br /><strong>R：是否可读</strong>  <br />1：可读 <br />0：不可读 <br /><br /><strong>C：一致位</strong>  <br />1：一致代码段（Conforming），也就是共享的段，要求：CPL &gt;&#x3D; DPL。<br /><strong>特权级高的程序不允许访问特权级低的数据</strong>：核心态不允许访问用户态的数据。<br /><strong>特权级低的程序可以访问到特权级高的数据</strong>，但特权级不会改变：用户态CS还是用户态CS。 <br />0：非一致代码段（Nonconforming），Windows 使用。要求：CPL &#x3D; DPL 并且 RPL &lt;&#x3D; DPL。<br /><strong>只允许同级访问</strong>。绝对禁止不同级别的访问：核心态不是用户态，用户态也不是核心态。</td>
+<td>保护模式下，代码段不可写。</td>
+</tr>
+<tr>
+<td>数据段（DATA）</td>
+<td><strong>A：段描述符是否被访问过</strong>  <br />1：已访问过 <br />0：未访问过 <br /><br /><strong>W：是否可写</strong>  <br />1：可写 <br />0：不可写 <br /><br /><strong>E：拓展方向位</strong>  <br />1：向下拓展，Windows 使用 <br />0：向上拓展。</td>
+<td>SS 段必须是可读可写的。</td>
+</tr>
+</tbody></table>
+<p><img data-src="https://s2.loli.net/2022/01/29/p7igRC5t3NfzAFy.png" alt="13.png"></p>
+<p>也就是共享的段，要求：CPL &gt;&#x3D; DPL。<strong>特权级高的程序不允许访问特权级低的数据</strong>：核心态不允许访问用户态的数据<strong>特权级低的程序可以访问到特权级高的数据</strong>，但特权级不会改变：用户态CS还是用户态CS。</p>
+<h4 id="2-5-2-系统描述符"><a href="#2-5-2-系统描述符" class="headerlink" title="2.5.2 系统描述符"></a>2.5.2 系统描述符</h4><p><strong>S &#x3D; 0，系统描述符</strong>。系统描述符分为两类：系统段描述符、门描述符。</p>
+<ol>
+<li><strong>系统段描述符</strong>：LDT、TSS。</li>
+<li><strong>门描述符</strong>：调用门、中断门、陷阱门、任务门。</li>
+</ol>
+<p>在 IA-32e 模式下，<mark class="label warning">系统描述符都是 16 字节 128 位</mark>。</p>
+<p><img data-src="https://s2.loli.net/2022/01/29/niLUjlR5sg4Q6JD.png" alt="15.png"></p>
+<h4 id="2-5-3-64-bit模式代码段"><a href="#2-5-3-64-bit模式代码段" class="headerlink" title="2.5.3 64-bit模式代码段"></a>2.5.3 64-bit模式代码段</h4><p>结构如下：可以看到，<strong>Base、Limit 都没有了</strong>，被平坦了。</p>
+<p><img data-src="https://s2.loli.net/2022/11/02/GOMJoH3khj72dKx.png" alt="33.png"></p>
+<p>64 位模式下<strong>不使用 ES、DS 和 SS 段寄存器</strong>，所以它们在段描述符寄存器中的字段（Base、Limit 和 Attribute）被忽略。如果使用的话， 处理器<strong>会将CS、DS、ES、SS的段Base和Limit都视为零</strong>，创建一个等于有效地址的线性地址。<strong>FS 段和 GS 段基址不为 0</strong>。</p>
+<p>64-bit 模式下，代码段仍然存在，其存在的两个目的：</p>
+<ol>
+<li><p>指出处理器的运行模式 </p>
+<ul>
+<li>CS.L &#x3D; 0，处理器运行在兼容模式。 <ul>
+<li>D&#x2F;B &#x3D; 1，运行32位代码程序。</li>
+<li>D&#x2F;B &#x3D; 0，运行16位代码程序。</li>
+</ul>
+</li>
+<li>CS.L &#x3D;1，处理器运行在 64-bit 模式。<ul>
+<li>D&#x2F;B &#x3D; 0，运行64-bit模式，地址大小为64位。 </li>
+<li>D&#x2F;B &#x3D; 1，供将来使用，现在使用会产生#GP异常。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>使用 <code>CS.DPL</code> 执行权限检查，就像在传统模式中检查那样。</p>
+</li>
+</ol>
+<h4 id="2-5-4-64-bit模式数据段"><a href="#2-5-4-64-bit模式数据段" class="headerlink" title="2.5.4 64-bit模式数据段"></a>2.5.4 64-bit模式数据段</h4><p>64 位模式下<strong>不使用 ES、DS 和 SS 段寄存器</strong>，所以它们在段描述符寄存器中的字段（Base、Limit 和 Attribute）被忽略。</p>
+<p>继续分析 Intel 手册 5.8。（结合前面x86的文章和x86&#x2F;64体系探索及编程、软件调试第二版卷1）</p>
 <p>然后分析 IA-32e 分页。</p>
 <p>总的看来，IA-32e 模式下的 IDT 变得更简单了，不再有任务门，只有中断门和陷阱门， 断门和陷阱门都支持通过它们中的 IST 位域来指定是否要切换栈——软件调试第二版卷1 3.5.3。</p>
 
@@ -654,8 +739,8 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/post/x64-Kernel/" rel="prev" title="">
-                  <i class="fa fa-chevron-left"></i> 
+                <a href="/post/x64-Kernel/" rel="prev" title="x64 内核（一）IA-32e 研究">
+                  <i class="fa fa-chevron-left"></i> x64 内核（一）IA-32e 研究
                 </a>
             </div>
             <div class="post-nav-item">
@@ -729,7 +814,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">28:58</span>
+    <span title="站点阅读时长">29:01</span>
   </span>
 </div>
 <div class="busuanzi-count">

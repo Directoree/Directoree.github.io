@@ -22,12 +22,12 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="title: x64 内核（一）IA-32e 研究date: 2022-10-27 16:24:49tags:     - Windows内核          - x64 内核GDTcategories:          - x64 内核hide: false 😄">
+  <meta name="description" content="😄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Catecat">
+<meta property="og:title" content="x64 内核（一）IA-32e 研究">
 <meta property="og:url" content="https://directoree.github.io/post/x64-Kernel/index.html">
 <meta property="og:site_name" content="Catecat">
-<meta property="og:description" content="title: x64 内核（一）IA-32e 研究date: 2022-10-27 16:24:49tags:     - Windows内核          - x64 内核GDTcategories:          - x64 内核hide: false 😄">
+<meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/10/27/HMZLU4l6PQtB5R9.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/27/yPSInXpHElB4oMu.png">
@@ -51,9 +51,15 @@
 <meta property="og:image" content="https://s2.loli.net/2022/10/27/KM1HJnaDbx53piy.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/31/L3aZAyUODI5CRbn.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/01/LHXVAFy2dhCrknv.png">
-<meta property="article:published_time" content="2022-10-27T08:24:50.004Z">
-<meta property="article:modified_time" content="2022-11-01T16:11:22.048Z">
+<meta property="og:image" content="https://s2.loli.net/2022/11/02/dS9Df6QPmcU37pI.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/02/S3aYTzxkIn8LUOh.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/02/ksoZYKLC75OQUew.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/02/6Cdkj2o8XvGmUJN.png">
+<meta property="article:published_time" content="2022-10-27T08:24:49.000Z">
+<meta property="article:modified_time" content="2022-11-02T14:33:58.541Z">
 <meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 内核分段">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2022/10/27/HMZLU4l6PQtB5R9.png">
 
@@ -71,7 +77,7 @@
   };
 </script>
 
-  <title> | Catecat</title>
+  <title>x64 内核（一）IA-32e 研究 | Catecat</title>
   
 
 
@@ -358,7 +364,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          
+          x64 内核（一）IA-32e 研究
         </h1>
 
         <div class="post-meta-container">
@@ -369,18 +375,27 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2022-10-27 16:24:50" itemprop="dateCreated datePublished" datetime="2022-10-27T16:24:50+08:00">2022-10-27</time>
+      <time title="创建时间：2022-10-27 16:24:49" itemprop="dateCreated datePublished" datetime="2022-10-27T16:24:49+08:00">2022-10-27</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-11-02 00:11:22" itemprop="dateModified" datetime="2022-11-02T00:11:22+08:00">2022-11-02</time>
+        <time title="修改时间：2022-11-02 22:33:58" itemprop="dateModified" datetime="2022-11-02T22:33:58+08:00">2022-11-02</time>
       </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64-%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64 内核</span></a>
+        </span>
+    </span>
 
   
-    <span id="/post/x64-Kernel/" class="post-meta-item leancloud_visitors" data-flag-title="" title="阅读次数">
+    <span id="/post/x64-Kernel/" class="post-meta-item leancloud_visitors" data-flag-title="x64 内核（一）IA-32e 研究" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -408,14 +423,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>14k</span>
+      <span>15k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>13 分钟</span>
+      <span>14 分钟</span>
     </span>
 </div>
 
@@ -426,8 +441,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>title: x64 内核（一）IA-32e 研究<br>date: 2022-10-27 16:24:49<br>tags:<br>     - Windows内核<br>          - x64 内核GDT<br>categories:<br>          - x64 内核<br>hide: false</p>
-<p>😄</p>
+        <p>😄</p>
 <span id="more"></span>
 
 
@@ -946,16 +960,23 @@
 <p><strong>Bit 11</strong>：控制每级页表项的最高位 <code>XD</code> 位，使用 <code>或(||)</code> 关系。</p>
 <div class="note danger"><p>IA-32e 模式的启用条件是：</p>
 <p>  　　1. 启用段内存管理进入保护模式 CR0.PE &#x3D; 1</p>
-<p>  　　2. 启用PAE内存分页管理模式 CR4.PAE &#x3D; 1</p>
-<p>  　　3. 启用64位模式 EFER.LME &#x3D; 1 </p>
-<p>  　　4. 启用页内存管理 CR0.PG &#x3D; 1 </p>
-<p>  　　5. 上述四点必须按照上面的顺序启用</p>
+<pre><code>　　2. 启用PAE内存分页管理模式 CR4.PAE = 1
+
+  　　3. 启用64位模式 EFER.LME = 1 
+
+    　　4. 启用页内存管理 CR0.PG = 1 
+
+      　　5. 上述四点必须按照上面的顺序启用
+</code></pre>
 <p>如果条件全部满足，CPU会置 EFER.LMA &#x3D; 1表示 IA-32e 位模式启动了 。然后在 IA-32e 下区分 64 位模式和还是兼容模式：查看 CS 段寄存器的 <mark class="label default">L</mark> 位。</p>
 </div>
 
 <p>IA-32e 模式下寄存器的设置：</p>
 <p><img data-src="https://s2.loli.net/2022/10/31/L3aZAyUODI5CRbn.png" alt="25.png"></p>
-<h3 id="4-4-支持-sysenter-x2F-sysexit-指令的-MSR"><a href="#4-4-支持-sysenter-x2F-sysexit-指令的-MSR" class="headerlink" title="4.4 支持 sysenter&#x2F;sysexit 指令的 MSR"></a>4.4 支持 sysenter&#x2F;sysexit 指令的 MSR</h3><p><code>sysenter/sysexit</code> 在 IA-32 和 IA-32e 下都可以使用，但是不支持在 AMD 的 Long mode 下使用。</p>
+<h3 id="4-4-支持-sysenter-x2F-sysexit-指令的-MSR"><a href="#4-4-支持-sysenter-x2F-sysexit-指令的-MSR" class="headerlink" title="4.4 支持 sysenter&#x2F;sysexit 指令的 MSR"></a>4.4 支持 sysenter&#x2F;sysexit 指令的 MSR</h3><div class="note warning"><p>64 位 Windows 并不是使用 <code>sysenter/sysexit</code> 指令进行 <code>R3/R0</code> 权限的切换，<strong>使用 <code>syscall/sysret</code> 指令</strong>。</p>
+</div>
+
+<p><code>sysenter/sysexit</code> 在 IA-32 和 IA-32e 下都可以使用，但是不支持在 AMD 的 Long mode 下使用。</p>
 <p>与之相关的 3 个 MSR 寄存器：</p>
 <ul>
 <li>0x174：IA32_SYSENTER_CS</li>
@@ -966,32 +987,46 @@
 <h4 id="IA-32"><a href="#IA-32" class="headerlink" title="IA-32"></a>IA-32</h4><p><strong>R3 进入 R0</strong>：使用 <code>sysenter</code> 进入 0 环时，CS0 寄存器的段选择子来自 <code>IA32_SYSENTER_CS</code>，<code>SS = CS.Selector + 8</code>。EIP0 来自于 <code>IA32_SYSENTER_EIP(0x176)</code>。但是 ESP0 是来自于 <code>TSS.ESP0</code>，不是来自于 <code>IA32_SYSENTER_ESP(0x175)</code>。</p>
 <p><strong>R0 返回 R3</strong>：使用 <code>sysexit</code> 返回 3 环时，EDX 存放 EIP3，ECX 存放 ESP3。</p>
 <h4 id="IA-32e"><a href="#IA-32e" class="headerlink" title="IA-32e"></a>IA-32e</h4><p><strong>R3 进入 R0</strong>：使用 <code>sysenter</code> 进入 0 环时，CS 寄存器的段选择子 来自 <code>IA32_SYSENTER_CS</code>，<code>SS = CS.Selector + 8</code>。RIP0 来自于 <code>IA32_SYSENTER_EIP(0x176)</code>。但是 RSP0 是来自于 <code>TSS.RSP0</code>，不是来自于 <code>IA32_SYSENTER_ESP(0x175)</code>。</p>
-<h3 id="4-5-支持-syscall-x2F-sysret-指令的-MSR"><a href="#4-5-支持-syscall-x2F-sysret-指令的-MSR" class="headerlink" title="4.5 支持 syscall&#x2F;sysret 指令的 MSR"></a>4.5 支持 syscall&#x2F;sysret 指令的 MSR</h3><p>SYSCALL 和 SYSRET 指令专为使用平坦内存模式且不使用分段的操作系统而设计。 这些指令（连同 <code>SYSENTER/SYSEXIT</code>）非常适合 IA-32e 模式操作。 兼容模式不支持 SYSCALL 和 SYSRET。 有关检测 SYSCALL 和 SYSRET 可用性的更多详细信息，请参阅 CPUID。</p>
-<p>SYSCALL 和 SYSRET 指定 64 位代码偏移量。 在 IA-32e 模式下，清除 EFLAGS 中的位是可编程的，而不是固定的； SYSCALL 和 SYSRET 保存和恢复 EFLAGS 寄存器。</p>
-<h3 id="4-6-支持-swapgs-指令的-MSR"><a href="#4-6-支持-swapgs-指令的-MSR" class="headerlink" title="4.6 支持 swapgs 指令的 MSR"></a>4.6 支持 swapgs 指令的 MSR</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; rdmsr <span class="number">0xC0000100</span></span><br><span class="line">msr[c0000100] = <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000101</span></span><br><span class="line">msr[c0000101] = fffff800`<span class="number">65642000</span></span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000102</span></span><br><span class="line">msr[c0000102] = <span class="number">0000004</span>d`<span class="number">0668b</span>000</span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000103</span></span><br><span class="line">msr[c0000103] = <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+<p><code>SYSEXIT</code> 指令返回时不同，具体见《Intel® 64 and IA-32 Architectures Software Developer’s Manual Volume 3 (3A, 3B, 3C &amp; 3D): System Programming Guide 5.8.7.1》。</p>
+<h3 id="4-5-支持-syscall-x2F-sysret-指令的-MSR"><a href="#4-5-支持-syscall-x2F-sysret-指令的-MSR" class="headerlink" title="4.5 支持 syscall&#x2F;sysret 指令的 MSR"></a>4.5 支持 syscall&#x2F;sysret 指令的 MSR</h3><p>SYSCALL 和 SYSRET 指令专为使用平坦内存模式且不使用分段的操作系统而设计。 这些指令（连同 <code>SYSENTER/SYSEXIT</code>）非常适合 IA-32e 模式操作。 <mark class="label danger">兼容模式不支持 SYSCALL 和 SYSRET</mark>。 <code>CPUID.80000001H.EDX[bit 11] = 1</code> 表示该 CPU 支持 SYSCALL 和 SYSRET。</p>
+<p>SYSCALL 和 SYSRET 指定 64 位代码偏移量。 在 IA-32e 模式下，清除 EFLAGS 中的位是可编程的，而不是固定的； SYSCALL 和 SYSRET 会保存和恢复 EFLAGS 寄存器。</p>
+<div class="note danger"><ol>
+<li><p>64 位 Windows <strong>使用 <code>syscall/sysret</code> 指令</strong>进行系统调用和返回，对于 32 位的程序，会在 Wow64 进行转换后，从 64 位的 <code>ntdll.dll</code> 调用 <code>syscall</code> 进入 0 环。</p>
+</li>
+<li><p>内核一直都是运行 64-bit 模式，32 位程序的运行环境是模拟出来的。在 64 位系统中，如果此时程序 <code>CS = 0x23</code>，则该段选择子对应的段描述符 <code>CS.L = 0</code>，说明系统此时以兼容模式来运行该程序，以 32 位指令集来运行。</p>
+</li>
+<li><p>但是不管是 32 位程序还是 64 位程序，<strong>只要发生系统调用，都必须以 64-bit 模式进</strong>入，因为内核以 64-bit 模式运行。</p>
+</li>
+<li><p>所以， <mark class="label primary">32 位的驱动程序无法在 64 位系统下运行</mark>，因为 IA-32e 的兼容模式是用来运行用户模式的程序的。</p>
+</li>
+</ol>
+</div>
 
+<p><strong>一、syscall 步骤</strong></p>
+<ol>
+<li>将 rflags 存入 r11 寄存器，将 3 换的返回地址保存到 rcx 寄存器。</li>
+<li>获取以下 msr 寄存器中的值进行提权跳转。</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2022/11/02/dS9Df6QPmcU37pI.png" alt="29.png"></p>
+<p><strong>二、sysret 返回</strong>（返回到64位程序&#x2F;32位程序）</p>
+<p><img data-src="https://s2.loli.net/2022/11/02/S3aYTzxkIn8LUOh.png" alt="30.png"></p>
+<p>使用到的三个 MSR 寄存器：</p>
+<ul>
+<li>0xC0000081：IA32_STAR</li>
+<li>0xC0000082：IA32_LSTAR</li>
+<li>0xC0000084：IA32_FMASK</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/11/02/ksoZYKLC75OQUew.png" alt="31.png"></p>
+<h3 id="4-6-支持-swapgs-指令的-MSR"><a href="#4-6-支持-swapgs-指令的-MSR" class="headerlink" title="4.6 支持 swapgs 指令的 MSR"></a>4.6 支持 swapgs 指令的 MSR</h3><ul>
+<li>0xC0000101：IA32_GS_BASE —— <strong>用户模式</strong> <code>GS:[0]</code>，GS.Base。</li>
+<li>0xC0000102：IA32_KERNEL_GS_BASE —— <strong>内核模式</strong> <code>GS:[0]</code>，GS.Base。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; rdmsr <span class="number">0xC0000100</span>	<span class="comment">//IA32_FS_BASE</span></span><br><span class="line">msr[c0000100] = <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000101</span>	<span class="comment">//IA32_GS_BASE</span></span><br><span class="line">msr[c0000101] = fffff800`<span class="number">65642000</span></span><br><span class="line">kd&gt; rdmsr <span class="number">0xC0000102</span>	<span class="comment">//IA32_KERNEL_GS_BASE</span></span><br><span class="line">msr[c0000102] = <span class="number">0000004</span>d`<span class="number">0668b</span>000</span><br></pre></td></tr></table></figure>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<p>初始状态时，<code>IA32_GS_BASE</code> 保存用户态的 <code>GS:[0]</code>，这个时候将其加载到 <code>GS.Base</code>，<code>IA32_KERNEL_GS_BASE</code> 为内核态的 <code>GS:[0]</code>。</p>
+<p>当系统调用时，进入 0 环后，会将 <code>IA32_KERNEL_GS_BASE</code> 的值加载到 <code>GS.Base</code>，并与 <code>IA32_GS_BASE</code> 的值进行交换。</p>
+<p>如上 <code>IA32_KERNEL_GS_BASE = 0000004d&#39;0668b000</code> 就是已经进入内核态发生过一次交换了。<code>swapgs</code> 指令如下：</p>
+<p><img data-src="https://s2.loli.net/2022/11/02/6Cdkj2o8XvGmUJN.png" alt="32.png"></p>
 
     </div>
 
@@ -1027,7 +1062,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/x64-Kernel/" title="">https://directoree.github.io/post/x64-Kernel/</a>
+      <a href="https://directoree.github.io/post/x64-Kernel/" title="x64 内核（一）IA-32e 研究">https://directoree.github.io/post/x64-Kernel/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -1035,6 +1070,10 @@
 </ul>
 </div>
 
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-%E5%86%85%E6%A0%B8%E5%88%86%E6%AE%B5/" rel="tag"><i class="fa fa-tag"></i> x64 内核分段</a>
+          </div>
 
         
 
@@ -1115,7 +1154,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">28:58</span>
+    <span title="站点阅读时长">29:01</span>
   </span>
 </div>
 <div class="busuanzi-count">
