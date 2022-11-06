@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64 内核（三）IA-32e 分段研究">
+<meta property="og:url" content="https://directoree.github.io/post/x64-Kernel3/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/11/04/PXdgtV7le1SuAyH.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/04/V6XWaomHAKIt47h.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/04/mFYT8iEfsGULJg1.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/20/wHi3jGQ9lgvMfza.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/20/Am4kPME5LUBJCYv.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/04/AgxJKYLqGRWUVZl.png">
+<meta property="og:image" content="https://s2.loli.net/2022/07/02/JVYqAoIOk5hjCP1.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/04/uNMtIGFhR7caes2.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/31/QXtUG2jZPrkYI39.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/05/Iv8CnLMuyHlJNqP.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/05/OyzJKw46x7XuqnZ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/05/maWiYNcbdZMop8L.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/05/WzTpYfJKhn3HSaU.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/05/O2RaAcWKPIboGEi.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/30/tCrVcMgBDFXTndW.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/05/maWiYNcbdZMop8L.png">
+<meta property="article:published_time" content="2022-11-04T10:54:29.000Z">
+<meta property="article:modified_time" content="2022-11-06T09:42:08.066Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64内核">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/11/04/PXdgtV7le1SuAyH.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/x64-Kernel3/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>x64 内核（三）IA-32e 分段研究 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E4%B8%AD%E6%96%AD"><span class="nav-text">1 中断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%A4%96%E9%83%A8%E4%B8%AD%E6%96%AD"><span class="nav-text">1.1 外部中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E8%BD%AF%E4%BB%B6%E4%B8%AD%E6%96%AD"><span class="nav-text">1.2 软件中断</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%B8%AD%E6%96%AD%E7%9A%84%E5%BC%80%E5%90%AF%E5%92%8C%E5%B1%8F%E8%94%BD"><span class="nav-text">1.3 中断的开启和屏蔽</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%8F%E8%94%BD%E5%8F%AF%E5%B1%8F%E8%94%BD%E7%9A%84%E4%B8%AD%E6%96%AD"><span class="nav-text">屏蔽可屏蔽的中断</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B1%8F%E8%94%BD%E5%8D%95%E6%AD%A5%E8%B0%83%E8%AF%95"><span class="nav-text">屏蔽单步调试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%BC%82%E5%B8%B8"><span class="nav-text">2 异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-text"></span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%B8%AD%E6%96%AD%E9%97%A8-x2F-%E9%99%B7%E9%98%B1%E9%97%A8"><span class="nav-text">3 中断门&#x2F;陷阱门</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-IA-32-%E4%B8%AD%E6%96%AD%E9%97%A8-x2F-%E9%99%B7%E9%98%B1%E9%97%A8"><span class="nav-text">3.1 IA-32 中断门&#x2F;陷阱门</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8"><span class="nav-text">中断描述符表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%A8%E5%A4%84%E7%90%86%E8%BF%87%E7%A8%8B"><span class="nav-text">门处理过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A0%86%E6%A0%88%E5%88%87%E6%8D%A2"><span class="nav-text">堆栈切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%A8%E8%BF%94%E5%9B%9E"><span class="nav-text">门返回</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%A8%E6%9D%83%E9%99%90%E6%A3%80%E6%9F%A5"><span class="nav-text">门权限检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#EFLAGS-%E7%9A%84%E4%BD%8D"><span class="nav-text">EFLAGS 的位</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-IA-32e-%E4%B8%AD%E6%96%AD%E9%97%A8-x2F-%E9%99%B7%E9%98%B1%E9%97%A8"><span class="nav-text">3.2 IA-32e 中断门&#x2F;陷阱门</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E6%8F%8F%E8%BF%B0%E7%AC%A6%E8%A1%A8-1"><span class="nav-text">中断描述符表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A0%86%E6%A0%88%E5%88%87%E6%8D%A2-1"><span class="nav-text">堆栈切换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%AD%E6%96%AD%E5%A0%86%E6%A0%88%E8%A1%A8%EF%BC%88Interrupt-Stack-Table-IST%EF%BC%89"><span class="nav-text">中断堆栈表（Interrupt Stack Table, IST）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-TSS%EF%BC%88IA-32e%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-text">3 TSS（IA-32e模式）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-TR-%E5%AF%84%E5%AD%98%E5%99%A8"><span class="nav-text">3.1 TR 寄存器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-64-bit-%E6%A8%A1%E5%BC%8F%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-text">3.2 64-bit 模式任务管理</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">141</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">74</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64-Kernel3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64 内核（三）IA-32e 分段研究
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-04 18:54:29" itemprop="dateCreated datePublished" datetime="2022-11-04T18:54:29+08:00">2022-11-04</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-11-06 17:42:08" itemprop="dateModified" datetime="2022-11-06T17:42:08+08:00">2022-11-06</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/x64-Kernel3/" class="post-meta-item leancloud_visitors" data-flag-title="x64 内核（三）IA-32e 分段研究" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/x64-Kernel3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/x64-Kernel3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-中断"><a href="#1-中断" class="headerlink" title="1 中断"></a>1 中断</h2><p>从中断源来看，中断分为两类：</p>
+<ol>
+<li>外部（硬件）产生的中断。</li>
+<li>软件产生的中断（使用 <code>INT n</code> 指令）。</li>
+</ol>
+<h3 id="1-1-外部中断"><a href="#1-1-外部中断" class="headerlink" title="1.1 外部中断"></a>1.1 外部中断</h3><p>外部中断通过处理器上的引脚或本地 APIC 来接收。引脚分为两类：INTR、NMI。</p>
+<ul>
+<li><p>通过 <code>INTR</code> 引脚或 APIC 传递给处理器的外部中断为<mark class="label success">可屏蔽中断</mark>。</p>
+<ul>
+<li><code>INTR</code> 引脚：<code>0～255</code> 中断向量号。</li>
+<li>本地 APIC：<code>16～255</code> 中断向量号。</li>
+</ul>
+</li>
+<li><p>通过 <code>NMI</code> 引脚产生的外部中断为<mark class="label warning">不可屏蔽中断</mark>。</p>
+<ul>
+<li><code>NMI</code> 引脚：使用 <code>2</code> 中断向量号。</li>
+<li>软件中断 <code>INT n</code> 指令产生的，也是不可屏蔽中断。</li>
+</ul>
+</li>
+</ul>
+<p>不可屏蔽中断说明：</p>
+<ol>
+<li>只要从 <code>NMI</code> 引脚产生的中断，都会使用 <code>2</code> 号中断向量指向的处理例程来进行处理。</li>
+<li><code>INTR</code> 引脚发出的中断向量号为 <code>2</code> 的中断，虽然可以调用 <code>NMI</code> 中断处理例程，但并不是真正的 NMI 中断。</li>
+</ol>
+<h3 id="1-2-软件中断"><a href="#1-2-软件中断" class="headerlink" title="1.2 软件中断"></a>1.2 软件中断</h3><p>在程序中，可以使用 <code>INT n</code> 指令来产生一个从软件内部产生的中断，叫做软件中断。<code>n</code> 的取值范围 <code>0～255</code> 。</p>
+<p>特别说明：</p>
+<ol>
+<li><code>int 2</code> ，可以通过中断向量 <code>2</code> 来调用 <code>NMI</code> 中断处理例程，但是不会激活处理器的 NMI-handling hardware。</li>
+<li><code>INT n</code> 指令产生的中断<strong>不会被 <code>eflags.IF</code> 位屏蔽</strong>。</li>
+</ol>
+<p><strong>注意</strong>：通过 <code>INT n</code> 指令，产生的是中断，它也用来在软件中模拟一个异常，这样就会使该中断和异常处理程序关联起来。</p>
+<blockquote>
+<p>手册6.4.2提到，在架构上已经给很多异常进行了定义，如 <code>0～31</code> 号，如果软件使用 <code>INT n</code> 指令中的 <code>n</code> 位于这个区间，产生中断时，并不会向堆栈中压入错误码 <code>Error</code>。同样地6.8.1提到，如果通过 <code>INTR</code> 引脚来调用一个异常处理程序，也不会向堆栈中压入错误码 <code>Error</code>。<strong>因为这些都是中断，不是真正意义上的异常</strong>。</p>
+</blockquote>
+<h3 id="1-3-中断的开启和屏蔽"><a href="#1-3-中断的开启和屏蔽" class="headerlink" title="1.3 中断的开启和屏蔽"></a>1.3 中断的开启和屏蔽</h3><h4 id="屏蔽可屏蔽的中断"><a href="#屏蔽可屏蔽的中断" class="headerlink" title="屏蔽可屏蔽的中断"></a>屏蔽可屏蔽的中断</h4><p><code>eflags.IF</code> 标志位用来屏蔽可屏蔽的中断：</p>
+<ul>
+<li><code>eflags.IF = 0</code>，使用 <code>cli</code> 指令，屏蔽可屏蔽的中断。</li>
+<li><code>eflags.IF = 1</code>，使用 <code>sti</code> 指令，响应中断。</li>
+</ul>
+<h4 id="屏蔽单步调试"><a href="#屏蔽单步调试" class="headerlink" title="屏蔽单步调试"></a>屏蔽单步调试</h4><p>当我们 <code>eflags.TF = 1</code> ，时就是设置了指令断点，会产生调试异常。它与 <code>eflags.RF</code> 配合起来使用才能达到单步调试的效果。</p>
+<ul>
+<li>TF &#x3D; 1，产生指令断点，触发调试异常。</li>
+<li>TF &#x3D; 0，不产生指令断点。</li>
+<li>RF &#x3D; 1，屏蔽指令断点产生调试异常。</li>
+<li>RF &#x3D; 0，指令断点可产生调试异常。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">pushfd</span><br><span class="line">bts dvord [esp], <span class="number">8</span>	; eflags.TF = <span class="number">1</span></span><br><span class="line">popfd			;更新 eflags 寄存器</span><br><span class="line">mov eax, <span class="number">1</span>		;test <span class="number">1</span></span><br><span class="line">mov eax, <span class="number">2</span>		;test <span class="number">2</span></span><br><span class="line">mov eax, <span class="number">3</span>		;test <span class="number">3</span></span><br><span class="line">mov eax, <span class="number">4</span>		;test <span class="number">4</span></span><br><span class="line">mov eax, <span class="number">5</span>		;test <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/11/04/PXdgtV7le1SuAyH.png" alt="42.png"></p>
+<p><strong>正常代码执行过程中，每次指令执行结束，处理器都会将 <code>RF = 0</code>。但是 <code>iret</code> 指令会将 <code>RF = 1</code>。</strong></p>
+<p>单步调试的过程如下：</p>
+<ol>
+<li>RF &#x3D; 0，TF &#x3D; 1。<code>mov eax, 1</code> 指令执行完之后产生指令断点触发 #DB 异常。CPU 将 eflags 压栈、将 TF &#x3D; 0、PF &#x3D; 0、NT &#x3D; 0、VM &#x3D; 0。</li>
+<li><code>iret</code> 执行之后前，将栈中 eflags.RF &#x3D; 1，<code>iret</code> 执行时将其弹出到 eflags 中。此时 RF &#x3D; 1，TF &#x3D; 1（TF&#x3D;1是因为保存在堆栈的eflags.TF&#x3D;1）。</li>
+<li>由于 RF &#x3D; 1，TF &#x3D; 1。所以 <code>mov eax, 2</code> 会得到执行，该指令执行完后 CPU 将 RF &#x3D; 0，然后重复上面这个过程。</li>
+</ol>
+<p>参考《x86&#x2F;x64体系探索及编程5.3》。</p>
+<p>如果在指令边界（在指令执行之间）有多个事件挂起，则处理器会以可预测的顺序为它们提供服务。表 6-2 显示了事件源类之间的优先级。</p>
+<p><img data-src="https://s2.loli.net/2022/11/04/V6XWaomHAKIt47h.png" alt="43.png"></p>
+<p><img data-src="https://s2.loli.net/2022/11/04/mFYT8iEfsGULJg1.png" alt="44.png"></p>
+<p>这个也很有用，比如说 eflags.if &#x3D; 0 时，并不会阻止中断和异常的生成（只是暂时屏蔽掉），新生成的中断和异常将被挂起，这些被挂起的事件（中断和异常事件）有优先级，优先级高的在IF &#x3D; 1后优先被处理（挂起的事件并不是只使用一个队列）。</p>
+<h2 id="2-异常"><a href="#2-异常" class="headerlink" title="2 异常"></a>2 异常</h2><p>处理器接收的 3 个异常来源：</p>
+<ol>
+<li>程序执行产生的错误。</li>
+<li>软件生成的异常（int n 指令）。</li>
+<li>机器检查异常（Machine-check）。</li>
+</ol>
+<p>异常分类：</p>
+<p><img data-src="https://s2.loli.net/2022/07/20/wHi3jGQ9lgvMfza.png" alt="1.png"></p>
+<h3 id=""><a href="#" class="headerlink" title=""></a></h3><table>
+<thead>
+<tr>
+<th>中断&#x2F;异常向量号</th>
+<th>助记符</th>
+<th>类型</th>
+<th>描述</th>
+<th>来源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>#DE</td>
+<td>错误</td>
+<td>除零错误</td>
+<td>DIV 和 IDIV指令</td>
+</tr>
+<tr>
+<td>1</td>
+<td>#DB</td>
+<td>错误&#x2F;陷阱</td>
+<td>调试异常，用于软件调试（eflags.TF &#x3D; 1单步调试）</td>
+<td>任何代码或数据引用</td>
+</tr>
+<tr>
+<td>2</td>
+<td>&#x2F;</td>
+<td>中断</td>
+<td>NMI中断</td>
+<td>不可屏蔽的外部中断</td>
+</tr>
+<tr>
+<td>3</td>
+<td>#BP</td>
+<td>陷阱</td>
+<td>断点</td>
+<td><code>INT 3</code> 指令</td>
+</tr>
+<tr>
+<td>4</td>
+<td>#OF</td>
+<td>陷阱</td>
+<td>溢出</td>
+<td><code>INTO</code> 指令</td>
+</tr>
+<tr>
+<td>5</td>
+<td>#BR</td>
+<td>错误</td>
+<td>数组越界</td>
+<td><code>BOUND</code> 指令</td>
+</tr>
+<tr>
+<td>6</td>
+<td>#UD</td>
+<td>错误</td>
+<td>无效指令（没有定义的指令）</td>
+<td>UD2 指令（奔腾 Pro CPU 引入此指令）或任何保留的指令</td>
+</tr>
+<tr>
+<td>7</td>
+<td>#NM</td>
+<td>错误</td>
+<td>数学协处理器不存在或不可用</td>
+<td>浮点或 <code>WAIT/FWAIT</code> 指令</td>
+</tr>
+<tr>
+<td>8</td>
+<td>#DF</td>
+<td>中止</td>
+<td>双重错误 (Double Fault)</td>
+<td>任何可能产生异常的指令、不可屏蔽中断或可屏蔽中断</td>
+</tr>
+<tr>
+<td>9</td>
+<td>#MF</td>
+<td>错误</td>
+<td>向协处理器传送操作数时检测到页错误(Page Faults）或段不存在，自从 486 把数学协处理器集成到 CPU 内部后，<strong>本异常便保留不用</strong></td>
+<td>浮点指令</td>
+</tr>
+<tr>
+<td>10</td>
+<td>#TS</td>
+<td>错误</td>
+<td>无效 TSS</td>
+<td>任务切换或访问 TSS</td>
+</tr>
+<tr>
+<td>11</td>
+<td>#NP</td>
+<td>错误</td>
+<td>段不存在</td>
+<td>加载段寄存器或访问系统段</td>
+</tr>
+<tr>
+<td>12</td>
+<td>#SS</td>
+<td>错误</td>
+<td>栈段错误</td>
+<td>栈操作或加载 SS 寄存器</td>
+</tr>
+<tr>
+<td>13</td>
+<td>#GP</td>
+<td>错误</td>
+<td>通用保护（GP）异常，如果一个操作违反了保护模式下的规定，而且该情况不属于其他异常，则 CPU 便产生通用保护异常，很多时候也被翻译为一般保护异常</td>
+<td>任何内存引用和保护性检查</td>
+</tr>
+<tr>
+<td>14</td>
+<td>#PF</td>
+<td>错误</td>
+<td>页错误</td>
+<td>任何内存引用</td>
+</tr>
+<tr>
+<td>15</td>
+<td>保留</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>16</td>
+<td>#MF</td>
+<td>错误</td>
+<td>浮点错误</td>
+<td>浮点或 <code>WAIT/FWAIT </code>指令</td>
+</tr>
+<tr>
+<td>17</td>
+<td>#AC</td>
+<td>错误</td>
+<td>对齐检查</td>
+<td>对内存中数据的引用（486CPU 引入）</td>
+</tr>
+<tr>
+<td>18</td>
+<td>#MC</td>
+<td>中止</td>
+<td>机器检查(Machine Check)</td>
+<td>错误代码和来源与型号有关（奔腾CPU 引入）</td>
+</tr>
+<tr>
+<td>19</td>
+<td>#XF</td>
+<td>错误</td>
+<td>SIMD 浮点异常</td>
+<td>SIMD 浮点指令（奔腾I CPU 引入）</td>
+</tr>
+<tr>
+<td>20~31</td>
+<td>保留</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+<td>&#x2F;</td>
+</tr>
+<tr>
+<td>32~255</td>
+<td>用户定义中断</td>
+<td>中断</td>
+<td>可屏蔽中断</td>
+<td>来自<code>INTR</code>的外部中断或 <code>INT n</code>指令</td>
+</tr>
+</tbody></table>
+<p>手册2A，int 3指令可为：0xcc&#x2F;0xcd 3</p>
+<p><img data-src="https://s2.loli.net/2022/07/20/Am4kPME5LUBJCYv.png" alt="2.png"></p>
+<h2 id="3-中断门-x2F-陷阱门"><a href="#3-中断门-x2F-陷阱门" class="headerlink" title="3 中断门&#x2F;陷阱门"></a>3 中断门&#x2F;陷阱门</h2><div class="note danger"><p>IDT表用来将中断向量和中断&#x2F;异常处理例程进行关联。IDT表有以下特征：</p>
+<ol>
+<li>类似于 GDT 表，每个条目为 8 字节，但是 IDT 表中<strong>不包含调用门</strong>（中断门、任务门、陷阱门）。</li>
+<li>调用门、中断门、陷阱门描述符中的段选择子都为代码段选择子。</li>
+<li>不像 GDT 表，IDT 表的下标 <code>0</code> 的条目不是空的，它是对应于 <code>INT 0</code> 的。</li>
+<li>中断向量为 <code>0-256</code>，所以 IDT 表中最多有 256 项。</li>
+<li>IDT 表的地址是随机的，可以使用 IDTR 寄存器来定位 IDT 表。</li>
+<li>IDTR 寄存器类似于 GDTR 寄存器。特权指令 <code>LIDT</code> 将一个数加载到 IDTR 寄存器（仅在R0使用），SIDT 指令读取 IDTR 寄存器的值（SIDT可以在3环使用）。</li>
+<li>中断向量 <code>INT n</code>的 <code>n</code> 为 IDT 表的索引。</li>
+</ol>
+</div>
+
+
+
+<h3 id="3-1-IA-32-中断门-x2F-陷阱门"><a href="#3-1-IA-32-中断门-x2F-陷阱门" class="headerlink" title="3.1 IA-32 中断门&#x2F;陷阱门"></a>3.1 IA-32 中断门&#x2F;陷阱门</h3><h4 id="中断描述符表"><a href="#中断描述符表" class="headerlink" title="中断描述符表"></a>中断描述符表</h4><p>IA-32 中断描述符表包含以下三种门描述符（不包含调用门）：</p>
+<ul>
+<li>中断门</li>
+<li>陷阱门</li>
+<li>任务门</li>
+</ul>
+<div class="note default"><p>中断门、陷阱门描述符与调用门描述符非常相似，它们都包含一个<mark class="label danger">远指针</mark>（<code>Selector:Offset</code>），处理器使用该远指针找到代码段中的中断&#x2F;异常处理例程。</p>
+</div>
+
+<p><img data-src="https://s2.loli.net/2022/11/04/AgxJKYLqGRWUVZl.png" alt="45.png"></p>
+<h4 id="门处理过程"><a href="#门处理过程" class="headerlink" title="门处理过程"></a>门处理过程</h4><p>在软件中可以使用 <code>INT n</code> 指令来触发，然后过程如下。</p>
+<p><img data-src="https://s2.loli.net/2022/07/02/JVYqAoIOk5hjCP1.png" alt="INT_N转换为服务过程.png"></p>
+<h4 id="堆栈切换"><a href="#堆栈切换" class="headerlink" title="堆栈切换"></a>堆栈切换</h4><div class="note info"><p>关于段的切换：</p>
+<ol>
+<li>CS0：来自于中断门&#x2F;陷阱门描述符的 CS 段选择子。</li>
+<li>SS0、ESP0：来自于 TSS。</li>
+</ol>
+</div>
+
+<div class="note warning"><p>中断门&#x2F;陷阱门类似于调用门，有同级别权限和不同级别的中断门&#x2F;陷阱门，关于堆栈：</p>
+<ol>
+<li>如果不发生权限切换：堆栈中压入 EFLAGS、CS、EIP、ErrrCode。</li>
+<li>如果发生权限切换：R0 堆栈中压入：<strong>SS3</strong>、<strong>ESP3</strong>、EFLAGS3、CS3、EIP3、ErrrCode。</li>
+<li>中断门&#x2F;陷阱门没有参数，调用门有参数。</li>
+</ol>
+<p>如果不发生权限切换，则不会将 SS、ESP 压入堆栈。</p>
+</div>
+
+<p><img data-src="https://s2.loli.net/2022/11/04/uNMtIGFhR7caes2.png" alt="46.png"></p>
+<h4 id="门返回"><a href="#门返回" class="headerlink" title="门返回"></a>门返回</h4><p>中断门&#x2F;陷阱门的返回：</p>
+<ul>
+<li>16位：<code>iret</code></li>
+<li>32位：<code>iretd</code></li>
+<li>64位：<code>iretq</code></li>
+</ul>
+<p>调用门的返回：<code>retf</code>。</p>
+<h4 id="门权限检查"><a href="#门权限检查" class="headerlink" title="门权限检查"></a>门权限检查</h4><p>中断门&#x2F;陷阱门是通过 <code>INT n</code> 触发的，不存在 RPL，所以不会对 RPL 进行权限检查。</p>
+<p><strong>中断门&#x2F;陷阱门</strong>：CPL &lt;&#x3D; 门的DPL，代码段描述符 DPL &#x3D; 0。</p>
+<ul>
+<li>仅当使用 <code>INT n</code>、<code>INT3</code> 或 <code>INTO</code> 指令产生异常或中断时，处理器才会检查中断或陷阱门的 DPL。</li>
+<li>对于硬件产生的中断&#x2F;处理器检测到的异常，处理器会忽略中断和陷阱门的 DPL。</li>
+</ul>
+<p><strong>注意</strong>：<code>int3(0xCC)</code> 和 <code>int 3(0xCD 0x03)</code> 在机器码上不同，后者需要进行门权限检查。</p>
+<h4 id="EFLAGS-的位"><a href="#EFLAGS-的位" class="headerlink" title="EFLAGS 的位"></a>EFLAGS 的位</h4><p>中断门&#x2F;陷阱门下，处理器会先将 EFLAGS 存储在被调用程序堆栈中，然后将 <strong>TF、VM、RF、NT</strong> 位清 0。<code>iret</code> 时将堆栈的 eflags 弹出到 EFLAGS 寄存器。（清除 TF 标志可防止指令跟踪影响中断响应并确保没有单步异常将被传递。）</p>
+<div class="note danger"><p><strong>注意</strong>：中断门和陷阱门之间的唯一区别是：<strong>中断门会 <code>EFLAGS.IF = 0</code> 来屏蔽可屏蔽的中断</strong>。当通过中断门访问异常或中断处理程序时，处理器清除 IF 标志以防止其他中断干扰。</p>
+</div>
+
+<h3 id="3-2-IA-32e-中断门-x2F-陷阱门"><a href="#3-2-IA-32e-中断门-x2F-陷阱门" class="headerlink" title="3.2 IA-32e 中断门&#x2F;陷阱门"></a>3.2 IA-32e 中断门&#x2F;陷阱门</h3><p>IA-32e 中断门&#x2F;陷阱门发生了很多变化：</p>
+<ol>
+<li><strong>IA-32e 下系统段描述符（TSS、LDT）、门描述符都是 16 字节 128 位</strong>。</li>
+<li>中断堆栈 <code>push</code> 都是 8 字节。</li>
+<li><mark class="label primary">原 SS、RSP 被无条件压入堆栈</mark>（IA-32下发生权限切换才会压入SS3、ESP3）。</li>
+<li>如果 CPL 发生改变，则将新的 <code>SS = NULL</code>。</li>
+<li>引入 IST 表（Interrupt Stack Table）。</li>
+</ol>
+<h4 id="中断描述符表-1"><a href="#中断描述符表-1" class="headerlink" title="中断描述符表"></a>中断描述符表</h4><p>同 IA-32 下一样，</p>
+<ol>
+<li>IDT 表的地址是随机的，可以使用 IDTR 寄存器来定位 IDT 表。</li>
+<li>IDTR 寄存器类似于 GDTR 寄存器。特权指令 <code>LIDT</code> 将一个数加载到 IDTR 寄存器（仅在R0使用），SIDT 指令读取 IDTR 寄存器的值（SIDT可以在3环使用）。</li>
+</ol>
+<p>IDTR 和 GDTR 扩展到 80 位：</p>
+<p><strong>注意</strong>：GDT、IDT 不被视为段，它只是用来描述段描述符。<strong>段描述符</strong>寄存器分为两部分：base、limit。（不是<strong>段寄存器</strong>的Base和Limit，注意区分段寄存器和段描述符寄存器）</p>
+<ul>
+<li>IA-32：GDTR、IDTR 寄存器为 48 位，低 16 位表明 GDT、IDTR 表的字节总数，高 32 位为 GDT、IDT 表在内存中的起始线性地址。</li>
+<li>IA-32e：GDTR、IDTR 寄存器为 80 位，低 16 位表明 GDT、IDTR 表的字节总数，高 64 位为 GDT、IDT 表在内存中的起始线性地址。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/10/31/QXtUG2jZPrkYI39.png" alt="26.png"></p>
+<p>IA-32e 取消<strong>了任务门，</strong>中断描述符表包含以下三种两种门描述符（不包含调用门、任务门）：</p>
+<ul>
+<li>中断门</li>
+<li>陷阱门</li>
+</ul>
+<div class="note default"><p>门描述符都是 16 字节 128 位，它们都包含一个<mark class="label danger">远指针</mark>（<code>Selector:Offset</code>），处理器使用该远指针找到代码段中的中断&#x2F;异常处理例程。远指针 <code>Offset</code> 为 64 位。</p>
+<p><strong>IA-32e 中断门&#x2F;陷阱门描述符一样</strong>。</p>
+</div>
+
+<p><img data-src="https://s2.loli.net/2022/11/05/Iv8CnLMuyHlJNqP.png" alt="47.png"></p>
+<p>中断门引用的目标代码段必须是 64 位代码段 （CS.L &#x3D; 1，CS.D &#x3D; 0）。如果目标不是 64 位码段，则会生成一般保护异常 （#GP），并将 IDT 向量号报告为错误码。</p>
+<ul>
+<li>Type &#x3D; 0xE</li>
+</ul>
+<p>00007FF6 1A1310C0</p>
+<p>0001 0 0 00</p>
+<p>00000000&#96;00007FF6</p>
+<p>1A13EE00&#96;001010C0</p>
+<h4 id="堆栈切换-1"><a href="#堆栈切换-1" class="headerlink" title="堆栈切换"></a>堆栈切换</h4><div class="note warning"><p>关于段、堆栈的切换：</p>
+<ol>
+<li>CS0：来自于中断门&#x2F;陷阱门描述符的 CS 段选择子。</li>
+<li>SS：在 IA-32e 下，不管权限是否发生切换，新的强制为 <mark class="label success">SS &#x3D; NULL</mark>。</li>
+<li>RSP0：从 TSS 中获取。</li>
+<li>堆栈切换时，<strong>新的堆栈必须 16 字节对齐</strong>。新的堆栈中会压入 <strong>SS3</strong>、<strong>RSP3</strong>、RFLAGS3、CS3、RIP3、ErrrCode。而且<mark class="label danger">旧的 SS、RSP 是无条件压栈的，不管是否权限发生改变</mark>。（IA-32下仅权限发生改变时会压入旧的SS、ESP）</li>
+<li>IDT 门描述符的 IST 域决定着新的 RSP 取值（具体看下一节）。</li>
+</ol>
+</div>
+
+<p><img data-src="https://s2.loli.net/2022/11/05/OyzJKw46x7XuqnZ.png" alt="48.png"></p>
+<p>中断门&#x2F;陷阱门门返回使用 <code>iretq</code> 指令，该指令会强制从堆栈中弹出原先的 <code>SS</code> 和 <code>RSP</code>。</p>
+<h4 id="中断堆栈表（Interrupt-Stack-Table-IST）"><a href="#中断堆栈表（Interrupt-Stack-Table-IST）" class="headerlink" title="中断堆栈表（Interrupt Stack Table, IST）"></a>中断堆栈表（Interrupt Stack Table, IST）</h4><p>在 Legacy 模式下， IDT 中的任务门会提供一个良好的堆栈环境，所以有的中断产生以后会使用任务门来找到对应的中断服务例程。</p>
+<p>但是，IA-32e 模式不支持旧的任务切换机制，也<strong>不支持任务门</strong>。所以 IA-32e 模式下就提供一种新的堆栈切换机制，以达到使特定中断（<strong>NMl、双重故障、机器检查</strong>）对应的中断服务例程始终在已知良好堆栈上执行。这种机制就是中断堆栈表（Interrupt Stack Table, IST）。</p>
+<ol>
+<li>IST 位于 TSS 中，仅可在 IA-32e 模式下使用。</li>
+<li>IDT 表中 IST 域（bits-32,33,34）不为零的条目说明支持 IST 机制。IST 域有 3 bits，但是仅有 7 种值，IST &#x3D; 0 保留。</li>
+</ol>
+<div class="note danger"><p>查看 IDT 表的每个门描述符时；</p>
+<ul>
+<li><code>IST  = 0</code>，堆栈切换时，新的 <code>RSP = RSP0</code>。</li>
+<li><code>IST != 0</code>，堆栈切换时，新的 <code>RSP = TSS.ISTn</code>（<code>n</code> 取值为 <code>1~7</code>）。</li>
+</ul>
+</div>
+
+<p>IA-32e 模式下的 TSS（任务状态段）：</p>
+<p><img data-src="https://s2.loli.net/2022/11/05/maWiYNcbdZMop8L.png" alt="49.png"></p>
+<p>注意查看 <code>IST</code> 域：</p>
+<p><img data-src="https://s2.loli.net/2022/11/05/WzTpYfJKhn3HSaU.png" alt="51.png"></p>
+<p>不难发现，大部分中断门描述符的 IST 域都是 <code>0</code>，只有少数是有值的。</p>
+<p>上图的 <code>int 1/2/8/18</code> 都是有 IST 值的，跟 Intel 手册(6.14.5)说的一样。</p>
+<ul>
+<li>1 号 #DB 用于调试异常，用于软件调试（eflags.TF &#x3D; 1单步调试）。</li>
+<li>2 号 NMI 中断。</li>
+<li>8 号 #DF 双重错误 (Double Fault）。</li>
+<li>18 号 #MC 机器检查（Machine Check）。</li>
+</ul>
+<p>如下查看这几个中断号对应的处理函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !idt</span><br><span class="line">Dumping IDT: fffff8024de97000</span><br><span class="line"></span><br><span class="line"><span class="number">00</span>:	fffff8024ba19100 nt!KiDivideErrorFaultShadow</span><br><span class="line"><span class="number">01</span>:	fffff8024ba19180 nt!KiDebugTrapOrFaultShadow	Stack = <span class="number">0xFFFFF8024DE9B9D0</span></span><br><span class="line"><span class="number">02</span>:	fffff8024ba19240 nt!KiNmiInterruptShadow	Stack = <span class="number">0xFFFFF8024DE9B7D0</span></span><br><span class="line"><span class="number">03</span>:	fffff8024ba192c0 nt!KiBreakpointTrapShadow</span><br><span class="line"><span class="number">04</span>:	fffff8024ba19340 nt!KiOverflowTrapShadow</span><br><span class="line"><span class="number">05</span>:	fffff8024ba193c0 nt!KiBoundFaultShadow</span><br><span class="line"><span class="number">06</span>:	fffff8024ba19440 nt!KiInvalidOpcodeFaultShadow</span><br><span class="line"><span class="number">07</span>:	fffff8024ba194c0 nt!KiNpxNotAvailableFaultShadow</span><br><span class="line"><span class="number">08</span>:	fffff8024ba19540 nt!KiDoubleFaultAbortShadow	Stack = <span class="number">0xFFFFF8024DE9B3D0</span></span><br><span class="line"><span class="number">09</span>:	fffff8024ba195c0 nt!KiNpxSegmentOverrunAbortShadow</span><br><span class="line"><span class="number">0</span>a:	fffff8024ba19640 nt!KiInvalidTssFaultShadow</span><br><span class="line"><span class="number">0b</span>:	fffff8024ba196c0 nt!KiSegmentNotPresentFaultShadow</span><br><span class="line"><span class="number">0</span>c:	fffff8024ba19740 nt!KiStackFaultShadow</span><br><span class="line"><span class="number">0</span>d:	fffff8024ba197c0 nt!KiGeneralProtectionFaultShadow</span><br><span class="line"><span class="number">0</span>e:	fffff8024ba19840 nt!KiPageFaultShadow</span><br><span class="line"><span class="number">10</span>:	fffff8024ba198c0 nt!KiFloatingErrorFaultShadow</span><br><span class="line"><span class="number">11</span>:	fffff8024ba19940 nt!KiAlignmentFaultShadow</span><br><span class="line"><span class="number">12</span>:	fffff8024ba199c0 nt!KiMcheckAbortShadow	Stack = <span class="number">0xFFFFF8024DE9B5D0</span></span><br><span class="line"><span class="number">13</span>:	fffff8024ba19ac0 nt!KiXmmExceptionShadow</span><br><span class="line"><span class="number">14</span>:	fffff8024ba19b40 nt!KiVirtualizationExceptionShadow</span><br><span class="line"><span class="number">15</span>:	fffff8024ba19bc0 nt!KiControlProtectionFaultShadow</span><br><span class="line"><span class="number">1f</span>:	fffff8024ba19c40 nt!KiApcInterruptShadow</span><br><span class="line"><span class="number">20</span>:	fffff8024ba19cc0 nt!KiSwInterruptShadow</span><br><span class="line"><span class="number">29</span>:	fffff8024ba19d40 nt!KiRaiseSecurityCheckFailureShadow</span><br><span class="line"><span class="number">2</span>c:	fffff8024ba19dc0 nt!KiRaiseAssertionShadow</span><br><span class="line"><span class="number">2</span>d:	fffff8024ba19e40 nt!KiDebugServiceTrapShadow</span><br><span class="line"><span class="number">2f</span>:	fffff8024ba19f40 nt!KiDpcInterruptShadow</span><br><span class="line"><span class="number">30</span>:	fffff8024ba19fc0 nt!KiHvInterruptShadow</span><br><span class="line"><span class="number">31</span>:	fffff8024ba1a040 nt!KiVmbusInterrupt0Shadow</span><br><span class="line"><span class="number">32</span>:	fffff8024ba1a0c0 nt!KiVmbusInterrupt1Shadow</span><br><span class="line"><span class="number">33</span>:	fffff8024ba1a140 nt!KiVmbusInterrupt2Shadow</span><br><span class="line"><span class="number">34</span>:	fffff8024ba1a1c0 nt!KiVmbusInterrupt3Shadow</span><br><span class="line"><span class="number">35</span>:	fffff8024ba1a468 nt!HalpInterruptCmciService (KINTERRUPT fffff8024bcf9fc0)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-TSS（IA-32e模式）"><a href="#3-TSS（IA-32e模式）" class="headerlink" title="3 TSS（IA-32e模式）"></a>3 TSS（IA-32e模式）</h2><p>在 64 位模式下，不支持任务切换，也不存在任务门，<strong>但 TSS 描述符仍然存在</strong>。TSS 属于系统描述符，为 16 字节 128  位。</p>
+<p>系统描述符（段描述符S &#x3D; 0）分为两类：系统段描述符、门描述符。</p>
+<ol>
+<li><strong>系统段描述符</strong>：LDT、TSS。</li>
+<li><strong>门描述符</strong>：调用门、中断门、陷阱门。</li>
+</ol>
+<p>64 位模式下 LDT、TSS 段描述符结构如下：</p>
+<p><img data-src="https://s2.loli.net/2022/11/05/O2RaAcWKPIboGEi.png" alt="50.png"></p>
+<h3 id="3-1-TR-寄存器"><a href="#3-1-TR-寄存器" class="headerlink" title="3.1 TR 寄存器"></a>3.1 TR 寄存器</h3><p>在 IA-32e 下 TR 寄存器和段寄存器 CS、DS、ES、FS、GS、SS 段寄存器一样都是 128 位。</p>
+<p>段寄存器分为可见部分（段选择子）和隐藏部分：</p>
+<ul>
+<li>IA-32：共 96 位<ul>
+<li>可见部分：16 位</li>
+<li>隐藏部分：80 位</li>
+</ul>
+</li>
+<li>IA-32e：共 128 位<ul>
+<li>可见部分：16 位</li>
+<li>隐藏部分：112 位</li>
+</ul>
+</li>
+</ul>
+<p>变化是 IA-32e 下段基址变为 64 位。</p>
+<p><img data-src="https://s2.loli.net/2022/10/30/tCrVcMgBDFXTndW.png" alt="22.png"></p>
+<p>关于 TR 寄存器：</p>
+<ol>
+<li>TR 可见的 16 位指向的 GDT 表中 TSS 段描述符（IA-32中将 TSS 段描述符加载到 TR 不可见部分）。</li>
+<li>TSS 段描述符的 <code>Bsae</code> 指向 TSS 段（TSS内存块结构）在线性地址空间的位置。</li>
+<li>IA-32e 下，TSS 的作用主要就是用来存储中断门&#x2F;陷阱门堆栈切换时的 RSP，因为 IA-32e 不存在任务切换。</li>
+</ol>
+<p>读写 TR 寄存器的指令：</p>
+<ul>
+<li><code>LTR</code>：特权指令。</li>
+<li><code>STR</code>：在任何权限下使用（CR4.UMIP&#x3D;1，则只有在 CPL&#x3D;0 时才能执行 STR）。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LTR AX;	<span class="comment">// 将 AX 加载到 TR 可见的 16 位 </span></span><br><span class="line">STR AX;	<span class="comment">// 将 TR 可见的 16 位保存到 AX 寄存器</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用 TR 寄存器找到 TSS 在内存中的位置：</p>
+<ol>
+<li><p>读取 TR 及 GDT 表的地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; r tr</span><br><span class="line">tr=<span class="number">0040</span>	<span class="comment">//01000 0 00,Index = 8</span></span><br><span class="line">kd&gt; r gdtr</span><br><span class="line">gdtr=fffff8024de99fb0</span><br><span class="line">kd&gt; dq gdtr</span><br><span class="line">fffff802`<span class="number">4</span>de99fb0  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">4</span>de99fc0  <span class="number">00209b</span>00`<span class="number">00000000</span> <span class="number">00409300</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">4</span>de99fd0  <span class="number">00</span>cffb00`<span class="number">0000f</span>fff <span class="number">00</span>cff300`<span class="number">0000f</span>fff</span><br><span class="line">fffff802`<span class="number">4</span>de99fe0  <span class="number">0020f</span>b00`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff802`<span class="number">4</span>de99ff0  <span class="number">4</span>d008be9`<span class="number">80000067</span> <span class="number">00000000</span>`fffff802</span><br></pre></td></tr></table></figure>
+
+<p>得到段描述符为 <code>4d008be9&#39;80000067  00000000&#39;fffff802</code>，为 TSS 段描述符。</p>
+</li>
+<li><p>从 TSS 段描述符中提取 base，为 <code>fffff802&#39;4de98000</code>，其为 TSS 内存块的起始线性地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _KTSS64 fffff802`<span class="number">4</span>de98000</span><br><span class="line">win32k!_KTSS64</span><br><span class="line">   +<span class="number">0x000</span> Reserved0        : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x004</span> Rsp0             : <span class="number">0xfffff802</span>`<span class="number">4</span>de9b200</span><br><span class="line">   +<span class="number">0x00c</span> Rsp1             : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x014</span> Rsp2             : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x01c</span> Ist              : [<span class="number">8</span>] <span class="number">0</span></span><br><span class="line">   +<span class="number">0x05c</span> Reserved1        : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x064</span> Reserved2        : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x066</span> IoMapBase        : <span class="number">0x68</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="3-2-64-bit-模式任务管理"><a href="#3-2-64-bit-模式任务管理" class="headerlink" title="3.2 64-bit 模式任务管理"></a>3.2 64-bit 模式任务管理</h3><p>IA-32e 模式下不支持任务切换，更是取消了任务门（本来 32 位 Windows 也没使用任务管理，而是使用线程技术）。</p>
+<p>在 64-bit 模式下，如果使用任务切换&#x2F;任务门，会产生 #GP 异常：</p>
+<ol>
+<li>通过 <code>JMP、CALL、INT n、INT3、INTO、INT1</code> 、中断门、陷阱门进入 TSS段&#x2F;任务门，会产生 #GP 异常。</li>
+<li>使用 <code>iret</code> 指令时如果 <code>eflags.NT = 1</code>（任务嵌套）时，会产生 #GP 异常。</li>
+</ol>
+<p>虽然 64-bit 模式下不支持硬件任务切换，但是仍然存在着 TSS（任务状态段），此时 TSS 里面存的信息和任务切换机制完全没有关系。</p>
+<p>TSS 保存以下信息：</p>
+<ul>
+<li>RSP0,1,2：特权级别为 0,1,2 的 RSP 指针（<code>canonical forms</code>表示0环高16位<code>0xFFFF</code>，3环高16位<code>0x0000</code>）。</li>
+<li>IST1～7：保存特殊中断下的 RSP。</li>
+<li>I&#x2F;O 位图基址：是一个表示 I&#x2F;O 权限的 16 位偏移量（The 16-bit offset to the I&#x2F;O permission bit map from the 64-bit TSS base.）。</li>
+</ul>
+<p>IA-32e 模式下的 TSS（任务状态段）：</p>
+<p><img data-src="https://s2.loli.net/2022/11/05/maWiYNcbdZMop8L.png" alt="49.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/x64-Kernel3/" title="x64 内核（三）IA-32e 分段研究">https://directoree.github.io/post/x64-Kernel3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> x64内核</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/x64-Kernel2/" rel="prev" title="x64 内核（二）IA-32e 分段研究">
+                  <i class="fa fa-chevron-left"></i> x64 内核（二）IA-32e 分段研究
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.9m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">29:10</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/x64-Kernel3/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

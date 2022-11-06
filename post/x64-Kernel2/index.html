@@ -24,7 +24,7 @@
 
   <meta name="description" content="😄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="x64 内核（二）IA-32e 研究">
+<meta property="og:title" content="x64 内核（二）IA-32e 分段研究">
 <meta property="og:url" content="https://directoree.github.io/post/x64-Kernel2/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="😄">
@@ -49,12 +49,13 @@
 <meta property="og:image" content="https://s2.loli.net/2022/11/03/M5fFcq4irh6jVPu.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/03/Ao4XE1GMqpgUPF5.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/03/5PbNXrpg8WLEtkG.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/03/LfZvIdK8cV2w4YT.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/04/sQpIKVYqmwvRHWl.png">
 <meta property="article:published_time" content="2022-11-01T11:43:19.000Z">
-<meta property="article:modified_time" content="2022-11-03T16:21:56.647Z">
+<meta property="article:modified_time" content="2022-11-06T09:36:50.483Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
-<meta property="article:tag" content="x64 内核分段">
+<meta property="article:tag" content="x64内核">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2022/10/30/4xl9G5RDBCen2LM.png">
 
@@ -72,7 +73,7 @@
   };
 </script>
 
-  <title>x64 内核（二）IA-32e 研究 | Catecat</title>
+  <title>x64 内核（二）IA-32e 分段研究 | Catecat</title>
   
 
 
@@ -269,20 +270,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">140</span>
+          <span class="site-state-item-count">141</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/newcategories/">
           
-        <span class="site-state-item-count">62</span>
+        <span class="site-state-item-count">63</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-count">74</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -359,7 +360,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          x64 内核（二）IA-32e 研究
+          x64 内核（二）IA-32e 分段研究
         </h1>
 
         <div class="post-meta-container">
@@ -377,7 +378,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-11-04 00:21:56" itemprop="dateModified" datetime="2022-11-04T00:21:56+08:00">2022-11-04</time>
+        <time title="修改时间：2022-11-06 17:36:50" itemprop="dateModified" datetime="2022-11-06T17:36:50+08:00">2022-11-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -385,12 +386,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/x64-%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64 内核</span></a>
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
         </span>
     </span>
 
   
-    <span id="/post/x64-Kernel2/" class="post-meta-item leancloud_visitors" data-flag-title="x64 内核（二）IA-32e 研究" title="阅读次数">
+    <span id="/post/x64-Kernel2/" class="post-meta-item leancloud_visitors" data-flag-title="x64 内核（二）IA-32e 分段研究" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -418,14 +419,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>8.3k</span>
+      <span>8.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>8 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -832,11 +833,11 @@
 
 
 
-<p>00007FF6  3AEC10F0</p>
-<p>0110 0 011</p>
+<p>00007FF6  AB7510F0</p>
+<p>0111 0 011  14</p>
 <p>00007FF7  3DEC10E0</p>
 <p>00000000&#96;00007FF6</p>
-<p>3AECEC00&#96;001010F0</p>
+<p> AB75EC00&#96;001010F0</p>
 <h3 id="4-3-调用门过程"><a href="#4-3-调用门过程" class="headerlink" title="4.3 调用门过程"></a>4.3 调用门过程</h3><p><img data-src="https://s2.loli.net/2022/11/03/M5fFcq4irh6jVPu.png" alt="37.png"></p>
 <h3 id="4-4-调用门段权限检查"><a href="#4-4-调用门段权限检查" class="headerlink" title="4.4 调用门段权限检查"></a>4.4 调用门段权限检查</h3><p>IA-32 和 IA-32e 调用门段权限检查都是一样的。</p>
 <p><img data-src="https://s2.loli.net/2022/11/03/Ao4XE1GMqpgUPF5.png" alt="38.png"></p>
@@ -844,7 +845,7 @@
 <h3 id="4-5-调用门堆栈及EFLAGS"><a href="#4-5-调用门堆栈及EFLAGS" class="headerlink" title="4.5 调用门堆栈及EFLAGS"></a>4.5 调用门堆栈及EFLAGS</h3><h4 id="调用门堆栈"><a href="#调用门堆栈" class="headerlink" title="调用门堆栈"></a>调用门堆栈</h4><p><strong>一、IA-32</strong></p>
 <p>根据调用门描述符指定参数的个数，<strong>将 3 环的参数复制到 0 环的堆栈中</strong>。注意参数在 SS3、ESP3 和 CS3、EIP3 中间。</p>
 <p><strong>注意</strong>：CS0 来自代码段描述符、SS0、ESP0 来自 TSS。EIP0 来自调用门的 offset + 代码段描述符的 base。</p>
-<p>![截屏2022-11-03 下午11.56.47](&#x2F;Users&#x2F;alvin&#x2F;Desktop&#x2F;截屏2022-11-03 下午11.56.47.png)</p>
+<p><img data-src="https://s2.loli.net/2022/11/03/LfZvIdK8cV2w4YT.png" alt="40.png"></p>
 <p><strong>二、IA-32e</strong></p>
 <p>注意：</p>
 <ol>
@@ -861,8 +862,6 @@
 <li>调用门：IF 位不清 0。</li>
 <li>陷阱门：IF 位不清 0。</li>
 </ul>
-<p>继续分析 Intel 手册 5.8。（结合前面x86的文章和x86&#x2F;64体系探索及编程、软件调试第二版卷1）</p>
-<p>然后分析 IA-32e 分页。</p>
 <p>总的看来，IA-32e 模式下的 IDT 变得更简单了，不再有任务门，只有中断门和陷阱门， 断门和陷阱门都支持通过它们中的 IST 位域来指定是否要切换栈——软件调试第二版卷1 3.5.3。</p>
 
     </div>
@@ -899,7 +898,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/x64-Kernel2/" title="x64 内核（二）IA-32e 研究">https://directoree.github.io/post/x64-Kernel2/</a>
+      <a href="https://directoree.github.io/post/x64-Kernel2/" title="x64 内核（二）IA-32e 分段研究">https://directoree.github.io/post/x64-Kernel2/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -909,20 +908,20 @@
 
           <div class="post-tags">
               <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
-              <a href="/tags/x64-%E5%86%85%E6%A0%B8%E5%88%86%E6%AE%B5/" rel="tag"><i class="fa fa-tag"></i> x64 内核分段</a>
+              <a href="/tags/x64%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> x64内核</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/post/x64-Kernel/" rel="prev" title="x64 内核（一）IA-32e 研究">
-                  <i class="fa fa-chevron-left"></i> x64 内核（一）IA-32e 研究
+                <a href="/post/x64-Kernel/" rel="prev" title="x64 内核（一）IA-32e 寄存器研究">
+                  <i class="fa fa-chevron-left"></i> x64 内核（一）IA-32e 寄存器研究
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
-                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                <a href="/post/x64-Kernel3/" rel="next" title="x64 内核（三）IA-32e 分段研究">
+                  x64 内核（三）IA-32e 分段研究 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -991,7 +990,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">29:02</span>
+    <span title="站点阅读时长">29:10</span>
   </span>
 </div>
 <div class="busuanzi-count">
