@@ -24,7 +24,7 @@
 
   <meta name="description" content="😄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="x64 分页管理">
+<meta property="og:title" content="x64 分页管理（一）基础知识">
 <meta property="og:url" content="https://directoree.github.io/post/x64-4-level-paging/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="😄">
@@ -43,8 +43,13 @@
 <meta property="og:image" content="https://s2.loli.net/2022/11/10/lXVWpsM8rRnhOiv.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/10/oqEHAtb1M5pSWZx.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/10/ZRhl18KzQ7xgYSE.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/11/XdSCaMOUp54gyt9.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/09/KZha5UzENJlCeYF.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/12/W8VmjLHgfcGpAQo.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/12/OeVqBEoCd7tDWg9.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/12/Y6F2dqk3RiWxeOz.png">
 <meta property="article:published_time" content="2022-11-08T11:37:23.000Z">
-<meta property="article:modified_time" content="2022-11-10T13:35:31.019Z">
+<meta property="article:modified_time" content="2022-11-13T16:24:17.306Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="x64内核">
@@ -65,7 +70,7 @@
   };
 </script>
 
-  <title>x64 分页管理 | Catecat</title>
+  <title>x64 分页管理（一）基础知识 | Catecat</title>
   
 
 
@@ -246,7 +251,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%86%E9%A1%B5%E7%AE%A1%E7%90%86"><span class="nav-text">1 分页管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%89%A9%E7%90%86%E9%A1%B5%E9%9D%A2"><span class="nav-text">1.1 物理页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%90%AF%E7%94%A8%E5%88%86%E9%A1%B5%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.2 启用分页模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-x2F-5-level-%E5%88%86%E9%A1%B5"><span class="nav-text">2 4&#x2F;5-level 分页</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4-x2F-5-level-%E5%88%86%E9%A1%B5%E6%A6%82%E8%BF%B0"><span class="nav-text">2.1 4&#x2F;5-level 分页概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-x2F-5-level-%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E5%9B%BE"><span class="nav-text">2.2 4&#x2F;5-level 地址转换图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-PLM4T%E3%80%81PLM5T"><span class="nav-text">2.3 PLM4T、PLM5T</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%90%84%E7%BA%A7%E9%A1%B5%E8%A1%A8%E7%9B%AE%E5%BD%95"><span class="nav-text">2.4 各级页表目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="nav-text">2.5 虚拟地址转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="nav-text">3 访问权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%9C%B0%E5%9D%80%E7%9A%84%E8%AF%BB%E5%86%99%E4%B8%8E%E6%89%A7%E8%A1%8C%E6%9D%83%E9%99%90"><span class="nav-text">3.1 地址的读写与执行权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%BF%9D%E6%8A%A4%E7%A7%98%E9%92%A5%EF%BC%88Protection-Key%EF%BC%89"><span class="nav-text">3.2 保护秘钥（Protection Key）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-PAT"><span class="nav-text">4 PAT</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%88%86%E9%A1%B5%E7%AE%A1%E7%90%86"><span class="nav-text">1 分页管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%89%A9%E7%90%86%E9%A1%B5%E9%9D%A2"><span class="nav-text">1.1 物理页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%90%AF%E7%94%A8%E5%88%86%E9%A1%B5%E6%A8%A1%E5%BC%8F"><span class="nav-text">1.2 启用分页模式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-x2F-5-level-%E5%88%86%E9%A1%B5"><span class="nav-text">2 4&#x2F;5-level 分页</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-4-x2F-5-level-%E5%88%86%E9%A1%B5%E6%A6%82%E8%BF%B0"><span class="nav-text">2.1 4&#x2F;5-level 分页概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-4-x2F-5-level-%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2%E5%9B%BE"><span class="nav-text">2.2 4&#x2F;5-level 地址转换图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-PLM4T%E3%80%81PLM5T"><span class="nav-text">2.3 PLM4T、PLM5T</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%90%84%E7%BA%A7%E9%A1%B5%E8%A1%A8%E7%9B%AE%E5%BD%95"><span class="nav-text">2.4 各级页表目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E8%BD%AC%E6%8D%A2"><span class="nav-text">2.5 虚拟地址转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90"><span class="nav-text">3 访问权限</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%9C%B0%E5%9D%80%E7%9A%84%E8%AF%BB%E5%86%99%E4%B8%8E%E6%89%A7%E8%A1%8C%E6%9D%83%E9%99%90"><span class="nav-text">3.1 地址的读写与执行权限</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E4%BF%9D%E6%8A%A4%E7%A7%98%E9%92%A5%EF%BC%88Protection-Key%EF%BC%89"><span class="nav-text">3.2 保护秘钥（Protection Key）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-TLB-%E5%92%8C-Cache"><span class="nav-text">4 TLB 和 Cache</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%89%8D%E7%BD%AE%E7%9F%A5%E8%AF%86"><span class="nav-text">4.1 前置知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-PCID-%E6%9C%BA%E5%88%B6"><span class="nav-text">4.2 PCID 机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-TLB"><span class="nav-text">4.3 TLB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Paging-Structure-Cache"><span class="nav-text">4.4 Paging-Structure Cache</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-TLB-%E5%92%8C-Paging-Structure-Cache-%E5%8C%BA%E5%88%AB"><span class="nav-text">4.5 TLB 和 Paging-Structure Cache 区别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Global-page"><span class="nav-text">Global page</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AB%8B%E5%8D%B3%E5%88%B7%E6%96%B0-TLB-%E5%92%8C-Paging-Structure-Cache"><span class="nav-text">立即刷新 TLB 和 Paging-Structure Cache</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BB%B6%E8%BF%9F%E5%88%B7%E6%96%B0"><span class="nav-text">延迟刷新</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%A4%84%E7%90%86%E5%99%A8%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98%E7%9A%84%E9%A1%BA%E5%BA%8F"><span class="nav-text">4.6 处理器使用缓存的顺序</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -352,7 +357,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          x64 分页管理
+          x64 分页管理（一）基础知识
         </h1>
 
         <div class="post-meta-container">
@@ -370,7 +375,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-11-10 21:35:31" itemprop="dateModified" datetime="2022-11-10T21:35:31+08:00">2022-11-10</time>
+        <time title="修改时间：2022-11-14 00:24:17" itemprop="dateModified" datetime="2022-11-14T00:24:17+08:00">2022-11-14</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -383,7 +388,7 @@
     </span>
 
   
-    <span id="/post/x64-4-level-paging/" class="post-meta-item leancloud_visitors" data-flag-title="x64 分页管理" title="阅读次数">
+    <span id="/post/x64-4-level-paging/" class="post-meta-item leancloud_visitors" data-flag-title="x64 分页管理（一）基础知识" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -411,14 +416,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>7.8k</span>
+      <span>18k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -591,10 +596,10 @@
 <li>CR4.PKE &#x3D; 1，使用 PKRU 寄存器可以指定每个保护密钥关联的<mark class="label success">用户模式</mark>线性地址是否可以被读取或写入。</li>
 <li>CR4.PKS &#x3D; 1，使用 <code>IA32_PKRS</code> MSR（MSR index 6E1H）寄存器来指定每个保护密钥关联的<mark class="label danger">内核模式</mark>线性地址是否可以被读取或写入。（<code>IA32_PKRS</code> MSR 高 32 位保留为 0。）</li>
 </ul>
-<div class="note warning"><p><strong>PKRU</strong>（protection-key rights for user pages），该寄存器是 32 位的：</p>
+<div class="note warning"><p><strong>PKRU</strong>（protection-key rights for user pages），该寄存器是 32 位的，Protection key 共 4 位，其值为 <code>0 &lt;= i &lt;16</code>，在 PKRU 寄存器中计算方法是：</p>
 <ul>
-<li>偶数位：禁止访问位，以 <code>ADi</code> 表示（access-disable），这个 <code>i</code> 即为 PTE 的 Protection Key 域。</li>
-<li>基数位：禁止写入位，以 <code>WDi</code> 表示（write-disable），这个 <code>i</code> 即为 PTE 的 Protection Key 域。</li>
+<li>偶数位：<code>2i</code>，禁止访问位，以 <code>ADi</code> 表示（access-disable）。</li>
+<li>奇数位：<code>2i+1</code>，禁止写入位，以 <code>WDi</code> 表示（write-disable）。</li>
 </ul>
 </div>
 
@@ -626,7 +631,130 @@
 </div>
 
 <p>保护秘钥同样适用于影子堆栈（Shadow-stack），像普通数据这样进行使用即可。</p>
-<h2 id="4-PAT"><a href="#4-PAT" class="headerlink" title="4 PAT"></a>4 PAT</h2><p>所有支持 4 级分页或 5 级分页的处理器都支持 PAT。因此，不支持 APT 的处理器仅适用于 32 位分页和 PAE 分页。</p>
+<h2 id="4-TLB-和-Cache"><a href="#4-TLB-和-Cache" class="headerlink" title="4 TLB 和 Cache"></a>4 TLB 和 Cache</h2><h3 id="4-1-前置知识"><a href="#4-1-前置知识" class="headerlink" title="4.1 前置知识"></a>4.1 前置知识</h3><p>每级页表转换时，都需要访问一次内存去查找该级页表目录转换的结果，4-level、5-level 分页地址转换时就需要进行多次内存访问，很耗时，所以处理器就在自身结构内设置了缓存（Cache），保存上一次虚拟地址转换的结果（物理地址），以加快地址转译过程。</p>
+<ul>
+<li>段的 Cache：实际上就是段寄存器隐藏部分，共 <code>128-16=112</code> 位。</li>
+<li>页的 Cache：分为两类缓存，TLB 和 Paging-Structure Cache。</li>
+</ul>
+<p>TLB（Translation Lookaside Buffers）就是 Cache 的一类。通过 TLB，处理器可以绕过内存里的 table 和 table entry，<strong>直接在 Cache 里查找页的转换后的结果</strong>（即 page frame 信 息），这个结果包括了最终的<strong>物理页面基址</strong>和<strong>页的属性</strong>。</p>
+<p>在 Intel64 里实现了两类缓存：</p>
+<ol>
+<li>TLB（Translation Lookaside Buffers）：保存虚拟地址转换的物理页面地址结果。</li>
+<li>Paging-Structure Cache：保存各级页表条目的信息。</li>
+</ol>
+<p>关于 Page Number、Page Offset、page Frame 如下图。</p>
+<p><img data-src="https://s2.loli.net/2022/11/11/XdSCaMOUp54gyt9.png" alt="72.png"></p>
+<div class="note primary"><p>TLB、Paging-Structure Cache 是与 <mark class="label danger">PCID</mark>相关联的。<strong>PCID</strong>（Process-context identifiers, PCIDs）是 <strong>12 Bits</strong> 的标志 ID，<strong>PCID 是否启用由 <code>CR4.PCIDE</code> 决定</strong>。</p>
+<ul>
+<li><code>CR4.PCIDE = 1</code> 时，CR3 低 12 位表示表示 PCID 值，此时 <code>PCID &gt; 0</code>。 </li>
+<li><code>CR4.PCIDE = 0</code> 时，<strong>不启用 PCID 机制</strong>，此时 PCID 值为 <code>000H</code>。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/11/09/KZha5UzENJlCeYF.png" alt="64.png"></p>
+</div>
+
+
+
+<h3 id="4-2-PCID-机制"><a href="#4-2-PCID-机制" class="headerlink" title="4.2 PCID 机制"></a>4.2 PCID 机制</h3><p>PCID 是为 TLB 和 paging-structure cache 而产生的，CR3 低12 位的 PCID 值可以为不同的线性地址定义一个编号（同一个进程下不同的线性地址）。处理器会在 TLB 和 paging-structure cache 里为不同 PCID 编号的线性地址维护一份 cache，有着对应关系。</p>
+<p>也就是说，当拿到一个线性地址时，先查看 CR4.PCIDE 是否启用，如果启用了此时 CR3 的低 12 位就为 PCID 值，有了 PCID 值才能找到与该值对应的 TLB 和 paging-structure cache。<strong>每一个 PCID 号对应一份 TLB 和 paging-structure cache</strong>，也就是说处理器中的 TLB 和 paging-structure cache 特定的 PCID 值是对应的。如下图。</p>
+<p><img data-src="https://s2.loli.net/2022/11/12/W8VmjLHgfcGpAQo.png" alt="73.png"></p>
+<p>可以看到：一个 PCID 下面虽然只对应一组 TLB、paging-structure cache，但是一个 TLB 就是一个 Buffer，里面包含了很多地址的缓存。所以<strong>一个 PCID 值其实是对应非常多的线性地址转译到物理地址的缓存的</strong>。</p>
+<ul>
+<li>一个 PCID 对应一组 TLB、paging-structure cache。</li>
+<li>注意：<mark class="label default">一个 TLB 包含许多条目</mark>，<strong>每个条目是一个线性地址（Page number）转译的物理地址相关信息</strong>。</li>
+</ul>
+<div class="note warning"><p>关于 TLB 和 paging-structure cache 的刷新：</p>
+<p>使用 <code>MOV CR3, Reg</code> 更新 CR3 的值时，根据新的 CR3 的低 12 位 PCID 值，对该 PCID 编号对应的 TLB 和 paging-structure cache 进行刷新，不会对其他 PCID 编号和新 PCID 号对应的全局（<code>G</code>）页面进行刷新。</p>
+</div>
+
+
+
+<h3 id="4-3-TLB"><a href="#4-3-TLB" class="headerlink" title="4.3 TLB"></a>4.3 TLB</h3><p>TLB 分为两类：Data TLB、Instruction TLB（指令TLB）。</p>
+<ul>
+<li><strong>Instruction TLB</strong>：在 Instruction TLB 里只有 fetch 指令的地址。当 fetch 指令时处理器从 Instruction TLB entry 里找 page frame，否则作为读&#x2F;写访问内 存时，则从 Data TLB entry 里找到 page frame。处理器对<strong>首次执行的代码</strong> page 会在 Instruction TLB 里建立相应的 TLB entry（或者说 加载 TLB，相对应于 Segment 的加载）。Intel 明确说明了在 Instruction TLB entry 里无须 包含R&#x2F;W 和D标志位。</li>
+<li>Data TLB：当处理器对<strong>首次成功访问</strong>的 page frame（必须注意是成功访问，失败的访问不会建立 TLB entry），会在当前 PCID 的 TLB里建立相应的 TLB entry 来保存 page fame 或者建 立 global TLB entry 来保存 global page frame(当 page 的 G &#x3D; 1 时）。</li>
+</ul>
+<p>TLB 每个条目都包含 page number 和 物理页面的属性：</p>
+<p>page frame 的访问权限是采用”从严“策略：</p>
+<ul>
+<li>P 位：能在 TLB entry 中保存的 page frame， 必须是有效的 page frame，并且保留位为 0。一个无效的 page frame 处理器将不会在 TLB 中建立相应的 entry。</li>
+<li>R&#x2F;W、U&#x2F;S ：最终的 page frame 对应的属性是各级页表条目的<strong>逻辑与</strong>（<code>AND</code>） 关系。</li>
+<li>XD：最终的 page frame 对应的属性是各级页表条目的<strong>逻辑或</strong>（<code>OR</code>） 关系。</li>
+</ul>
+<p>一个处理器可能包含多种类型的 TLB（数据、指令等），如专门用于取指令（执行）的 TLB，这种 TLB 不需要包含 <code>R/W</code>、<code>D</code> 等标志。</p>
+<p>处理器并非一定要有 TLB 的存在，没有 TLB 也可以正常转译地址。</p>
+<h3 id="4-4-Paging-Structure-Cache"><a href="#4-4-Paging-Structure-Cache" class="headerlink" title="4.4 Paging-Structure Cache"></a>4.4 Paging-Structure Cache</h3><p>在 Intel64 中可以实现另一种 Cache 技术，处理器可以选择支持或不支持这种 Cache。 paging-structure cache 是与 TLB 互补的：TLB 是 cache 线性地址对应的 page frame, 而 paging-structure cache 则是 cache 页转换表中除 page frame 外的其他 <strong>table entry</strong>。</p>
+<p>在 4-level 分页下，在 Paging-Structure Cache 里可以建立 3 种 table entry 的缓存：</p>
+<ol>
+<li><strong>PML4E cache entry</strong>：只使用于 IA-32e paging 模式下。</li>
+<li><strong>PDPTE cache entry</strong>： 只使用于 IA-32e paging 模式下，PAE paging 模式的 PDPTE 是<strong>在 PDPTE 寄存器里 cache</strong>。</li>
+<li><strong>PDE cache entry</strong>：可以使用在 32 位 paging、 PAE paging 和 IA-32e paging 模式下。</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2022/11/12/OeVqBEoCd7tDWg9.png" alt="75.png"></p>
+<h3 id="4-5-TLB-和-Paging-Structure-Cache-区别"><a href="#4-5-TLB-和-Paging-Structure-Cache-区别" class="headerlink" title="4.5 TLB 和 Paging-Structure Cache 区别"></a>4.5 TLB 和 Paging-Structure Cache 区别</h3><p>TLB 是用来缓存虚拟地址与其对应的物理页面（转译结果）对应关系的。Paging-Structure Cache 则是用来缓存虚拟地址转移过程中的每级分页结构的。</p>
+<ul>
+<li>TLB Entries：包含物理页面的 Page Frame，物理页面属性。</li>
+<li>Paging-Structure Cache：包含每级页表结构，但是不包含最后一级页表（PTE或PS &#x3D; 1的页表）5-level 分页下为 PLM5E、PLM4E、PDPTE、PDE。</li>
+</ul>
+<h4 id="Global-page"><a href="#Global-page" class="headerlink" title="Global page"></a>Global page</h4><p>当 <code>PTE.G = 1</code> 时，物理页面为全局页面，不会因为 <code>MOV CR3, Reg</code> 而对 TLB 中的信息进行刷新。这是因为处理器会为 <code>PTE.G = 1</code> 的页面<strong>建立独立的 TLB</strong>（依赖于PCID号）：</p>
+<p><img data-src="https://s2.loli.net/2022/11/12/Y6F2dqk3RiWxeOz.png" alt="74.png"></p>
+<h4 id="立即刷新-TLB-和-Paging-Structure-Cache"><a href="#立即刷新-TLB-和-Paging-Structure-Cache" class="headerlink" title="立即刷新 TLB 和 Paging-Structure Cache"></a>立即刷新 TLB 和 Paging-Structure Cache</h4><p>以下的刷新方法属于<mark class="label danger">主动刷新</mark>（<strong>立即刷新</strong>）。</p>
+<p><strong>一、刷新指定线性地址对应的 TLB 条目 和 Paging-Structure Cache</strong></p>
+<p>使用 <code>INVLPG</code> 指令（该指令<strong>可以强制刷新全局页面</strong>。即 <code>G = 1</code> 页面）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">invlpg qword ptr[<span class="number">0x00000078</span>`<span class="number">4</span>cd260000];</span><br></pre></td></tr></table></figure>
+
+<p>这种方式与 PCID 无关。</p>
+<p><strong>二、刷新特定 PCID 号下所有 TLB 条目 和 Paging-Structure Cache</strong></p>
+<p>使用刷新 CR3 的方式。</p>
+<p>有两种情况，分别是 <code>CR3[63] = 0</code>、<code>CR3[63] = 1</code>。</p>
+<ol>
+<li><p><code>CR3[63] = 0</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mov cr3，<span class="number">0x200001</span>;</span><br></pre></td></tr></table></figure>
+
+<p>该指令<strong>会刷新</strong> <code>PCID = 0001h</code> 下 TLB 中的所有条目及 Paging-Structure Cache，但不会刷新全局页面及其他 PCID 对应的页面。</p>
+</li>
+<li><p><code>CR3[63] = 1</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mov rax，<span class="number">0x80000000</span>`<span class="number">000200001</span>;</span><br><span class="line">mov cr3, rax;</span><br></pre></td></tr></table></figure>
+
+<p>不会刷新 TLB。</p>
+</li>
+</ol>
+<p><strong>三、刷新全局页面和全局页面</strong></p>
+<p>使用更新 CR3 的方法不会刷新全局页面，但是可以通过 <code>CR4.PGE</code>  或 <code>CR4.PCIDE</code> 来进行刷新。</p>
+<p>将 <code>CR4.PGE</code>  或 <code>CR4.PCIDE</code>  从 1 改为 0，然后再改为 1。</p>
+<p>效果是：刷新所有全局页面的 TLB，刷新所有的 PCID 下的所有 TLB entry 和 Paging-Structure Cache。</p>
+<p><strong>四、根据 PCID 值来刷新 TLB</strong></p>
+<p>Intel64 提供了一个新指令 <code>INVPCID</code> 来根据提供的 invalidation type 和 descriptor 这两 个操作数做相应的刷新操作。<code>INVPCID</code> 指令是 PCID 功能配套指令，需要处理器支持， 从 <code>CPUID.07H:EBX[10].INVPCID</code> 位里查询是否获得支持。</p>
+<p><code>INVPCID</code> 指令可以做到上面所说的刷新 TLB entry 和 paging-structure cache entry 的功能，它可以提供 4 个 invalidation type：</p>
+<ul>
+<li>0 号 type 可以刷新单个 entry</li>
+<li>1号 type 可以刷新 PCID 下的所有 entry（除了 global TLB entry)</li>
+<li>2号 type 可以刷新所有 PCID 的所有 entry（<strong>包括</strong> global TLB entry)</li>
+<li>3号 type 可以刷新所有 PCID 的所有 entry（除了 global TLB entry)</li>
+</ul>
+<h4 id="延迟刷新"><a href="#延迟刷新" class="headerlink" title="延迟刷新"></a>延迟刷新</h4><p>在 Intel 手册里列举了一些<mark class="label success">不必立即进行主动刷新</mark> TLB 的情形，主要是基于 table entry 的<strong>属性修改</strong>，我们可以认为这些修改操作属于<mark class="label primary"> OS 内存管理模块的管理</mark>。</p>
+<p><strong>当遭遇 page frame 的</strong>：</p>
+<p>R&#x2F;W、U&#x2F;S 标志由 0 修改为1，XD 标志由 1 修改为 0 时，如果尝试对不可写的 page 进行写，不可执行的 page 进行执行，以及使用 User 权限进行访问将产生 <code>#PF</code> 异常。于是，系统在 对 <code>#PF handfer</code> 处理中，可以对情况做出判断，然后在 <code>#PF handler</code> 里再做出<strong>选择是否</strong>刷新 TLB entry 和 Page-Structure Cache entry 的操作。在后续的执行中，TLB entry 已经被刷新为正确的。</p>
+<p>相反，R&#x2F;W、U&#x2F;S 标志由 1 修改为0，XD 标志由 0 修改为 1 时，OS <strong>必须立即刷新</strong> TLB entry 和 Page-Structure Cache entry，否则起不了相应的控制作用。</p>
+<h3 id="4-6-处理器使用缓存的顺序"><a href="#4-6-处理器使用缓存的顺序" class="headerlink" title="4.6 处理器使用缓存的顺序"></a>4.6 处理器使用缓存的顺序</h3><p>处理器在访问内存时寻找目标 page frame 有严格的先后查找次序：</p>
+<ol>
+<li>首先，在 TLB 里查找 page frame 信息，找到就直接访问内存，<code>Physical address = page frame + Offset</code>。</li>
+<li>其次，当在 TLB 找不到时，如果 <code>PCID&gt;0</code> 情况下，就在 Paging-Structure Cache 里逐级从 PDE-entry、 PDPTE-entry 及 PMLAE-entry 里查找。</li>
+<li>最后在 Paging-Structure Cache 里也找不到时，就只好老老实实在内存里 walk 下去（说明该地址没有缓存）。</li>
+</ol>
+<p>所有支持 4 级分页或 5 级分页的处理器都支持 PAT。因此，不支持 APT 的处理器仅适用于 32 位分页和 PAE 分页。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00000001402</span>EDF10 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF10</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 MmIsAddressValidEx proc near            <span class="comment">// CODE XREF: MiCommitExistingVad+69E↑p</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF10                                         <span class="comment">// MiCommitExistingVad+DE2↑p ...</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF10</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 var_30          = qword ptr <span class="number">-30</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 var_28_PTE      = qword ptr <span class="number">-28</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 var_20_PDE      = qword ptr <span class="number">-20</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 var_18_PDPTE    = qword ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 var_10_PLM4E    = qword ptr <span class="number">-10</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 arg_0           = qword ptr  <span class="number">8</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF10</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10 <span class="comment">// FUNCTION CHUNK AT .text:000000014045F898 SIZE 00000056 BYTES</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF10</span><br><span class="line">.text:<span class="number">00000001402</span>EDF10                 mov     [rsp+arg_0], rbx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF15                 push    rdi</span><br><span class="line">.text:<span class="number">00000001402</span>EDF16                 sub     rsp, <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF1A                 mov     rax, rcx        <span class="comment">// 保存 VirtualAddress</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF1D                 mov     r10, rcx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF20                 sar     rax, <span class="number">2F</span>h        <span class="comment">// 算术右移 47 位（高位补符号位）</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF20                                         <span class="comment">// 判断线性地址是用户模式地址还是内核地址：</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF20                                         <span class="comment">// - 第48位 = 1：内核模式地址</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF20                                         <span class="comment">// - 第48位 = 0：用户模式地址</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF24                 inc     rax</span><br><span class="line">.text:<span class="number">00000001402</span>EDF27                 cmp     rax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF2B                 ja      loc_1402EE034</span><br><span class="line">.text:<span class="number">00000001402</span>EDF31                 mov     rdx, rcx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF34                 mov     rdi, <span class="number">0F</span>FFFF68000000000h <span class="comment">// PTE_BASE</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF3E                 shr     rdx, <span class="number">9</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF42                 mov     rcx, <span class="number">7F</span>FFFFFFF8h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF4C                 <span class="keyword">and</span>     rdx, rcx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF4F                 mov     rax, rdi        <span class="comment">// (VA &gt;&gt; 9) &amp; 0x7FFFFFFFF8</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF52                 add     rdx, rax        <span class="comment">// rdx = PTE = (VA &gt;&gt; 9) &amp; 0x7FFFFFFFF8 + PTE_BASE</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF55                 mov     [rsp+<span class="number">28</span>h+var_28_PTE], rdx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF59                 shr     rdx, <span class="number">9</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF5D                 <span class="keyword">and</span>     rdx, rcx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF60                 mov     rax, rdi</span><br><span class="line">.text:<span class="number">00000001402</span>EDF63                 add     rdx, rax        <span class="comment">// rdx = PDE = (PTE &gt;&gt; 9) &amp; 0x7FFFFFFFF8 + PTE_BASE</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF66                 mov     [rsp+<span class="number">28</span>h+var_20_PDE], rdx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF6B                 shr     rdx, <span class="number">9</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF6F                 <span class="keyword">and</span>     rdx, rcx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF72                 mov     rax, rdi</span><br><span class="line">.text:<span class="number">00000001402</span>EDF75                 add     rdx, rax        <span class="comment">// rdx = PDPTE = (PDE &gt;&gt; 9) &amp; 0x7FFFFFFFF8 + PTE_BASE</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF78                 mov     [rsp+<span class="number">28</span>h+var_18_PDPTE], rdx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF7D                 shr     rdx, <span class="number">9</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF81                 <span class="keyword">and</span>     rdx, rcx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF84                 mov     rax, rdi</span><br><span class="line">.text:<span class="number">00000001402</span>EDF87                 add     rdx, rax        <span class="comment">// rdx = PLM4E = (PDPTE &gt;&gt; 9) &amp; 0x7FFFFFFFF8 + PTE_BASE</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF8A                 mov     r11, <span class="number">0F</span>FFFF6FB7DBED000h</span><br><span class="line">.text:<span class="number">00000001402</span>EDF94                 mov     [rsp+<span class="number">28</span>h+var_10_PLM4E], rdx</span><br><span class="line">.text:<span class="number">00000001402</span>EDF99                 mov     edx, <span class="number">4</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDF9E                 mov     rbx, <span class="number">0F</span>FFFF6FB7DBED7F8h</span><br><span class="line">.text:<span class="number">00000001402</span>EDFA8</span><br><span class="line">.text:<span class="number">00000001402</span>EDFA8 loc_1402EDFA8:                          <span class="comment">// CODE XREF: MmIsAddressValidEx+BF↓j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFA8                 mov     r9, [rsp+rdx*<span class="number">8</span>+<span class="number">28</span>h+var_30]</span><br><span class="line">.text:<span class="number">00000001402</span>EDFAD                 dec     rdx</span><br><span class="line">.text:<span class="number">00000001402</span>EDFB0                 mov     rcx, [r9]</span><br><span class="line">.text:<span class="number">00000001402</span>EDFB3                 mov     rax, r11</span><br><span class="line">.text:<span class="number">00000001402</span>EDFB6                 cmp     r9, rax</span><br><span class="line">.text:<span class="number">00000001402</span>EDFB9                 jb      <span class="keyword">short</span> loc_1402EDFC3</span><br><span class="line">.text:<span class="number">00000001402</span>EDFBB                 mov     rax, rbx</span><br><span class="line">.text:<span class="number">00000001402</span>EDFBE                 cmp     r9, rax</span><br><span class="line">.text:<span class="number">00000001402</span>EDFC1                 jbe     <span class="keyword">short</span> loc_1402EDFDF</span><br><span class="line">.text:<span class="number">00000001402</span>EDFC3</span><br><span class="line">.text:<span class="number">00000001402</span>EDFC3 loc_1402EDFC3:                          <span class="comment">// CODE XREF: MmIsAddressValidEx+A9↑j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFC3                                         <span class="comment">// MmIsAddressValidEx+D9↓j ...</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFC3                 test    cl, <span class="number">1</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFC6                 jz      <span class="keyword">short</span> loc_1402EE034</span><br><span class="line">.text:<span class="number">00000001402</span>EDFC8                 test    cl, cl</span><br><span class="line">.text:<span class="number">00000001402</span>EDFCA                 js      <span class="keyword">short</span> loc_1402EE01D</span><br><span class="line">.text:<span class="number">00000001402</span>EDFCC                 test    rdx, rdx</span><br><span class="line">.text:<span class="number">00000001402</span>EDFCF                 jnz     <span class="keyword">short</span> loc_1402EDFA8</span><br><span class="line">.text:<span class="number">00000001402</span>EDFD1</span><br><span class="line">.text:<span class="number">00000001402</span>EDFD1 loc_1402EDFD1:                          <span class="comment">// CODE XREF: MmIsAddressValidEx+113↓j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFD1                                         <span class="comment">// MmIsAddressValidEx+122↓j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFD1                 mov     al, <span class="number">1</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFD3</span><br><span class="line">.text:<span class="number">00000001402</span>EDFD3 loc_1402EDFD3:                          <span class="comment">// CODE XREF: MmIsAddressValidEx+126↓j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFD3                 mov     rbx, [rsp+<span class="number">28</span>h+arg_0]</span><br><span class="line">.text:<span class="number">00000001402</span>EDFD8                 add     rsp, <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDFDC                 pop     rdi</span><br><span class="line">.text:<span class="number">00000001402</span>EDFDD                 retn</span><br><span class="line">.text:<span class="number">00000001402</span>EDFDD <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFDE                 db <span class="number">0</span>CCh</span><br><span class="line">.text:<span class="number">00000001402</span>EDFDF <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFDF</span><br><span class="line">.text:<span class="number">00000001402</span>EDFDF loc_1402EDFDF:                          <span class="comment">// CODE XREF: MmIsAddressValidEx+B1↑j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EDFDF                 test    cs:MiFlags, <span class="number">0</span>C00000h</span><br><span class="line">.text:<span class="number">00000001402</span>EDFE9                 jz      <span class="keyword">short</span> loc_1402EDFC3</span><br><span class="line">.text:<span class="number">00000001402</span>EDFEB                 mov     rax, gs:<span class="number">188</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EDFF4                 mov     r8, [rax+_KTHREAD.___u25.ApcState.Process]</span><br><span class="line">.text:<span class="number">00000001402</span>EDFFB                 cmp     byte ptr [r8+<span class="number">390</span>h], <span class="number">1</span></span><br><span class="line">.text:<span class="number">00000001402</span>EE003                 jz      <span class="keyword">short</span> loc_1402EDFC3</span><br><span class="line">.text:<span class="number">00000001402</span>EE005                 test    cl, <span class="number">1</span></span><br><span class="line">.text:<span class="number">00000001402</span>EE008                 jz      <span class="keyword">short</span> loc_1402EE034</span><br><span class="line">.text:<span class="number">00000001402</span>EE00A                 test    cl, <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EE00D                 jz      loc_14045F898</span><br><span class="line">.text:<span class="number">00000001402</span>EE013                 test    cl, <span class="number">42</span>h</span><br><span class="line">.text:<span class="number">00000001402</span>EE016                 jnz     <span class="keyword">short</span> loc_1402EDFC3</span><br><span class="line">.text:<span class="number">00000001402</span>EE018                 jmp     loc_14045F898</span><br><span class="line">.text:<span class="number">00000001402</span>EE01D <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">00000001402</span>EE01D</span><br><span class="line">.text:<span class="number">00000001402</span>EE01D loc_1402EE01D:                          <span class="comment">// CODE XREF: MmIsAddressValidEx+BA↑j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EE01D                 mov     rax, rdi</span><br><span class="line">.text:<span class="number">00000001402</span>EE020                 cmp     r10, rax</span><br><span class="line">.text:<span class="number">00000001402</span>EE023                 jb      <span class="keyword">short</span> loc_1402EDFD1</span><br><span class="line">.text:<span class="number">00000001402</span>EE025                 mov     rax, <span class="number">0F</span>FFFF6FFFFFFFFFFh</span><br><span class="line">.text:<span class="number">00000001402</span>EE02F                 cmp     r10, rax</span><br><span class="line">.text:<span class="number">00000001402</span>EE032                 ja      <span class="keyword">short</span> loc_1402EDFD1</span><br><span class="line">.text:<span class="number">00000001402</span>EE034</span><br><span class="line">.text:<span class="number">00000001402</span>EE034 loc_1402EE034:                          <span class="comment">// CODE XREF: MmIsAddressValidEx+1B↑j</span></span><br><span class="line">.text:<span class="number">00000001402</span>EE034                                         <span class="comment">// MmIsAddressValidEx+B6↑j ...</span></span><br><span class="line">.text:<span class="number">00000001402</span>EE034                 <span class="keyword">xor</span>     al, al</span><br><span class="line">.text:<span class="number">00000001402</span>EE036                 jmp     <span class="keyword">short</span> loc_1402EDFD3</span><br><span class="line">.text:<span class="number">00000001402</span>EE036 MmIsAddressValidEx endp</span><br></pre></td></tr></table></figure>
+
+
+
+<p><a target="_blank" rel="noopener" href="https://tttang.com/archive/1589/">https://tttang.com/archive/1589/</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.betacat.io/post/introduction-to-paging/">https://blog.betacat.io/post/introduction-to-paging/</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.xpnsec.com/total-meltdown-cve-2018-1038/">https://blog.xpnsec.com/total-meltdown-cve-2018-1038/</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-224348.htm">https://bbs.pediy.com/thread-224348.htm</a></p>
+<p><a target="_blank" rel="noopener" href="https://lzeroyuee.cn/old-blog/x64%E5%88%86%E9%A1%B5%20-%20%E8%8E%B7%E5%8F%96PTE%E5%9F%BA%E5%9D%80%20-%20lZeroyuee%27s%20Blog.html">https://lzeroyuee.cn/old-blog/x64分页%20-%20获取PTE基址%20-%20lZeroyuee%27s%20Blog.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://connormcgarr.github.io/paging/">https://connormcgarr.github.io/paging/</a></p>
+<p><a target="_blank" rel="noopener" href="https://jhinxs.com/x64%E7%9A%84%E4%B8%80%E4%BA%9B%E7%89%B9%E6%80%A7/">https://jhinxs.com/x64的一些特性/</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.kaikuoyun.com/thread-1048-1-1.html">http://www.kaikuoyun.com/thread-1048-1-1.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-269402.htm">https://bbs.pediy.com/thread-269402.htm</a></p>
 
     </div>
 
@@ -662,7 +790,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/x64-4-level-paging/" title="x64 分页管理">https://directoree.github.io/post/x64-4-level-paging/</a>
+      <a href="https://directoree.github.io/post/x64-4-level-paging/" title="x64 分页管理（一）基础知识">https://directoree.github.io/post/x64-4-level-paging/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -754,7 +882,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">29:19</span>
+    <span title="站点阅读时长">29:28</span>
   </span>
 </div>
 <div class="busuanzi-count">
