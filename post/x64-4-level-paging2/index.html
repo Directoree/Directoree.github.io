@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64 分页管理（二）页表自映射">
+<meta property="og:url" content="https://directoree.github.io/post/x64-4-level-paging2/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/11/09/VsNDWtTYMv7rzgO.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/14/z1O6dFMeo3bVZcD.png">
+<meta property="article:published_time" content="2022-11-14T10:56:57.000Z">
+<meta property="article:modified_time" content="2022-11-14T16:21:40.603Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64内核分页">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/11/09/VsNDWtTYMv7rzgO.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/x64-4-level-paging2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>x64 分页管理（二）页表自映射 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%81%8D%E5%8E%86%E9%A1%B5%E8%A1%A8"><span class="nav-text">1 遍历页表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BD%BF%E7%94%A8%E7%89%A9%E7%90%86%E5%9C%B0%E5%9D%80%E9%81%8D%E5%8E%86%E9%A1%B5%E8%A1%A8"><span class="nav-text">1.1 使用物理地址遍历页表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%BD%BF%E7%94%A8%E8%99%9A%E6%8B%9F%E5%9C%B0%E5%9D%80%E9%81%8D%E5%8E%86%E9%A1%B5%E8%A1%A8"><span class="nav-text">1.2 使用虚拟地址遍历页表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%A1%B5%E8%A1%A8%E8%87%AA%E6%98%A0%E5%B0%84"><span class="nav-text">2 页表自映射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E6%8E%A8%E5%AF%BC%E8%87%AA%E6%98%A0%E5%B0%84%E9%A1%B5%E8%A1%A8%E6%9D%A1%E7%9B%AE"><span class="nav-text">2.1 推导自映射页表条目</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">143</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/x64-4-level-paging2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64 分页管理（二）页表自映射
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-14 18:56:57" itemprop="dateCreated datePublished" datetime="2022-11-14T18:56:57+08:00">2022-11-14</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-11-15 00:21:40" itemprop="dateModified" datetime="2022-11-15T00:21:40+08:00">2022-11-15</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/x64-4-level-paging2/" class="post-meta-item leancloud_visitors" data-flag-title="x64 分页管理（二）页表自映射" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/x64-4-level-paging2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/x64-4-level-paging2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-遍历页表"><a href="#1-遍历页表" class="headerlink" title="1 遍历页表"></a>1 遍历页表</h2><h3 id="1-1-使用物理地址遍历页表"><a href="#1-1-使用物理地址遍历页表" class="headerlink" title="1.1 使用物理地址遍历页表"></a>1.1 使用物理地址遍历页表</h3><p>有 2 种方法使用物理地址来遍历页表结构：</p>
+<ol>
+<li><p>使用如下图方法。</p>
+<p><img data-src="https://s2.loli.net/2022/11/09/VsNDWtTYMv7rzgO.png" alt="67.png"></p>
+</li>
+<li><p>使用 CR3 逐级遍历。具体过程见上一篇文章 2.5 章节。</p>
+</li>
+</ol>
+<h3 id="1-2-使用虚拟地址遍历页表"><a href="#1-2-使用虚拟地址遍历页表" class="headerlink" title="1.2 使用虚拟地址遍历页表"></a>1.2 使用虚拟地址遍历页表</h3><p>实际在代码中，由于分页模式的存在，我们无法直接操作物理地址。但是 Windows 会将对应的页表结构映射到虚拟地址中，如 x86 下将PTE 页表基址映射到 <code>0xC0000000</code>，将 PDE 映射到 <code>0xC0300000</code>。<a target="_blank" rel="noopener" href="https://tttang.com/user/Drunkmars">Drunkmars</a> 在文章《<a target="_blank" rel="noopener" href="https://tttang.com/archive/1589/">x64下隐藏可执行内存</a>》指出在 Windows 7 x64 <code>PTE_BASE = fffff68000000000</code> 固定映射，但是从 Windows 10 1607 开始页表采用随机地址映射。</p>
+<p>这一块主要涉及两种获取 <code>PTE_BASE</code> 的方法和解析 PTE 的方式：</p>
+<p>获取 <code>PTE_BASE</code> 两种常用方法：</p>
+<ol>
+<li>动态获取 <code>PTE_BASE</code> 对应的虚拟地址，可以通过特征码搜索。</li>
+<li>利用页表自映射（Self-Referencing Page Tables）首先获取 PLM4T 的虚拟基地址，然后再获取 <code>PTE_BASE</code>。</li>
+</ol>
+<p><strong>解析 PTE 的方式的方式</strong>：</p>
+<p>PTE 表在物理内存中是一块 4KB 大小的物理页，但是所有物理页面的 PTE 映射到虚拟地址后，这些虚拟地址都是连续的。这就有一个比较有趣的现象，表示 PTE 的虚拟地址是连续的（不止4KB）。</p>
+<p>示例1：</p>
+<ol>
+<li><p>先拿到一个虚拟地址，将其作为基址，如地址 <code>0x0</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !process <span class="number">0</span> <span class="number">0</span> notepad.exe</span><br><span class="line">PROCESS ffff9386ffaa4080</span><br><span class="line">    SessionId: <span class="number">1</span>  Cid: <span class="number">0858</span>    Peb: <span class="number">555</span>dab6000  ParentCid: <span class="number">0</span>c5c</span><br><span class="line">    DirBase: <span class="number">3</span>cb63002  ObjectTable: ffffe68e661f4d80  HandleCount: <span class="number">239.</span></span><br><span class="line">    Image: notepad.exe</span><br><span class="line">      </span><br><span class="line">kd&gt; .process /i ffff9386ffaa4080</span><br><span class="line"></span><br><span class="line">kd&gt; !pte <span class="number">0</span></span><br><span class="line">                                           VA <span class="number">0000000000000000</span></span><br><span class="line">PXE at FFFF8FC7E3F1F000    PPE at FFFF8FC7E3E00000    PDE at FFFF8FC7C0000000    PTE at FFFF8F8000000000</span><br><span class="line">contains <span class="number">8</span>A0000001FE61867  contains <span class="number">0000000000000000</span></span><br><span class="line">pfn <span class="number">1f</span>e61     ---DA--UW-V  contains <span class="number">0000000000000000</span></span><br><span class="line"><span class="keyword">not</span> valid</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，线性地址 <code>0x0</code> 对应的 PTE 为 <code>0xFFFF8F8000000000</code>。</p>
+</li>
+<li><p>解析地址 <code>0x20DEAC52A40</code> 对应的 PTE。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dq FFFF8F8000000000+((<span class="number">0x20D</span>`EAC52A40&gt;&gt;<span class="number">0xC</span>)&lt;&lt;<span class="number">3</span>)</span><br><span class="line">ffff8f81`<span class="number">06f</span>56290  <span class="number">81000000</span>`<span class="number">3</span>d28a867 <span class="number">00002000</span>`<span class="number">45b</span>b6880</span><br><span class="line">ffff8f81`<span class="number">06f</span>562a0  <span class="number">81000000</span>`<span class="number">6</span>cb79847 <span class="number">00002000</span>`<span class="number">1b</span>d78880</span><br><span class="line">ffff8f81`<span class="number">06f</span>562b0  <span class="number">81000000</span>`<span class="number">24545805</span> <span class="number">0005</span>a817`<span class="number">00002094</span></span><br><span class="line">  </span><br><span class="line">kd&gt; !vtop <span class="number">3</span>cb63000 <span class="number">0x20DEAC52A40</span></span><br><span class="line">Amd64VtoP: Virt <span class="number">0000020</span>deac52a40, pagedir <span class="number">000000003</span>cb63000</span><br><span class="line">Amd64VtoP: PML4E <span class="number">000000003</span>cb63020</span><br><span class="line">Amd64VtoP: PDPE <span class="number">0000000035</span>a051b8</span><br><span class="line">Amd64VtoP: PDE <span class="number">0000000025786</span>ab0</span><br><span class="line">Amd64VtoP: PTE <span class="number">0000000070e29290</span></span><br><span class="line">Amd64VtoP: Mapped phys <span class="number">000000003</span>d28aa40</span><br><span class="line">Virtual address <span class="number">20</span>deac52a40 translates to physical address <span class="number">3</span>d28aa40.</span><br><span class="line">  </span><br><span class="line">kd&gt; !du <span class="number">3</span>d28aa40</span><br><span class="line">#<span class="number">3</span>d28aa40 <span class="string">&quot;20221110&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到地址 <code>0x20DEAC52A40</code> 对应的 PTE 为 <code>ffff8f81&#39;06f56290</code>。</p>
+</li>
+</ol>
+<p>从上面这个示例可以总结几点：</p>
+<ul>
+<li><p>为什么选定 <code>0x0</code> 的 PTE 作为转换其他线性地址对应的基础地址后，也就是 <code>PTE_BASE</code>？是因为在线性地址中，所有的 PTE 都是从 <code>0x0</code> 对应的 PTE 进行线性排列的。</p>
+<ul>
+<li>先右移 12 位，目的就是拿到 PTi 索引。每一项为 8 字节，所以还要左移 3 位。</li>
+<li>然后加上基地址 <code>FFFF8F8000000000</code> 即可得到目标地址对应的 PTE。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/11/14/z1O6dFMeo3bVZcD.png" alt="76.png"></p>
+</li>
+<li><p>计算 PTE 的公式：<code>PTE = PTE_BASE + PLM4i*512GB + PDPTi*1GB + PDi*2MB + PTi*8</code>，实际上右移 12 位后低 9 位就是 PTi，左移 3 位就是 <code>*8</code>，只不过使用移位更方便一些。</p>
+</li>
+</ul>
+<p>另外一个疑问，已知一个地址的 PTE（虚拟地址），如何得到该虚拟地址对应的 PDE、PDPTE、PLM4E 对应的虚拟地址。      </p>
+<p><strong>答案</strong>：只需要将当前得到的 PTE 虚拟地址<mark class="label success">当做一个普通地址</mark>，然后解析该地址的 PTE。因为新的 PTE 指向的物理地址保存的内容就是原来的 PTE。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dq FFFF8F8000000000+((<span class="number">0x8f8106f56290</span>&gt;&gt;<span class="number">0xC</span>)&lt;&lt;<span class="number">3</span>)</span><br><span class="line">ffff8fc7`c0837ab0  <span class="number">0</span>a000000`<span class="number">70e29867</span> <span class="number">0</span>a000000`<span class="number">182b</span>a867</span><br><span class="line">ffff8fc7`c0837ac0  <span class="number">0</span>a000000`<span class="number">13925867</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">ffff8fc7`c0837ad0  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+
+<p>地址 <code>0xffff8fc7&#39;c0837ab0</code> 即为 PDE，物理页面保存的 <code>70e29867</code> 即为 PTE 物理地址。<code>3d28a867</code> 为虚拟地址 <code>0x20DEAC52A40</code> 对应的物理地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !vtop <span class="number">3</span>cb63000 <span class="number">0x20DEAC52A40</span></span><br><span class="line">Amd64VtoP: Virt <span class="number">0000020</span>deac52a40, pagedir <span class="number">000000003</span>cb63000</span><br><span class="line">Amd64VtoP: PML4E <span class="number">000000003</span>cb63020</span><br><span class="line">Amd64VtoP: PDPE <span class="number">0000000035</span>a051b8</span><br><span class="line">Amd64VtoP: PDE <span class="number">0000000025786</span>ab0</span><br><span class="line">Amd64VtoP: PTE <span class="number">0000000070e29290</span></span><br><span class="line">Amd64VtoP: Mapped phys <span class="number">000000003</span>d28aa40</span><br><span class="line">Virtual address <span class="number">20</span>deac52a40 translates to physical address <span class="number">3</span>d28aa40.</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="2-页表自映射"><a href="#2-页表自映射" class="headerlink" title="2 页表自映射"></a>2 页表自映射</h2><p>微软管理页表时，使用了页表自映射的技术（Self-Referencing Page Tables，或 Self-ref entry）。</p>
+<p><strong>其核心就是</strong>：在某一级的页表中存在一个条目，<mark class="label success">该条目指向当前级页表基址</mark>。</p>
+<ul>
+<li>32-bit paging、PAE 分页下，该条目位于 PDE 中。</li>
+<li>4-level 分页下，该条目位于 PLM4T 中。</li>
+</ul>
+<p>注意：Cr3 寄存器中存储了最高级页表（PML4）的表基物理地址。</p>
+<div class="note danger"><p>在 4-level 分页下：</p>
+<p>该自映射的条目位于 PLM4T 中，同时该条目指向 PLM4T 表。因为 CR3 也指向 PLM4T 表，所以：<mark class="label primary">这个 <code>PLM4E entry 物理地址 = CR3</code></mark>，这种自映射也叫做最高级页表自映射。</p>
+</div>
+
+<p>参考以下文章，对 Microsoft 的页表自映射进行分析：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-274152.htm">四级分页下的页表自映射与基址随机化原理介绍</a></li>
+<li><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-254276.htm">逆向TesSafe.sys有感：鹅厂是如何定位随机化的PTE_BASE</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.xpnsec.com/total-meltdown-cve-2018-1038/">Exploiting CVE-2018-1038 - Total Meltdown</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.coresecurity.com/core-labs/articles/getting-physical-extreme-abuse-of-intel-based-paging-systems-part-2-windows">Getting Physical: Extreme abuse of Intel based Paging Systems - Part 2 - Windows</a></li>
+</ul>
+<h3 id="2-1-推导自映射页表条目"><a href="#2-1-推导自映射页表条目" class="headerlink" title="2.1 推导自映射页表条目"></a>2.1 推导自映射页表条目</h3><p>假设 PML4 表中索引位置 <code>0x100</code> 的元素用于内存管理且满足自映射，那么此时用于内存管理的虚拟地址空间为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0xFFFF8000</span>`<span class="number">00000000</span> ~ <span class="number">0xFFFF807F</span>`FFFFF000</span><br></pre></td></tr></table></figure>
+
+<p>查询流程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 起始地址</span></span><br><span class="line">![Cr3 + <span class="number">0x100</span> * <span class="number">8</span>] = PDPTE</span><br><span class="line">![PDPTE + <span class="number">0x0</span> * <span class="number">8</span>] = PDE</span><br><span class="line">![PDE + <span class="number">0x0</span> * <span class="number">8</span>] = PTE</span><br><span class="line">![PTE + <span class="number">0x0</span> * <span class="number">8</span>] = 物理页面</span><br><span class="line"> </span><br><span class="line"><span class="comment">// 结束地址</span></span><br><span class="line">![Cr3 + <span class="number">0x100</span> * <span class="number">8</span>] = PDPTE</span><br><span class="line">![PDPTE + <span class="number">0x1FF</span> * <span class="number">8</span>] = PDE</span><br><span class="line">![PDE + <span class="number">0x1FF</span> * <span class="number">8</span>] = PTE</span><br><span class="line">![PTE + <span class="number">0x0</span> * <span class="number">8</span>] = 物理页面</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>推指向 PLM4T 表的虚拟基址。假设在 PLM4T 中，这个自映射页表条目的虚拟地址对应的 4 级分页索引分别为：$x,y,z,r$。页表解析规则：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">![CR3   + x * <span class="number">8</span>] = PDPTE = Cr3</span><br><span class="line">![PDPTE + y * <span class="number">8</span>] = PDE</span><br><span class="line">![PDE   + z * <span class="number">8</span>] = PTE</span><br><span class="line">![PTE   + r * <span class="number">8</span>] = PLM4T基址 = Cr3</span><br></pre></td></tr></table></figure>
+
+<p>当且仅当 $x &#x3D; y &#x3D; z &#x3D; r$ 时，满足上述条件。所以指向 PLM4T 表基址的虚拟地址的特点为：PML4i &#x3D;&#x3D; PDTi &#x3D;&#x3D; PDi &#x3D;&#x3D; PTi &#x3D;&#x3D; Index。</p>
+</li>
+<li><p>推导指向 PDPT 表的虚拟基址。假设这个虚拟地址对应的 4 级分页索引分别为：$a,b,c,d$。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">![CR3   + a * <span class="number">8</span>] = PDPTE = Cr3</span><br><span class="line">![PDPTE + b * <span class="number">8</span>] = PDE</span><br><span class="line">![PDE   + c * <span class="number">8</span>] = PTE</span><br><span class="line">![PTE   + d * <span class="number">8</span>] = X</span><br></pre></td></tr></table></figure>
+
+<p>注意 <code>![PTE + d * 8] != Cr3</code>，不再指向 PLM4T 表，而是 <code>d = 0</code>。</p>
+</li>
+</ol>
+<div class="note danger"><p>经过最后的推导，所有指向每级页表的虚拟地址有如下特征：</p>
+<ul>
+<li>指向 <strong>PML4</strong> 表的虚拟地址：PML4i &#x3D;&#x3D; PDTi &#x3D;&#x3D; PDi &#x3D;&#x3D; PTi &#x3D;&#x3D; Index，页内偏移均为0。</li>
+<li>指向 <strong>PDPT</strong> 表的虚拟地址：PML4i &#x3D;&#x3D; PDTi &#x3D;&#x3D; PDi &#x3D;&#x3D; Index &amp;&amp; PTi &#x3D;&#x3D; 0，页内偏移均为0。</li>
+<li>指向 <strong>PDT</strong> 表的虚拟地址：PML4i &#x3D;&#x3D; PDTi &#x3D;&#x3D; Index &amp;&amp; PDi &#x3D;&#x3D; 0 &amp;&amp; PTi &#x3D;&#x3D; 0，页内偏移均为0。</li>
+<li>指向 <strong>PTT</strong> 表的虚拟地址：PML4i &#x3D;&#x3D; Index &amp;&amp; PDTi &#x3D;&#x3D; 0 &amp;&amp; PDi &#x3D;&#x3D; 0 &amp;&amp; PTi &#x3D;&#x3D; 0，页内偏移均为0。</li>
+</ul>
+<p>这个 <code>Index</code> 就是自映射表项在 PML4 表中的索引。</p>
+</div>
+
+<p>如上面实验的 <code>0x0</code> 地址，其 4 级页表的虚拟地址满足上述的特征：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !pte <span class="number">0</span></span><br><span class="line">                                           VA <span class="number">0000000000000000</span></span><br><span class="line">PXE at FFFF8FC7E3F1F000    PPE at FFFF8FC7E3E00000    PDE at FFFF8FC7C0000000    PTE at FFFF8F8000000000</span><br><span class="line">contains <span class="number">8</span>A0000001FE61867  contains <span class="number">0000000000000000</span></span><br><span class="line">pfn <span class="number">1f</span>e61     ---DA--UW-V  contains <span class="number">0000000000000000</span></span><br><span class="line"><span class="keyword">not</span> valid</span><br><span class="line">  </span><br><span class="line">kd&gt; !vtop <span class="number">3</span>cb63000 FFFF8FC7E3F1F000</span><br><span class="line">Amd64VtoP: Virt ffff8fc7e3f1f000, pagedir <span class="number">000000003</span>cb63000</span><br><span class="line">Amd64VtoP: PML4E <span class="number">000000003</span>cb638f8</span><br><span class="line">Amd64VtoP: PDPE <span class="number">000000003</span>cb638f8</span><br><span class="line">Amd64VtoP: PDE <span class="number">000000003</span>cb638f8</span><br><span class="line">Amd64VtoP: PTE <span class="number">000000003</span>cb638f8</span><br><span class="line">Amd64VtoP: Mapped phys <span class="number">000000003</span>cb63000</span><br><span class="line">Virtual address ffff8fc7e3f1f000 translates to physical address <span class="number">3</span>cb63000.</span><br><span class="line">  </span><br><span class="line">kd&gt; !dq <span class="number">3</span>cb63000</span><br><span class="line">#<span class="number">3</span>cb63000 <span class="number">8</span>a000000`<span class="number">241f</span>e867 <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">#<span class="number">3</span>cb63010 <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">#<span class="number">3</span>cb63020 <span class="number">8</span>a000000`<span class="number">35</span>a05867 <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">#<span class="number">3</span>cb63030 <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">#<span class="number">3</span>cb63040 <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">#<span class="number">3</span>cb63050 <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">#<span class="number">3</span>cb63060 <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">#<span class="number">3</span>cb63070 <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/x64-4-level-paging2/" title="x64 分页管理（二）页表自映射">https://directoree.github.io/post/x64-4-level-paging2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64%E5%86%85%E6%A0%B8%E5%88%86%E9%A1%B5/" rel="tag"><i class="fa fa-tag"></i> x64内核分页</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/x64-4-level-paging/" rel="prev" title="x64 分页管理（一）基础知识">
+                  <i class="fa fa-chevron-left"></i> x64 分页管理（一）基础知识
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">29:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/x64-4-level-paging2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
