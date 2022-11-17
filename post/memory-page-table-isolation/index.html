@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x64 页表隔离（一）Meltdown 和 Spectre">
+<meta property="og:url" content="https://directoree.github.io/post/memory-page-table-isolation/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/11/17/Mo8dZUQy4WPJrYH.png">
+<meta property="article:published_time" content="2022-11-17T13:28:16.000Z">
+<meta property="article:modified_time" content="2022-11-17T16:10:44.347Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64内存页表隔离">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/11/17/Mo8dZUQy4WPJrYH.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/memory-page-table-isolation/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>x64 页表隔离（一）Meltdown 和 Spectre | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Meltdown-%E5%92%8C-Spectre"><span class="nav-text">1 Meltdown 和 Spectre</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="nav-text">2 漏洞原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Spectre%EF%BC%88%E5%B9%BD%E7%81%B5%EF%BC%89"><span class="nav-text">2.1 Spectre（幽灵）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E5%8E%9F%E7%90%86"><span class="nav-text">漏洞原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%8F%E6%B4%9E%E8%BF%98%E5%8E%9F"><span class="nav-text">漏洞还原</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">144</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">76</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/memory-page-table-isolation/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          x64 页表隔离（一）Meltdown 和 Spectre
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-17 21:28:16" itemprop="dateCreated datePublished" datetime="2022-11-17T21:28:16+08:00">2022-11-17</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-11-18 00:10:44" itemprop="dateModified" datetime="2022-11-18T00:10:44+08:00">2022-11-18</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/memory-page-table-isolation/" class="post-meta-item leancloud_visitors" data-flag-title="x64 页表隔离（一）Meltdown 和 Spectre" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/memory-page-table-isolation/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/memory-page-table-isolation/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-Meltdown-和-Spectre"><a href="#1-Meltdown-和-Spectre" class="headerlink" title="1 Meltdown 和 Spectre"></a>1 Meltdown 和 Spectre</h2><p>Meltdown 和 Spectre 是两个 CPU 漏洞，对应的 CVE 编号是 Meltdown（熔毁，CVE-2017-5754）、Spectre（幽灵，CVE-2017-5753&amp;CVE-2017-5715）。目前已经衍生出<a target="_blank" rel="noopener" href="https://blog.yzsun.me/spectre-meltdown-foreshadow/">多种变种利用方式</a>。</p>
+<p>这两个 CPU 缺陷几乎影响了自 Pentium Pro（1995）以来开发的所有现代处理器。这些缺陷源于两个关键的CPU功能：乱序执行和推测执行。</p>
+<ul>
+<li>Spectre：基于<mark class="label warning">分支预测</mark>来推测执行（Speculative execution from branch prediction）。</li>
+<li>Meltdown：基于<mark class="label success">乱序执行</mark>（Out-of-order execution）的推测执行。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2022/11/17/Mo8dZUQy4WPJrYH.png" alt="1.png"></p>
+<p>两个漏洞非常相似，都是组合 CPU 设计缺陷、侧信道攻击、内存访问越界来实施攻击，以<mark class="label danger">破坏地址空间隔离</mark>，<strong>泄露内核数据</strong>。</p>
+<p>这两个漏洞的研究报告：《<a target="_blank" rel="noopener" href="https://meltdownattack.com/">Meltdown and Spectre</a>》。</p>
+<p>Spectre 影响的 CPU 范围较 Meltdown 广，用于缓解 Meltdown 的 KAISER 机制不能防止 Spectre。</p>
+<h2 id="2-漏洞原理"><a href="#2-漏洞原理" class="headerlink" title="2 漏洞原理"></a>2 漏洞原理</h2><h3 id="2-1-Spectre（幽灵）"><a href="#2-1-Spectre（幽灵）" class="headerlink" title="2.1 Spectre（幽灵）"></a>2.1 Spectre（幽灵）</h3><h4 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a>漏洞原理</h4><p>几十年前，为了加快处理器的执行速度以提高性能，其中一项技术就是推测执行（Speculative Execution）：<strong>在遇到分支判断时，让处理器猜测可能执行的方向，并在这个路径上提前执行指令</strong>。</p>
+<p>举个示例，在分支判断的地方访问了未缓存的内存，由于访问内存要比 CPU 执行慢得多，通常需要数百个时钟周期才能取到内存中的值，CPU 不会空闲下来而浪费这些周期时间，而是尝试去猜测该控制流的方向。CPU 先将当前点（Checkpoint）的寄存器状态保存起来，然后在猜测的路径上继续往下执行。当从内存传送过来的值到达处理器后，CPU 会检查初始猜测的正确性。如果猜测错误，CPU 会通过将寄存器状态恢复为存储的检查点来丢弃不正确的推测执行（称为回滚），这种情况下与空闲是相当的性能；如果猜测正确则继续往下执行，从而产生性能的提升。</p>
+<p>而幽灵漏洞就是利用不正确的猜测执行，幽灵攻击<strong>诱使 CPU 推测执行正确控制流不应该执行的指令</strong>。漏洞发现者将这部分正确控制流不会执行，而 CPU 能推测执行的指令称为 <code>Transient instructions</code>（瞬态指令）。利用 <code>Transient instructions</code> 从受害者的内存地址空间中泄露内核信息。</p>
+<blockquote>
+<p>不幸的是，尽管架构状态被回滚了，仍然有些副作用，比如 TLB 或缓存状态并没有被回滚。这些副作用随后可以被黑客通过侧信道攻击（Side Channel Attack）的方式获取到缓存的内容。如果攻击者能触发推测执行去访问指定的敏感数据区域的话，就可能可以读取到原本是其它用户或更高特权级的敏感数据。</p>
+</blockquote>
+<p>基于这样的推测执行能够衍生出多种不同的变体利用方式，如利用条件分支的推测执行、利用间接分支的推测执行。</p>
+<h4 id="漏洞还原"><a href="#漏洞还原" class="headerlink" title="漏洞还原"></a>漏洞还原</h4><p>本文以其中一种变体——利用条件分支的推测执行来泄露内核数据。</p>
+<p>主要参考<a target="_blank" rel="noopener" href="https://labs.bluefrostsecurity.de/blog/2020/06/30/meltdown-reloaded-breaking-windows-kaslr/">Meltdown Reloaded: Breaking Windows KASLR by Leaking KVA Shadow Mappings</a>、<a target="_blank" rel="noopener" href="https://spectreattack.com/spectre.pdf">Spectre Attacks: Exploiting Speculative Execution</a>。</p>
+<p><strong>一、触发漏洞</strong></p>
+<p>如下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> __int64 array_size = <span class="number">1</span></span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> array1[<span class="number">256</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> array2[<span class="number">256</span>] = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line">Leaker_function ( <span class="keyword">unsigned</span> __int64 pos )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ( pos &lt; array_size )</span><br><span class="line">  &#123;</span><br><span class="line">    temp_value = array1[ array2[ pos ] ];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>参数 <code>pos</code> 完全由攻击者控制，如果此时 <code>pos &gt;255</code>，CPU 没有等待条件判断，同时还会猜测数组边界检查为真（实际上 CPU 直接访问了越界数组指向的内存），假设此时 <code>array2[pos] = 0x41</code>，则接下来 CPU 会访问 <code>array1[0x41]</code>，并将访问到的数据缓存 Cache。当最终确定条件分支及数组越界检查的结果后，CPU 会发现其错误并进行回滚。但是访问 <code>array1[0x41]</code> 的数据已缓存 Cache，CPU 没有刷新该缓存，攻击者就可以分析该缓存的内容，从而得到越界访问的数据。</p>
+<p><strong>注意</strong>：<code>0 &lt;= array2[pos] &lt;= 255</code>，所以数组 <code>array1[X]</code> 不会越界，方便后面分析缓存的值（无符号字符为1字节8位，2^8^&#x3D;256）。</p>
+<p>所以可以构造如下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">array1[ array2[<span class="number">0xffff8000</span>`<span class="number">12345678</span> - &amp;array2] ];</span><br></pre></td></tr></table></figure>
+
+<p>这样就可以将 CPU 推测执行 <code>array2[0xffff8000&#39;12345678]</code> 的地址缓存起来，<strong>然后分析缓存</strong>，从而得到地址 <code>0xffff8000&#39;12345678</code> 泄露的值。</p>
+<p><strong>关于缓存</strong>：</p>
+<p>现代 CPU 一般都会在内部设置缓存结构，然后将高速缓存划分为固定大小的块（或叫做行Lines），典型的每行 64&#x2F;128 字节，<strong>内存是按行的粒度进行缓存的</strong>。档处理器需要内存中的数据时，首先就要去高速缓存中进行检索，检索不到才会去访问物理内存。</p>
+<p>Intel 处理器通常具有三级缓存，每个核心都有自己的 L1、L2 缓存，还有一个所有核心共享的 L3 缓存（也称为LLC）。</p>
+<p>处理器必须使用缓存一致性协议<strong>确保每个内核的 L1和L2缓存是一致的</strong>，通常基于 MESI 协议。特别是，使用 MESI 协议或其某些变体意味着对一个内核的内存写入操作将导致其他内核的 L1 和 L2缓存中的相同数据副本被标记为无效，这意味着将来访问其他内核上的这些数据将无法从L1或 L2 缓存中快速加载数据。</p>
+<p><strong>二、分析缓存</strong>：</p>
+<p>由于 CPU 使用缓存来存储最近访问的内存的内容，并且缓存比常规内存快得多，因此我们有机会通过观察不同缓存行的访问时间来推断访问了哪些元素。</p>
+<p>推断访问了哪个缓存行的典型方法是（Flush+Reload技术）：</p>
+<ol>
+<li><p>首先刷新所有缓存行，刷新数组每个元素的 CPU 缓存。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span> ; i &lt; <span class="number">256</span> ; i ++ )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// Invalidating cache</span></span><br><span class="line">  _mm_clflush ( &amp;array1 [ i ] );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>然后触发受害者内存访问。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Leaker_function ( <span class="keyword">unsigned</span> __int64 pos )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ( pos &lt; array_size )</span><br><span class="line">  &#123;</span><br><span class="line">    temp_value = array1[ array2[<span class="number">0xffff8000</span>`<span class="number">12345678</span> - &amp;array2] ];</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假设 <code>array2[0xffff8000&#39;12345678 - &amp;array2] = 0x41</code>，则在下面使用 <code>__rdtscp</code> 检索数组 <code>array1</code> 每个元素访问时间时，应该是 <code>array1[0x41]</code> 使用的时间最少。 </p>
+</li>
+<li><p>然后为访问每个缓存行计时。受害者访问的线路将产生最低的时间。</p>
+</li>
+</ol>
+<p>三、训练</p>
+<p>完整利用代码（参考<a target="_blank" rel="noopener" href="https://labs.bluefrostsecurity.de/blog/2020/06/30/meltdown-reloaded-breaking-windows-kaslr/">Meltdown Reloaded: Breaking Windows KASLR by Leaking KVA Shadow Mappings</a>）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Kernel address to be read</span></span><br><span class="line">malicious_pos = kernel_address - &amp;array1;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Looping 33 times</span></span><br><span class="line"><span class="keyword">for</span> ( i = <span class="number">0</span> ; i &lt;= <span class="number">33</span> ; i ++ )</span><br><span class="line">&#123;</span><br><span class="line"><span class="comment">// Enabling speculator</span></span><br><span class="line">  pos = ( ( i % <span class="number">33</span> ) - <span class="number">1</span> ) &amp; ~<span class="number">0xFFFF</span>;</span><br><span class="line">  pos = ( pos | ( pos &gt;&gt; <span class="number">16</span> ) );</span><br><span class="line">  pos = pos &amp; malicious_pos;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Leaking data when branch predictor is working</span></span><br><span class="line">  leaker_function ( pos );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><a target="_blank" rel="noopener" href="https://www.4hou.com/posts/jL6y">https://www.4hou.com/posts/jL6y</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/93599">https://www.anquanke.com/post/id/93599</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.yzsun.me/spectre-meltdown-foreshadow/">https://blog.yzsun.me/spectre-meltdown-foreshadow/</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.qfrost.com/WindowsKernel/KVAS/">http://www.qfrost.com/WindowsKernel/KVAS/</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/33427373">https://zhuanlan.zhihu.com/p/33427373</a></p>
+<p><a target="_blank" rel="noopener" href="https://zerosum0x0.blogspot.com/2019/11/fixing-remote-windows-kernel-payloads-meltdown.html">https://zerosum0x0.blogspot.com/2019/11/fixing-remote-windows-kernel-payloads-meltdown.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/xuandao_ahfengren/article/details/112135179">https://blog.csdn.net/xuandao_ahfengren/article/details/112135179</a></p>
+<p><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/3072">https://xz.aliyun.com/t/3072</a></p>
+<p><a target="_blank" rel="noopener" href="https://key08.com/usr/uploads/2022/05/910489819.pdf">https://key08.com/usr/uploads/2022/05/910489819.pdf</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/memory-page-table-isolation/" title="x64 页表隔离（一）Meltdown 和 Spectre">https://directoree.github.io/post/memory-page-table-isolation/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64%E5%86%85%E5%AD%98%E9%A1%B5%E8%A1%A8%E9%9A%94%E7%A6%BB/" rel="tag"><i class="fa fa-tag"></i> x64内存页表隔离</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/x64-4-level-paging2/" rel="prev" title="x64 分页管理（二）页表自映射">
+                  <i class="fa fa-chevron-left"></i> x64 分页管理（二）页表自映射
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">29:46</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/memory-page-table-isolation/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
