@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CFG">
+<meta property="og:url" content="https://directoree.github.io/post/Control-Flow-Guard/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/27/MBrHElxt28bUpJA.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/27/U3zoCmL72KWA4Xk.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/27/MqDTIzskYmXNCQB.png">
+<meta property="article:published_time" content="2022-11-25T02:40:13.000Z">
+<meta property="article:modified_time" content="2022-11-27T15:34:32.700Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 CFG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Control-Flow-Guard/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>CFG | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-CFG-%E6%94%AF%E6%8C%81"><span class="nav-text">1 CFG 支持</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-PE%E4%B8%AD%E7%9A%84CFG%E6%A0%87%E5%BF%97"><span class="nav-text">1.1 PE中的CFG标志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-VS%E5%BC%80%E5%90%AFCFG%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-text">1.2 VS开启CFG代码分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-CFG-Bitmap"><span class="nav-text">2 CFG Bitmap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%94%A8%E6%88%B7-CFG"><span class="nav-text">3 用户 CFG</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">145</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">77</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Control-Flow-Guard/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CFG
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-25 10:40:13" itemprop="dateCreated datePublished" datetime="2022-11-25T10:40:13+08:00">2022-11-25</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-11-27 23:34:32" itemprop="dateModified" datetime="2022-11-27T23:34:32+08:00">2022-11-27</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Control-Flow-Guard/" class="post-meta-item leancloud_visitors" data-flag-title="CFG" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Control-Flow-Guard/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Control-Flow-Guard/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>22k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>20 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-CFG-支持"><a href="#1-CFG-支持" class="headerlink" title="1 CFG 支持"></a>1 CFG 支持</h2><p>微软于 2014 年在 Windows 8.1 Update 3（<code>KB3000850</code>）中首次发布了 CFG（Control Flow Guard），并在之后的 Windows 10 中自动启用。（参考MSDN<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/secbp/control-flow-guard">Control Flow Guard for platform security</a>）</p>
+<p>CFG 主要用来解决代码中针对<mark class="label success">间接跳转</mark>的缓解，如 <code>jmp/call/ret</code> 等间接跳转。代码运行过程中，在间接跳转之前，系统会通过 CFG Bitmap 来动态判断跳转目的地址是否是可信赖的区域。试图在汇编级别保护间接调用。这也叫做控制流完整性（Control Flow Integrity，CFI）。分为：</p>
+<ul>
+<li>User CFG，在用户代码中的 CFG。</li>
+<li>Kernel CFG，内核代码中的 KCFG。</li>
+</ul>
+<p>CFG 的启用需要系统和编译器同时支持（就像ASLR一样），从 Virtual Studio 2015 Updated 2 版本以上开始支持（<em>项目属性—C&#x2F;C++—代码生成—控制流防护—是 guard:cf</em>）。</p>
+<p>程序中有了 CFG 之后，间接跳转之前加了一个跳转判断：</p>
+<p><img data-src="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png" alt="1.png"></p>
+<h3 id="1-1-PE中的CFG标志"><a href="#1-1-PE中的CFG标志" class="headerlink" title="1.1 PE中的CFG标志"></a>1.1 PE中的CFG标志</h3><p>当在 VS 2019 <em>项目属性—C&#x2F;C++—代码生成—控制流防护—是 guard:cf</em> 启用 CFG 后：</p>
+<ol>
+<li>PE <code>Optionnal Header.DLL characteristics</code> 有相关签名指出程序中使用了 CFG。</li>
+<li>CFG 数据编译在 <code>.gfids</code> 节中，但是该节一般会被合并到 <code>.rdata</code> 节中。</li>
+<li>在 <code>.rdata</code> 节中的 CFG 数据结构用数据目录表 <code>_IMAGE_LOAD_CONFIG_DIRECTORY64</code> 中相关字段来描述。</li>
+</ol>
+<p>使用 VS 自带工具 dumpbin 查看 PE 文件头信息（工具—命令行—开发者 Power Shell）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">dumpbin /headers /loadconfig C:\Win32\LoadDriverIO\x64\Release\LoadDriverIO.exe</span><br><span class="line">...</span><br><span class="line">OPTIONAL HEADER VALUES</span><br><span class="line">             <span class="number">20B</span> magic # (PE32+)</span><br><span class="line">...</span><br><span class="line">            C160 DLL characteristics</span><br><span class="line">                   High Entropy Virtual Addresses</span><br><span class="line">                   Dynamic base</span><br><span class="line">                   NX compatible</span><br><span class="line">                   Control Flow Guard</span><br><span class="line">                   Terminal Server Aware</span><br><span class="line">  </span><br><span class="line"> Section contains the following load config:</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">    <span class="number">0000000140005008</span> Security Cookie</span><br><span class="line">    <span class="number">0000000140003240</span> Guard CF address of check-function pointer</span><br><span class="line">    <span class="number">0000000140003250</span> Guard CF address of dispatch-function pointer</span><br><span class="line">    <span class="number">00000001400032</span>C0 Guard CF function table</span><br><span class="line">                   D Guard CF function count</span><br><span class="line">            <span class="number">00017500</span> Guard Flags</span><br><span class="line">                       CF instrumented</span><br><span class="line">                       FID table present</span><br><span class="line">                       Protect delayload IAT</span><br><span class="line">                       Delayload IAT in its own section</span><br><span class="line">                       Export suppression info present</span><br><span class="line">                       Long jump target table present</span><br><span class="line">                <span class="number">0000</span> Code Integrity Flags</span><br><span class="line">                <span class="number">0000</span> Code Integrity Catalog</span><br><span class="line">            <span class="number">00000000</span> Code Integrity Catalog Offset</span><br><span class="line">            <span class="number">00000000</span> Code Integrity Reserved</span><br><span class="line">    <span class="number">0000000000000000</span> Guard CF address taken IAT entry table</span><br><span class="line">                   <span class="number">0</span> Guard CF address taken IAT entry count</span><br><span class="line">    <span class="number">0000000000000000</span> Guard CF <span class="keyword">long</span> jump target table</span><br><span class="line">                   <span class="number">0</span> Guard CF <span class="keyword">long</span> jump target count</span><br><span class="line">    <span class="number">0000000000000000</span> Dynamic value relocation table</span><br><span class="line">    <span class="number">0000000000000000</span> Hybrid metadata pointer</span><br><span class="line">    <span class="number">0000000000000000</span> Guard RF address of failure-function</span><br><span class="line">    <span class="number">0000000000000000</span> Guard RF address of failure-function pointer</span><br><span class="line">            <span class="number">00000000</span> Dynamic value relocation table offset</span><br><span class="line">                <span class="number">0000</span> Dynamic value relocation table section</span><br><span class="line">                <span class="number">0000</span> Reserved2</span><br><span class="line">    <span class="number">0000000000000000</span> Guard RF address of <span class="built_in">stack</span> pointer verification function pointer</span><br><span class="line">            <span class="number">00000000</span> Hot patching table offset</span><br><span class="line">                <span class="number">0000</span> Reserved3</span><br><span class="line">    <span class="number">0000000000000000</span> Enclave configuration pointer</span><br><span class="line">    <span class="number">0000000140003700</span> Volatile metadata pointer</span><br><span class="line">    <span class="number">0000000000000000</span> Guard EH continuation table</span><br><span class="line">                   <span class="number">0</span> Guard EH continuation count</span><br><span class="line">    <span class="number">0000000140003248</span> Guard XFG address of check-function pointer</span><br><span class="line">    <span class="number">0000000140003258</span> Guard XFG address of dispatch-function pointer</span><br><span class="line">    <span class="number">0000000140003260</span> Guard XFG address of dispatch-table-function pointer</span><br><span class="line">    <span class="number">0000000140005620</span> CastGuard OS determined failure mode</span><br><span class="line"></span><br><span class="line">    Guard CF Function Table</span><br><span class="line"></span><br><span class="line">          Address</span><br><span class="line">          --------</span><br><span class="line">           <span class="number">0000000140001070</span>  ?OpenDriverFileThreadProc@@YAKPEAX@Z (<span class="keyword">unsigned</span> <span class="keyword">long</span> __cdecl OpenDriverFileThreadProc(<span class="keyword">void</span> *))</span><br><span class="line">           <span class="number">00000001400012E0</span>  ?DlgProc@@YAHPEAUHWND__@@I_K_J@Z (<span class="keyword">int</span> __cdecl DlgProc(struct HWND__ *,<span class="keyword">unsigned</span> <span class="keyword">int</span>,<span class="keyword">unsigned</span> __int64,__int64))</span><br><span class="line">           <span class="number">00000001400017</span>C0</span><br><span class="line">           <span class="number">0000000140001880</span></span><br><span class="line">           <span class="number">0000000140001890</span></span><br><span class="line">           <span class="number">0000000140001</span>A20  wWinMainCRTStartup</span><br><span class="line">           <span class="number">0000000140001</span>A70  __report_gsfailure</span><br><span class="line">           <span class="number">0000000140001</span>EC0  __scrt_exe_initialize_mta</span><br><span class="line">           <span class="number">0000000140001</span>EF0  _guard_check_icall_nop</span><br><span class="line">           <span class="number">0000000140002130</span>  __scrt_unhandled_exception_filter</span><br><span class="line">           <span class="number">00000001400021</span>D0  _RTC_Terminate</span><br><span class="line">           <span class="number">00000001400024F</span>0  _guard_dispatch_icall_nop</span><br><span class="line">           <span class="number">0000000140002510</span>  _guard_xfg_dispatch_icall_nop</span><br></pre></td></tr></table></figure>
+
+
+
+<p>其中 <code>GuardFlags </code>成员指定使用了哪些 <code>CFG</code> 缓解措施：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CF_INSTRUMENTED                    0x00000100 <span class="comment">// Module performs control flow integrity checks using system-supplied support</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CFW_INSTRUMENTED                   0x00000200 <span class="comment">// Module performs control flow and write integrity checks</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CF_FUNCTION_TABLE_PRESENT          0x00000400 <span class="comment">// Module contains valid control flow target metadata</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_SECURITY_COOKIE_UNUSED             0x00000800 <span class="comment">// Module does not make use of the /GS security cookie</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_PROTECT_DELAYLOAD_IAT              0x00001000 <span class="comment">// Module supports read only delay load IAT</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_DELAYLOAD_IAT_IN_ITS_OWN_SECTION   0x00002000 <span class="comment">// Delayload import table in its own .didat section (with nothing else in it) that can be freely reprotected</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CF_EXPORT_SUPPRESSION_INFO_PRESENT 0x00004000 <span class="comment">// Module contains suppressed export information. This also infers that the address taken</span></span></span><br><span class="line">                                                                  <span class="comment">// taken IAT table is also present in the load config.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CF_ENABLE_EXPORT_SUPPRESSION       0x00008000 <span class="comment">// Module enables suppression of exports</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CF_LONGJUMP_TABLE_PRESENT          0x00010000 <span class="comment">// Module contains longjmp target information</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_RF_INSTRUMENTED                    0x00020000 <span class="comment">// Module contains return flow instrumentation and metadata</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_RF_ENABLE                          0x00040000 <span class="comment">// Module requests that the OS enable return flow protection</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_RF_STRICT                          0x00080000 <span class="comment">// Module requests that the OS enable return flow protection in strict mode</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_RETPOLINE_PRESENT                  0x00100000 <span class="comment">// Module was built with retpoline support</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_EH_CONTINUATION_TABLE_PRESENT      0x00400000 <span class="comment">// Module contains EH continuation target information</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CF_FUNCTION_TABLE_SIZE_MASK        0xF0000000 <span class="comment">// Stride of Guard CF function table encoded in these bits (additional count of bytes per element)</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_CF_FUNCTION_TABLE_SIZE_SHIFT       28         <span class="comment">// Shift to right-justify Guard CF function table stride</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// GFIDS table entry flags.</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_FLAG_FID_SUPPRESSED               0x01       <span class="comment">// The containing GFID entry is suppressed</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_GUARD_FLAG_EXPORT_SUPPRESSED            0x02       <span class="comment">// The containing GFID entry is export suppressed</span></span></span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>PE 字段</th>
+<th>对应函数</th>
+<th>加载函数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Guard CF address of check-function pointer</td>
+<td>__guard_check_icall_fptr</td>
+<td>ntdll!LdrpValidateUserCallTarget</td>
+</tr>
+<tr>
+<td>Guard CF address of dispatch-function pointer</td>
+<td>__guard_dispatch_icall_fptr</td>
+<td>ntdll!LdrpDispatchUserCallTarget</td>
+</tr>
+<tr>
+<td>Guard CF function table</td>
+<td>指向一个 RVA 数组的指针，这个数组包含程序中<strong>所有间接跳转&#x2F;调用的函数地址的 RVA</strong>。</td>
+<td></td>
+</tr>
+<tr>
+<td>Guard CF function count</td>
+<td>RVA的个数。</td>
+<td></td>
+</tr>
+</tbody></table>
+<h3 id="1-2-VS开启CFG代码分析"><a href="#1-2-VS开启CFG代码分析" class="headerlink" title="1.2 VS开启CFG代码分析"></a>1.2 VS开启CFG代码分析</h3><p>如下代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">cfgTest</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;we are testing CFG! \n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> ( *cfgTest1[<span class="number">1</span>] )(<span class="keyword">void</span>) = &#123; cfgTest &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    cfgTest1[<span class="number">0</span>]();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p>不开启 CFG 功能。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001510</span> <span class="comment">// int __fastcall main()</span></span><br><span class="line">.text:<span class="number">0000000140001510</span> main            proc near               </span><br><span class="line">.text:<span class="number">0000000140001510</span>                                         </span><br><span class="line">.text:<span class="number">0000000140001510</span>                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140001512</span>                 sub     rsp, <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">0000000140001522</span>                 mov     eax, <span class="number">8</span></span><br><span class="line">.text:<span class="number">0000000140001527</span>                 imul    rax, <span class="number">0</span></span><br><span class="line">.text:<span class="number">000000014000152B</span>                 lea     rcx, cfgTest1 <span class="comment">// void (*near * cfgTest1)(void)</span></span><br><span class="line">.text:<span class="number">0000000140001532</span>                 call    qword ptr [rcx+rax]</span><br><span class="line">.text:<span class="number">0000000140001541</span>                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">0000000140001543</span>                 add     rsp, <span class="number">20</span>h</span><br><span class="line">.text:<span class="number">0000000140001547</span>                 pop     rdi</span><br><span class="line">.text:<span class="number">0000000140001548</span>                 retn</span><br><span class="line">.text:<span class="number">0000000140001548</span> main            endp</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>开启 CFG 功能。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001F</span>C0 <span class="comment">// int __fastcall main()</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>C0 main            proc near               </span><br><span class="line">.text:<span class="number">0000000140001F</span>C0 var_18          = qword ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">0000000140001F</span>C0</span><br><span class="line">.text:<span class="number">0000000140001F</span>C0                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140001F</span>C2                 sub     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">0000000140001F</span>D2                 mov     eax, <span class="number">8</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>D7                 imul    rax, <span class="number">0</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>DB                 lea     rcx, cfgTest1 <span class="comment">// void (*near * cfgTest1)(void)</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>E2                 mov     rax, [rcx+rax]</span><br><span class="line">.text:<span class="number">0000000140001F</span>E6                 mov     [rsp+<span class="number">38</span>h+var_18], rax</span><br><span class="line">.text:<span class="number">0000000140001F</span>EB                 mov     rax, [rsp+<span class="number">38</span>h+var_18]</span><br><span class="line">.text:<span class="number">0000000140001F</span>F0                 call    cs:__guard_dispatch_icall_fptr</span><br><span class="line">.text:<span class="number">0000000140002002</span>                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">0000000140002004</span>                 add     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">0000000140002008</span>                 pop     rdi</span><br><span class="line">.text:<span class="number">0000000140002009</span>                 retn</span><br><span class="line">.text:<span class="number">0000000140002009</span> main            endp</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>可以看到，加了 CFG 后，不再是直接调用间接地址 <code>call    qword ptr [rcx+rax]</code>，而是将间接地址交给 <code>rax</code>，然后调用 <code>__guard_dispatch_icall_fptr</code> 函数。</p>
+<h2 id="2-CFG-Bitmap"><a href="#2-CFG-Bitmap" class="headerlink" title="2 CFG Bitmap"></a>2 CFG Bitmap</h2><p>CFG 通过验证间接调用的目标是否位于已知函数的开头来解决 CFl 的间接 <code>CALL/JMP</code> 调用。如果目标不在已知函数的开头， 则该过程将简单地终止。</p>
+<p><img data-src="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png" alt="1.png"></p>
+<h2 id="3-用户-CFG"><a href="#3-用户-CFG" class="headerlink" title="3 用户 CFG"></a>3 用户 CFG</h2><p>参考<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/secbp/pe-metadata">PE metadata</a></p>
+<ul>
+<li>用户模式CFG只能对标记为地址空间布局随机化（ASLR）兼容的图像强制执行（由与Microsoft链接器的&#x2F;DYNAMICBASE选项指定）。这是由于操作系统内部如何处理CFG，它基本上连接到ASLR基础设施。一般来说，作为第一步，CFG用户应该为他们的图像启用ASLR。工具不应假设操作系统在没有ASLR设置的情况下始终忽略CFG，而通常应该同时设置两者。</li>
+<li>请注意，要执行<a target="_blank" rel="noopener" href="https://connormcgarr.github.io/examining-xfg/">kCFG</a>，需要虚拟化基础安全（VBS）。然而，即使VBS被禁用，kCFG也有一些有限的功能。这超出了这篇博客文章的范围）。</li>
+</ul>
+<p>只读的CFG 位图由操作系统维护，部分位图由所有进程共享。CFG 位图中：</p>
+<ul>
+<li>偶数位对应一个 16 字节对齐的地址。</li>
+<li>奇数位对应 15 个非 16 字节对齐的地址。</li>
+</ul>
+<p>Bitmap 的核心就是根据目标地址本身，就能判断该地址是否是有效的跳转地址。</p>
+<p>因此，内存管理器将 CFG 位图视为页面文件支持的可共享内存区域，并且对应于共享位的物理页面仅在 RAM 中存在一次。</p>
+<p><img data-src="https://s2.loli.net/2022/11/27/MBrHElxt28bUpJA.png" alt="3.png"></p>
+<p><img data-src="https://s2.loli.net/2022/11/27/U3zoCmL72KWA4Xk.png" alt="4.png"></p>
+<p>CFG位图构建：</p>
+<ol>
+<li>系统初始化时，会调用 MiInitializeCfg 函数来初始化对 CFG 的支持。 该函数创建一个或两个内存区对象 (MmCreateSection) 作为保留内存，其大小适合平台，如前所示。 对于 32 位平台，一张位图就足够了。 对于 x64 平台，需要两个位图 — 一个用于 64 位进程，另一个用于 Wow64 进程（32 位应用程序）。 内存区对象的指针存储在 MiState 全局变量的子结构中。</li>
+<li>创建进程后，相应的内存区将安全地映射到进程的地址空间中。 这里的安全意味着该部分不能被进程中运行的代码取消映射或更改其保护。 （否则，恶意代码可能只是取消映射内存、重新分配并用 1 位填充所有内容，从而有效地禁用 CFG，或者通过将区域标记为读&#x2F;写来简单地修改任何位。）</li>
+</ol>
+<p>用户模式 CFG 位图在以下场景中填充：</p>
+<ol>
+<li>在镜像映射期间，由于 ASLR（有关 ASLR 的更多信息，请参阅第 5 章）而动态重新定位的镜像将提取其间接调用目标元数据。 如果镜像没有间接调用目标元数据，这意味着它不是用 CFG 编译的，则假设镜像中的每个地址都可以间接调用。 正如所解释的，因为动态重新定位的镜像应该在每个进程中加载到相同的地址，所以它们的元数据用于填充用于 CFG 位图的共享内存区。</li>
+<li>在镜像映射期间，需要特别注意非动态重新定位的镜像和未映射到其首选基础的镜像。 对于这些镜像映射，CFG 位图的相关页面是私有的，并使用镜像中的 CFG 元数据进行填充。 对于其 CFG 位存在于共享 CFG 位图中的镜像，将进行检查以确保所有相关的 CFG 位图页面仍然共享。 如果不是这种情况，则使用镜像中的 CFG 元数据填充私有 CFG 位图页面的位。</li>
+<li>当虚拟内存被分配或重新保护为可执行文件时，CFG 位图的相关页面默认设为私有并初始化为全 1。 这在即时编译等情况下是必需的，在这种情况下，代码会即时生成然后执行（例如，.NET 或 Java）。</li>
+</ol>
+<p>尽管 CFG 足以防止利用间接调用或跳转的攻击类型，但可以通过以下方式绕过它：</p>
+<ol>
+<li>如果进程可能被欺骗或现有的 JIT 引擎被滥用来分配可执行内存，则所有相应的位都将设置为 {1, 1}，这意味着所有内存都被视为有效的调用目标。</li>
+<li>对于 32 位应用程序，如果预期的调用目标是 __stdcall（标准调用约定），但攻击者能够将间接调用目标更改为 __cdecl（C 调用约定），则堆栈将损坏，因为 C 调用函数将 与标准调用函数不同，不执行调用者参数的清理。 由于 CFG 无法区分不同的调用约定，这会导致堆栈损坏，可能具有攻击者控制的返回地址，从而绕过 CFG 缓解措施。</li>
+<li>同样，编译器生成的 setjmp&#x2F;longjmp 目标的行为与真正的间接调用不同。 CFG无法区分两者。</li>
+<li>某些间接调用更难保护，例如导入地址表 (IAT) 或延迟加载地址表，它们通常位于可执行文件的只读部分。</li>
+<li>导出的函数可能不是理想的间接函数调用。</li>
+</ol>
+<p>Windows 10 引入了 CFG 的改进来解决所有这些问题。 第一个是向 VirtualAlloc 函数引入一个名为 PAGE_TARGETS_INVALID 的新标志，并向 VirtualProtect 引入一个名为 PAGE_TARGETS_NO_UPDATE 的新标志。 设置这些标志后，分配可执行内存的 JIT 引擎将不会看到所有分配的位都设置为 {1, 1} 状态。 相反，他们必须手动调用 SetProcessValidCallTargets 函数（调用本机 NtSetInformationVirtualMemory 函数），这将允许他们指定其 JIT 代码的实际函数起始地址。 此外，此函数被标记为带有 DECLSPEC_GUARD_SUPPRESS 的抑制调用，确保攻击者无法使用间接 CALL 或 JMP 重定向到它，即使是在函数启动时也是如此。 （因为它本质上是一个危险的函数，使用受控堆栈或寄存器调用它可能会导致绕过 CFG。）</p>
+<p>接下来，改进的 CFG 将您在本节开头看到的默认流程更改为更精细的流程。 在这个流程中，加载器并没有实现一个简单的“验证目标，返回”功能，而是一个“验证目标，调用目标，检查堆栈，返回”功能，它被用在 32 位应用程序的一个子集地方（ 和&#x2F;或在 Wow64 下运行）。这种改进的执行流程如图 7-32 所示。</p>
+<p>接下来，改进后的 CFG 在可执行文件中添加了额外的表，例如 Address Taken IAT 表和 Long Jump Address 表。 当编译器启用longjmp和IAT CFG保护时，这些表用于存储这些特定类型的间接调用的目标地址，相关函数不放在常规函数表中，因此不在位图中。 这意味着如果代码试图间接跳转&#x2F;调用这些函数之一，它将被视为非法转换。 相反，C 运行时和链接器将通过手动检查此表来验证 longjmp 函数的目标。 虽然它比位图效率低，但这些表中应该几乎没有功能，因此成本可以承受。</p>
+<p>最后，改进的 CFG 实现了一个称为导出抑制的功能，该功能必须得到编译器的支持并通过进程缓解策略启用。 （有关进程级别缓解的更多信息，请参阅“进程缓解策略”部分。）启用此功能后，将实现一个新的位状态（回想一下，项目符号列表将 {0, 1} 作为未定义状态）。 此状态表示该函数有效但导出受抑制，加载程序将对其进行不同的处理。</p>
+<p><img data-src="https://s2.loli.net/2022/11/27/MqDTIzskYmXNCQB.png" alt="2.png"></p>
+<p>您可以通过查看镜像加载配置目录中的保护标志来确定给定二进制文件中存在哪些功能，之前使用的 DumpBin 应用程序可以对其进行解码。 作为参考，它们列在表 7-21 中。</p>
+<p>Loader 与 CFG 交互：</p>
+<p>尽管构建 CFG 位图的是内存管理器，但用户模式加载器（有关更多信息，请参见第 3 章）有两个用途。 第一种是仅在启用该功能时才动态启用 CFG 支持（例如，调用者可能没有为子进程请求 CFG，或者进程本身可能没有 CFG 支持）。 这是由 LdrpCfgProcessLoadConfig 加载器函数完成的，该函数被调用来为每个加载的模块初始化 CFG。 如果PE可选头文件中的模块DllCharacteristics标志没有设置CFG标志（IMAGE_DLLCHARACTERISTICS_GUARD_CF），IMAGE_LOAD_CONFIG_DIRECTORY结构的GuardFlags成员没有设置IMAGE_GUARD_CF_INSTRUMENTED标志，或者内核已经强制关闭了这个模块的CFG，那么 没有什么可以做的。</p>
+<p>其次，如果模块确实使用了 CFG，LdrpCfgProcessLoadConfig 会获取从映像中检索到的间接检查函数指针（IMAGE_LOAD_CONFIG_DIRECTORY 结构的 GuardCFCheckFunctionPointer 成员），并将其设置为 Ntdll 中的 LdrpValidateUserCallTarget 或 LdrpValidateUserCallTargetES，具体取决于是否启用了导出抑制。 此外，该函数首先确保间接指针没有以某种方式被修改为指向模块本身之外。</p>
+<p>此外，如果使用改进的 CFG 来编译此二进制文件，则可以使用第二个间接例程，称为 dispatch CFG 例程。 它用于实现前面描述的增强执行流程。 如果镜像包含这样的函数指针（在上述结构的 GuardCFDispatchFunctionPointer 成员中），则将其初始化为 LdrpDispatchUserCallTarget，如果启用了导出抑制，则初始化为 LdrpDispatchUserCallTargetES。</p>
+<p>提示：在某些情况下，内核本身可以代表用户模式模拟或执行间接跳转或调用。 在这种情况下，内核会实现自己的 MmValidateUserCallTarget 例程，该例程执行与 LdrpValidateUserCallTarget 相同的工作。</p>
+<p>启用 CFG 时编译器生成的代码发出一个间接调用，该调用位于 Ntdll 中的 LdrpValidateCallTarget(ES) 或 LdrpDispatchUserCallTarget(ES) 函数中。 此函数使用目标分支地址并检查函数的位状态值：</p>
+<ul>
+<li>如果位状态为 {0, 0}，则分派可能无效。</li>
+<li>如果位状态为{1, 0}，且地址为 16 字节对齐，则分派有效。 否则，它可能无效。</li>
+<li>如果位状态为 {1, 1}，并且地址不是 16 字节对齐的，则分派有效。 否则，它可能无效。</li>
+<li>如果位状态为 {0, 1}，则分派可能无效。</li>
+</ul>
+<p>如果分派可能无效，则 RtlpHandleInvalidUserCallTarget 函数将执行以确定适当的操作。 首先，它检查进程中是否允许被抑制的调用，这是一个不寻常的应用程序兼容性选项，如果启用了应用程序验证程序，或通过注册表可以设置。 如果是这样，它将检查地址是否被抑制，这就是为什么它没有被插入到位图中的原因（回想一下 guard 函数表条目中的 3 个特殊标志表明了这一点）。 如果是这种情况，则允许呼叫通过。 如果该函数根本无效（意味着它不在表中），则分派中止并且进程终止。</p>
+<p>其次，检查是否启用了出口抑制。 如果是，则根据出口抑制地址列表检查目标地址，这再次用添加到保护功能表条目中的另一个标志指示。 如果是这种情况，加载程序会验证目标地址是对另一个 DLL 的导出表的转发器引用，这是对具有抑制导出的图像进行间接调用的唯一允许的情况。 这是通过复杂的检查来完成的，该检查确保目标地址位于不同的图像中，其图像加载目录已启用导出抑制，并且该地址位于该图像的导入目录中。 如果这些检查匹配，内核将通过前面描述的 NtSetInformationVirtualMemory 调用来调用，以将位状态更改为 {1, 0}。 如果这些检查中的任何一个失败，或者未启用导出抑制，则该过程将终止。</p>
+<p>对于 32 位应用程序，如果为进程启用了 DEP，则会执行额外的检查。 （有关 DEP 的更多信息，请参阅第 5 章。）否则，因为没有执行保证，所以允许错误调用，因为它可能是一个较旧的应用程序出于合法原因调用堆或堆栈。</p>
+<p>最后，由于未提交大量 {0, 0} 位状态以节省空间，如果检查 CFG 位图落在保留页上，则会发生访问冲突异常。 在 x86 上，异常 dll 设置很昂贵，而不是作为验证代码的一部分进行处理，而是让它正常传播。 （有关异常调度的更多信息，请参阅第 2 部分中的第 8 章。）用户模式调度程序处理程序 KiUserExceptionDispatcher 在验证函数中具有识别 CFG 位图访问违规异常的特定检查，如果异常代码是，它将自动恢复执行这简化了代码 在 LdrpValidatelserCallTarget(ES) 和 LdrpValidateUserCallTarget(ES) 和 LdrpDispatchUserCallTarget(ES) 中，它们不必包含异常处理代码。 在 x64 上，异常处理程序只是在表中注册，LdrpICallHandler 处理程序改为运行，其逻辑与上述相同。</p>
+<p>LdrpValidateUserCallTarget：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000018008</span>C580 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">000000018008</span>C580</span><br><span class="line">.text:<span class="number">000000018008</span>C580</span><br><span class="line">.text:<span class="number">000000018008</span>C580 LdrpValidateUserCallTarget proc near    <span class="comment">// CODE XREF: RtlGuardRestoreContext+90↑p</span></span><br><span class="line">.text:<span class="number">000000018008</span>C580                                         <span class="comment">// DATA XREF: LdrpCfgProcessLoadConfig+199↑o ...</span></span><br><span class="line">.text:<span class="number">000000018008</span>C580 <span class="comment">// __unwind &#123; // LdrpICallHandler</span></span><br><span class="line">.text:<span class="number">000000018008</span>C580                 mov     rdx, cs:qword_1801813A8</span><br><span class="line">.text:<span class="number">000000018008</span>C587                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C58A                 shr     rax, <span class="number">9</span></span><br><span class="line">.text:<span class="number">000000018008</span>C58E                 mov     rdx, [rdx+rax*<span class="number">8</span>]</span><br><span class="line">.text:<span class="number">000000018008</span>C592                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C595                 shr     rax, <span class="number">3</span></span><br><span class="line">.text:<span class="number">000000018008</span>C599                 test    cl, <span class="number">0F</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C59C                 jnz     <span class="keyword">short</span> loc_18008C5A5</span><br><span class="line">.text:<span class="number">000000018008</span>C59E                 bt      rdx, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C5A2                 jnb     <span class="keyword">short</span> loc_18008C5B0</span><br><span class="line">.text:<span class="number">000000018008</span>C5A4                 retn</span><br><span class="line">.text:<span class="number">000000018008</span>C5A5 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5A5</span><br><span class="line">.text:<span class="number">000000018008</span>C5A5 loc_18008C5A5:                          <span class="comment">// CODE XREF: LdrpValidateUserCallTarget+1C↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5A5                 btr     rax, <span class="number">0</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5AA                 bt      rdx, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C5AE                 jnb     <span class="keyword">short</span> loc_18008C5BB</span><br><span class="line">.text:<span class="number">000000018008</span>C5B0</span><br><span class="line">.text:<span class="number">000000018008</span>C5B0 loc_18008C5B0:                          <span class="comment">// CODE XREF: LdrpValidateUserCallTarget+22↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5B0                 <span class="keyword">or</span>      rax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5B4                 bt      rdx, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C5B8                 jnb     <span class="keyword">short</span> loc_18008C5BB</span><br><span class="line">.text:<span class="number">000000018008</span>C5BA                 retn</span><br><span class="line">.text:<span class="number">000000018008</span>C5BB <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5BB</span><br><span class="line">.text:<span class="number">000000018008</span>C5BB loc_18008C5BB:                          <span class="comment">// CODE XREF: LdrpValidateUserCallTarget+2E↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5BB                                         <span class="comment">// LdrpValidateUserCallTarget+38↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5BB                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C5BE                 <span class="keyword">xor</span>     r10, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C5C1                 jmp     LdrpHandleInvalidUserCallTarget</span><br><span class="line">.text:<span class="number">000000018008</span>C5C1 <span class="comment">// &#125; // starts at 18008C580</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5C1 LdrpValidateUserCallTarget endp</span><br></pre></td></tr></table></figure>
+
+<p>LdrpValidateUserCallTargetES：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000018008</span>C5D0 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5D0</span><br><span class="line">.text:<span class="number">000000018008</span>C5D0</span><br><span class="line">.text:<span class="number">000000018008</span>C5D0 LdrpValidateUserCallTargetES proc near  <span class="comment">// CODE XREF: RtlGuardRestoreContext:loc_18006DD9B↑p</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5D0                                         <span class="comment">// DATA XREF: LdrpCfgProcessLoadConfig+192↑o ...</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5D0 <span class="comment">// __unwind &#123; // LdrpICallHandler</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5D0                 mov     rdx, cs:qword_1801813A8</span><br><span class="line">.text:<span class="number">000000018008</span>C5D7                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C5DA                 shr     rax, <span class="number">9</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5DE                 mov     rdx, [rdx+rax*<span class="number">8</span>]</span><br><span class="line">.text:<span class="number">000000018008</span>C5E2                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C5E5                 shr     rax, <span class="number">3</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5E9                 test    cl, <span class="number">0F</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C5EC                 jnz     <span class="keyword">short</span> loc_18008C5F5</span><br><span class="line">.text:<span class="number">000000018008</span>C5EE                 bt      rdx, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C5F2                 jnb     <span class="keyword">short</span> loc_18008C60B</span><br><span class="line">.text:<span class="number">000000018008</span>C5F4                 retn</span><br><span class="line">.text:<span class="number">000000018008</span>C5F5 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5F5</span><br><span class="line">.text:<span class="number">000000018008</span>C5F5 loc_18008C5F5:                          <span class="comment">// CODE XREF: LdrpValidateUserCallTargetES+1C↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5F5                 btr     rax, <span class="number">0</span></span><br><span class="line">.text:<span class="number">000000018008</span>C5FA                 bt      rdx, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C5FE                 jnb     <span class="keyword">short</span> loc_18008C60B</span><br><span class="line">.text:<span class="number">000000018008</span>C600                 <span class="keyword">or</span>      rax, <span class="number">1</span></span><br><span class="line">.text:<span class="number">000000018008</span>C604                 bt      rdx, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C608                 jnb     <span class="keyword">short</span> loc_18008C60B</span><br><span class="line">.text:<span class="number">000000018008</span>C60A                 retn</span><br><span class="line">.text:<span class="number">000000018008</span>C60B <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C60B</span><br><span class="line">.text:<span class="number">000000018008</span>C60B loc_18008C60B:                          <span class="comment">// CODE XREF: LdrpValidateUserCallTargetES+22↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C60B                                         <span class="comment">// LdrpValidateUserCallTargetES+2E↑j ...</span></span><br><span class="line">.text:<span class="number">000000018008</span>C60B                 mov     rax, rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C60E                 <span class="keyword">xor</span>     r10, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C611                 jmp     LdrpHandleInvalidUserCallTarget</span><br><span class="line">.text:<span class="number">000000018008</span>C611 <span class="comment">// &#125; // starts at 18008C5D0</span></span><br><span class="line">.text:<span class="number">000000018008</span>C611 LdrpValidateUserCallTargetES endp</span><br></pre></td></tr></table></figure>
+
+
+
+<p>LdrpDispatchUserCallTarget：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000018008</span>C620 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">000000018008</span>C620</span><br><span class="line">.text:<span class="number">000000018008</span>C620</span><br><span class="line">.text:<span class="number">000000018008</span>C620 LdrpDispatchUserCallTarget proc near    <span class="comment">// DATA XREF: LdrpCfgProcessLoadConfig+24C↑o</span></span><br><span class="line">.text:<span class="number">000000018008</span>C620                                         <span class="comment">// .rdata:000000018011FD26↓o ...</span></span><br><span class="line">.text:<span class="number">000000018008</span>C620 <span class="comment">// __unwind &#123; // LdrpICallHandler</span></span><br><span class="line">.text:<span class="number">000000018008</span>C620                 mov     r11, cs:qword_1801813A8</span><br><span class="line">.text:<span class="number">000000018008</span>C627                 mov     r10, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C62A                 shr     r10, <span class="number">9</span></span><br><span class="line">.text:<span class="number">000000018008</span>C62E                 mov     r11, [r11+r10*<span class="number">8</span>]</span><br><span class="line">.text:<span class="number">000000018008</span>C632                 mov     r10, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C635                 shr     r10, <span class="number">3</span></span><br><span class="line">.text:<span class="number">000000018008</span>C639                 test    al, <span class="number">0F</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C63B                 jnz     <span class="keyword">short</span> loc_18008C646</span><br><span class="line">.text:<span class="number">000000018008</span>C63D                 bt      r11, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C641                 jnb     <span class="keyword">short</span> loc_18008C651</span><br><span class="line">.text:<span class="number">000000018008</span>C643                 jmp     rax</span><br><span class="line">.text:<span class="number">000000018008</span>C646 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C646</span><br><span class="line">.text:<span class="number">000000018008</span>C646 loc_18008C646:                          <span class="comment">// CODE XREF: LdrpDispatchUserCallTarget+1B↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C646                 btr     r10, <span class="number">0</span></span><br><span class="line">.text:<span class="number">000000018008</span>C64B                 bt      r11, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C64F                 jnb     <span class="keyword">short</span> loc_18008C65E</span><br><span class="line">.text:<span class="number">000000018008</span>C651</span><br><span class="line">.text:<span class="number">000000018008</span>C651 loc_18008C651:                          <span class="comment">// CODE XREF: LdrpDispatchUserCallTarget+21↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C651                 <span class="keyword">or</span>      r10, <span class="number">1</span></span><br><span class="line">.text:<span class="number">000000018008</span>C655                 bt      r11, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C659                 jnb     <span class="keyword">short</span> loc_18008C65E</span><br><span class="line">.text:<span class="number">000000018008</span>C65B                 jmp     rax</span><br><span class="line">.text:<span class="number">000000018008</span>C65E <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C65E</span><br><span class="line">.text:<span class="number">000000018008</span>C65E loc_18008C65E:                          <span class="comment">// CODE XREF: LdrpDispatchUserCallTarget+2F↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C65E                                         <span class="comment">// LdrpDispatchUserCallTarget+39↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C65E                 mov     r10d, <span class="number">1</span></span><br><span class="line">.text:<span class="number">000000018008</span>C664                 jmp     LdrpHandleInvalidUserCallTarget</span><br><span class="line">.text:<span class="number">000000018008</span>C664 <span class="comment">// &#125; // starts at 18008C620</span></span><br><span class="line">.text:<span class="number">000000018008</span>C664 LdrpDispatchUserCallTarget endp</span><br></pre></td></tr></table></figure>
+
+<p>LdrpDispatchUserCallTargetES：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000018008</span>C670 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">000000018008</span>C670</span><br><span class="line">.text:<span class="number">000000018008</span>C670</span><br><span class="line">.text:<span class="number">000000018008</span>C670 LdrpDispatchUserCallTargetES proc near  <span class="comment">// DATA XREF: LdrpCfgProcessLoadConfig+245↑o</span></span><br><span class="line">.text:<span class="number">000000018008</span>C670                                         <span class="comment">// .rdata:000000018011FD2B↓o ...</span></span><br><span class="line">.text:<span class="number">000000018008</span>C670 <span class="comment">// __unwind &#123; // LdrpICallHandler</span></span><br><span class="line">.text:<span class="number">000000018008</span>C670                 mov     r11, cs:qword_1801813A8</span><br><span class="line">.text:<span class="number">000000018008</span>C677                 mov     r10, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C67A                 shr     r10, <span class="number">9</span></span><br><span class="line">.text:<span class="number">000000018008</span>C67E                 mov     r11, [r11+r10*<span class="number">8</span>]</span><br><span class="line">.text:<span class="number">000000018008</span>C682                 mov     r10, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C685                 shr     r10, <span class="number">3</span></span><br><span class="line">.text:<span class="number">000000018008</span>C689                 test    al, <span class="number">0F</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C68B                 jnz     <span class="keyword">short</span> loc_18008C696</span><br><span class="line">.text:<span class="number">000000018008</span>C68D                 bt      r11, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C691                 jnb     <span class="keyword">short</span> loc_18008C6AE</span><br><span class="line">.text:<span class="number">000000018008</span>C693                 jmp     rax</span><br><span class="line">.text:<span class="number">000000018008</span>C696 <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C696</span><br><span class="line">.text:<span class="number">000000018008</span>C696 loc_18008C696:                          <span class="comment">// CODE XREF: LdrpDispatchUserCallTargetES+1B↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C696                 btr     r10, <span class="number">0</span></span><br><span class="line">.text:<span class="number">000000018008</span>C69B                 bt      r11, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C69F                 jnb     <span class="keyword">short</span> loc_18008C6AE</span><br><span class="line">.text:<span class="number">000000018008</span>C6A1                 <span class="keyword">or</span>      r10, <span class="number">1</span></span><br><span class="line">.text:<span class="number">000000018008</span>C6A5                 bt      r11, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C6A9                 jnb     <span class="keyword">short</span> loc_18008C6AE</span><br><span class="line">.text:<span class="number">000000018008</span>C6AB                 jmp     rax</span><br><span class="line">.text:<span class="number">000000018008</span>C6AE <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C6AE</span><br><span class="line">.text:<span class="number">000000018008</span>C6AE loc_18008C6AE:                          <span class="comment">// CODE XREF: LdrpDispatchUserCallTargetES+21↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C6AE                                         <span class="comment">// LdrpDispatchUserCallTargetES+2F↑j ...</span></span><br><span class="line">.text:<span class="number">000000018008</span>C6AE                 mov     r10d, <span class="number">1</span></span><br><span class="line">.text:<span class="number">000000018008</span>C6B4                 jmp     LdrpHandleInvalidUserCallTarget</span><br><span class="line">.text:<span class="number">000000018008</span>C6B4 <span class="comment">// &#125; // starts at 18008C670</span></span><br><span class="line">.text:<span class="number">000000018008</span>C6B4 LdrpDispatchUserCallTargetES endp</span><br></pre></td></tr></table></figure>
+
+<p>LdrpHandleInvalidUserCallTarget：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000018008</span>C4C0 <span class="comment">// =============== S U B R O U T I N E =======================================</span></span><br><span class="line">.text:<span class="number">000000018008</span>C4C0</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 LdrpHandleInvalidUserCallTarget proc near</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0                                         <span class="comment">// CODE XREF: LdrpValidateUserCallTarget+41↓j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C4C0                                         <span class="comment">// LdrpValidateUserCallTargetES+41↓j ...</span></span><br><span class="line">.text:<span class="number">000000018008</span>C4C0</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 var_98          = xmmword ptr <span class="number">-98</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 var_88          = xmmword ptr <span class="number">-88</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 var_78          = xmmword ptr <span class="number">-78</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 var_68          = xmmword ptr <span class="number">-68</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 var_58          = xmmword ptr <span class="number">-58</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 var_48          = xmmword ptr <span class="number">-48</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0 var_10          = qword ptr <span class="number">-10</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0</span><br><span class="line">.text:<span class="number">000000018008</span>C4C0                 push    r11</span><br><span class="line">.text:<span class="number">000000018008</span>C4C2                 push    r10</span><br><span class="line">.text:<span class="number">000000018008</span>C4C4                 push    r9</span><br><span class="line">.text:<span class="number">000000018008</span>C4C6                 push    r8</span><br><span class="line">.text:<span class="number">000000018008</span>C4C8                 push    rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C4C9                 push    rdx</span><br><span class="line">.text:<span class="number">000000018008</span>C4CA                 push    rax</span><br><span class="line">.text:<span class="number">000000018008</span>C4CB                 sub     rsp, <span class="number">80</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C4D2                 movaps  [rsp+<span class="number">0B</span>8h+var_98], xmm0</span><br><span class="line">.text:<span class="number">000000018008</span>C4D7                 movaps  [rsp+<span class="number">0B</span>8h+var_88], xmm1</span><br><span class="line">.text:<span class="number">000000018008</span>C4DC                 movaps  [rsp+<span class="number">0B</span>8h+var_78], xmm2</span><br><span class="line">.text:<span class="number">000000018008</span>C4E1                 movaps  [rsp+<span class="number">0B</span>8h+var_68], xmm3</span><br><span class="line">.text:<span class="number">000000018008</span>C4E6                 movaps  [rsp+<span class="number">0B</span>8h+var_58], xmm4</span><br><span class="line">.text:<span class="number">000000018008</span>C4EB                 movaps  [rsp+<span class="number">0B</span>8h+var_48], xmm5</span><br><span class="line">.text:<span class="number">000000018008</span>C4F0                 mov     rcx, rax</span><br><span class="line">.text:<span class="number">000000018008</span>C4F3                 call    RtlpHandleInvalidUserCallTarget</span><br><span class="line">.text:<span class="number">000000018008</span>C4F8                 movaps  xmm3, [rsp+<span class="number">0B</span>8h+var_68]</span><br><span class="line">.text:<span class="number">000000018008</span>C4FD                 movaps  xmm2, [rsp+<span class="number">0B</span>8h+var_78]</span><br><span class="line">.text:<span class="number">000000018008</span>C502                 movaps  xmm1, [rsp+<span class="number">0B</span>8h+var_88]</span><br><span class="line">.text:<span class="number">000000018008</span>C507                 movaps  xmm0, [rsp+<span class="number">0B</span>8h+var_98]</span><br><span class="line">.text:<span class="number">000000018008</span>C50C                 mov     r10, [rsp+<span class="number">0B</span>8h+var_10]</span><br><span class="line">.text:<span class="number">000000018008</span>C514                 test    r10, r10</span><br><span class="line">.text:<span class="number">000000018008</span>C517                 jz      <span class="keyword">short</span> loc_18008C52E</span><br><span class="line">.text:<span class="number">000000018008</span>C519                 add     rsp, <span class="number">80</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C520                 pop     rax</span><br><span class="line">.text:<span class="number">000000018008</span>C521                 pop     rdx</span><br><span class="line">.text:<span class="number">000000018008</span>C522                 pop     rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C523                 pop     r8</span><br><span class="line">.text:<span class="number">000000018008</span>C525                 pop     r9</span><br><span class="line">.text:<span class="number">000000018008</span>C527                 pop     r10</span><br><span class="line">.text:<span class="number">000000018008</span>C529                 pop     r11</span><br><span class="line">.text:<span class="number">000000018008</span>C52B                 jmp     rax</span><br><span class="line">.text:<span class="number">000000018008</span>C52E <span class="comment">// ---------------------------------------------------------------------------</span></span><br><span class="line">.text:<span class="number">000000018008</span>C52E</span><br><span class="line">.text:<span class="number">000000018008</span>C52E loc_18008C52E:                          <span class="comment">// CODE XREF: LdrpHandleInvalidUserCallTarget+57↑j</span></span><br><span class="line">.text:<span class="number">000000018008</span>C52E                 movaps  xmm5, [rsp+<span class="number">0B</span>8h+var_48]</span><br><span class="line">.text:<span class="number">000000018008</span>C533                 movaps  xmm4, [rsp+<span class="number">0B</span>8h+var_58]</span><br><span class="line">.text:<span class="number">000000018008</span>C538                 add     rsp, <span class="number">80</span>h</span><br><span class="line">.text:<span class="number">000000018008</span>C53F                 pop     rax</span><br><span class="line">.text:<span class="number">000000018008</span>C540                 pop     rdx</span><br><span class="line">.text:<span class="number">000000018008</span>C541                 pop     rcx</span><br><span class="line">.text:<span class="number">000000018008</span>C542                 pop     r8</span><br><span class="line">.text:<span class="number">000000018008</span>C544                 pop     r9</span><br><span class="line">.text:<span class="number">000000018008</span>C546                 pop     r10</span><br><span class="line">.text:<span class="number">000000018008</span>C548                 pop     r11</span><br><span class="line">.text:<span class="number">000000018008</span>C54A                 retn</span><br><span class="line">.text:<span class="number">000000018008</span>C54A LdrpHandleInvalidUserCallTarget endp</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Kernel CFG:</p>
+<p>尽管使用 Visual Studio 和 &#x2F;guard:cf 编译的驱动程序最终也具有与用户模式图像相同的二进制属性，但 Windows 10 的第一个版本并未对这些数据执行任何操作。与受保护的用户模式 CFG 位图不同 如果要创建一个更高、更可信的实体（内核），则没有任何东西可以真正“保护”内核 CFG 位图。 恶意利用可以简单地编辑与包含要修改的所需位的页面对应的 PTE，将其标记为读&#x2F;写，然后继续进行间接调用或跳转。 因此，设置这种微不足道的可绕过缓解措施的开销根本不值得。</p>
+<p>随着越来越多的用户启用 VBS 功能，可以再次利用 VTL 1 提供的更高安全边界。 SLAT 页表条目通过提供第二个边界来防止 PTE 页面保护更改来解决这个问题。 虽然位图对于 VTL 0 是可读的，因为 SLAT 条目被标记为只读，但如果内核攻击者试图更改 PTE 以将其标记为可读&#x2F;可写，则他们无法对 SLAT 条目执行相同的操作。 因此，这将被检测为 HyperGuard 可以对其采取行动的无效 KCFG 位图访问（仅出于遥测原因——因为这些位无论如何都无法更改）。</p>
+<p>KCFG 的实现几乎与常规 CFG 相同，除了未启用导出抑制、longjmp 支持以及为 JIT 目的动态请求额外位的能力之外。 内核驱动程序不应该做任何这些事情。 取而代之的是，这些位是根据“地址获取 IAT 表”条目（如果已设置）在位图中设置的； 每次加载驱动程序映像时，通过保护表中的常用函数条目； 以及由 MiInitializeKernelCfg 引导期间的 HAL 和内核。 如果未启用虚拟机管理程序，并且不存在 SLAT 支持，那么这些都不会被初始化，并且 Kernel CFG 将保持禁用状态。</p>
+<p>就像在用户模式下一样，加载配置数据目录中的动态指针被更新，在启用的情况下，它将指向 __guard_check_icall 用于检查功能，而 __guard_dispatch_icall 用于增强 CFG 模式下的调度功能。 此外，名为 guard_icall_bitmap 的变量将保存位图的虚拟地址。</p>
+<p>关于内核 CFG 的最后一个细节是，不幸的是，动态驱动程序验证程序设置将不可配置（有关驱动程序验证程序的更多信息，请参阅第 6 章，“&#x2F;O 系统”），因为这需要添加动态内核挂钩并将执行重定向到 可能不在位图中的功能。在这种情况下，将返回 STATUS_VRF_CFG_ENABLED (0xC000049F)，并且需要重新启动（此时可以使用 Verifier 驱动程序挂钩构建位图）。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Control-Flow-Guard/" title="CFG">https://directoree.github.io/post/Control-Flow-Guard/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-CFG/" rel="tag"><i class="fa fa-tag"></i> x64 CFG</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/memory-page-table-isolation/" rel="prev" title="CPU 推测执行漏洞及缓解 via KVA Shadow">
+                  <i class="fa fa-chevron-left"></i> CPU 推测执行漏洞及缓解 via KVA Shadow
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">30:43</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Control-Flow-Guard/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
