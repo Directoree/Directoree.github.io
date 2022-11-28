@@ -31,11 +31,12 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png">
+<meta property="og:image" content="https://s2.loli.net/2022/11/27/MqDTIzskYmXNCQB.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/27/MBrHElxt28bUpJA.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/27/U3zoCmL72KWA4Xk.png">
 <meta property="og:image" content="https://s2.loli.net/2022/11/27/MqDTIzskYmXNCQB.png">
 <meta property="article:published_time" content="2022-11-25T02:40:13.000Z">
-<meta property="article:modified_time" content="2022-11-27T15:34:32.700Z">
+<meta property="article:modified_time" content="2022-11-28T15:01:20.903Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="x64 CFG">
@@ -361,7 +362,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2022-11-27 23:34:32" itemprop="dateModified" datetime="2022-11-27T23:34:32+08:00">2022-11-27</time>
+        <time title="修改时间：2022-11-28 23:01:20" itemprop="dateModified" datetime="2022-11-28T23:01:20+08:00">2022-11-28</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -402,14 +403,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>22k</span>
+      <span>26k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>20 分钟</span>
+      <span>24 分钟</span>
     </span>
 </div>
 
@@ -488,8 +489,91 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140001F</span>C0 <span class="comment">// int __fastcall main()</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>C0 main            proc near               </span><br><span class="line">.text:<span class="number">0000000140001F</span>C0 var_18          = qword ptr <span class="number">-18</span>h</span><br><span class="line">.text:<span class="number">0000000140001F</span>C0</span><br><span class="line">.text:<span class="number">0000000140001F</span>C0                 push    rdi</span><br><span class="line">.text:<span class="number">0000000140001F</span>C2                 sub     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">0000000140001F</span>D2                 mov     eax, <span class="number">8</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>D7                 imul    rax, <span class="number">0</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>DB                 lea     rcx, cfgTest1 <span class="comment">// void (*near * cfgTest1)(void)</span></span><br><span class="line">.text:<span class="number">0000000140001F</span>E2                 mov     rax, [rcx+rax]</span><br><span class="line">.text:<span class="number">0000000140001F</span>E6                 mov     [rsp+<span class="number">38</span>h+var_18], rax</span><br><span class="line">.text:<span class="number">0000000140001F</span>EB                 mov     rax, [rsp+<span class="number">38</span>h+var_18]</span><br><span class="line">.text:<span class="number">0000000140001F</span>F0                 call    cs:__guard_dispatch_icall_fptr</span><br><span class="line">.text:<span class="number">0000000140002002</span>                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">0000000140002004</span>                 add     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">0000000140002008</span>                 pop     rdi</span><br><span class="line">.text:<span class="number">0000000140002009</span>                 retn</span><br><span class="line">.text:<span class="number">0000000140002009</span> main            endp</span><br></pre></td></tr></table></figure></li>
 </ol>
 <p>可以看到，加了 CFG 后，不再是直接调用间接地址 <code>call    qword ptr [rcx+rax]</code>，而是将间接地址交给 <code>rax</code>，然后调用 <code>__guard_dispatch_icall_fptr</code> 函数。</p>
-<h2 id="2-CFG-Bitmap"><a href="#2-CFG-Bitmap" class="headerlink" title="2 CFG Bitmap"></a>2 CFG Bitmap</h2><p>CFG 通过验证间接调用的目标是否位于已知函数的开头来解决 CFl 的间接 <code>CALL/JMP</code> 调用。如果目标不在已知函数的开头， 则该过程将简单地终止。</p>
+<h2 id="2-CFG-Bitmap"><a href="#2-CFG-Bitmap" class="headerlink" title="2 CFG Bitmap"></a>2 CFG Bitmap</h2><p>Windows 支持两种 CFG，Windows 10 之后引入了更精细的流程（增强的CFG）。</p>
+<table>
+<thead>
+<tr>
+<th>CFG类型</th>
+<th>使用函数</th>
+<th>启用抑制导出（Export-Suppression）</th>
+<th>间接地址验证流程</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>常规的 CFG</td>
+<td>__guard_check_icall_fptr</td>
+<td>是：将函数 __guard_check_icall_fptr 加载为 ntdll!LdrpValidateUserCallTargetES。<br />否：将函数 __guard_check_icall_fptr 加载为 ntdll!LdrpValidateUserCallTarget。</td>
+<td>验证目标，返回。</td>
+</tr>
+<tr>
+<td>增强的 CFG</td>
+<td>__guard_dispatch_icall_fptr</td>
+<td>是：将函数 __guard_dispatch_icall_fptr 加载为 ntdll!LdrpDispatchUserCallTargetES。<br />否：将函数 __guard_dispatch_icall_fptr 加载为 ntdll!LdrpDispatchUserCallTarget。</td>
+<td>验证目标，调用目标，检查堆栈，返回。</td>
+</tr>
+</tbody></table>
+<p>启用抑制导出时，在 <code>GuardFlags</code> 下会包含 <code> IMAGE_GUARD_CF_ENABLE_EXPORT_SUPPRESSION(0x00008000)</code></p>
+<div class="note success"><p>不管是常规还是增强的 CFG，不管是否启用抑制导出，在间接地址验证时<strong>都会使用到 Bitmap 中连续的 2 个位</strong>。</p>
+<ul>
+<li>如果位状态为 {0, 0}，则分派可能无效。</li>
+<li>如果位状态为{1, 0}，且地址为 16 字节对齐，则分派有效。 否则，它可能无效。</li>
+<li>如果位状态为 {1, 1}，并且地址不是 16 字节对齐的，则分派有效。 否则，它可能无效。</li>
+<li>如果位状态为 {0, 1}，则分派可能无效。</li>
+</ul>
+<p>{1, 0} ：<code>1</code> 是低位，<code>0</code> 是高位。</p>
+</div>
+
+<div class="note danger"><p>使用 2 个位的原因是：无法保证编译器生成所有函数都在 16 字节上对齐。手工编写的汇编代码和某些优化可能会违反此规则。</p>
+<p>所以需要在原基础上增加一个位，来表示那些没有 16 字节对齐的函数，因为这些函数也是有效的间接调用函数。</p>
+<p>所以在 CFG 位图中：</p>
+<ul>
+<li>偶数位对应一个 16 字节对齐的函数起始地址。</li>
+<li>奇数位对应一个非 16 字节对齐的函数起始地址（ 紧接着的15 个 Bytes）。</li>
+</ul>
+<p><strong>奇数位和偶数位表示同一个 16 Bytes，偶数位表示起始地址，奇数位则为起始地址后的 15 Bytes。</strong></p>
+</div>
+
+<div class="note info"><p>怎么来解释奇数位表示非 16 字节对齐的函数起始地址呢？</p>
+<p>如函数地址是 <code>pAddr = 0x00007ff&#39;00402013</code>，因为 <code>pAddr &amp; 0xF != 0</code>，所以该函数起始地址不是 16 字节对齐的。</p>
+<p>在解释这之前就必须要知道 x64 下 Windows 是如何验证函数地址是否有效的流程：</p>
+<ol>
+<li><code>Bitmap_Index = pAddr &gt;&gt; 9</code>，取的函数地址的高 55 位作为定位位图的索引；</li>
+<li><code>Bitmap[Bitmap_Index] = Bitmap_Base + Bitmap_Index*8</code>，定位到位图指定的条目；</li>
+<li><code>Offset = (pAddr &gt;&gt; 3) &amp; 0x3F</code>，取得函数地址的 <code>bit 3 ~ bit 8</code> 共 6 位，作为定位条目中的位，<strong>此时 <code>Offset</code> 为偶数</strong>；</li>
+<li>判断函数地址是否已经 16 字节对齐，如果<strong>已经对齐</strong>的则进行如下流程；</li>
+<li>测试 <code>Bitmap[Bitmap_Index]</code>  中的 <code>bit Offset</code> 位，如果为 1 则直接 <code>jmp pAddr</code>，跳转到目标函数。</li>
+</ol>
+<p>如果函数地址<strong>不是 16 字节对齐</strong>的：</p>
+<ol>
+<li><code>Bitmap_Index = pAddr &gt;&gt; 9</code>，取的函数地址的高 55 位作为定位位图的索引（同上）；</li>
+<li><code>Bitmap[Bitmap_Index] = Bitmap_Base + Bitmap_Index*8</code>，定位到位图指定的条目（同上）；</li>
+<li><code>Offset = (pAddr &gt;&gt; 3) &amp; 0x3F</code>，取得函数地址的 <code>bit 3 ~ bit 8</code> 共 6 位，作为定位条目中的位（同上），<strong>此时 <code>Offset</code> 为奇数</strong>；</li>
+<li>判断函数地址是否已经 16 字节对齐，如果<strong>没有对齐</strong>则进行如下流程；</li>
+<li><code>Offset = Offset &amp; 3E</code>，将最低位清零。判断上一个偶数位对应地址是否是一个有效的间接跳转地址（该偶数位为 1）。 如果是则进行下一步；</li>
+<li><code>Offset = Offset &amp; 3F</code>，测试 <code>Bitmap[Bitmap_Index]</code>  中的 <code>bit Offset</code> 位，如果为 1 则直接 <code>jmp pAddr</code>，跳转到目标函数。</li>
+</ol>
+<p>实际上非 16 字节对齐的函数，使用的就是上面提到的 {1,1} 这个方式。</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<p>CFG 通过验证间接调用的目标是否位于已知函数的开头来解决 CFl 的间接 <code>CALL/JMP</code> 调用。如果目标不在已知函数的开头， 则该过程将简单地终止。</p>
+<ol>
+<li><p>常规的 CFG 流程：</p>
 <p><img data-src="https://s2.loli.net/2022/11/25/ElaG47rofm2n5RK.png" alt="1.png"></p>
+</li>
+<li><p>增强的 CFG 流程：</p>
+<p><img data-src="https://s2.loli.net/2022/11/27/MqDTIzskYmXNCQB.png" alt="2.png"></p>
+</li>
+</ol>
 <h2 id="3-用户-CFG"><a href="#3-用户-CFG" class="headerlink" title="3 用户 CFG"></a>3 用户 CFG</h2><p>参考<a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/secbp/pe-metadata">PE metadata</a></p>
 <ul>
 <li>用户模式CFG只能对标记为地址空间布局随机化（ASLR）兼容的图像强制执行（由与Microsoft链接器的&#x2F;DYNAMICBASE选项指定）。这是由于操作系统内部如何处理CFG，它基本上连接到ASLR基础设施。一般来说，作为第一步，CFG用户应该为他们的图像启用ASLR。工具不应假设操作系统在没有ASLR设置的情况下始终忽略CFG，而通常应该同时设置两者。</li>
@@ -504,6 +588,19 @@
 <p>因此，内存管理器将 CFG 位图视为页面文件支持的可共享内存区域，并且对应于共享位的物理页面仅在 RAM 中存在一次。</p>
 <p><img data-src="https://s2.loli.net/2022/11/27/MBrHElxt28bUpJA.png" alt="3.png"></p>
 <p><img data-src="https://s2.loli.net/2022/11/27/U3zoCmL72KWA4Xk.png" alt="4.png"></p>
+<p>The CFG bitmap：</p>
+<p>正如您之前看到的，强制程序每隔几条指令迭代一次函数调用列表是不切实际的。 因此，不是需要线性时间 O(n) 的算法，而是性能要求指示使用 O(1) 算法来代替——使用恒定查找时间的算法，而不管表中存在多少函数。 这个常量查找时间应该尽可能短。 这种要求的明显赢家将是一个可由目标函数地址索引的数组，它指示该地址是否有效（例如简单的 BOOL）。 但是，对于 128 TB 的可能地址，这样的数组本身必须是 128 TB * sizeof(BOOL)，这是一个不可接受的存储大小——比地址空间本身还大。 我们能做得更好吗？</p>
+<p>首先，我们可以利用编译器应该在 16 字节边界上生成 x64 函数代码这一事实。 这会将所需数组的大小减少到仅 8 TB * sizeof(BOOL)。 但是使用整个 BOOL（最坏情况下为 4 个字节，最好情况下为 1 个字节）是极其浪费的。 我们只需要一个状态，有效或无效，只需要使用 1 位。 这使得计算结果为 8 TB &#x2F; 8，或者只是 1 TB。 然而，不幸的是，有一个障碍。 无法保证编译器会在 16 字节二进制文件上生成所有函数。 手工编写的汇编代码和某些优化可能会违反此规则。 因此，我们必须想出一个解决办法。 一个可能的选择是简单地使用另一位来指示函数是否开始于下一个 15 字节的某处，而不是 16 字节边界本身。 因此，我们有以下可能性：</p>
+<p>■ {0, 0} No valid function begins inside this 16-byte boundary. </p>
+<p>■ {1, 0} A valid function begins exactly on this aligned 16-byte address. </p>
+<p>■ {1, 1} A valid function begins somewhere inside of this 16-byte address.</p>
+<p>由于这种设置，如果攻击者试图在链接器标记为 16 字节对齐的函数内部调用，则 2 位状态将为 {1, 0}。而所需的位（即bit 3 和bit 4) 地址中将是 {1, 1} 因为地址不是 16 字节对齐的。 因此，如果链接器没有生成首先对齐的函数（那么位将是 {1, 1}，如上所示），攻击者将只能在函数的前 16 个字节中调用任意指令 . 即便如此，这条指令必须以某种方式对攻击者有用而不会使函数崩溃（通常是某种堆栈枢轴或以 ret 指令结尾的小工具）。</p>
+<p>考虑到这一点，我们可以应用以下公式来计算 CFG 位图的大小：</p>
+<p>■ x86 或 x64 上的 32 位应用程序 2 GB &#x2F; 16 * 2 &#x3D; 32 MB<br>■ 带有 &#x2F;LARGEADDRESSAWARE 的 32 位应用程序，在 x86 上以 3 GB 模式启动 3 GB &#x2F; 16 *2 &#x3D; 48 MB<br>■ 64 位应用程序 128 TB &#x2F; 16 * 2 &#x3D; 2 TB<br>■ 带有 &#x2F;LARGEADDRESSAWARE 的 32 位应用程序，在 x64 上 4 GB &#x2F; 16 *2 &#x3D; 64 MB，加上保护 64 位 Ntdll.dll 和 WoW64 组件所需的 64 位位图的大小，因此 2 TB + 64MB</p>
+<p>分配和填充 2 TB 的位（每个进程执行仍然是一个难以承受的性能开销。 即使我们已经固定了间接调用本身的执行成本，进程启动也不能允许这么长时间，2 TB 的提交内存会立即耗尽提交限制。 因此，使用了两个节省内存和提高性能的技巧。</p>
+<p>首先，内存管理器将仅保留位图，基于这样的假设：CFG 验证函数将在 CFG 位图访问期间将异常视为位状态为 {0,0} 的指示。 因此，只要该区域包含 4 KB 的位状态都是 {0, 0}，它就可以保留为保留状态，并且只需要提交至少设置了一位 {1, X} 的页面。</p>
+<p>接下来，如第 5 章“内存管理”的 ASLR 部分所述，系统通常只在启动时执行一次库的随机化&#x2F;重定位，作为避免重复重定位的性能节省措施。 因此，支持 ASLR 的库在给定地址加载一次后，将始终在同一地址加载。 因此，这也意味着一旦为该库中的函数计算了相关的位图状态，它们在所有其他也加载相同二进制文件的进程中将是相同的。 因此，内存管理器将 CFG 位图视为页面文件支持的可共享内存区域，并且对应于共享位的物理页面仅在 RAM 中存在一次。</p>
+<p>这降低了 RAM 中已提交页面的成本，意味着只需要计算与私有内存对应的位。 在常规应用程序中，私有内存不可执行，除非有人修补了库的写时复制情况（但这不会在图像加载时发生），因此加载应用程序的成本，如果它共享相同的库 之前推出的其他应用，几乎为零。 下一个实验证明了这一点。</p>
 <p>CFG位图构建：</p>
 <ol>
 <li>系统初始化时，会调用 MiInitializeCfg 函数来初始化对 CFG 的支持。 该函数创建一个或两个内存区对象 (MmCreateSection) 作为保留内存，其大小适合平台，如前所示。 对于 32 位平台，一张位图就足够了。 对于 x64 平台，需要两个位图 — 一个用于 64 位进程，另一个用于 Wow64 进程（32 位应用程序）。 内存区对象的指针存储在 MiState 全局变量的子结构中。</li>
@@ -697,7 +794,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">30:43</span>
+    <span title="站点阅读时长">30:46</span>
   </span>
 </div>
 <div class="busuanzi-count">
