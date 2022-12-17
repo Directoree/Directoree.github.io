@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内核补丁保护（二）初始化">
+<meta property="og:url" content="https://directoree.github.io/post/Kernel-Patch-Protection2/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/12/14/BSgrqJxlz7IvVAk.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/15/k8blPWOheHLQtvc.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/15/Gz8xaV6tAOmP7NQ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/17/LFY9WObiSXDepRB.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/17/Fdrk21ePowVCyGZ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/18/IuSfcrkMeP3Qblt.png">
+<meta property="article:published_time" content="2022-12-15T01:57:30.000Z">
+<meta property="article:modified_time" content="2022-12-17T18:00:24.126Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 PG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/12/14/BSgrqJxlz7IvVAk.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Kernel-Patch-Protection2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>内核补丁保护（二）初始化 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-PG-KiInitializePatchGuardContext-%E5%89%8D%E5%A5%8F"><span class="nav-text">1 PG_KiInitializePatchGuardContext 前奏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%88%9D%E5%A7%8B%E5%8C%96%E6%96%B9%E6%B3%95"><span class="nav-text">1.1 初始化方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-text">1.2 参数说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E9%80%9A%E7%9F%A5%E5%9B%9E%E8%B0%83"><span class="nav-text">1.3 通知回调</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-PG-KiInitializePatchGuardContext"><span class="nav-text">2 PG_KiInitializePatchGuardContext</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-FUNCTIONEXTENTLIST-%E8%B5%84%E6%BA%90%E5%A4%84%E7%90%86"><span class="nav-text">2.1 FUNCTIONEXTENTLIST 资源处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-INITKDBG-%E8%8A%82%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-text">2.2 INITKDBG 节的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0%E7%9A%84%E6%A3%80%E7%B4%A2"><span class="nav-text">2.3 关键函数的检索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E4%BF%9D%E5%AD%98%E5%85%B3%E9%94%AE%E5%87%BD%E6%95%B0%E7%9A%84-PTE-%E9%A1%B5%E9%9D%A2"><span class="nav-text">2.4 保存关键函数的 PTE 页面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Allocate-PgContext"><span class="nav-text">2.5 Allocate PgContext</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-PGContext-%E6%95%B0%E6%8D%AE%E5%A1%AB%E5%85%85"><span class="nav-text">3 PGContext 数据填充</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-CmpAppendDllSection"><span class="nav-text">3.1 CmpAppendDllSection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%87%8D%E8%A6%81%E5%87%BD%E6%95%B0-API-%E5%9C%B0%E5%9D%80%E5%A4%87%E4%BB%BD"><span class="nav-text">3.2 重要函数(API)地址备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E5%8F%8A%E6%8C%87%E9%92%88"><span class="nav-text">3.3 全局变量及指针</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%85%B6%E4%BB%96%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD"><span class="nav-text">3.4 其他数据备份</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Kernel-Patch-Protection2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内核补丁保护（二）初始化
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-15 09:57:30" itemprop="dateCreated datePublished" datetime="2022-12-15T09:57:30+08:00">2022-12-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-12-18 02:00:24" itemprop="dateModified" datetime="2022-12-18T02:00:24+08:00">2022-12-18</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Kernel-Patch-Protection2/" class="post-meta-item leancloud_visitors" data-flag-title="内核补丁保护（二）初始化" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Kernel-Patch-Protection2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Kernel-Patch-Protection2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>35k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>31 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-PG-KiInitializePatchGuardContext-前奏"><a href="#1-PG-KiInitializePatchGuardContext-前奏" class="headerlink" title="1 PG_KiInitializePatchGuardContext 前奏"></a>1 PG_KiInitializePatchGuardContext 前奏</h2><h3 id="1-1-初始化方法"><a href="#1-1-初始化方法" class="headerlink" title="1.1 初始化方法"></a>1.1 初始化方法</h3><p>函数 <code>PG_KiInitializePatchGuard</code> 并不是微软给出的符号名称，而是许多相关 PatchGuard 文献对其进行的命名。</p>
+<p>该函数一共有 5 个参数，在不同的情况下，他们决定着对 PGContext 不同的初始化方式。</p>
+<ul>
+<li>参数 1：DPC 方法的索引。</li>
+<li>参数 2：调度方式，决定着初始化 PGContext 和创建 DPC 的方法。</li>
+<li>参数 3：决定要检查的最大尺寸大小，是一个随机值。该随机值可以是 1 或 2。</li>
+<li>参数 4：指向 <code>KI_FILTER_FIBER_PARAM</code> 结构的指针，该指针从 <code>ExpLicenseWatchInitWorker</code> 中来自 <code>KPRCB[0].HalReserved[6]</code>。</li>
+<li>参数 5：BOOL 类型，决定着是否需要重新计算 NT 内核函数的校验值。</li>
+</ul>
+<p>我们主要关注第 2、4 个参数。先介绍方法 0，1，2，3，4，5，7 这些方法由参数 2 决定：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">KeSetCoalescableTimer = <span class="number">0</span>,</span><br><span class="line">Prcb.AcpiReserved = <span class="number">1</span>,</span><br><span class="line">Prcb.HalReserved = <span class="number">2</span>,</span><br><span class="line">PsCreateSystemThread = <span class="number">3</span>,</span><br><span class="line">KeInsertQueueApc = <span class="number">4</span>,</span><br><span class="line">KiBalanceSetManagerPeriodicDpc = <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<ol>
+<li><p><strong>方法 0</strong>：<strong>插入与 DPC 链接的计时器</strong>。初始化 PGContext、DPC 函数。将 DPC 函数出入到定时器中。</p>
+</li>
+<li><p><strong>方法 1，2</strong>：<strong>隐藏 DPC</strong>。初始化 PGContext、KDPC 结构。不使用定时器，而是将 DPC 函数保存至 <code>KPRCB</code>。</p>
+<ul>
+<li>方法 1：将 DPC 函数保存至 <code>KPRCB.AcpiReserved</code>。使用 <code>HalpTimerDpcRoutine</code> 函数插入队列（Queue），当某个 ACPI 事件发生时调用 HalpTimerDpcRoutine，例如过渡到空闲状态。</li>
+<li>方法 2：将 DPC 函数保存至 <code>KPECB.HalReserved[7]</code>。使用 <code>HalpMcaQueueDpc</code> 函数插入队列，在发生 HAL 定时器时钟中断时完成检查（请参阅 HalpTimerClockInterrupt&#x2F;HalpTimerAlwaysOnClockInterrupt）</li>
+</ul>
+</li>
+<li><p><strong>方法 3</strong>：<strong>系统线程</strong>。初始化 PGContext、并创建一个系统线程。此时需要 <code>ExpLicenseWatchInitWorker</code> 函数传来的 <code>KI_FILTER_FIBER_PARAM</code> 参数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KI_FILTER_FIBER_PARAM</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  CHAR code_prefetch_rcx_retn[<span class="number">4</span>]; <span class="comment">// prefetchw byte ptr [rcx]; retn;</span></span><br><span class="line">  CHAR padding[<span class="number">4</span>];		<span class="comment">// 用于对齐的4字节（Align）</span></span><br><span class="line">  PVOID pPsCreatesystemThread;</span><br><span class="line">  PVOID Pg_Method3stubTocheckRoutine_sub_1405B9FB0;</span><br><span class="line">  PVOID pKiBalanceSetManagerPeriodicDpc;</span><br><span class="line">&#125;KI_FILTER_FIBER_PARAM, *PKI_FILTER_FIBER_PARAM;</span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，会在 <code>PG_KiInitializePatchGuard</code> 函数里调用 <code>sub_xxx</code> 来创建一个新的系统线程，该系统线程的回调函数就是 <code>Pg_Method3stubTocheckRoutine_sub_1405B9FB0</code>。</p>
+</li>
+<li><p><strong>方法 4</strong>：<strong>异步过程调用</strong>。初始化 PGContext、KAPC 结构。并将 APC 函数插入到已有的系统线程中。在函数中为 <code>KiInsertQueueApc</code> 函数准备参数： </p>
+<p>NormalRoutine &#x3D; xHalTimerWatchdogStop</p>
+<p>KernelRoutine &#x3D; KiDispatchCallout</p>
+<p>RundownRoutine &#x3D; NULL</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Line 8592</span></span><br><span class="line">*((_QWORD *)v212 + <span class="number">317</span>) = KiDispatchCallout;</span><br><span class="line">*((_QWORD *)v212 + <span class="number">318</span>) = xHalTimerWatchdogStop;</span><br><span class="line">*((_DWORD *)v212 + <span class="number">597</span>) = <span class="number">2122344719</span>;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>挂钩常规 DPC</strong>。此时需要 <code>ExpLicenseWatchInitWorker</code> 函数传来的 <code>KI_FILTER_FIBER_PARAM</code> 参数最后一个成员提供的指向全局变量 <code>KiBalanceSetManagerPeriodicDpc</code> 的指针，该指针类型为 <code>KDPC</code>，其 DPC 例程在函数 <code>KiInitSystem</code> 中初始化。</p>
+</li>
+</ol>
+<h3 id="1-2-参数说明"><a href="#1-2-参数说明" class="headerlink" title="1.2 参数说明"></a>1.2 参数说明</h3><p><strong>参数一：DPC 例程的索引</strong>。</p>
+<p>我们上面描述了在方法 0，1，2，5 上，我们创建了 DPC 函数（我简称为PG_DpcFuctions），参数一索引指向的函数，就是即将要被 <code>PG_DpcFuctions</code> 调用的函数。这些被参数一索引指向的函数主要作用是用于检查 PGContext。</p>
+<p>下面这些函数我们可以在 <code>PG_KiInitializePatchGuard</code> 函数中看到。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// These ones don&#x27;t use exception handlers to fire checks</span></span><br><span class="line">KiTimerDispatch (copied to random pool allocation)</span><br><span class="line">KiDpcDispatch (copied into patchguard context)</span><br><span class="line">  </span><br><span class="line"><span class="comment">// These use exception handlers to fire patchguard checks</span></span><br><span class="line">ExpTimerDpcRoutine</span><br><span class="line">IopTimerDispatch</span><br><span class="line">IopIrpStackProfilerTimer</span><br><span class="line">PopThermalZoneDpc</span><br><span class="line">CmpEnableLazyFlushDpcRoutine</span><br><span class="line">CmpLazyFlushDpcRoutine</span><br><span class="line">KiBalanceSetManagerDeferredRoutine</span><br><span class="line">ExpTimeRefreshDpcRoutine</span><br><span class="line">ExpTimeZoneDpcRoutine</span><br><span class="line">ExpCenturyDpcRoutine</span><br></pre></td></tr></table></figure>
+
+<p>使用异常处理的这 10 个 DPC 是系统 DPC 函数，如果传给这些函数的参数 <code>DeferredContext</code> 地址是 Non-Canonical Address（不合法的地址）时，则会调用相应的 <code>KiCustomAccessRoutine</code> 函数。</p>
+<p>下面是对应的 10 个 KiCustomAccessRoutine：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">ExpTimerDpcRoutine</span><br><span class="line">- KiCustomAccessRoutine0 (+ FsRtlTruncateSmallMcb)</span><br><span class="line"></span><br><span class="line">IopTimerDispatch</span><br><span class="line">- KiCustomAccessRoutine1</span><br><span class="line"></span><br><span class="line">IopIrpStackProfilerTimer</span><br><span class="line">- KiCustomAccessRoutine2</span><br><span class="line"></span><br><span class="line">PopThermalZoneDpc</span><br><span class="line">- KiCustomAccessRoutine3</span><br><span class="line"></span><br><span class="line">CmpEnableLazyFlushDpcRoutine</span><br><span class="line">- KiCustomAccessRoutine4</span><br><span class="line"></span><br><span class="line">CmpLazyFlushDpcRoutine</span><br><span class="line">- KiCustomAccessRoutine5</span><br><span class="line"></span><br><span class="line">KiBalanceSetManagerDeferredRoutine</span><br><span class="line">- KiCustomAccessRoutine6</span><br><span class="line"></span><br><span class="line">ExpTimeRefreshDpcRoutine</span><br><span class="line">- KiCustomAccessRoutine7</span><br><span class="line"></span><br><span class="line">ExpTimeZoneDpcRoutine</span><br><span class="line">- KiCustomAccessRoutine8</span><br><span class="line"></span><br><span class="line">ExpCenturyDpcRoutine</span><br><span class="line">- KiCustomAccessRoutine9</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>参数二：调度方式，决定着初始化 PGContext 和创建 DPC 的方法</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">KeSetCoalescableTimer = <span class="number">0</span>,</span><br><span class="line">Prcb.AcpiReserved = <span class="number">1</span>,</span><br><span class="line">Prcb.HalReserved = <span class="number">2</span>,</span><br><span class="line">PsCreateSystemThread = <span class="number">3</span>,</span><br><span class="line">KeInsertQueueApc = <span class="number">4</span>,</span><br><span class="line">KiBalanceSetManagerPeriodicDpc = <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>参数三：决定要检查的最大尺寸大小，是一个随机值</strong>。该随机值可以是 1 或 2。</p>
+<p>此值用于确定每次 PatchGuard 检查时校验和的最大数据大小（以字节为单位）。主要思想是 PatchGuard 使用一个结构列表来检查完整性，并且在每次校验和之后，计数器会根据数据的大小递增。虽然检查的数据总量小于先前定义的最大值，PatchGuard 继续下一个结构以检查其列表。</p>
+<p><strong>参数四：指 <code>KI_FILTER_FIBER_PARAM</code> 结构体</strong>。</p>
+<p>该结构体是调用 <code>KiFilterFiberContext</code> 的各种方法中，由 <code>ExpLicenseWatchInitWorker</code> 调用时传递的结构体。</p>
+<p><strong>参数五：表示是否需要重新计算 NT 内核函数校验的 Boolean 型值</strong>。</p>
+<h3 id="1-3-通知回调"><a href="#1-3-通知回调" class="headerlink" title="1.3 通知回调"></a>1.3 通知回调</h3><h2 id="2-PG-KiInitializePatchGuardContext"><a href="#2-PG-KiInitializePatchGuardContext" class="headerlink" title="2 PG_KiInitializePatchGuardContext"></a>2 PG_KiInitializePatchGuardContext</h2><p>根据 1.3 的分析，<code>sub_140A1AEE4</code> 就是函数 <code>PG_KiInitializePatchGuardContext</code>。如下图在函数窗口将函数大小升序排序后，可以看到该函数是最大的一个，位于 <code>INIT</code> 区段中。</p>
+<p><img data-src="https://s2.loli.net/2022/12/14/BSgrqJxlz7IvVAk.png" alt="10.png"></p>
+<p>默认情况下对该函数 F5 反汇编会提示该函数太大无法进行反汇编（0x1AAEF &#x3D; 106KB &gt; 64KB），只需要修改 IDA 配置文件即可：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修改文件 \cfg\hexrays.cfg</span></span><br><span class="line"></span><br><span class="line">MAX_FUNCSIZE            = <span class="number">1024</span>        <span class="comment">// Functions over 64K are not decompiled, Defult:64</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>在该函数中，多次使用了全局变量 <code>KdDebuggerNotPresent</code> 在关中断下进行反调试。</p>
+<ul>
+<li><code>KdDebuggerNotPresent != 0</code>，内核调试器不存在。</li>
+<li><code>KdDebuggerNotPresent == 0</code>，存在内核调试器。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">_disable();</span><br><span class="line">v5 = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> ( !(_BYTE)KdDebuggerNotPresent )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">while</span> ( <span class="number">1</span> );</span><br><span class="line">&#125;</span><br><span class="line">_enable();</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-1-FUNCTIONEXTENTLIST-资源处理"><a href="#2-1-FUNCTIONEXTENTLIST-资源处理" class="headerlink" title="2.1 FUNCTIONEXTENTLIST 资源处理"></a>2.1 FUNCTIONEXTENTLIST 资源处理</h3><p><strong>一、参数二，初始化方法的判断与设置</strong>。</p>
+<ul>
+<li><code>KI_FILTER_FIBER_PARAM != NULL</code>，有参数，只能使用方法 0，3，5。</li>
+<li><code>KI_FILTER_FIBER_PARAM == NULL &amp;&amp; (a2 != 3 | a2 != 5)</code>，无参数，只能使用方法 0，1，2，4，7。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">  <span class="comment">// KI_FILTER_FIBER_PARAM != NULL</span></span><br><span class="line">  <span class="comment">// 只能使用方法0,3,5</span></span><br><span class="line">  v6 = <span class="number">41</span>;</span><br><span class="line">  <span class="keyword">if</span> ( a4 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( a2 &gt; <span class="number">5</span> || !_bittest(&amp;v6, a2) ) <span class="comment">// 有参数，a2 = 1,2,4,7将转化为0</span></span><br><span class="line">      a2 = <span class="number">0</span>;</span><br><span class="line">    v7 = a5 | <span class="number">4</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span>  </span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( (a2 - <span class="number">3</span>) &amp; <span class="number">0xFFFFFFFD</span> ) <span class="comment">//0xD: 1101, a2 - 3 = 2</span></span><br><span class="line">    &#123;</span><br><span class="line">      v4369 = a5;</span><br><span class="line">      <span class="keyword">goto</span> LABEL_12; <span class="comment">// KI_FILTER_FIBER_PARAM == NULL &amp;&amp; (a2 != 3 | a2 != 5)</span></span><br><span class="line">    &#125;				 <span class="comment">// 无参数，a2 = 0,1,2,4,7有效</span></span><br><span class="line">    v7 = a5;</span><br><span class="line">    a2 = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  v4369 = v7;</span><br><span class="line">LABEL_12:</span><br><span class="line">  v8 = __2b; <span class="comment">// 全局变量 cs:$$2b</span></span><br><span class="line">  v9 = <span class="number">0</span>;</span><br><span class="line">  v10 = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">if</span> ( !_bittest(&amp;v8, a2) )</span><br><span class="line">    v10 = a2;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>二、疑似将 <code>ntoskrnl.exe</code> 模块前 24 字节保存至全局变量</strong></p>
+<p>该部分需要动态调试确认拷贝的内容。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 将 __2a 前 24 字节拷贝至全局变量 v66、v4920_NtoskrnlBase</span></span><br><span class="line"><span class="comment">// __2a 疑似 Ntoskrnl 模块基址</span></span><br><span class="line"><span class="keyword">if</span> ( __2a )</span><br><span class="line">&#123;</span><br><span class="line">  v64 = <span class="number">24</span>;</span><br><span class="line">  v65 = &amp;__2a;  </span><br><span class="line">  v66 = &amp;v4920_NtoskrnlBase;</span><br><span class="line">  v67 = <span class="number">3</span>i64;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    v64 -= <span class="number">8</span>;</span><br><span class="line">    *v66 = *v65;</span><br><span class="line">    ++v65;</span><br><span class="line">    ++v66;</span><br><span class="line">    --v67;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( v67 );</span><br><span class="line">  <span class="keyword">for</span> ( ; v64; --v64 )  <span class="comment">// 不会被执行</span></span><br><span class="line">  &#123;</span><br><span class="line">    v68 = *(_BYTE *)v65;</span><br><span class="line">    v65 = (__int64 *)((<span class="keyword">char</span> *)v65 + <span class="number">1</span>);</span><br><span class="line">    *(_BYTE *)v66 = v68;</span><br><span class="line">    v66 = (__int64 *)((<span class="keyword">char</span> *)v66 + <span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">goto</span> LABEL_126;</span><br><span class="line">&#125;</span><br><span class="line">v4920_NtoskrnlBase = <span class="number">5368709120</span>i64; <span class="comment">// 0x00000001`40000000, v4920_NtoskrnlBase = g_Ntoskrnl</span></span><br><span class="line">v13_ExAlloc_BugCheckParameter2_+_4 = <span class="number">0</span>i64;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>三、从 ntoskrl.exe 中获取 FUNCTIONEXTENTLIST 已压缩资源</strong></p>
+<ol>
+<li><p>调用 <code>LdrResFindResource</code> 函数从 ntoskrl.exe 获取名称为 <code>FUNCTIONEXTENTLIST</code> 的资源。根据名字应该是函数导出列表列表资源，在后面看了一看到，该资源与 <code>IMAGE_DIRECTORY_ENTRY_EXCEPTION</code> 相关。参考 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/libloaderapi/nf-libloaderapi-findresourceexw">FindResourceExW</a> 该函数的定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSTATUS <span class="title">LdrResFindResource</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">	IN  PVOID ImageBase,		<span class="comment">// 目标资源所属模块基址，NULL表示当前模块</span></span></span></span><br><span class="line"><span class="function"><span class="params">	IN  ULONG ResourceType,		<span class="comment">// 资源类型</span></span></span></span><br><span class="line"><span class="function"><span class="params">	IN  <span class="keyword">wchar_t</span>* ResourceName,	<span class="comment">// 资源名称</span></span></span></span><br><span class="line"><span class="function"><span class="params">	IN  ULONG Unknown,</span></span></span><br><span class="line"><span class="function"><span class="params">	OUT PVOID ResourceBuffer,	<span class="comment">// 保存获取到的资源缓冲区</span></span></span></span><br><span class="line"><span class="function"><span class="params">	OUT PULONG ResourceSize,	<span class="comment">// 获取到的资源大小（字节）</span></span></span></span><br><span class="line"><span class="function"><span class="params">	OPTIONAL ULONG64 Unknown,</span></span></span><br><span class="line"><span class="function"><span class="params">	OPTIONAL ULONG64 Unknown,</span></span></span><br><span class="line"><span class="function"><span class="params">	OPTIONAL ULONG Unknown,</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>ResourceType &#x3D; 10，对应的 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/windows/win32/menurc/resource-types">类型</a> 为 <code>RT_RCDATA</code>（Application-defined resource (raw data)）。</p>
+<p>根据下面的分析，可以知道获取到的资源是 <mark class="label primary"> 压缩</mark> 的，后面还要对其进行解压。</p>
+</li>
+<li><p>如果 <code>RtlImageNtHeader(NtoskrlBase)</code> 存在，则会调用 <code>RtlImageDirectoryEntryToData</code> 函数得到 <code>IMAGE_DIRECTORY_ENTRY_EXCEPTION(3)</code> 异常资源表的数据。该函数返回指定镜像文件中获取到的<strong>数据目录表的基址</strong>。（参考 XP 源码）</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PVOID NTAPI <span class="title">RtlImageDirectoryEntryToData</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Base,		<span class="comment">// 文件的基地址</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN BOOLEAN MappedAsImage,	<span class="comment">// TRUE-Image 文件，FALSE-Maping的数据文件</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN USHORT DirectoryEntry,	<span class="comment">// 数据目录表的索引</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PULONG Size		<span class="comment">// 返回的目标数据目录表的大小（字节）</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>数据目录表索引如下，参考 <a target="_blank" rel="noopener" href="https://0xrick.github.io/win-internals/pe5/">A dive into the PE file format - PE file structure - Part 4: Data Directories, Section Headers and Sections</a> ：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_EXPORT          0   <span class="comment">// Export Directory</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_IMPORT          1   <span class="comment">// Import Directory</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_RESOURCE        2   <span class="comment">// Resource Directory</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_EXCEPTION       3   <span class="comment">// Exception Directory</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_SECURITY        4   <span class="comment">// Security Directory</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_BASERELOC       5   <span class="comment">// Base Relocation Table</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_DEBUG           6   <span class="comment">// Debug Directory</span></span></span><br><span class="line"><span class="comment">//      IMAGE_DIRECTORY_ENTRY_COPYRIGHT       7   // (X86 usage)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_ARCHITECTURE    7   <span class="comment">// Architecture Specific Data</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_GLOBALPTR       8   <span class="comment">// RVA of GP</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_TLS             9   <span class="comment">// TLS Directory</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_LOAD_CONFIG    10   <span class="comment">// Load Configuration Directory</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_BOUND_IMPORT   11   <span class="comment">// Bound Import Directory in headers</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_IAT            12   <span class="comment">// Import Address Table</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT   13   <span class="comment">// Delay Load Import Descriptors</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR 14   <span class="comment">// COM Runtime descriptor</span></span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<p><strong>四、根据压缩数据的 ExceptionDirectory 签名执行不同操作</strong> ——签名 &#x3D;&#x3D; “EXTC”</p>
+<ol>
+<li><p>压缩数据的前 4 字节表示 ExceptionDirectory 签名。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( *(_DWORD *)OUT_Compress_ResourceBuffer == <span class="number">1163416643</span> ) <span class="comment">// Signature —— “EXTC”</span></span><br></pre></td></tr></table></figure>
+
+<p>压缩数据的第二个 <code>DWORD</code> 表示压缩数据的完整大小。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">v23 = *(<span class="keyword">unsigned</span> <span class="keyword">int</span> *)(OUT_Compress_ResourceBuffer + <span class="number">4</span>); <span class="comment">// 压缩异常数据目录资源表+4 = 大小</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>使用函数 <code>RtlGetCompressionWorkSpaceSize</code> 获取压缩、解压时应该使用的空间大小。方便后面使用 <code>RtlDecompressBufferEx</code> 对获取的资源进行解压。函数功能参见《<a target="_blank" rel="noopener" href="https://b1ackie.cn/2021/08/06/%E5%8E%8B%E7%BC%A9%E6%8A%80%E6%9C%AF-windows%E5%8E%8B%E7%BC%A9API/">压缩技术-windows压缩API </a>》。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NT_RTL_COMPRESS_API NTSTATUS <span class="title">RtlGetCompressionWorkSpaceSize</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  USHORT CompressionFormatAndEngine,   <span class="comment">// Bitmask指定压缩格式和引擎类型。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] PULONG CompressBufferWorkSpaceSize,  <span class="comment">// 此值用于确定RtlCompressBuffer的WorkSpace缓冲区的正确大小。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] PULONG CompressFragmentWorkSpaceSize <span class="comment">// 此值用于确定RtlDecompressFragment的WorkSpace缓冲区的正确大小</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>该部分代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 ntoskrl.exe 中获取如下名称的资源</span></span><br><span class="line"><span class="comment">// 然后将获取的资源保存至参数五中。资源大小保存至参数六（字节）</span></span><br><span class="line"><span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)LdrResFindResource(</span><br><span class="line">                   <span class="number">5368709120</span>i64,  <span class="comment">// 0x00000001`40000000</span></span><br><span class="line">                   <span class="number">10</span>i64,</span><br><span class="line">                   (__int64)<span class="string">L&quot;FUNCTIONEXTENTLIST&quot;</span>, <span class="comment">// IN_ResourceName，是压缩数据名称</span></span><br><span class="line">                   <span class="number">0</span>i64,</span><br><span class="line">                   (__int64)&amp;OUT_Compress_ResourceBuffer,   <span class="comment">// OUT_Compress_ResourceBuffer</span></span><br><span class="line">                   (__int64)&amp;OUT_Compress_ResourceSize,			<span class="comment">// OUT_Compress_ResourceSize</span></span><br><span class="line">                   <span class="number">0</span>i64,</span><br><span class="line">                   <span class="number">0</span>i64,</span><br><span class="line">                   <span class="number">0</span>) &gt;= <span class="number">0</span></span><br><span class="line">  &amp;&amp; (<span class="keyword">unsigned</span> __int64)(OUT_Compress_ResourceSize - <span class="number">8</span>) &lt;= <span class="number">0xFFFFFFF7</span> ) <span class="comment">// 注意这里的 0xFFFFFFF7 是无符号数（正数）</span></span><br><span class="line">&#123;</span><br><span class="line">  LODWORD(v4374) = OUT_Compress_ResourceSize;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 返回指向 Ntoskrl.exe 文件的 NtHeader</span></span><br><span class="line">  <span class="keyword">if</span> ( RtlImageNtHeader(<span class="number">5368709120</span>i64) )</span><br><span class="line">  &#123;</span><br><span class="line">    LOBYTE(v14) = <span class="number">1</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// Get ExceptionDirectory, V15 指向 VA</span></span><br><span class="line">    <span class="comment">// https://bbs.pediy.com/thread-36436.htm</span></span><br><span class="line">    v15_pExceptionDirectory = RtlImageDirectoryEntryToData(<span class="number">5368709120</span>i64, v14, <span class="number">3</span>i64, </span><br><span class="line">                                                            &amp;v4407_ExceptionDirectory_Size);</span><br><span class="line">    <span class="keyword">if</span> ( v15 )</span><br><span class="line">    &#123;</span><br><span class="line">      v16 = <span class="number">0</span>i64;</span><br><span class="line">      v17 = <span class="number">-1073741823</span>; <span class="comment">// 0xC0000001</span></span><br><span class="line">      <span class="keyword">if</span> ( *(_DWORD *)OUT_Compress_ResourceBuffer == <span class="number">1163416643</span> ) <span class="comment">// Signature —— “EXTC”</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="comment">// NumberOfBytes = RtlCompressBuffer 工作缓冲区的大小</span></span><br><span class="line">        <span class="comment">// v4471 = RtlDecompressFragment 工作缓冲区的大小</span></span><br><span class="line">        <span class="keyword">if</span> ( (<span class="keyword">signed</span> <span class="keyword">int</span>)RtlGetCompressionWorkSpaceSize(<span class="number">4</span>i64, &amp;NumberOfBytes, &amp;v4471) &lt; <span class="number">0</span> )</span><br><span class="line">          <span class="keyword">goto</span> LABEL_34;</span><br><span class="line">        v23_Compress_ResourceSize = *(<span class="keyword">unsigned</span> <span class="keyword">int</span> *)(OUT_Compress_ResourceBuffer + <span class="number">4</span>); <span class="comment">// 压缩异常数据目录资源表+4 = 大小</span></span><br><span class="line">        <span class="keyword">if</span> ( (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v23_Compress_ResourceSize &lt; <span class="number">8</span> )</span><br><span class="line">        &#123;</span><br><span class="line">          HIDWORD(NumberOfBytes) = <span class="number">-805294751</span>;</span><br><span class="line">          KeBugCheckEx(__ROR4__(<span class="number">-805306349</span>, <span class="number">92</span>), <span class="number">0xE</span>ui64, OUT_Compress_ResourceBuffer, <span class="number">0x140000000</span>ui64, (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v4374);</span><br><span class="line">        &#125;</span><br><span class="line">        v24 = __rdtsc();</span><br><span class="line">        v25 = (__ROR8__(v24, <span class="number">3</span>) ^ v24) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64;</span><br><span class="line">        v4626 = *((_QWORD *)&amp;v25 + <span class="number">1</span>);</span><br><span class="line">        v26 = (v25 ^ *((_QWORD *)&amp;v25 + <span class="number">1</span>))</span><br><span class="line">            - <span class="number">11</span></span><br><span class="line">            * ((<span class="keyword">unsigned</span> __int64)(((<span class="keyword">unsigned</span> __int64)v25 ^ *((_QWORD *)&amp;v25 + <span class="number">1</span>))</span><br><span class="line">                                * (<span class="keyword">unsigned</span> __int128)<span class="number">0x2E8BA2E8BA2E8BA3</span>ui64 &gt;&gt; <span class="number">64</span>) &gt;&gt; <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<ol start="3">
+<li><p><strong>使用算法生成 <code>ExAllocatePoolWithTag</code> 的 <code>Tag</code> 参数申请内存</strong></p>
+<p>下面会调用 <code>ExAllocatePoolWithTag</code> 函数 2 次，都是申请的非分页内存不可执行内存 <code>NonPagedPoolNx</code>。</p>
+<ol>
+<li><p>第一次。<u><em>从后面分析中可以看到，这块内存 v16 并没有使用到，应该算是一个Bug了</em></u>。</p>
+<ul>
+<li>内存类型：NonPagedPoolNx</li>
+<li>内存大小：RtlCompressBuffer 函数的 WorkSpace</li>
+<li>内存标签：v29</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v16 = (<span class="keyword">unsigned</span> <span class="keyword">int</span> *)ExAllocatePoolWithTag(NonPagedPoolNx, </span><br><span class="line">                                            (<span class="keyword">unsigned</span> <span class="keyword">int</span>)Compress_NumberOfBytes, v29);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>第二次。<strong>用来保存 FUNCTIONEXTENTLIST 资源解压后的数据。</strong></p>
+<ul>
+<li>内存类型：NonPagedPoolNx</li>
+<li>内存大小：FUNCTIONEXTENTLIST 资源的大小</li>
+<li>内存标签：v40</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v13_1ExAlloc_Compress_Point_2DecompressBuffer = (<span class="keyword">unsigned</span> <span class="keyword">int</span> *)ExAllocatePoolWithTag(NonPagedPoolNx, </span><br><span class="line">                                                                                  v23_Compress_ResourceSize, v40);</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p><strong>解压上面获取的 FUNCTIONEXTENTLIST 资源</strong></p>
+<p><strong>注意</strong>：是从 FUNCTIONEXTENTLIST 资源的第 <strong>8</strong> 字节开始解压。</p>
+<p>调用函数 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/ntifs/nf-ntifs-rtldecompressbufferex">RtlDecompressBufferEx</a>，从 FUNCTIONEXTENTLIST 资源的第 <strong>8</strong> 字节开始解压。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NT_RTL_COMPRESS_API NTSTATUS <span class="title">RtlDecompressBufferEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  USHORT CompressionFormat,	<span class="comment">// 指定压缩格式的位掩码</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] PUCHAR UncompressedBuffer,	<span class="comment">// 接收解压后数据的缓冲区</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  ULONG  UncompressedBufferSize,	<span class="comment">// 参数二缓冲区的大小</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  PUCHAR CompressedBuffer,	<span class="comment">// 指向压缩（要解压）数据的指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  ULONG  CompressedBufferSize,	<span class="comment">// 压缩（要解压）数据的大小</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] PULONG FinalUncompressedSize,	<span class="comment">// 实际解压数据缓的大小</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  PVOID  WorkSpace	<span class="comment">// RtlDecompressBufferEx 工作区大小，从 RtlGetCompressionWorkSpaceSize 获取</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>解压过程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">v47 = RtlDecompressBufferEx(<span class="number">4</span>, (_DWORD)v13_1ExAllocCompressBuffer_2DecompressBuffer,</span><br><span class="line">                            (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v23_Compress_ResourceSize, OUT_Compress_ResourceBuffer + <span class="number">8</span>);</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>所以在<strong>签名 &#x3D;&#x3D; “EXTC”</strong>，可以得知 <strong>压缩的 FUNCTIONEXTENTLIST</strong> 结构为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PG_COMPRESSED_DATA</span>&#123;</span></span><br><span class="line">    ULONG Header;</span><br><span class="line">    ULONG DecompressSize;</span><br><span class="line">    BYTE  CompressedData[<span class="number">1</span>];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li><p><strong>对 ExceptionDirectory 进行累加后对比</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 开始对 ExceptionDirectory 进行累加，每次操作 4 字节</span></span><br><span class="line"><span class="comment">// 将异常数据目录表内容循环地 4 字节相加，最后的和为 v61</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// v4407_ExceptionDirectory_Size 为 ExceptionDirectory 大小</span></span><br><span class="line"><span class="comment">// v15_pExceptionDirectory 为指向 ExceptionDirectory 的虚拟地址</span></span><br><span class="line"></span><br><span class="line">LABEL_111:</span><br><span class="line">     v60 = <span class="number">0</span>;</span><br><span class="line">     v61 = v15_pExceptionDirectory - <span class="number">0x40000</span></span><br><span class="line">     <span class="keyword">if</span> ( v4407_ExceptionDirectory_Size )</span><br><span class="line">     &#123;</span><br><span class="line">       <span class="keyword">do</span></span><br><span class="line">       &#123;</span><br><span class="line">         v62 = v60; <span class="comment">// 0</span></span><br><span class="line">         v60 += <span class="number">4</span>;</span><br><span class="line">         v61 += *(_DWORD *)(v15_pExceptionDirectory + <span class="number">4</span> * (v62 &gt;&gt; <span class="number">2</span>));</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">while</span> ( v60 &lt; v4407_ExceptionDirectory_Size );</span><br><span class="line">     &#125;</span><br><span class="line">		  </span><br><span class="line">		<span class="comment">// v13_1ExAllocCompressBuffer_2DecompressBuffer 保存资源 L&quot;FUNCTIONEXTENTLIST&quot; 第 8 字节开始进行解压的数据</span></span><br><span class="line">    <span class="comment">// 保存的值就是未解压的L&quot;FUNCTIONEXTENTLIST&quot;大小</span></span><br><span class="line">		v63 = v13_1ExAllocCompressBuffer_2DecompressBuffer[<span class="number">1</span>];</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 确保该值与解压的资源数据相同</span></span><br><span class="line">    <span class="keyword">if</span> ( v61 != (_DWORD)v63 )</span><br><span class="line">    &#123;</span><br><span class="line">      v4236 = <span class="number">-805294751</span>;</span><br><span class="line">      KeBugCheckEx(__ROR4__(<span class="number">-805306349</span>, <span class="number">92</span>), <span class="number">0x10</span>ui64, (ULONG_PTR)v13_1ExAllocCompressBuffer_2DecompressBuffer, <span class="number">0x140000000</span>ui64, v63 ^ v61);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">goto</span> LABEL_117;</span><br></pre></td></tr></table></figure>
+
+<p>可所以在<strong>签名 &#x3D;&#x3D; “EXTC”</strong>，，<strong>FUNCTIONEXTENTLIST 资源解压后并不是 ExceptionDirectory 的明文数据</strong>。</p>
+</li>
+</ol>
+<p>所以在<strong>签名 &#x3D;&#x3D; “EXTC”</strong>，得到 <strong>解压的 FUNCTIONEXTENTLIST</strong> 结构为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">PG_DECOMPRESS_DATA</span>&#123;</span></span><br><span class="line">    ULONG IntegrityCheckLength;</span><br><span class="line">    ULONG InitIntegrityCheckData;</span><br><span class="line">    BYTE UnknownData[<span class="keyword">sizeof</span>(UncompressedData<span class="number">-8</span>)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p><strong>五、根据压缩数据的 ExceptionDirectory 签名执行不同操作</strong> ——签名 &#x3D;&#x3D; “EXTL”</p>
+<ol>
+<li><p>根据计算得到的参数 <code>v53 = Tag</code> 调用 <code>ExAllocatePoolWithTag</code> 申请非分页内存，申请的大小是 <code>sizeof(FUNCTIONEXTENTLIST) - 4</code>。然后从 FUNCTIONEXTENTLIST 资源的第 4 四字节开始的地方拷贝至申请的非分页内存中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">v59 = (<span class="keyword">unsigned</span> <span class="keyword">int</span> *)ExAllocatePoolWithTag(NonPagedPoolNx, </span><br><span class="line">                                            (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v4374_OUT_Compress_ResourceSize - <span class="number">4</span>, v53);</span><br><span class="line"></span><br><span class="line">v13_1ExAllocCompressBuffer_2DecompressBuffer = v59;</span><br><span class="line"><span class="keyword">if</span> ( v59 )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// 将解压前的资源 L&quot;FUNCTIONEXTENTLIST&quot; 第4字节开始拷贝至非分页内存</span></span><br><span class="line">    memmove(v59, (<span class="keyword">const</span> <span class="keyword">void</span> *)(OUT_Compress_ResourceBuffer + <span class="number">4</span>), </span><br><span class="line">            (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v4374_OUT_Compress_ResourceSize - <span class="number">4</span>);</span><br><span class="line">    <span class="keyword">goto</span> LABEL_111;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>这与签名 &#x3D;&#x3D; “EXTC”是明显不同的：</p>
+<ul>
+<li>签名 &#x3D;&#x3D; “EXTC”，从 <code>FUNCTIONEXTENTLIST + 8</code> 开始处理。<mark class="label danger"> 需要</mark>调用 <code>RtlDecompressBufferEx</code> 进行解压。</li>
+<li>签名 &#x3D;&#x3D; “EXTL”，从 <code>FUNCTIONEXTENTLIST + 4</code> 开始处理。<mark class="label success"> 无需</mark>调用 <code>RtlDecompressBufferEx</code> 进行解压。</li>
+</ul>
+</li>
+<li><p>然后重复上面的步骤 5 ——<strong>对 ExceptionDirectory 进行累加后对比</strong>。</p>
+</li>
+</ol>
+<p><strong>六、总结</strong></p>
+<p>在函数 <code>PG_KiInitializePatchGuardContext</code> 一开头，也就是开始初始化 PatchGuard 时。如果全局变量 <code>$$2a &lt;= 0</code>，则会对 ntoskrl.exe 模块中名称为 <code>FUNCTIONEXTENTLIST</code> 的资源进行处理后，与该模块的异常资源表进行比较，如果不相等则直接会蓝屏（KeBugCheckEx）。我们知道异常资源表中存放的是 <code>RUNTIME_FUNCTION</code>，所以要在系统启动前修改 ntoskrl.exe 模块中的函数，就要了解本节中细节，了解 <code>FUNCTIONEXTENTLIST</code> 资源对比处理过程，然后进行绕过。</p>
+<p>FUNCTIONEXTENTLIST 资源的处理过程如下：</p>
+<p><img data-src="https://s2.loli.net/2022/12/15/k8blPWOheHLQtvc.png" alt="11"></p>
+<h3 id="2-2-INITKDBG-节的处理"><a href="#2-2-INITKDBG-节的处理" class="headerlink" title="2.2 INITKDBG 节的处理"></a>2.2 INITKDBG 节的处理</h3><ol>
+<li><p>获取 <code>FsRtlUninitializeSmallMcb</code> 函数所在的模块、区段。该模块为 ntoskrnl.exe。</p>
+<p>调用 <code>RtlPcToFileHeader</code> 函数，得到目标函数所在的模块基址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PVOID <span class="title">RtlPcToFileHeader</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID PcValue,		<span class="comment">// 目标函数的虚拟地址（VA）</span></span></span></span><br><span class="line"><span class="function"><span class="params">    OUT PVOID *BaseOfImage	<span class="comment">// 目标函数所在模块的基址（VA）</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>调用 <code>RtlImageNtHeader</code> 函数获取 ntoskrnl.exe 的 <code>pNtHeader</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PIMAGE_NT_HEADERS <span class="title">RtlImageNtHeader</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Base <span class="comment">// 模块基址（VA）</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>这里的返回值是 VA 值。</p>
+</li>
+<li><p>调用 <code>RtlSectionTableFromVirtualAddress</code> 函数获取目标函数所在的区段 VA 地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PIMAGE_SECTION_HEADER <span class="title">RtlSectionTableFromVirtualAddress</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PIMAGE_NT_HEADERS NtHeaders,	<span class="comment">// VA</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Base,		<span class="comment">// VA</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN ULONG Address		<span class="comment">// 目标函数地址相对于基址的 RVA</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+<p>返回值是 VA。目标函数 <code>FsRtlUninitializeSmallMcb</code> 位于 <code>INITKDBG</code> 区段。</p>
+</li>
+<li><p>获取如下几个函数相对于 <code>INITKDBG</code> 区段的 RVA。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sub_140A0DD10</span><br><span class="line">sub_140A0E830</span><br><span class="line">RtlLookupFunctionEntryEx</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>设置一个全局 BOOL 值 <code>v4202</code>。</p>
+<p>如果函数 <code>MmStrongCodeGuaranteesEnforced() &gt; 0</code>、<code>sub_140A360D4() &gt; 0</code> ，则 <code>v4202 = TRUE</code>。</p>
+<p>如果函数 <code>PG_KiInitializePatchGuardContext</code> 的参数二（调度方法）为 7，则 <code>v4202 = TRUE</code>。 </p>
+</li>
+<li><p>疑似检查 EPT Hook。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( (<span class="keyword">unsigned</span> <span class="keyword">int</span>)MmStrongCodeGuaranteesEnforced() &amp;&amp; (<span class="keyword">unsigned</span> <span class="keyword">int</span>)sub_140A360D4() )</span><br></pre></td></tr></table></figure>
+
+<p><code>MmStrongCodeGuaranteesEnforced</code> 函数返回 <code>MiFlags[2] &amp; 1</code>（Bit 15）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">BYTE MiFlags[<span class="number">4</span>];</span><br><span class="line"></span><br><span class="line"><span class="function">__int64 <span class="title">MmStrongCodeGuaranteesEnforced</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> BYTE2(MiFlags) &amp; <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>sub_140A360D4</code> 函数疑似检查 EPT Hook。参考《<a target="_blank" rel="noopener" href="https://key08.com/index.php/2021/08/18/1301.html">Windows PatchGuard KiErrata671Present</a>》。</p>
+<ul>
+<li>如果 KiErrata671Presen 函数被成功修改则返回 FALSE。</li>
+<li>如果修改失败则返回 TRUE。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 <span class="title">sub_140A360D4</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v0; <span class="comment">// rbx</span></span><br><span class="line">  <span class="keyword">char</span> v1; <span class="comment">// si</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">int</span> v2; <span class="comment">// ecx</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int8 v4; <span class="comment">// [rsp+50h] [rbp+8h]</span></span><br><span class="line"></span><br><span class="line">  v4 = KeGetCurrentIrql();</span><br><span class="line">  __writecr8(<span class="number">0xF</span>ui64);</span><br><span class="line">  v0 = __readcr0();</span><br><span class="line">  __writecr0(v0 &amp; <span class="number">0xFFFFFFFFFFFEFFFF</span>ui64);</span><br><span class="line">  v1 = *((_BYTE *)KiErrata671Present + <span class="number">2</span>);</span><br><span class="line">  *((_BYTE *)KiErrata671Present + <span class="number">2</span>) = <span class="number">0xC3</span>; <span class="comment">// 0xC3 == ret</span></span><br><span class="line">  v2 = KiErrata671Present();</span><br><span class="line">  <span class="keyword">if</span> ( *((_BYTE *)KiErrata671Present + <span class="number">2</span>) != v1 )</span><br><span class="line">    *((_BYTE *)KiErrata671Present + <span class="number">2</span>) = v1;</span><br><span class="line">  __writecr0(v0);</span><br><span class="line">  __writecr8(v4);</span><br><span class="line">  <span class="keyword">return</span> v2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="2-3-关键函数的检索"><a href="#2-3-关键函数的检索" class="headerlink" title="2.3 关键函数的检索"></a>2.3 关键函数的检索</h3><p>如下代码，会将 <code>off_140C005D8</code> 地址保存到数组 <code>qword_140C00210[0]</code> 第一个元素中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">qword_140C00210[<span class="number">0</span>] = (__int64)off_140C005D8; </span><br></pre></td></tr></table></figure>
+
+<p><code>qword_140C00210</code> 数组如下：</p>
+<p><img data-src="https://s2.loli.net/2022/12/15/Gz8xaV6tAOmP7NQ.png" alt="12.png"></p>
+<p>可以看到 <code>qword_140C00210[0]</code> 是空的，在初始化 PatchGuard 时进行填充。而填充的地址指向 <code>xHalHaltSystem</code> 函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">.data:<span class="number">0000000140</span>C005D8 off_140C005D8   dq offset xHalHaltSystem</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这 15 个函数都是非常关键重要的函数，我将这个数组命名为 <code>CriticalRoutines</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">PVOID CriticalRoutines[<span class="number">15</span>] = &#123;</span><br><span class="line">    xHaliHaltSystem,</span><br><span class="line">    KeBugCheckEx,</span><br><span class="line">    KeBugCheck2,</span><br><span class="line">    KiBugCheckDebugBreak,</span><br><span class="line">    KiDebugTrapOrFault,</span><br><span class="line">    DbgBreakPointWithStatus,</span><br><span class="line">    RtlCaptureContext,</span><br><span class="line">    KeQueryCurrentStackInformation,</span><br><span class="line">    KiSaveProcessorControlState,</span><br><span class="line">    memmove,</span><br><span class="line">    IoSaveBugCheckProgress,</span><br><span class="line">    KeIsEmptyAffinityEx,</span><br><span class="line">    VfNotifyVerifierOfEvent,</span><br><span class="line">    _guard_check_icall,</span><br><span class="line">    KeGuardDispatchICall</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>调用 <a target="_blank" rel="noopener" href="https://doxygen.reactos.org/d8/d2f/unwind_8c.html#ae54b6e92ac33487731d412097a83cf7a">RtlLookupFunctionTable</a> 函数循环查找 <code>CriticalRoutines</code> 数组 15 个函数所在模块的  <code>KLDR_DATA_TABLE_ENTRY.ExceptionTable</code> 的地址，实际上获得的结果是同一个，因为他们都在 ntoskrnl.exe 模块中。该函数功能：查找参数一函数所在模块的 ExceptionTable 基址，也是异常资源表中第一个 RUNTIME_FUNCTION 结构地址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PRUNTIME_FUNCTION <span class="title">RtlLookupFunctionTable</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">   IN  PVOID  ControlPC,	<span class="comment">// 目标函数地址</span></span></span></span><br><span class="line"><span class="function"><span class="params">   OUT PVOID* ImageBase,	<span class="comment">// 接收目标函数所在模块基址</span></span></span></span><br><span class="line"><span class="function"><span class="params">   OUT PULONG SizeOfTable	<span class="comment">// sizeof(RUNTIME_FUNCTION) </span></span></span></span><br><span class="line"><span class="function"><span class="params">  )</span></span>; </span><br><span class="line"></span><br><span class="line"><span class="function">NTSYSAPI PRUNTIME_FUNCTION <span class="title">RtlLookupFunctionEntry</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  DWORD64               ControlPc,	<span class="comment">// 目标函数地址</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] PDWORD64              ImageBase,	<span class="comment">// 接收目标函数所在模块基址</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [out] PUNWIND_HISTORY_TABLE HistoryTable</span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后调用 <code>RtlLookupFunctionEntry</code> 获取目标函数所在的 <code>RUNTIME_FUNCTION</code> 的地址。</p>
+<ul>
+<li>RtlLookupFunctionTable：获取目标函数所在模块第一个 RUNTIME_FUNCTION 的地址，即 ExceptionTable 表地址。</li>
+<li>RtlLookupFunctionEntry：获取目标函数所在 RUNTIME_FUNCTION 的地址（并不一定是第一个）。</li>
+</ul>
+<blockquote>
+<p>Windows 10 前，PEB 上的模块链表和 <code>pDriver-&gt;DriverSection</code> 都是 <code>_LDR_DATA_TABLE_ENTRY</code> 结构。<br>Windows 10 开始，PEB 上的模块链表是 <code>_LDR_DATA_TABLE_ENTRY</code>，内核 <code>DriverSection</code> 的模块链是 <code>_KLDR_DATA_TABLE_ENTRY</code> 结构。</p>
+</blockquote>
+<p>下面就是进行关键函数检索，前提是已知这些函数都位于 ntoskrnl.exe 模块中。</p>
+<ol>
+<li>先获取关键函数 <code>CriticalRoutines[i]</code> 所在模块的异常资源表基地址（使用RtlLookupFunctionTable函数）。</li>
+<li>然后使用 <code>CriticalRoutines[i]</code> 函数地址，循环地与异常资源表 ExceptionTable 中每一个 RUNTIME_FUNCTION 函数地址比较。</li>
+<li>如果  <code>CriticalRoutines[i]</code> 函数不在异常资源表中，就跳转到 <code>LABEL_184</code>，不会保存函数所在页面的 PTE（下面2.4节内容）。</li>
+</ol>
+<h3 id="2-4-保存关键函数的-PTE-页面"><a href="#2-4-保存关键函数的-PTE-页面" class="headerlink" title="2.4 保存关键函数的 PTE 页面"></a>2.4 保存关键函数的 PTE 页面</h3><p>步骤 2.3 中的关键函数验证通过后才会执行本节内容，否则直接跳转至 <code>LABEL_184</code>。</p>
+<ol>
+<li><p>在一个大循环里面，首先找到 <code>CriticalRoutines[i]</code> 函数所在页面基地址，有可能一个函数的大小超过 1 个页面，所以要找到该函数所在页面所有的页面基地址，我将页面基地址命名为 <code>CriticalRoutinesPageBaseAddress</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">// 获取目标函数所在的页面基址</span></span><br><span class="line"><span class="comment">// 目标函数可能很大，超过一个页面，所以需要计算目标函数的终止地址 v4207</span></span><br><span class="line"><span class="comment">// 然后在这个函数包含的页面中，进行下面的 do-while 运算</span></span><br><span class="line"><span class="comment">//////////////////////////////////////////////////////////</span></span><br><span class="line"><span class="comment">// v99:Ntos_ImageBase</span></span><br><span class="line">v112_PageBasedAddress  = (v99 + v110) &amp; <span class="number">0xFFFFFFFFFFFFF000</span>ui64; <span class="comment">// 对齐一个页面</span></span><br><span class="line">v4207 = v99 + v110 + v111; </span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>获取页面的 4 级页表虚拟地址（实际上是函数所在所有页面，外面还有一层循环）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 获取 PTE Base</span></span><br><span class="line">v115_PteAddress   = MmPteBase + ((v112_PageBasedAddress  &gt;&gt; <span class="number">9</span>) &amp; <span class="number">0x7FFFFFFFF8</span>i64);</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="comment">// X 的 PTE 为 PteAddress，PteAddress 的 PTE = X 的 PdeAddress。</span></span><br><span class="line">  <span class="comment">// v113_4levelPagetableAddress[0] = PteAddress</span></span><br><span class="line">  <span class="comment">// v113_4levelPagetableAddress[1] = PdeAddress</span></span><br><span class="line">  <span class="comment">// v113_4levelPagetableAddress[2] = PdpteAddress</span></span><br><span class="line">  <span class="comment">// v113_4levelPagetableAddress[3] = Plm4eAddress</span></span><br><span class="line">  *v113_4levelPagetableAddress = v115_PteAddress  ;</span><br><span class="line">  ++v113_4levelPagetableAddress;</span><br><span class="line">  v115_PteAddress   = MmPteBase + ((v115_PteAddress &gt;&gt; <span class="number">9</span>) &amp; <span class="number">0x7FFFFFFFF8</span>i64);</span><br><span class="line">  --v114;</span><br><span class="line">&#125;<span class="keyword">while</span> ( v114 );</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>如果 4 级页表的 <code>PAT/PS</code> 启用，则将该级页表置 0。</p>
+</li>
+<li><p>调用 <code>ExAllocatePoolWithTag</code> 函数分配 <code>NonPagedPoolNx</code> 类型内存，将该函数的 4 级页表保存起来。</p>
+</li>
+</ol>
+<h3 id="2-5-Allocate-PgContext"><a href="#2-5-Allocate-PgContext" class="headerlink" title="2.5 Allocate PgContext"></a>2.5 Allocate PgContext</h3><p>本节主要是申请一块非分页内存，这块非分页内存就是 PGContext。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">194</span>_TempPgContext = ExAllocatePoolWithTag(<span class="number">0</span>, v190 + v177, v183);</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>内存大小：<code>v190 + v177</code>。</p>
+<p>v190：可以看到 v190 最大为 <code>0x7FF</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// v190</span></span><br><span class="line">v189 = __rdtsc();</span><br><span class="line">v4495 = (__ROR8__(v189, <span class="number">3</span>) ^ v189) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64 &gt;&gt; <span class="number">64</span>;</span><br><span class="line">v190 = (v4495 ^ <span class="number">0x4002001</span> * (__ROR8__(v189, <span class="number">3</span>) ^ v189)) &amp; <span class="number">0x7FF</span>;</span><br></pre></td></tr></table></figure>
+
+<p>v177：最大为 <code>sizeof(INITKDBG) + 0xAA8 + 0x80000 + 0x7FF + Max(0x10*16)【4-levelpagetable】 + 16 个 CriticalRoutines[i] 函数大小</code>。</p>
+</li>
+<li><p>标签 v183 通过计算获得，此处忽略。</p>
+</li>
+</ol>
+<p><strong>根据代码分析有以下结论：</strong></p>
+<ol>
+<li>申请 <code>v190 + v177</code> 大小的 PGContext。</li>
+<li>在 PGContext 首尾使用随机值进行填充，填充的字节最大为 <code>v190 = 0x7FF</code> 字节。</li>
+<li>PGContext 中间有 <code>v177</code> 大小的填充数据。包含：<ul>
+<li>INITKDBG 大小</li>
+<li>0xAA8</li>
+<li>16 个 <code>CriticalRoutines[i]</code> 函数大小、及这 16 个关键函数对应的 4-level 页表（0x100）。</li>
+<li>0x80000</li>
+<li>0x7FF（v190最大可达）</li>
+</ul>
+</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2022/12/17/LFY9WObiSXDepRB.png" alt="13.png"></p>
+<p>所以 PGContext 结构大致如下：</p>
+<p><img data-src="https://s2.loli.net/2022/12/17/Fdrk21ePowVCyGZ.png" alt="14.png"></p>
+<p>紧接着，将 <code>v175 + 0x80000</code> 大小的空间清 <code>0</code>，并开始对 PGContext 进行填充。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">v212_ContextData = (<span class="keyword">char</span> *)<span class="number">194</span>_TempPgContext + (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v193_sizeofRandomValue_1;</span><br><span class="line">...</span><br><span class="line"><span class="built_in">memset</span>(v212_ContextData, <span class="number">0</span>, (<span class="keyword">unsigned</span> <span class="keyword">int</span>)(v175 + <span class="number">0x80000</span>));</span><br></pre></td></tr></table></figure>
+
+<p>该节描述代码如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*************************************************************************************/</span></span><br><span class="line"><span class="comment">// 填充 PGContext 首尾</span></span><br><span class="line">v189 = __rdtsc();</span><br><span class="line">v4495 = (__ROR8__(v189, <span class="number">3</span>) ^ v189) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64 &gt;&gt; <span class="number">64</span>;</span><br><span class="line">v190 = (v4495 ^ <span class="number">67117057</span> * (__ROR8__(v189, <span class="number">3</span>) ^ v189)) &amp; <span class="number">0x7FF</span>;</span><br><span class="line">v191 = __rdtsc();</span><br><span class="line">v192 = (__ROR8__(v191, <span class="number">3</span>) ^ v191) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64;</span><br><span class="line">v4496 = *((_QWORD *)&amp;v192 + <span class="number">1</span>);</span><br><span class="line">v193_sizeofRandomValue_1 = (*((_QWORD *)&amp;v192 + <span class="number">1</span>) ^ (<span class="keyword">unsigned</span> __int64)v192) % (<span class="keyword">unsigned</span> <span class="keyword">int</span>)(v190 + <span class="number">1</span>);</span><br><span class="line"><span class="number">194</span>_TempPgContext = ExAllocatePoolWithTag(<span class="number">0</span>, v190 + v177, v183);</span><br><span class="line"><span class="keyword">if</span> ( !<span class="number">194</span>_TempPgContext )</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">v195 = v193_sizeofRandomValue_1;</span><br><span class="line">v196 = <span class="number">194</span>_TempPgContext;</span><br><span class="line"><span class="keyword">if</span> ( (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v193_sizeofRandomValue_1 &gt;= <span class="number">8</span> )</span><br><span class="line">&#123;</span><br><span class="line">  v197 = (<span class="keyword">unsigned</span> __int64)(<span class="keyword">unsigned</span> <span class="keyword">int</span>)v193_sizeofRandomValue_1 &gt;&gt; <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    v198 = __rdtsc();</span><br><span class="line">    v195 -= <span class="number">8</span>;</span><br><span class="line">    v199 = (__ROR8__(v198, <span class="number">3</span>) ^ v198) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64;</span><br><span class="line">    v4497 = *((_QWORD *)&amp;v199 + <span class="number">1</span>);</span><br><span class="line">    *v196 = v199 ^ *((_QWORD *)&amp;v199 + <span class="number">1</span>);</span><br><span class="line">    ++v196;</span><br><span class="line">    --v197;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( v197 );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( v195 )</span><br><span class="line">&#123;</span><br><span class="line">  v200 = __rdtsc();</span><br><span class="line">  v201 = (__ROR8__(v200, <span class="number">3</span>) ^ v200) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64;</span><br><span class="line">  v4498 = *((_QWORD *)&amp;v201 + <span class="number">1</span>);</span><br><span class="line">  v202 = v201 ^ *((_QWORD *)&amp;v201 + <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    *(_BYTE *)v196 = v202;</span><br><span class="line">    v196 = (_QWORD *)((<span class="keyword">char</span> *)v196 + <span class="number">1</span>);</span><br><span class="line">    v202 &gt;&gt;= <span class="number">8</span>;</span><br><span class="line">    --v195;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( v195 );</span><br><span class="line">&#125;</span><br><span class="line">v203 = (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v193_sizeofRandomValue_1;</span><br><span class="line">v204_sizeofRandomValue_2 = v190 - v193_sizeofRandomValue_1;</span><br><span class="line">v205_RandomValue2_Start = (_QWORD *)((<span class="keyword">char</span> *)<span class="number">194</span>_TempPgContext + </span><br><span class="line">                                     (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v193_sizeofRandomValue_1 + (<span class="keyword">unsigned</span> __int64)v177);</span><br><span class="line"><span class="keyword">if</span> ( v204_sizeofRandomValue_2 &gt;= <span class="number">8</span> )</span><br><span class="line">&#123;</span><br><span class="line">  v206 = (<span class="keyword">unsigned</span> __int64)v204_sizeofRandomValue_2 &gt;&gt; <span class="number">3</span>;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    v207 = __rdtsc();</span><br><span class="line">    v204_sizeofRandomValue_2 -= <span class="number">8</span>;</span><br><span class="line">    v208 = (__ROR8__(v207, <span class="number">3</span>) ^ v207) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64;</span><br><span class="line">    v4499 = *((_QWORD *)&amp;v208 + <span class="number">1</span>);</span><br><span class="line">    *v205_RandomValue2_Start = v208 ^ *((_QWORD *)&amp;v208 + <span class="number">1</span>);</span><br><span class="line">    ++v205_RandomValue2_Start;</span><br><span class="line">    --v206;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( v206 );</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( v204_sizeofRandomValue_2 )</span><br><span class="line">&#123;</span><br><span class="line">  v209 = __rdtsc();</span><br><span class="line">  v210 = (__ROR8__(v209, <span class="number">3</span>) ^ v209) * (<span class="keyword">unsigned</span> __int128)<span class="number">0x7010008004002001</span>ui64;</span><br><span class="line">  v4500 = *((_QWORD *)&amp;v210 + <span class="number">1</span>);</span><br><span class="line">  v211 = v210 ^ *((_QWORD *)&amp;v210 + <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    *(_BYTE *)v205_RandomValue2_Start = v211;</span><br><span class="line">    v205_RandomValue2_Start = (_QWORD *)((<span class="keyword">char</span> *)v205_RandomValue2_Start + <span class="number">1</span>);</span><br><span class="line">    v211 &gt;&gt;= <span class="number">8</span>;</span><br><span class="line">    --v204_sizeofRandomValue_2;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( v204_sizeofRandomValue_2 );</span><br><span class="line">&#125;</span><br><span class="line">v212_ContextData = (<span class="keyword">char</span> *)<span class="number">194</span>_TempPgContext + (<span class="keyword">unsigned</span> <span class="keyword">int</span>)v193_sizeofRandomValue_1;</span><br><span class="line">v4501 = <span class="number">194</span>_TempPgContext;</span><br><span class="line">v4199 = (<span class="keyword">unsigned</span> __int64)<span class="number">194</span>_TempPgContext + v203;</span><br><span class="line"><span class="keyword">if</span> ( !(_QWORD *)((<span class="keyword">char</span> *)<span class="number">194</span>_TempPgContext + v203) )</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// v173 = v4201_INITKDBG_VirtualSize, v174 = 0xAA8</span></span><br><span class="line"><span class="comment">// v175 = v173 + v174 == v4201_INITKDBG_VirtualSize + 0xAA8</span></span><br><span class="line">v213 = v175 + <span class="number">0x80000</span>;</span><br><span class="line">v4202_BOOL_GlobleFlag = v175 + <span class="number">0x80000</span>;</span><br><span class="line"><span class="built_in">memset</span>(v212_ContextData, <span class="number">0</span>, (<span class="keyword">unsigned</span> <span class="keyword">int</span>)(v175 + <span class="number">0x80000</span>));</span><br><span class="line"><span class="comment">/*************************************************************************************/</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h2 id="3-PGContext-数据填充"><a href="#3-PGContext-数据填充" class="headerlink" title="3 PGContext 数据填充"></a>3 PGContext 数据填充</h2><h3 id="3-1-CmpAppendDllSection"><a href="#3-1-CmpAppendDllSection" class="headerlink" title="3.1 CmpAppendDllSection"></a>3.1 CmpAppendDllSection</h3><p>先观察 <code>CmpAppendDllSection</code> 函数特征：</p>
+<ol>
+<li><p>从 IDA 反汇编结果来看函数 <code>CmpAppendDllSection</code> 大小为 <code>0xC8</code>。</p>
+<p><img data-src="https://s2.loli.net/2022/12/18/IuSfcrkMeP3Qblt.png" alt="15.png"></p>
+<p><code>0x190 + 0xC8 = 0x258</code>，可以看到函数从 <code>0x0000000140A36246</code> 到 <code>0x0000000140A36258</code> 都是填充数据。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">INIT:<span class="number">0000000140</span>A36190 CmpAppendDllSection proc near          </span><br><span class="line">INIT:<span class="number">0000000140</span>A36190                                    db      <span class="number">2</span>Eh</span><br><span class="line">INIT:<span class="number">0000000140</span>A36190 <span class="number">2</span>E <span class="number">48</span> <span class="number">31</span> <span class="number">11</span>                        xor     [<span class="type">rcx</span>], rdx</span><br><span class="line">...</span><br><span class="line">INIT:<span class="number">0000000140</span>A36241 BA <span class="number">01</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                     mov     edx, <span class="number">1</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A36246 <span class="number">41</span> FF E0                           jmp     r8</span><br><span class="line">INIT:<span class="number">0000000140</span>A36246                          ; -------------------------------------------------------------------</span><br><span class="line">INIT:<span class="number">0000000140</span>A36249 <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span>+           db <span class="number">0</span>Fh dup(<span class="number">90</span><span class="built_in">h</span>)</span><br><span class="line">INIT:<span class="number">0000000140</span>A36249 <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span> <span class="number">90</span>     CmpAppendDllSection endp</span><br><span class="line">INIT:<span class="number">0000000140</span>A36258 CC CC CC CC CC CC CC CC+ byte_140A36258  db <span class="number">0</span>Eh dup(<span class="number">0</span>CCh)</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>函数首字节 <code>0x2E</code> 像是一个 Header Flag，并不参与函数的实际功能。彷佛是表明此处是 <code>CmpAppendDllSection</code> 函数。</p>
+</li>
+</ol>
+<p>紧接着将该函数拷贝至 PGContext v212 开始的位置，共复制了 <code>0xC4</code> 字节。</p>
+<p>注意：<code>_OWORD</code> 表示 16 Bytes。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">_enable();	<span class="comment">// cli</span></span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">505</span>) = v175;</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">647</span>) = v213;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">249</span>) = v4501;</span><br><span class="line">  v323 = (<span class="keyword">signed</span> __int64)(v212_ContextData + <span class="number">128</span>);</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">585</span>) = v4206;</span><br><span class="line">  *(_OWORD *)v212_ContextData = *(_OWORD *)CmpAppendDllSection;</span><br><span class="line">  *((_OWORD *)v212_ContextData + <span class="number">1</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">1</span>);</span><br><span class="line">  *((_OWORD *)v212_ContextData + <span class="number">2</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">2</span>);</span><br><span class="line">  *((_OWORD *)v212_ContextData + <span class="number">3</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">3</span>);</span><br><span class="line">  *((_OWORD *)v212_ContextData + <span class="number">4</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">4</span>);</span><br><span class="line">  *((_OWORD *)v212_ContextData + <span class="number">5</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">5</span>);</span><br><span class="line">  *((_OWORD *)v212_ContextData + <span class="number">6</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">6</span>);  <span class="comment">// 96~192, Total 112 bytes</span></span><br><span class="line">  *(_OWORD *)(v323 - <span class="number">16</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">7</span>);</span><br><span class="line">  *(_OWORD *)v323 = *((_OWORD *)CmpAppendDllSection + <span class="number">8</span>);</span><br><span class="line">  *(_OWORD *)(v323 + <span class="number">16</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">9</span>);</span><br><span class="line">  *(_OWORD *)(v323 + <span class="number">32</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">10</span>);</span><br><span class="line">  *(_OWORD *)(v323 + <span class="number">48</span>) = *((_OWORD *)CmpAppendDllSection + <span class="number">11</span>); <span class="comment">// 176~192, Total 0xC0 bytes</span></span><br><span class="line">  *(_DWORD *)(v323 + <span class="number">64</span>) = *((_DWORD *)CmpAppendDllSection + <span class="number">48</span>); <span class="comment">// 192~196, Total 0xC4 bytes </span></span><br><span class="line">  LODWORD(v323) = v4210;	<span class="comment">// v4210 = v174</span></span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">508</span>) = v4210 + v4191_ToINITKDBGSectionBase_RVA;</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">506</span>) = v323 + v4190_sub_140A0DD10ToINITKDBGSectionBase_RVA;</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">507</span>) = v323 + v4193_RtlLookupFunctionEntryEx_ToINITKDBGSectionBase_RVA;</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">509</span>) = v323 + v4194_sub_140A0E830_ToINITKDBGSectionBase_RVA;</span><br><span class="line">_disable();	<span class="comment">// sti</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：在反汇编代码中，这部分代码的赋值使用 <mark class="label danger"> movups</mark> 指令（SSE 指令），表示对 16 字节（128 Bytes）移动处理。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">INIT:<span class="number">0000000140</span>A1DA5B                 lea     rax, CmpAppendDllSection</span><br><span class="line">INIT:<span class="number">0000000140</span>A1DA62                 movups  xmm0, xmmword ptr [rax]</span><br><span class="line">INIT:<span class="number">0000000140</span>A1DA65                 movups  xmmword ptr [r14], xmm0</span><br><span class="line">INIT:<span class="number">0000000140</span>A1DA69                 movups  xmm1, xmmword ptr [rax+<span class="number">10</span>h]</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-重要函数-API-地址备份"><a href="#3-2-重要函数-API-地址备份" class="headerlink" title="3.2 重要函数(API)地址备份"></a>3.2 重要函数(API)地址备份</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br></pre></td><td class="code"><pre><span class="line">_enable();	<span class="comment">// cli</span></span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">29</span>) = ExAcquireResourceSharedLite; <span class="comment">// 232~240, Total 0xF0 bytes</span></span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">30</span>) = ExAcquireResourceExclusiveLite;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">31</span>) = ExAllocatePoolWithTag;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">32</span>) = ExFreePoolWithTag;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">33</span>) = ExMapHandleToPointer;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">34</span>) = ExQueueWorkItem;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">35</span>) = ExReleaseResourceLite;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">36</span>) = ExUnlockHandleTableEntry;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">37</span>) = ExAcquirePushLockExclusiveEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">38</span>) = ExReleasePushLockExclusiveEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">39</span>) = ExAcquirePushLockSharedEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">40</span>) = ExReleasePushLockSharedEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">41</span>) = KeAcquireInStackQueuedSpinLockAtDpcLevel;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">42</span>) = ExAcquireSpinLockSharedAtDpcLevel;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">43</span>) = KeBugCheckEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">44</span>) = KeDelayExecutionThread;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">45</span>) = KeEnterCriticalRegionThread;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">46</span>) = KeLeaveCriticalRegion;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">47</span>) = KeEnterGuardedRegion;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">48</span>) = KeLeaveGuardedRegion;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">49</span>) = KeReleaseInStackQueuedSpinLockFromDpcLevel;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">50</span>) = ExReleaseSpinLockSharedFromDpcLevel;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">51</span>) = KeRevertToUserGroupAffinityThread;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">52</span>) = KeProcessorGroupAffinity;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">53</span>) = KeInitializeEnumerationContext;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">54</span>) = KeEnumerateNextProcessor;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">55</span>) = KeCountSetBitsAffinityEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">56</span>) = KeQueryAffinityProcess;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">57</span>) = KeQueryAffinityThread;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">58</span>) = KeSetSystemGroupAffinityThread;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">59</span>) = KeSetCoalescableTimer;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">63</span>) = RtlImageNtHeader;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">66</span>) = RtlSectionTableFromVirtualAddress;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">64</span>) = RtlLookupFunctionTableEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">65</span>) = RtlPcToFileHeader;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">60</span>) = HalPutDmaAdapter;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">61</span>) = &amp;ObReferenceObjectByName;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">62</span>) = RtlImageDirectoryEntryToData;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">67</span>) = DbgPrint;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">68</span>) = MmAllocateIndependentPages;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">69</span>) = MmFreeIndependentPages;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">70</span>) = MmSetPageProtection;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">76</span>) = RtlLookupFunctionEntry;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">77</span>) = KeAcquireSpinLockRaiseToDpc;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">78</span>) = KeReleaseSpinLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">79</span>) = MmGetSessionById;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">80</span>) = MmGetNextSession;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">81</span>) = MmQuitNextSession;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">82</span>) = MmAttachSession;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">83</span>) = MmDetachSession;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">84</span>) = MmGetSessionIdEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">85</span>) = MmIsSessionAddress;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">86</span>) = MmIsAddressValid;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">87</span>) = MmSessionGetWin32Callouts;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">88</span>) = KeInsertQueueApc;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">89</span>) = KeWaitForSingleObject;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">91</span>) = ExReferenceCallBackBlock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">92</span>) = ExGetCallBackBlockRoutine;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">93</span>) = ExDereferenceCallBackBlock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">94</span>) = sub_1403DA4F0;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">95</span>) = PspEnumerateCallback;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">96</span>) = CmpEnumerateCallback;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">97</span>) = DbgEnumerateCallback;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">98</span>) = ExpEnumerateCallback;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">99</span>) = ExpGetNextCallback;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">100</span>) = xHalTimerWatchdogStop;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">101</span>) = KiSchedulerApcTerminate;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">102</span>) = KiSchedulerApc;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">103</span>) = xHalTimerWatchdogStop;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">104</span>) = sub_1403DB560;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">105</span>) = MmAllocatePagesForMdlEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">106</span>) = MmAllocateMappingAddress;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">107</span>) = MmMapLockedPagesWithReservedMapping;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">108</span>) = MmUnmapReservedMapping;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">109</span>) = sub_1403E7C30;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">110</span>) = sub_1403E7CA0;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">111</span>) = MmAcquireLoadLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">112</span>) = MmReleaseLoadLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">113</span>) = KeEnumerateQueueApc;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">114</span>) = KeIsApcRunningThread;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">115</span>) = sub_1403DB430;</span><br><span class="line">  v324 = (__int64)v5121;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">116</span>) = PsAcquireProcessExitSynchronization;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">117</span>) = ObDereferenceProcessHandleTable;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">118</span>) = PsGetNextProcess;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">119</span>) = PsQuitNextProcessThread;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">120</span>) = PsGetNextProcessEx;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">121</span>) = MmIsSessionLeaderProcess;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">122</span>) = PsInvokeWin32Callout;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">123</span>) = MmEnumerateAddressSpaceAndReferenceImages;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">124</span>) = PsGetProcessProtection;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">125</span>) = PsGetProcessSignatureLevel;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">126</span>) = PsGetProcessSectionBaseAddress;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">127</span>) = SeCompareSigningLevels;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">133</span>) = RtlIsMultiSessionSku;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">134</span>) = KiEnumerateCallback;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">135</span>) = KeStackAttachProcess;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">136</span>) = KeUnstackDetachProcess;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">137</span>) = KeIpiGenericCall;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">138</span>) = sub_1403E7A80;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">139</span>) = MmGetPhysicalAddress;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">140</span>) = MmUnlockPages;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">128</span>) = KeComputeSha256;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">129</span>) = KeComputeParallelSha256;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">130</span>) = KeSetEvent;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">141</span>) = VslVerifyPage;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">144</span>) = PsLookupProcessByProcessId;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">145</span>) = PsGetProcessId;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">146</span>) = MmCheckProcessShadow;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">147</span>) = MmGetImageRetpolineCodePage;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">300</span>) = &amp;qword_140C12EC0;</span><br><span class="line">  <span class="keyword">if</span> ( v324 )</span><br><span class="line">    *((_QWORD *)v212_ContextData + <span class="number">90</span>) = *(_QWORD *)(v324 + <span class="number">8</span>);</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">131</span>) = RtlpConvertFunctionEntry;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">132</span>) = RtlpLookupPrimaryFunctionEntry;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">142</span>) = KiGetInterruptObjectAddress;</span><br><span class="line">_disable();	<span class="comment">// sti</span></span><br><span class="line">  <span class="keyword">if</span> ( !(_BYTE)KdDebuggerNotPresent )	<span class="comment">// Anti Debug</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">while</span> ( <span class="number">1</span> )</span><br><span class="line">      ;</span><br><span class="line">  &#125;</span><br><span class="line">_enable();</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">599</span>) = v175;</span><br><span class="line">_disable();</span><br><span class="line">...</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">612</span>) ^= (*((_DWORD *)v212_ContextData + <span class="number">612</span>) ^ <span class="number">0x1C00</span>) &amp; <span class="number">0x7C00</span>;</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">596</span>) = dword_140C12E80++;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">256</span>) = <span class="number">0</span>i64;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">294</span>) = VfExcludeSections;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">295</span>) = *(&amp;VfExcludeSections + <span class="number">1</span>);</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">296</span>) = off_140C0EFE0;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">297</span>) = *(&amp;off_140C0EFE0 + <span class="number">1</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-3-全局变量及指针"><a href="#3-3-全局变量及指针" class="headerlink" title="3.3 全局变量及指针"></a>3.3 全局变量及指针</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">_enable();</span><br><span class="line">  *((_DWORD *)v212_ContextData + <span class="number">523</span>) = <span class="number">0x140000</span> / v5120;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">152</span>) = &amp;qword_140C0F140;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">153</span>) = &amp;qword_140C12EA8;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">154</span>) = &amp;qword_140C12EB0;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">155</span>) = &amp;qword_140C12EB8;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">156</span>) = PsInitialSystemProcess;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">157</span>) = KiWaitAlways;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">158</span>) = &amp;KiEntropyTimingRoutine;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">159</span>) = &amp;KiProcessListHead;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">160</span>) = &amp;KiProcessListLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">161</span>) = ObpTypeObjectType;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">162</span>) = IoDriverObjectType;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">163</span>) = PsProcessType;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">164</span>) = &amp;PsActiveProcessHead;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">165</span>) = &amp;PsInvertedFunctionTable;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">166</span>) = &amp;PsLoadedModuleList;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">167</span>) = &amp;PsLoadedModuleResource;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">168</span>) = &amp;PsLoadedModuleSpinLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">169</span>) = &amp;PspActiveProcessLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">170</span>) = &amp;PspCidTable;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">171</span>) = &amp;ExpUuidLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">172</span>) = &amp;AlpcpPortListLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">173</span>) = &amp;KeServiceDescriptorTable;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">174</span>) = &amp;KeServiceDescriptorTableShadow;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">175</span>) = &amp;KeServiceDescriptorTableFilter;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">176</span>) = &amp;VfThunksExtended;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">177</span>) = &amp;PsWin32CallBack;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">178</span>) = &amp;qword_140C12E88;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">179</span>) = &amp;KiTableInformation;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">180</span>) = &amp;HandleTableListHead;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">181</span>) = &amp;HandleTableListLock;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">182</span>) = ObpKernelHandleTable;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">183</span>) = <span class="number">-9345848836096</span>i64; <span class="comment">// 0xFFFFF780000000C4</span></span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">184</span>) = KiWaitNever;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">185</span>) = &amp;SeProtectedMapping;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">187</span>) = &amp;KiStackProtectNotifyEvent;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">188</span>) = MmPteBase;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">189</span>) = PsNtosImageBase;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">190</span>) = PsHalImageBase;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">191</span>) = &amp;KeNumberProcessors_0;</span><br><span class="line">  v333 = &amp;_ti_a;</span><br><span class="line">  v334 = <span class="number">2</span>i64;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">192</span>) = &amp;::Src_INITKDBG_VirtualAddress;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">193</span>) = &amp;qword_140CFC3D0;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">194</span>) = RtlpInvertedFunctionTable;</span><br><span class="line">  *((_QWORD *)v212_ContextData + <span class="number">186</span>) = KiInterruptThunk;</span><br></pre></td></tr></table></figure>
+
+<p>上面这些数据大概表述如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">PG_CONTEXT</span>&#123;</span></span><br><span class="line">	BYTE CmpAppendDllSection[<span class="number">0xC4</span>]; <span class="comment">// 0x0000 - 0x00C4</span></span><br><span class="line">	BYTE UnknownData[<span class="number">0x24</span>]; 	<span class="comment">// 0x00C4 - 0x00E8</span></span><br><span class="line">	PVOID ExAcquireResourceSharedLite;</span><br><span class="line">	PVOID ExAcquireResourceExclusiveLite;</span><br><span class="line">	PVOID ExAllocatePoolWithTag;</span><br><span class="line">	PVOID ExFreePoolWithTag;</span><br><span class="line">	PVOID ExMapHandleToPointer;</span><br><span class="line">	....</span><br><span class="line">&#125;PG_CONTEXT, *PPG_CONTEXT;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="3-4-其他数据备份"><a href="#3-4-其他数据备份" class="headerlink" title="3.4 其他数据备份"></a>3.4 其他数据备份</h3><p>0xB6 &#x3D; 182</p>
+<p>国科量子</p>
+<p>终于出现了与PatchGuardContext有直接关联的逻辑。这里被命名为FixPgContextSize的原因是,实际上池没有分配到相应的大小。因为包括PgContext大小的其他数据也包括在内。</p>
+<p>在这里以现在为基准，PgContext 大小为 0xAA0，可以通过很多文件确认。</p>
+<p>例如,确认 KiMarkBugCheckRegions 程序的最下端如下。</p>
+<p>后续工作：</p>
+<p>接下来分析回调<strong>b -</strong> <strong>«</strong> <strong>TV</strong> <strong>»</strong> <strong>回调，第一次将</strong> <strong>PatchGuard</strong> <strong>链接到</strong> <strong>mssecflt.sys</strong><a target="_blank" rel="noopener" href="https://github.com/0xcpu/ExecutiveCallbackObjects/tree/master/542875F90F9B47F497B64BA219CACF69">https://github.com/0xcpu/ExecutiveCallbackObjects/tree/master/542875F90F9B47F497B64BA219CACF69</a></p>
+<p>然后参考<a target="_blank" rel="noopener" href="https://shhoya.github.io/windows_pginit2.html">PatchGuard Initialize -2-</a>、<a target="_blank" rel="noopener" href="https://shhoya.github.io/windows_pgtravel.html">PatchGuard Initialization Analysis -1-</a>分析PatchGuard的初始化。</p>
+<p>然后分析TETRANE-触发检查</p>
+<p>INIT:0000000140A1DA5B                 lea     rax, CmpAppendDllSection<br>INIT:0000000140A1DA62                 movups  xmm0, xmmword ptr [rax]</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Kernel-Patch-Protection2/" title="内核补丁保护（二）初始化">https://directoree.github.io/post/Kernel-Patch-Protection2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-PG/" rel="tag"><i class="fa fa-tag"></i> x64 PG</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Kernel-Patch-Protection/" rel="prev" title="内核补丁保护（一）初始化">
+                  <i class="fa fa-chevron-left"></i> 内核补丁保护（一）初始化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">32:03</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Kernel-Patch-Protection2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
