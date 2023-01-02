@@ -22,20 +22,22 @@
     var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="作曲 : 张洢豪 作词 : 薛之谦 角色精湛 主题略荒诞 理由太短 是让人不安 疑信参半 却无比期盼 你的惯犯 圆满 别让纠缠 显得 孤单 你肆无忌惮 你急着闹翻 用词刁钻 要观后感 爱本是两端 要倾斜不难 要摧毁简单 我顺其自然 我表现勇敢 补缺填满 随意调侃 爱会变习惯 维护者喜欢 自愈的快感 理由丰满 角色越骨感 染上情感 退让都不谈 承载过半 还奋力纠缠 你的预判 圆满 我尽量延缓">
+  <meta name="description" content="😄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="薛之谦-《肆无忌惮》专辑">
-<meta property="og:url" content="https://directoree.github.io/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/index.html">
+<meta property="og:title" content="内核补丁保护（四）其他触发 PG 检查方式">
+<meta property="og:url" content="https://directoree.github.io/post/Kernel-Patch-Protection4/index.html">
 <meta property="og:site_name" content="Catecat">
-<meta property="og:description" content="作曲 : 张洢豪 作词 : 薛之谦 角色精湛 主题略荒诞 理由太短 是让人不安 疑信参半 却无比期盼 你的惯犯 圆满 别让纠缠 显得 孤单 你肆无忌惮 你急着闹翻 用词刁钻 要观后感 爱本是两端 要倾斜不难 要摧毁简单 我顺其自然 我表现勇敢 补缺填满 随意调侃 爱会变习惯 维护者喜欢 自愈的快感 理由丰满 角色越骨感 染上情感 退让都不谈 承载过半 还奋力纠缠 你的预判 圆满 我尽量延缓">
+<meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2018-11-17T15:54:01.000Z">
-<meta property="article:modified_time" content="2019-01-13T06:56:23.000Z">
+<meta property="article:published_time" content="2023-01-02T08:54:43.000Z">
+<meta property="article:modified_time" content="2023-01-02T16:21:05.432Z">
 <meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 PG">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/">
+<link rel="canonical" href="https://directoree.github.io/post/Kernel-Patch-Protection4/">
 
 
 <script class="page-configurations">
@@ -48,7 +50,7 @@
   };
 </script>
 
-  <title>薛之谦-《肆无忌惮》专辑 | Catecat</title>
+  <title>内核补丁保护（四）其他触发 PG 检查方式 | Catecat</title>
   
 
 
@@ -217,7 +219,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -229,6 +231,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%B3%BB%E7%BB%9F%E7%BA%BF%E7%A8%8B%E6%96%B9%E5%BC%8F"><span class="nav-text">1 系统线程方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%86%85%E6%A0%B8-APC-%E6%96%B9%E5%BC%8F"><span class="nav-text">2 内核 APC 方式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%EF%BC%88%E9%80%9A%E7%9F%A5%E5%9B%9E%E8%B0%83%EF%BC%89"><span class="nav-text">3 全局变量（通知回调）</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -244,7 +247,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-count">142</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -257,7 +260,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">78</span>
+        <span class="site-state-item-count">79</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -321,7 +324,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Kernel-Patch-Protection4/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -334,7 +337,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          薛之谦-《肆无忌惮》专辑
+          内核补丁保护（四）其他触发 PG 检查方式
         </h1>
 
         <div class="post-meta-container">
@@ -345,14 +348,14 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2018-11-17 23:54:01" itemprop="dateCreated datePublished" datetime="2018-11-17T23:54:01+08:00">2018-11-17</time>
+      <time title="创建时间：2023-01-02 16:54:43" itemprop="dateCreated datePublished" datetime="2023-01-02T16:54:43+08:00">2023-01-02</time>
     </span>
       <span class="post-meta-item">
         <span class="post-meta-item-icon">
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-01-13 14:56:23" itemprop="dateModified" datetime="2019-01-13T14:56:23+08:00">2019-01-13</time>
+        <time title="修改时间：2023-01-03 00:21:05" itemprop="dateModified" datetime="2023-01-03T00:21:05+08:00">2023-01-03</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -360,12 +363,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E9%9F%B3%E4%B9%90/" itemprop="url" rel="index"><span itemprop="name">音乐</span></a>
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
         </span>
     </span>
 
   
-    <span id="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/" class="post-meta-item leancloud_visitors" data-flag-title="薛之谦-《肆无忌惮》专辑" title="阅读次数">
+    <span id="/post/Kernel-Patch-Protection4/" class="post-meta-item leancloud_visitors" data-flag-title="内核补丁保护（四）其他触发 PG 检查方式" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -380,8 +383,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/Kernel-Patch-Protection4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Kernel-Patch-Protection4/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -393,14 +396,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>471</span>
+      <span>4.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -411,49 +414,47 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=110 src="//music.163.com/outchain/player?type=2&id=557581967&auto=0&height=66"></iframe>
+        <p>😄</p>
+<span id="more"></span>
 
-<center><font face="楷体">
-作曲 : 张洢豪
-作词 : 薛之谦
-角色精湛 主题略荒诞
-理由太短 是让人不安
-疑信参半 却无比期盼
-你的惯犯 圆满
-别让纠缠 显得 孤单
-你肆无忌惮 你急着闹翻
-用词刁钻 要观后感
-爱本是两端 要倾斜不难 要摧毁简单
-我顺其自然 我表现勇敢
-补缺填满 随意调侃
-爱会变习惯 维护者喜欢 自愈的快感
-理由丰满 角色越骨感
-染上情感 退让都不谈
-承载过半 还奋力纠缠
-你的预判 圆满
-我尽量延缓 胡闹狂欢
-你肆无忌惮 你急着闹翻
-用词刁钻 要观后感
-爱本是两端 要倾斜不难 要摧毁简单
-我违背自然 我表演勇敢
-宁缺勿滥 严加看管
-无用的手段 维护者习惯 让自己难堪
-最后的离散 请用词温暖
-制作人：张洢豪
-编曲： 张洢豪、Eric Juu
-木吉他：张洢豪
-电吉他：Derrick Sepnio
-钢琴：Eric Juu
-Bass：Rayvaughn Covington
-鼓：Padget Nanton III
-合声：薛之谦
-人声录制：汝文博@BIG.J Studio
-乐器录制：Tsang Yat Lung@Non Sound Studio
-混音：赵靖@BIG.J Studio
-母带：全相彦@OK Mastering Studio
-</font>
+<h2 id="1-系统线程方式"><a href="#1-系统线程方式" class="headerlink" title="1 系统线程方式"></a>1 系统线程方式</h2><p>使用系统线程触发 PG 检查方式的概率不是很高。</p>
+<p>在 <code>PG_KiInitializePatchGuardContext</code> 函数中使用<strong>方法三</strong>初始化 <code>PGContext</code> 时，在 <code>PG_KiInitializePatchGuardContext</code> 函数中调用 <code>Pg_InitMethod3SystemThread</code> 函数来初始化一个系统线程。</p>
+<p>通过系统线程来触发 PG 检查适用于方法三初始的 PGContext。</p>
+<p>初始化过程如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ExpLicenseWatchInitWorker --&gt; PG_KiFilterFiberContext(pKiServiceTablesLocked) <span class="comment">// 参数 KPRCB[0].HalReserved[6]</span></span><br><span class="line"><span class="comment">// 参数结构如下 </span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">KI_FILTER_FIBER_PARAM</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  CHAR code_prefetch_rcx_retn[<span class="number">4</span>]; <span class="comment">// prefetchw byte ptr [rcx]; retn;</span></span><br><span class="line">  CHAR padding[<span class="number">4</span>];		<span class="comment">// 用于对齐的4字节（Align）</span></span><br><span class="line">  PVOID pPsCreatesystemThread;	<span class="comment">// PsCreatesystemThread 函数的存根</span></span><br><span class="line">  PVOID Pg_Method3stubTocheckRoutine_sub_1405B9FB0;	<span class="comment">// 被创建的系统线程的回调函数</span></span><br><span class="line">  PVOID pKiBalanceSetManagerPeriodicDpc;		<span class="comment">// 指向一个全局的 KDPC 结构</span></span><br><span class="line">&#125;KI_FILTER_FIBER_PARAM, *PKI_FILTER_FIBER_PARAM;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
+<p>在 <code>PG_KiInitializePatchGuardContext</code> 调用 <code>Pg_InitMethod3SystemThread</code> 函数，在函数 <code>Pg_InitMethod3SystemThread</code> 中使用 <code>KI_FILTER_FIBER_PARAM.pPsCreatesystemThread</code> 来创建一个系统线程，线程回调函数为 <code>KI_FILTER_FIBER_PARAM.Pg_Method3stubTocheckRoutine_sub_1405B9FB0</code>。</p>
+<p>通过分析线程回调函数 <code>Pg_Method3stubTocheckRoutine_sub_1405B9FB0</code>：</p>
+<ol>
+<li><p>在 <code>Pg_InitMethod3SystemThread</code> 触发异常，在异常处理中调用 <code>KI_FILTER_FIBER_PARAM.pPsCreatesystemThread</code> 创建系统线程。</p>
+<p>线程回调函数的参数可以将其命名为 <code>pg_StartContext</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">pg_StartContext</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	ULONG64 pEvent_0x00; <span class="comment">// a pointer to the event</span></span><br><span class="line">	ULONG64 bRandom_ShouldRunKeRundownApcQueues_0x08; <span class="comment">// set at 0x1408A970B</span></span><br><span class="line">	ULONG64 unknown_0x10;</span><br><span class="line">	KEVENT  event_0x18；</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>在线程回调函数中 <code>KeWaitForSingleObject(pEvent_0x00, 0, 0, 0, 0)</code>，等待没有设置超时时间，而该事件是在 <code>PG_KiInitializePatchGuardContext</code> 结束时通知的。</p>
+</li>
+<li><p>线程回调函数等待信号之后，就开始进行几乎类似于 DPC 触发 PG Check 的解密过程</p>
+<p>第一阶段使用到 <code>KiWaitAlways</code>、<code>KiWaitNever</code> 参与解密，第二阶段就是 <code>CmpAppendDlSection</code> 自解密。</p>
+</li>
+<li><p>一旦验证结束，就会调用 <code>KeDelayExecutionThread/KeWaitForSingleObject</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ( v32 )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">do</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v35 )</span><br><span class="line">      KeDelayExecutionThread(<span class="number">0</span>, <span class="number">0</span>, &amp;Interval);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      KeWaitForSingleObject(v4, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, &amp;Interval);</span><br><span class="line">    v31 = *v36;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">while</span> ( !*v36 );</span><br><span class="line">&#125;</span><br><span class="line">v34 = *(_QWORD *)(v31 + <span class="number">32</span>);</span><br><span class="line">v9 = v8 ^ v31;</span><br><span class="line">*v36 = <span class="number">0</span>i64;</span><br><span class="line">v10 = v8 ^ v34;</span><br><span class="line"><span class="keyword">if</span> ( v35 )</span><br><span class="line">  KeDelayExecutionThread(<span class="number">0</span>, <span class="number">0</span>, &amp;Interval);</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  KeWaitForSingleObject(v4, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, &amp;Interval);</span><br></pre></td></tr></table></figure>
+
+<p>这里的 <code>Interval</code> 等待时间约为 <code>2 min～ 2 min 10 seconds</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">v2 = ExGenRandom(<span class="number">1</span>i64);</span><br><span class="line">v32 = *(_QWORD *)(v1 + <span class="number">8</span>) == <span class="number">1</span>i64;</span><br><span class="line">Interval.QuadPart = <span class="number">-1200000000</span>i64</span><br><span class="line">                  - (v2</span><br><span class="line">                   - <span class="number">100000000</span> * ((<span class="keyword">unsigned</span> __int64)(v2 * (<span class="keyword">unsigned</span> __int128)<span class="number">0xABCC77118461CEFD</span>ui64 &gt;&gt; <span class="number">64</span>) &gt;&gt; <span class="number">26</span>));</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="2-内核-APC-方式"><a href="#2-内核-APC-方式" class="headerlink" title="2 内核 APC 方式"></a>2 内核 APC 方式</h2><p>使用 <code>PsEnumProcessThreads</code> 来枚举 <code>System</code> 系统进程中的系统线程，如果哪一个线程回调函数等于 <code>PopIrpWorkerControl</code>，初始化则将该线程 <code>ETHREAD</code> 保存至 PGContext（将APC插入到该线程），然后将 <code>ETHREAD</code> 存放在该 <code>KAPC</code> 结构中。即 <code>ETHREAD.StartAddress = PopIrpWorkerControl</code>。</p>
+<p>该 APC 的 <code>KernelRoutine = KiDispatchCallout</code>，也就是说 <code>KiDispatchCallout</code> 为 APC 回调函数（PG Check 函数）。</p>
+<p>实际上 <code>System</code> 进程中有好多个这样的线程：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !process <span class="number">0</span> <span class="number">0</span></span><br><span class="line">**** NT ACTIVE PROCESS DUMP ****</span><br><span class="line">PROCESS ffff858bb88a7080</span><br><span class="line">    SessionId: none  Cid: <span class="number">0004</span>    Peb: <span class="number">00000000</span>  ParentCid: <span class="number">0000</span></span><br><span class="line">    DirBase: <span class="number">001</span>ad002  ObjectTable: ffffdb8aefe4b700  HandleCount: <span class="number">2080.</span></span><br><span class="line">    Image: System</span><br><span class="line"></span><br><span class="line">kd&gt; !process <span class="number">0</span> <span class="number">0</span></span><br><span class="line">**** NT ACTIVE PROCESS DUMP ****</span><br><span class="line">PROCESS ffff858bb88a7080</span><br><span class="line">    SessionId: none  Cid: <span class="number">0004</span>    Peb: <span class="number">00000000</span>  ParentCid: <span class="number">0000</span></span><br><span class="line">    DirBase: <span class="number">001</span>ad002  ObjectTable: ffffdb8aefe4b700  HandleCount: <span class="number">2080.</span></span><br><span class="line">    Image: System</span><br><span class="line">...</span><br><span class="line">      </span><br><span class="line">        THREAD ffff858bb8892400  Cid <span class="number">0004.000</span>c  Teb: <span class="number">0000000000000000</span> Win32Thread: <span class="number">0000000000000000</span> WAIT: (Executive) KernelMode Non-Alertable</span><br><span class="line">            fffff80474e35a20  SynchronizationEvent</span><br><span class="line"><span class="comment">/***/</span>   Win32 Start Address nt!PopIrpWorkerControl (<span class="number">0xfffff804745dec50</span>) <span class="comment">/****/</span></span><br><span class="line">        Stack Init ffffc3059da0dc90 Current ffffc3059da0d810</span><br><span class="line">        Base ffffc3059da0e000 Limit ffffc3059da08000 Call <span class="number">0000000000000000</span></span><br><span class="line">        Priority <span class="number">15</span> BasePriority <span class="number">13</span> PriorityDecrement <span class="number">32</span> IoPriority <span class="number">2</span> PagePriority <span class="number">5</span></span><br><span class="line">        Child-SP          RetAddr               Call Site</span><br><span class="line">        ffffc305`<span class="number">9</span>da0d850 fffff804`<span class="number">744280b</span>0     nt!KiSwapContext+<span class="number">0x76</span></span><br><span class="line">        ffffc305`<span class="number">9</span>da0d990 fffff804`<span class="number">744275</span>df     nt!KiSwapThread+<span class="number">0x500</span></span><br><span class="line">        ffffc305`<span class="number">9</span>da0da40 fffff804`<span class="number">74426e83</span>     nt!KiCommitThreadWait+<span class="number">0x14f</span></span><br><span class="line">        ffffc305`<span class="number">9</span>da0dae0 fffff804`<span class="number">745</span>dec72     nt!KeWaitForSingleObject+<span class="number">0x233</span></span><br><span class="line">        ffffc305`<span class="number">9</span>da0dbd0 fffff804`<span class="number">74486</span>d25     nt!PopIrpWorkerControl+<span class="number">0x22</span></span><br><span class="line">        ffffc305`<span class="number">9</span>da0dc10 fffff804`<span class="number">74615778</span>     nt!PspSystemThreadStartup+<span class="number">0x55</span></span><br><span class="line">        ffffc305`<span class="number">9</span>da0dc60 <span class="number">00000000</span>`<span class="number">00000000</span>     nt!KiStartSystemThread+<span class="number">0x28</span></span><br><span class="line">...</span><br><span class="line">kd&gt; ? PopIrpWorkerControl</span><br><span class="line">Evaluate expression: <span class="number">-8776960840624</span> = fffff804`<span class="number">745</span>dec50</span><br><span class="line">kd&gt; u fffff804`<span class="number">745</span>dec50</span><br><span class="line">nt!PopIrpWorkerControl:</span><br><span class="line">fffff804`<span class="number">745</span>dec50 <span class="number">4053</span>            push    rbx</span><br><span class="line">fffff804`<span class="number">745</span>dec52 <span class="number">4883</span>ec30        sub     rsp,<span class="number">30</span>h          </span><br></pre></td></tr></table></figure>
+
+<p>APC 回调函数中解密类似于 DPC 触发 PG Check 的<strong>解密过程</strong>：第一阶段使用到 <code>KiWaitAlways</code>、<code>KiWaitNever</code> 参与解密，第二阶段就是 <code>CmpAppendDlSection</code> 自解密。</p>
+<h2 id="3-全局变量（通知回调）"><a href="#3-全局变量（通知回调）" class="headerlink" title="3 全局变量（通知回调）"></a>3 全局变量（通知回调）</h2><ul>
+<li>b-x TV » callback, first time linking PatchGuard to mssecflt.sys</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/0xcpu/ExecutiveCallbackObjects/blob/b04c7cd396efbf0ab57c2c519c4d93690ad08843/542875F90F9B47F497B64BA219CACF69/README.md">https://github.com/0xcpu/ExecutiveCallbackObjects/blob/b04c7cd396efbf0ab57c2c519c4d93690ad08843/542875F90F9B47F497B64BA219CACF69/README.md</a></li>
+<li><a target="_blank" rel="noopener" href="https://shhoya.github.io/windows_pginit.html">https://shhoya.github.io/windows_pginit.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/zhuhuibeishadiao/PatchGuardResearch">https://github.com/zhuhuibeishadiao/PatchGuardResearch</a></li>
+</ul>
 
     </div>
 
@@ -489,7 +490,7 @@ Bass：Rayvaughn Covington
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/" title="薛之谦-《肆无忌惮》专辑">https://directoree.github.io/post/薛之谦-《肆无忌惮》专辑/</a>
+      <a href="https://directoree.github.io/post/Kernel-Patch-Protection4/" title="内核补丁保护（四）其他触发 PG 检查方式">https://directoree.github.io/post/Kernel-Patch-Protection4/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -497,18 +498,22 @@ Bass：Rayvaughn Covington
 </ul>
 </div>
 
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-PG/" rel="tag"><i class="fa fa-tag"></i> x64 PG</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E9%82%A3%E6%98%AF%E4%BD%A0%E7%A6%BB%E5%BC%80%E4%BA%86%E5%8C%97%E4%BA%AC%E7%9A%84%E7%94%9F%E6%B4%BB%E3%80%8B%E4%B8%93%E8%BE%91/" rel="prev" title="薛之谦-《那是你离开了北京的生活》专辑">
-                  <i class="fa fa-chevron-left"></i> 薛之谦-《那是你离开了北京的生活》专辑
+                <a href="/post/Windows-WorkItem/" rel="prev" title="Windows 工作项（WorkItem）">
+                  <i class="fa fa-chevron-left"></i> Windows 工作项（WorkItem）
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/%E5%8F%B6%E9%9B%AA%E5%A6%82-%E3%80%8A%E6%B0%B4%E6%98%9F%E8%AE%B0%E3%80%8B%E3%80%8A%E4%BD%93%E9%9D%A2%E3%80%8B%E6%94%B6%E8%97%8F%E7%89%88/" rel="next" title="叶雪如-《水星记》《体面》收藏版">
-                  叶雪如-《水星记》《体面》收藏版 <i class="fa fa-chevron-right"></i>
+                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
+                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -558,7 +563,7 @@ Bass：Rayvaughn Covington
 <div class="copyright">
   
   &copy; 2018 – 
-  <span itemprop="copyrightYear">2022</span>
+  <span itemprop="copyrightYear">2023</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -577,7 +582,7 @@ Bass：Rayvaughn Covington
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">32:03</span>
+    <span title="站点阅读时长">32:33</span>
   </span>
 </div>
 <div class="busuanzi-count">
@@ -728,7 +733,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/%E8%96%9B%E4%B9%8B%E8%B0%A6-%E3%80%8A%E8%82%86%E6%97%A0%E5%BF%8C%E6%83%AE%E3%80%8B%E4%B8%93%E8%BE%91/",
+      path: "/post/Kernel-Patch-Protection4/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);

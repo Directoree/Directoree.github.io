@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内核补丁保护（三）DPC 方式触发检查">
+<meta property="og:url" content="https://directoree.github.io/post/Kernel-Patch-Protection3/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2022/04/26/yu9bSLtdi64NehB.png">
+<meta property="og:image" content="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png">
+<meta property="og:image" content="https://s2.loli.net/2022/10/20/xipeXTMdJuj1trK.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/21/6ZVRucvtXzEYF8L.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/30/lKzD3tCJhPgb5n1.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/25/VU2knm8lBIWDAtd.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/25/e7YkbfICDLKZ13S.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/30/lKzD3tCJhPgb5n1.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/29/4UaiYsOJE5N8cVW.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/17/Fdrk21ePowVCyGZ.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/27/gMAmOUbdG7on4YN.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/27/Pesx6JWfCFIybON.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/27/qAbVhPvs3cRuFL8.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/28/JVib6Q4lSuZ91eq.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/30/wJ1ruDp5kHZclME.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/29/4UaiYsOJE5N8cVW.png">
+<meta property="og:image" content="https://s2.loli.net/2022/12/30/wJ1ruDp5kHZclME.png">
+<meta property="article:published_time" content="2022-12-20T13:59:32.000Z">
+<meta property="article:modified_time" content="2023-01-02T13:48:02.472Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="x64 PG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2022/04/26/yu9bSLtdi64NehB.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Kernel-Patch-Protection3/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>内核补丁保护（三）DPC 方式触发检查 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E8%A7%A6%E5%8F%91PG%E6%A3%80%E6%9F%A5"><span class="nav-text">1 触发PG检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-DPC%E5%87%BD%E6%95%B0%E8%A7%A6%E5%8F%91PG"><span class="nav-text">1.1 DPC函数触发PG</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%AC%AC%E4%B8%80%E5%B1%82%E8%A7%A3%E5%AF%86"><span class="nav-text">1.2 第一层解密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%AC%AC%E4%BA%8C%E5%B1%82%E8%A7%A3%E5%AF%86CmpAppendDllSection"><span class="nav-text">1.3 第二层解密CmpAppendDllSection</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E5%8D%8A%E9%83%A8%E5%88%86"><span class="nav-text">上半部分</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E5%8D%8A%E9%83%A8%E5%88%86"><span class="nav-text">下半部分</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%8A%A8%E6%80%81%E8%8E%B7%E5%8F%96Pg-entry"><span class="nav-text">2 动态获取Pg_entry</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-HOOK-ExpCenturyDpcRoutine-fin-0"><span class="nav-text">3  HOOK ExpCenturyDpcRoutine$fin$0</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%AF%BB%E6%89%BE-HOOK-%E7%82%B9"><span class="nav-text">3.1 寻找 HOOK 点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-HOOK-%E4%BB%A3%E7%A0%81"><span class="nav-text">3.2 HOOK 代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E8%A7%A3%E5%AF%86%E5%BE%97%E5%88%B0CmpAppendDllSection"><span class="nav-text">3.3 解密得到CmpAppendDllSection</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E4%B8%ADShellCode"><span class="nav-text">命中ShellCode</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-PatchGuardEntryPoint-%E5%87%BD%E6%95%B0%E5%88%86%E6%9E%90"><span class="nav-text">4 PatchGuardEntryPoint 函数分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%89%A7%E8%A1%8C-WorkItem"><span class="nav-text">5 执行 WorkItem</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-FsRtlUninitializeSmallMcb"><span class="nav-text">6 FsRtlUninitializeSmallMcb</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-DPC-%E6%96%B9%E5%BC%8F%E6%A3%80%E6%9F%A5%E8%BF%87%E7%A8%8B"><span class="nav-text">7 DPC 方式检查过程</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">142</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Kernel-Patch-Protection3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内核补丁保护（三）DPC 方式触发检查
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-20 21:59:32" itemprop="dateCreated datePublished" datetime="2022-12-20T21:59:32+08:00">2022-12-20</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-01-02 21:48:02" itemprop="dateModified" datetime="2023-01-02T21:48:02+08:00">2023-01-02</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Kernel-Patch-Protection3/" class="post-meta-item leancloud_visitors" data-flag-title="内核补丁保护（三）DPC 方式触发检查" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Kernel-Patch-Protection3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Kernel-Patch-Protection3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>28k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>26 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-触发PG检查"><a href="#1-触发PG检查" class="headerlink" title="1 触发PG检查"></a>1 触发PG检查</h2><p>从目前的研究来看，触发 PG 检查的方法有很多种。主要为 DPC 函数执行、系统线程执行、APC 等。</p>
+<h3 id="1-1-DPC函数触发PG"><a href="#1-1-DPC函数触发PG" class="headerlink" title="1.1 DPC函数触发PG"></a>1.1 DPC函数触发PG</h3><p>以下 DPC 函数执行的时候，会触发 PatchGuard 检查执行。前 10 个函数中，会通过触发异常来开始 PatchGuard 检查执行（通过检查参数DeferredContext是否是Canonical地址）；而后两个函数是是直接调用 PatchGuard 检查执行。</p>
+<p>注意：<code>KiBalanceSetManagerDeferredRoutine</code> 函数仅用于方法 5。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ExpTimerDpcRoutine;</span><br><span class="line">ExpTimeZoneDpcRoutine;</span><br><span class="line">ExpCenturyDpcRoutine;</span><br><span class="line">ExpTimeRefreshDpcRoutine;</span><br><span class="line">CmpLazyFlushDpcRoutine;</span><br><span class="line">CmpEnableLazyFlushDpcRoutine;</span><br><span class="line">IopTimerDispatch;</span><br><span class="line">IopIrpStackProfilerDpcRoutine;</span><br><span class="line">KiBalanceSetManagerDeferredRoutine;</span><br><span class="line">PopThermalZoneDpc;</span><br><span class="line">KiTimerDispatch;</span><br><span class="line">KiDpcDispatch;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>下面以 <code>ExpTimerDpcRoutine</code> 函数来进行分析。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID __fastcall <span class="title">ExpTimerDpcRoutine</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PKDPC Dpc,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID DeferredContext,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID SystemArgument1,</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID SystemArgument2</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>该函数开头会校验参数 <code>DeferredContext</code> 是否是 Canonical 地址：</p>
+<ul>
+<li>如果是规范地址或者 <code>0</code>，则执行正常的 DPC 处理流程。</li>
+<li>如果不是规范地址，则将会跳转到 <code>loc_14048981C</code>。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000014035E095</span>                 mov     rax, rbx        <span class="comment">// DeferredContext</span></span><br><span class="line">.text:<span class="number">000000014035E098</span>                 sar     rax, <span class="number">2F</span>h        <span class="comment">// 规范地址：FFFFFFFF`FFFFFFFF, -1</span></span><br><span class="line">.text:<span class="number">000000014035E098</span>                                         <span class="comment">// 不规范地址：FFFFFFFF`FFFFFFFE, -2</span></span><br><span class="line">.text:<span class="number">000000014035E09</span>C                 mov     r14d, <span class="number">1</span></span><br><span class="line">.text:<span class="number">000000014035E0</span>A2                 add     rax, r14</span><br><span class="line">.text:<span class="number">000000014035E0</span>A5                 cmp     rax, r14        <span class="comment">// CF | ZF == 0, jmp</span></span><br><span class="line">.text:<span class="number">000000014035E0</span>A8                 ja      loc_14048981C   <span class="comment">// Non-Canonical</span></span><br></pre></td></tr></table></figure>
+
+<mark class="label primary">注意</mark>： ja 指令不是简单用于比较大小，实际上是通过 rflags.CF 和 rflags.ZF 来判断是否跳转。
+
+<p><img data-src="https://s2.loli.net/2022/04/26/yu9bSLtdi64NehB.png" alt="2.png"></p>
+<p><img data-src="https://s2.loli.net/2021/12/19/ySQIR7D1LpUgh3v.png" alt="58.png"></p>
+<p><img data-src="https://s2.loli.net/2022/10/20/xipeXTMdJuj1trK.png" alt="3.png"></p>
+</li>
+<li><p>然后进入到 <code>__try</code> 块里面。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000014048981</span>C loc_14048981C:                          </span><br><span class="line">.text:<span class="number">000000014048981</span>C ; __unwind &#123; <span class="comment">// __C_specific_handler    ; Non-Canonical</span></span><br><span class="line">.text:<span class="number">000000014048981</span>C                 <span class="keyword">and</span>     [rsp+<span class="number">1B</span>8h+var_184], <span class="number">0</span></span><br><span class="line">.text:<span class="number">0000000140489821</span>                 mov     byte ptr [rdi], <span class="number">0</span></span><br><span class="line">.text:<span class="number">0000000140489824</span>                 mov     rax, r15</span><br><span class="line">.text:<span class="number">0000000140489827</span>                 shr     rax, <span class="number">8</span></span><br><span class="line">.text:<span class="number">000000014048982B</span>                 mov     [rdi+<span class="number">20</span>h], rax</span><br><span class="line">.text:<span class="number">000000014048982F</span>                 mov     [rsp+<span class="number">1B</span>8h+var_47], rsi</span><br><span class="line">.text:<span class="number">0000000140489837</span>                 mov     ecx, esi</span><br><span class="line">.text:<span class="number">0000000140489839</span>                 mov     rax, rbx</span><br><span class="line">.text:<span class="number">000000014048983</span>C                 rol     rax, cl</span><br><span class="line">.text:<span class="number">000000014048983F</span>                 mov     [rsp+<span class="number">1B</span>8h+var_97], rax</span><br><span class="line">.text:<span class="number">0000000140489847</span>                 mov     rax, rdi</span><br><span class="line">.text:<span class="number">000000014048984</span>A                 ror     rax, cl</span><br><span class="line">.text:<span class="number">000000014048984</span>D                 mov     [rsp+<span class="number">1B</span>8h+var_4F], rax</span><br><span class="line">.text:<span class="number">0000000140489855</span>                 <span class="keyword">xor</span>     [rdi+<span class="number">28</span>h], r15</span><br><span class="line">.text:<span class="number">0000000140489859</span>                 <span class="keyword">xor</span>     [rdi+<span class="number">30</span>h], rsi</span><br><span class="line">.text:<span class="number">000000014048985</span>D</span><br><span class="line">.text:<span class="number">000000014048985</span>D loc_14048985D:                          </span><br><span class="line">.text:<span class="number">000000014048985</span>D                                         </span><br><span class="line">.text:<span class="number">000000014048985</span>D ;     __try &#123; <span class="comment">// __finally(ExpTimerDpcRoutine$fin$2)</span></span><br><span class="line">.text:<span class="number">000000014048985</span>D ;         __try &#123; <span class="comment">// __finally(ExpTimerDpcRoutine$fin$0)</span></span><br><span class="line">.text:<span class="number">000000014048985</span>D ;   __try &#123; <span class="comment">// __except at loc_1404898AB</span></span><br><span class="line">.text:<span class="number">000000014048985</span>D ;       __try &#123; <span class="comment">// __except at loc_140489868</span></span><br><span class="line">.text:<span class="number">000000014048985</span>D                 mov     rcx, rbx</span><br><span class="line">.text:<span class="number">0000000140489860</span>                 call    KiCustomAccessRoutine0</span><br><span class="line">.text:<span class="number">0000000140489865</span>                 nop</span><br><span class="line">.text:<span class="number">0000000140489865</span> ;         &#125; <span class="comment">// starts at 14048985D</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看到，按照执行流程，会进入到 <code>000000014048985D</code> 的子 <code>__try</code> 里面调用 <code>KiCustomAccessRoutine0</code> 函数。</p>
+<p>这里需要对 <code>KiCustomAccessRoutineX</code> 函数和 <code>KiCustomRecurseRoutineY</code> 函数进行解释（<code>0 &lt;= X,Y &lt;= 9</code>）。 </p>
+<p>上述的 11 个 DPC 函数中会调用硬编码好的 <code>KiCustomAccessRoutineX</code>  函数，然后该函数调用对应的 <code>KiCustomRecurseRoutineX</code> 函数。进入到 <code>KiCustomRecurseRoutineX</code> 函数后，就像进入到”俄罗斯轮盘游戏“（在左轮手枪塞入一颗子弹，然后随意转动转轮并开枪，在一定概率下子弹会被命中），如下图。</p>
+<p><img data-src="https://s2.loli.net/2022/12/21/6ZVRucvtXzEYF8L.png" alt="16"></p>
+<p>使用 <code>AccessX</code> 函数进入到 <code>Recurse</code> 轮盘。</p>
+<ul>
+<li><p><code>AccessX</code> 函数。</p>
+<p>函数会 <code>(DeferredContext &amp; 0x3) + 1</code>，取参数低 2 位并加 1，带入到 <code>Recurse</code> 函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140402F</span>D0 KiCustomAccessRoutine0 proc near         </span><br><span class="line">.text:<span class="number">0000000140402F</span>D0 ; __unwind &#123; <span class="comment">// KiCustomAccessHandler0</span></span><br><span class="line">.text:<span class="number">0000000140402F</span>D0                 sub     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">0000000140402F</span>D4                 mov     rdx, rcx</span><br><span class="line">.text:<span class="number">0000000140402F</span>D7                 <span class="keyword">and</span>     ecx, <span class="number">3</span></span><br><span class="line">.text:<span class="number">0000000140402F</span>DA                 inc     ecx</span><br><span class="line">.text:<span class="number">0000000140402F</span>DC                 ror     rax, cl</span><br><span class="line">.text:<span class="number">0000000140402F</span>DF                 <span class="keyword">xor</span>     r8, rax</span><br><span class="line">.text:<span class="number">0000000140402F</span>E2                 <span class="keyword">xor</span>     r9, rax</span><br><span class="line">.text:<span class="number">0000000140402F</span>E5                 <span class="keyword">xor</span>     r10, rax</span><br><span class="line">.text:<span class="number">0000000140402F</span>E8                 <span class="keyword">xor</span>     r11, rax</span><br><span class="line">.text:<span class="number">0000000140402F</span>EB                 <span class="keyword">xor</span>     eax, eax</span><br><span class="line">.text:<span class="number">0000000140402F</span>ED                 call    KiCustomRecurseRoutine0</span><br><span class="line">.text:<span class="number">0000000140402F</span>F2                 nop</span><br><span class="line">.text:<span class="number">0000000140402F</span>F3                 add     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">0000000140402F</span>F7                 retn</span><br><span class="line">.text:<span class="number">0000000140402F</span>F7 ; &#125; <span class="comment">// starts at 140402FD0</span></span><br><span class="line">.text:<span class="number">0000000140402F</span>F7 KiCustomAccessRoutine0 endp</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><code>Recurse</code> 函数。</p>
+<p>在 <code>Recurse</code> <strong>轮盘函数</strong>里面如果 <code>(DeferredContext &amp; 0x3) + 1</code>  递减为 <code>0</code> 时，就会从 <code>rdx(DeferredContext)</code> 里读取数据。本身 <code>DeferredContext</code> 就是 Non-Canonical 地址，所以这里会出发 <code>#GP</code> 异常。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140402F</span>B0 KiCustomRecurseRoutine0 proc near       ; CODE XREF: KiCustomRecurseRoutine9+<span class="number">8</span>↑p</span><br><span class="line">.text:<span class="number">0000000140402F</span>B0                                         ; KiCustomAccessRoutine0+<span class="number">1</span>D↓p</span><br><span class="line">.text:<span class="number">0000000140402F</span>B0                                         ; DATA XREF: ...</span><br><span class="line">.text:<span class="number">0000000140402F</span>B0                 sub     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">0000000140402F</span>B4                 dec     ecx</span><br><span class="line">.text:<span class="number">0000000140402F</span>B6                 jz      <span class="keyword">short</span> loc_140402FBD</span><br><span class="line">.text:<span class="number">0000000140402F</span>B8                 call    KiCustomRecurseRoutine1</span><br><span class="line">.text:<span class="number">0000000140402F</span>BD</span><br><span class="line">.text:<span class="number">0000000140402F</span>BD loc_140402FBD:                          ; CODE XREF: KiCustomRecurseRoutine0+<span class="number">6</span>↑j</span><br><span class="line">.text:<span class="number">0000000140402F</span>BD                 mov     eax, [rdx]</span><br><span class="line">.text:<span class="number">0000000140402F</span>BF                 add     rsp, <span class="number">28</span>h</span><br><span class="line">.text:<span class="number">0000000140402F</span>C3                 retn</span><br><span class="line">.text:<span class="number">0000000140402F</span>C3 KiCustomRecurseRoutine0 endp</span><br></pre></td></tr></table></figure>
+
+<p>注意观察，在上面的 <code>__try</code> 块，对应的 <code>__except</code> 在 <code>loc_140489868</code>。在 <code>loc_140489868</code> 里就会开始对 PatchGuard 进行解密了。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">000000014048985</span>D ;       __try &#123; <span class="comment">// __except at loc_140489868</span></span><br><span class="line">.text:<span class="number">000000014048985</span>D                 mov     rcx, rbx</span><br><span class="line">.text:<span class="number">0000000140489860</span>                 call    KiCustomAccessRoutine0</span><br><span class="line">.text:<span class="number">0000000140489865</span>                 nop</span><br><span class="line">.text:<span class="number">0000000140489865</span> ;         &#125; <span class="comment">// starts at 14048985D</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p>异常处理块。</p>
+<p>找到对应的异常处理块如下，查看其异常处理过滤器 <code>ExpTimerDpcRoutine$filt$1</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">0000000140489868</span> loc_140489868:                          </span><br><span class="line">.text:<span class="number">0000000140489868</span> ;   __except(ExpTimerDpcRoutine$filt$<span class="number">1</span>) <span class="comment">// owned by 14048985D</span></span><br><span class="line">.text:<span class="number">0000000140489868</span>                 <span class="keyword">and</span>     [rsp+<span class="number">1B</span>8h+var_F8], <span class="number">0</span></span><br><span class="line">.text:<span class="number">0000000140489871</span>                 mov     rax, [rsp+<span class="number">1B</span>8h+var_47]</span><br><span class="line">.text:<span class="number">0000000140489879</span>                 mov     [rsp+<span class="number">1B</span>8h+var_F8], rax</span><br><span class="line">.text:<span class="number">0000000140489881</span>                 mov     rdx, [rsp+<span class="number">1B</span>8h+var_97]</span><br><span class="line">.text:<span class="number">0000000140489889</span>                 mov     ecx, eax</span><br><span class="line">.text:<span class="number">000000014048988B</span>                 ror     rdx, cl</span><br><span class="line">.text:<span class="number">000000014048988</span>E                 mov     eax, [rdx]</span><br><span class="line">.text:<span class="number">0000000140489890</span>                 mov     r14d, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0000000140489896</span>                 mov     rbx, [rsp+<span class="number">1B</span>8h+arg_8]</span><br><span class="line">.text:<span class="number">000000014048989</span>E                 mov     rdi, [rsp+<span class="number">1B</span>8h+arg_0]</span><br><span class="line">.text:<span class="number">000000014048989</span>E ;     &#125; <span class="comment">// starts at 14048985D</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>接下来会对 PGContext 进行解密。解密代码可能驻留在异常过滤器、异常处理程序或终止处理程序中。<strong>定位解密代码的小技巧就是</strong>：解密代码中会使用 <code>KiWaitAlways</code> 和 <code>KiWaitNever</code> 两个全局变量中的随机值。实际上这两个全局变量是用来<a target="_blank" rel="noopener" href="https://www.cnblogs.com/LyShark/p/16794841.html">解密 DPC </a>的（在异常过滤函数中是用来解密PGContext），<strong>在 PGContext 填充过程中保存了这两个全局变量，但是并没有看到用来加密 PGContext</strong>。</p>
+</li>
+</ol>
+<h3 id="1-2-第一层解密"><a href="#1-2-第一层解密" class="headerlink" title="1.2 第一层解密"></a>1.2 第一层解密</h3><p><strong>解密一共分为两层</strong>：</p>
+<ul>
+<li>第一层在 DPC 函数中（如 <code>ExpTimerDpcRoutine</code> 函数其中的一个异常处理过滤器）。</li>
+<li>第一层解密完成后就会调用 PGContext 中加密的 <code>CmpAppendDllSection</code> 函数，在 <code>CmpAppendDllSection</code> 函数中完成第二层解密。</li>
+</ul>
+<p>在上一节 1.1 的异常过滤器 <code>ExpTimerDpcRoutine$filt$1</code> 中，会<strong>进行第一层解密</strong>。</p>
+<ol>
+<li><p>如下代码，会将解密后的 <code>&amp;pg_entry</code> 保存在 <code>[rbp+58h]</code>。紧接着过滤器会对 <code>pg_entry</code> 进行验证。</p>
+<p>这里的 <code>pg_entry</code> 实际上就是 <code>PGContext.CmpAppendDllSection</code>，地址是随机的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00000001404140</span>A0 ExpTimerDpcRoutine$filt$<span class="number">1</span>:              </span><br><span class="line">.text:<span class="number">00000001404140</span>A0 ;   __except filter <span class="comment">// owned by 14048985D</span></span><br><span class="line">.text:<span class="number">00000001404140</span>A0                 push    rbp</span><br><span class="line">.text:<span class="number">00000001404140</span>A2                 sub     rsp, <span class="number">30</span>h</span><br><span class="line">...</span><br><span class="line">.text:<span class="number">00000001404141B</span>1                 mov     rax, [rbp+<span class="number">0E8</span>h]</span><br><span class="line">.text:<span class="number">00000001404141B</span>8                 <span class="keyword">xor</span>     rcx, rax</span><br><span class="line">.text:<span class="number">00000001404141B</span>B                 mov     [rbp+<span class="number">98</span>h], rcx</span><br><span class="line">.text:<span class="number">00000001404141</span>C2                 mov     rax, [rbp+<span class="number">98</span>h]</span><br><span class="line">.text:<span class="number">00000001404141</span>C9                 mov     rcx, <span class="number">0F</span>FFF800000000000h</span><br><span class="line">.text:<span class="number">00000001404141</span>D3                 <span class="keyword">or</span>      rax, rcx</span><br><span class="line">.text:<span class="number">00000001404141</span>D6                 mov     [rbp+<span class="number">98</span>h], rax</span><br><span class="line">.text:<span class="number">00000001404141</span>DD                 mov     rax, [rbp+<span class="number">98</span>h]</span><br><span class="line">.text:<span class="number">00000001404141E4</span>                 mov     [rbp+<span class="number">58</span>h], rax  <span class="comment">// 计算得到 [rbp+58h]，里面保存 pg_entry 的地址</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>由上一步可知， 解密后的 <code>&amp;pg_entry</code> 保存在 <code>[rbp+58h]</code> 中。接下来会将函数 <code>CmpAppendDllSection</code> 前 <mark class="label success"> 8</mark> 字节写入 <code>pg_entry</code>，然后进行异或。紧接着再将函数 <code>CmpAppendDllSection</code> 前 <mark class="label primary"> 4</mark> 字节（<code>0x1131482E</code>）重写入 <code>pg_entry</code>，最后调用 <code>pg_entry</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00000001404144</span>AA                 mov     rax, <span class="number">85131481131482</span>Eh <span class="comment">// CmpAppendDllSection 前 8 字节</span></span><br><span class="line">.text:<span class="number">00000001404144B</span>4                 mov     [rbp+<span class="number">48</span>h], rax</span><br><span class="line">  ...</span><br><span class="line">.text:<span class="number">00000001404144</span>DE                 mov     qword ptr [rbp+<span class="number">48</span>h], <span class="number">1131482</span>Eh <span class="comment">// CmpAppendDllSection 前4字节</span></span><br><span class="line">.text:<span class="number">00000001404144E6</span>                 mov     rax, [rbp+<span class="number">48</span>h]  <span class="comment">// rax = rcx = [rbp + 48h]</span></span><br><span class="line">.text:<span class="number">00000001404144</span>EA                 mov     rcx, [rbp+<span class="number">48</span>h]  <span class="comment">// rax = rcx = [rbp + 48h]</span></span><br><span class="line">.text:<span class="number">00000001404144</span>EE                 mov     [rbp+<span class="number">48</span>h], rcx  <span class="comment">// rax = rcx = [rbp + 48h]</span></span><br><span class="line">.text:<span class="number">00000001404144F</span>2                 mov     rcx, [rbp+<span class="number">48</span>h]  <span class="comment">// rax = rcx = [rbp + 48h]</span></span><br><span class="line">.text:<span class="number">00000001404144F</span>6                 mov     rax, [rbp+<span class="number">58</span>h]  <span class="comment">// rax = &amp;pg_entry</span></span><br><span class="line">.text:<span class="number">00000001404144F</span>A                 mov     [rax], ecx      <span class="comment">// *(QWORD*)&amp;pg_entry = 0x1131482E;</span></span><br><span class="line">.text:<span class="number">00000001404144F</span>C                 mov     eax, [rbp+<span class="number">8</span>Ch]  <span class="comment">// [rbp+8Ch] == 0</span></span><br><span class="line">.text:<span class="number">0000000140414502</span>                 test    al, <span class="number">1</span></span><br><span class="line">.text:<span class="number">0000000140414504</span>                 jz      <span class="keyword">short</span> loc_14041451C</span><br><span class="line">...</span><br><span class="line">.text:<span class="number">000000014041451</span>C loc_14041451C:                          </span><br><span class="line">.text:<span class="number">000000014041451</span>C                 mov     rax, [rbp+<span class="number">58</span>h]</span><br><span class="line">.text:<span class="number">0000000140414520</span>                 <span class="keyword">xor</span>     r9d, r9d</span><br><span class="line">.text:<span class="number">0000000140414523</span>                 <span class="keyword">xor</span>     r8d, r8d</span><br><span class="line">.text:<span class="number">0000000140414526</span>                 mov     rdx, [rbp+<span class="number">50</span>h]</span><br><span class="line">.text:<span class="number">000000014041452</span>A                 mov     rcx, [rbp+<span class="number">58</span>h]  <span class="comment">// rax = &amp;pg_entry</span></span><br><span class="line">.text:<span class="number">000000014041452</span>A                                         <span class="comment">// rcx = &amp;pg_entry</span></span><br><span class="line">.text:<span class="number">000000014041452</span>A                                         <span class="comment">// rdx = [rbp + 0x50]</span></span><br><span class="line">.text:<span class="number">000000014041452</span>A                                         <span class="comment">// r8  = 0</span></span><br><span class="line">.text:<span class="number">000000014041452</span>A                                         <span class="comment">// r9  = 0</span></span><br><span class="line">.text:<span class="number">000000014041452</span>E                 call    _guard_dispatch_icall <span class="comment">// jmp rax</span></span><br><span class="line">.text:<span class="number">000000014041452</span>E                                         <span class="comment">// rax = &amp;PGContext.CmpAppendDllSection</span></span><br><span class="line">.text:<span class="number">0000000140414533</span>                 nop</span><br></pre></td></tr></table></figure>
+
+<p>可以看到这里对 <code>&amp;pg_entry</code> 地址前 4 字节重写，然后就跳去指向 <code>pg_entry</code>。</p>
+<p>这个 <code>pg_entry</code> 就是从 <code>CmpAppendDllSection</code> 拷贝到 PGContext 中的。下面将会执行该函数。</p>
+</li>
+</ol>
+<p>参考内容：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/helloobaby/win10PatchGuard/blob/master/win10Rs5PatchGuard/doc.asm">Github-win10PatchGuard&#x2F;win10Rs5PatchGuard&#x2F;doc.asm</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/armasm/EasyAntiPatchGuard">Github-armasm &#x2F; EasyAntiPatchGuard</a></li>
+</ul>
+<h3 id="1-3-第二层解密CmpAppendDllSection"><a href="#1-3-第二层解密CmpAppendDllSection" class="headerlink" title="1.3 第二层解密CmpAppendDllSection"></a>1.3 第二层解密CmpAppendDllSection</h3><p>从上一篇<a target="_blank" rel="noopener" href="https://catecat.top/post/Kernel-Patch-Protection2/">内核补丁保护（二）初始化 3.1</a>我们知道，<code>CmpAppendDllSection</code> 函数长度为 <code>0xC8</code> 字节，但是最后 4 字节是用 <code>0x90(nop)</code> 填充的 。从看雪文章《<a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-247948.htm">攻破 Window AMD64 平台的 PatchGuard - 搜索加密的 PatchGuard Context</a>》知道，<code>CmpAppendDllSection + 0xC4</code> 保存着 PGContext_FirstSec 的长度。</p>
+<p><img data-src="https://s2.loli.net/2022/12/30/lKzD3tCJhPgb5n1.png" alt="17.png"></p>
+<div class="note danger"><p>注意：是<strong>解密得到 <code>CmpAppendDllSection</code> 函数</strong>，因为 PGContext 是加密的。</p>
+<p>解密执行 <code>CmpAppendDllSection</code> 分为两部分：</p>
+<ul>
+<li>上半部分是自解密得到 <code>CmpAppendDllSection</code>；</li>
+<li>下半部分是解密得出 <code>PatchGuardEntryPoint</code>（<strong>Check PG 的核心函数</strong>）。</li>
+</ul>
+</div>
+
+
+
+<p><img data-src="https://s2.loli.net/2022/12/25/VU2knm8lBIWDAtd.png" alt="19.png"></p>
+<h4 id="上半部分"><a href="#上半部分" class="headerlink" title="上半部分"></a>上半部分</h4><p>上面已经分析到，<code>pg_entry</code> 的前 8 字节已经提前重写好，然后就跳转到 <code>pg_entry</code> 开始执行。</p>
+<p><strong>注意</strong>：如下图，此时的 <code>pg_entry</code> 函数仅有前 8 个字节，解密的秘钥存放在 <mark class="label danger"> rdx</mark> 寄存器中。 当第一条指令（4字节长度）执行结束后会解密出 8 字节数据，并写回到当前地址。这说明两点：</p>
+<ol>
+<li>这是自解密代码，下面即将要执行的代码都会提前解密好，秘钥存放在 <code>rdx</code> 寄存器中。</li>
+<li>页面必须具备可读、可写、可执行，否则会发生异常。</li>
+</ol>
+<p>解密结果为：<code>0xBC541CD31131482E ^ 0xB4052D9B560DCCFC = 0x08513148473C84D2</code>。可以看到高 4 字节和 <code>CmpAppendDllSection</code> 前 4-7 字节完全符合。</p>
+<p><img data-src="https://s2.loli.net/2022/12/25/e7YkbfICDLKZ13S.png" alt="18.png"></p>
+<p><code>CmpAppendDllSection</code> 上半部分代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">INIT:<span class="number">0000000140</span>A36190                                     CmpAppendDllSection proc near           </span><br><span class="line">INIT:<span class="number">0000000140</span>A36190                                                     db      <span class="number">2</span>Eh</span><br><span class="line">INIT:<span class="number">0000000140</span>A36190 <span class="number">2</span>E <span class="number">48</span> <span class="number">31</span> <span class="number">11</span>                                         <span class="keyword">xor</span>     [rcx], rdx</span><br><span class="line">INIT:<span class="number">0000000140</span>A36194 <span class="number">48</span> <span class="number">31</span> <span class="number">51</span> <span class="number">08</span>                                         <span class="keyword">xor</span>     [rcx+<span class="number">8</span>], rdx</span><br><span class="line">INIT:<span class="number">0000000140</span>A36198 <span class="number">48</span> <span class="number">31</span> <span class="number">51</span> <span class="number">10</span>                                         <span class="keyword">xor</span>     [rcx+<span class="number">10</span>h], rdx</span><br><span class="line">  ...</span><br><span class="line">INIT:<span class="number">0000000140</span>A361F0                 <span class="keyword">xor</span>     [rcx+<span class="number">40</span>h], rdx</span><br><span class="line">INIT:<span class="number">0000000140</span>A361F4                 <span class="keyword">xor</span>     [rcx+<span class="number">48</span>h], rdx</span><br><span class="line">INIT:<span class="number">0000000140</span>A361F8                 sub     rcx, <span class="number">78</span>h</span><br><span class="line">INIT:<span class="number">0000000140</span>A361FC                 <span class="keyword">xor</span>     [rcx], edx      <span class="comment">// 同该函数的第一条指令</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A361FE                 mov     rax, rdx</span><br><span class="line">INIT:<span class="number">0000000140</span>A36201                 mov     rdx, rcx</span><br><span class="line">INIT:<span class="number">0000000140</span>A36204                 mov     ecx, [rdx+<span class="number">0</span>C4h]</span><br><span class="line">INIT:<span class="number">0000000140</span>A3620A                 test    rax, rax        <span class="comment">// 正常情况下秘钥并不为 0，这里不会发生跳转</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A3620D                 jz      <span class="keyword">short</span> loc_140A36220</span><br></pre></td></tr></table></figure>
+
+
+
+<div class="note default"><p>说明：PG 检查时并不是直接执行复制到 PGContext 中的 <code>CmpAppendDllSection</code> 函数，而是需要执行的时候进行自解密得到 <code>CmpAppendDllSection</code> 函数。</p>
+</div>
+
+
+
+
+
+<h4 id="下半部分"><a href="#下半部分" class="headerlink" title="下半部分"></a>下半部分</h4><p><code>CmpAppendDllSection</code> 下半部分代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">INIT:<span class="number">0000000140</span>A361F8                 sub     rcx, <span class="number">78</span>h</span><br><span class="line">INIT:<span class="number">0000000140</span>A361FC                 <span class="keyword">xor</span>     [rcx], edx      <span class="comment">// 同该函数的第一条指令</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A361FE                 mov     rax, rdx</span><br><span class="line">INIT:<span class="number">0000000140</span>A36201                 mov     rdx, rcx</span><br><span class="line">INIT:<span class="number">0000000140</span>A36204                 mov     ecx, [rdx+<span class="number">0</span>C4h] <span class="comment">// 取到计算 PGContext_FirstSec 长度的 Index</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A3620A                 test    rax, rax        <span class="comment">// 正常情况下秘钥并不为 0，这里不会发生跳转</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A3620D                 jz      <span class="keyword">short</span> loc_140A36220</span><br><span class="line">INIT:<span class="number">0000000140</span>A3620F loc_140A3620F:                          <span class="comment">// 对整个PGContext从高地址往低地址解密</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A3620F                 <span class="keyword">xor</span>     [rdx+rcx*<span class="number">8</span>+<span class="number">0</span>C0h], rax</span><br><span class="line">INIT:<span class="number">0000000140</span>A36217                 ror     rax, cl</span><br><span class="line">INIT:<span class="number">0000000140</span>A3621A                 btc     rax, rax</span><br><span class="line">INIT:<span class="number">0000000140</span>A3621E                 loop    loc_140A3620F</span><br><span class="line">INIT:<span class="number">0000000140</span>A36220</span><br><span class="line">INIT:<span class="number">0000000140</span>A36220 loc_140A36220:                          <span class="comment">// CODE XREF: CmpAppendDllSection+7D↑j</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A36220                 mov     eax, [rdx+<span class="number">7E8</span>h]</span><br><span class="line">INIT:<span class="number">0000000140</span>A36226                 add     rax, rdx</span><br><span class="line">INIT:<span class="number">0000000140</span>A36229                 sub     rsp, <span class="number">28</span>h</span><br><span class="line">INIT:<span class="number">0000000140</span>A3622D                 call    rax	<span class="comment">// PatchGuardEntryPoint 函数</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A3622F                 add     rsp, <span class="number">28</span>h</span><br><span class="line">INIT:<span class="number">0000000140</span>A36233                 mov     r8, [rax+<span class="number">110</span>h]</span><br><span class="line">INIT:<span class="number">0000000140</span>A3623A                 lea     rcx, [rax+<span class="number">798</span>h]</span><br><span class="line">INIT:<span class="number">0000000140</span>A36241                 mov     edx, <span class="number">1</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A36246                 jmp     r8</span><br><span class="line">INIT:<span class="number">0000000140</span>A36246 ; ---------------------------------------------------------------------------</span><br><span class="line">INIT:<span class="number">0000000140</span>A36249                 db <span class="number">0F</span><span class="function">h <span class="title">dup</span><span class="params">(<span class="number">90</span>h)</span></span></span><br><span class="line"><span class="function">INIT:0000000140A36249 CmpAppendDllSection endp</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：<code>PGContext_FirstSec</code> 表示 PGContext 的第一部分，并不是完整的 PGContext。</p>
+<p>从上面代码可以看到，解密完成后，实际上 <code>CmpAppendDllSection + 0xC4</code> 保存着用来计算 PGContext_FirstSec 总大小的索引值 <code>index</code>。</p>
+<p>即：<code>PGContext_FirstSec.Length = Index*8+0xC0</code>。</p>
+<ol>
+<li>LOOP 循环。这里是将整个 PGContext_FirstSec 进行解密，从高地址向低地址进行解密。<strong>注意</strong>：这里每一轮解密都会使用 <code>btc</code> 修改密钥——<code>btc  rax, rax</code>。</li>
+<li>调用 <code>PatchGuardEntryPoint</code> 函数。<code>PatchGuardEntryPoint</code> 函数是 <strong>Check PG 的核心函数</strong>。位于 <code>PGContext_FirstSec + 0x7E8</code>。</li>
+</ol>
+<p><code>PatchGuardEntryPoint</code> 函数位于 <code>INITKDBG</code> 区段。</p>
+<p><img data-src="https://s2.loli.net/2022/12/30/lKzD3tCJhPgb5n1.png" alt="17.png"></p>
+<p><img data-src="https://s2.loli.net/2022/12/29/4UaiYsOJE5N8cVW.png" alt="25.png"></p>
+<h2 id="2-动态获取Pg-entry"><a href="#2-动态获取Pg-entry" class="headerlink" title="2 动态获取Pg_entry"></a>2 动态获取Pg_entry</h2><p>从《<a target="_blank" rel="noopener" href="https://catecat.top/post/Kernel-Patch-Protection/">内核补丁保护（一）初始化</a>》知道，系统初始化时如果检测到有内核调试器存在就不会初始化 PGContext。所以要使被调试系统在调试状态下还能启用 PatchGuard 的方法：</p>
+<p>在被调试系统开机时，先不打开 Windbg 调试器，等被调试设备启动开始转圈后（这时候大概PG已经完成初始化，并且BootDebug断点没有触发），然后立刻挂上调试器。这样就能保证在启用 PG 的情况下，还能存在调试器。<em><strong>记得保存快照</strong></em>。</p>
+<blockquote>
+<p>借助周壑 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1wE41197kf/?spm_id_from=333.999.0.0&vd_source=96e0c33ed8fcae4e5a1665702381c51b">x64内核研究08_PatchGuard(2) </a>的方法触发 PatchGuard。方法是：在系统非分页内存池找到大小大于 <code>0x8000 + 0xAA8</code> 的内存块 PGContext（上一篇文章已经分析了，如下图），将其 PTE 的 NX 位置 1 触发异常动态得到 <code>pg_entry</code> 函数地址。</p>
+<p>异常成功触发后（得到 <code>pg_entry</code> 函数地址 <code>0xFFFF858BB8D0251D</code>），但是在 Windows 19044 下，给该地址下硬件断点 <code>ba</code> 不会被命中（猜测在这之前 DR7 寄存器已被清空），如果下软件断点 <code>bp</code> 则直接异常蓝屏。尝试过以下两种方法，但是只有方法二成功。</p>
+<ol>
+<li>方法一：用驱动下硬件断点。在驱动中写个死循环给 <code>0xFFFF858BB8D0251D</code> 下硬件断点，但是仅下一次断点也会触发异常蓝屏。</li>
+<li>方法二：HOOK DPC 函数。分析上面获取 <code>pg_entry</code> 函数地址触发异常时，找到触发 PatchGuard 的位置，发现是 DPC 函数 <code>nt!ExpCenturyDpcRoutine</code>。</li>
+</ol>
+</blockquote>
+<p><img data-src="https://s2.loli.net/2022/12/17/Fdrk21ePowVCyGZ.png" alt="14.png"></p>
+<p>方法一下硬件断点的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">NTSTATUS</span> <span class="params">(*PNtGetThreadContext)</span><span class="params">(IN HANDLE, IN OUT PCONTEXT)</span></span>;</span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">NTSTATUS</span><span class="params">(*PNtSetThreadContext)</span><span class="params">(IN HANDLE, IN OUT PCONTEXT)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">HardBreak</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    NTSTATUS bRet = STATUS_ACCESS_DENIED;</span><br><span class="line">    CONTEXT Context = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">    UNICODE_STRING UnicodeZwGetThreadContext = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">    UNICODE_STRING UnicodeZwGetThreadContext = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">    PZwGetThreadContext pZwGetThreadContext;</span><br><span class="line">    PZwSetThreadContext pZwSetThreadContext;</span><br><span class="line"></span><br><span class="line">    RtlInitUnicodeString(&amp;UnicodeZwGetThreadContext, <span class="string">L&quot;ZwGetThreadContext&quot;</span>);</span><br><span class="line">    RtlInitUnicodeString(&amp;UnicodeZwSetThreadContext, <span class="string">L&quot;ZwSetThreadContext&quot;</span>);</span><br><span class="line">    pZwGetThreadContext = (PZwGetThreadContext)MmGetSystemRoutineAddress(&amp;UnicodeZwGetThreadContext);</span><br><span class="line">    pZwSetThreadContext = (PZwSetThreadContext)MmGetSystemRoutineAddress(&amp;UnicodeZwSetThreadContext);</span><br><span class="line"></span><br><span class="line">    Context.ContextFlags = CONTEXT_FULL | CONTEXT_DEBUG_REGISTERS;</span><br><span class="line">    bRet = pZwGetThreadContext(NtCurrentThread(), &amp;Context);</span><br><span class="line">    Context.Dr0 = <span class="number">0xFFFF858BB8D0251D</span>;</span><br><span class="line">    Context.Dr7 |= <span class="number">0x402</span>;</span><br><span class="line">    Context.Dr7 &amp;= <span class="number">0xfff0ffff</span>;</span><br><span class="line">    pZwSetThreadContext(NtCurrentThread(), &amp;Context);</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用周壑 <a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1wE41197kf/?spm_id_from=333.999.0.0&vd_source=96e0c33ed8fcae4e5a1665702381c51b">x64内核研究08_PatchGuard(2) </a>的方法触发 PatchGuard。得到的堆栈如下：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; kv</span><br><span class="line"> <span class="comment"># Child-SP          RetAddr               : Args to Child                                                           : Call Site</span></span><br><span class="line"><span class="number">00</span> fffff804`770b6d88 fffff804`74727fd2     : fffff804`770b6ef0 fffff804`745928e0 <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 : nt!DbgBreakPointWithStatus</span><br><span class="line"><span class="number">01</span> fffff804`770b6d90 fffff804`747275b6     : <span class="number">00000000</span>`00000003 fffff804`770b6ef0 fffff804`74622fc0 <span class="number">00000000</span>`000000<span class="built_in">fc</span> : nt!KiBugCheckDebugBreak+<span class="number">0</span>x12</span><br><span class="line"><span class="number">02</span> fffff804`770b6df0 fffff804`7460e1f7     : <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 <span class="number">8</span>a000000`049e9863 fffff804`746201a5 : nt!KeBugCheck2+<span class="number">0</span>x946</span><br><span class="line"><span class="number">03</span> fffff804`770b7500 fffff804`7469a794     : <span class="number">00000000</span>`000000<span class="built_in">fc</span> ffff858b`b8d0251d <span class="number">8</span>a000000`049e9863 fffff804`770b7770 : nt!KeBugCheckEx+<span class="number">0</span>x107</span><br><span class="line"><span class="number">04</span> fffff804`770b7540 fffff804`7468c2cf     : <span class="number">00000000</span>`00000011 <span class="number">00000000</span>`00000003 <span class="number">00000000</span>`00000000 fffff804`770b7690 : nt!MiCheckSystemNxFault+<span class="number">0</span>x12d7ec</span><br><span class="line"><span class="number">05</span> fffff804`770b7580 fffff804`7444eacf     : <span class="number">8</span>a000000`049e9863 <span class="number">00000000</span>`00000011 fffff804`770b77f0 <span class="number">00000000</span>`00000000 : nt!MiRaisedIrqlFault+<span class="number">0</span>x142e43</span><br><span class="line"><span class="number">06</span> fffff804`770b75d0 fffff804`7461c25e     : <span class="number">00000000</span>`00000000 fffff804`742c5da4 ffffb181`2e9aba00 <span class="number">00000000</span>`00000022 : nt!MmAccessFault+<span class="number">0</span>x4ef</span><br><span class="line"><span class="number">07</span> fffff804`770b7770 ffff858b`b8d0251d     : fffff804`746283e3 <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 fffff804`742eb2f0 : nt!KiPageFault+<span class="number">0</span>x35e (TrapFrame <span class="selector-tag">@</span> fffff804`770b7770)</span><br><span class="line"><span class="number">08</span> fffff804`770b7908 fffff804`746283e3     : <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 fffff804`742eb2f0 fffff804`770b7fd0 : <span class="number">0</span>xffff858b`b8d0251d</span><br><span class="line"><span class="number">09</span> fffff804`770b7910 fffff804`745e3441     : fffff804`00000003 fffff804`770a3700 fffff804`7709e000 fffff804`770a4000 : nt!ExpCenturyDpcRoutine<span class="variable">$fin</span><span class="variable">$0</span>+<span class="number">0</span>x26d</span><br><span class="line"><span class="number">0</span>a fffff804`770b7970 fffff804`7461705f     : fffff804`770a3700 fffff804`770b7f60 fffff804`770a3770 fffff804`770a3770 : nt!_C_specific_handler+<span class="number">0</span>x1a1</span><br><span class="line"><span class="number">0</span>b fffff804`770b79e0 fffff804`7448cf64     : fffff804`770b87c0 fffff804`00000000 fffff804`770b87c0 fffff804`742eb2f0 : nt!RtlpExecuteHandlerForUnwind+<span class="number">0</span>xf</span><br><span class="line"><span class="number">0</span>c fffff804`770b7a10 fffff804`745e3385     : fffff804`74294878 fffff804`00000001 fffff804`770a3770 fffff804`770a4000 : nt!RtlUnwindEx+<span class="number">0</span>x2c4</span><br><span class="line"><span class="number">0</span>d fffff804`770b8130 fffff804`74616fdf     : fffff804`742eb2f0 fffff804`770b8710 fffff804`745e32a0 <span class="number">00000000</span>`00000000 : nt!_C_specific_handler+<span class="number">0</span>xe5</span><br><span class="line"><span class="number">0</span>e fffff804`770b81a0 fffff804`7448ca77     : fffff804`770b8710 <span class="number">00000000</span>`00000000 fffff804`770a3770 fffff804`7454158b : nt!RtlpExecuteHandlerForException+<span class="number">0</span>xf</span><br><span class="line"><span class="number">0</span>f fffff804`770b81d0 fffff804`7448b676     : fffff804`770a3448 fffff804`770b8e20 fffff804`770a3448 ffff858b`b887914e : nt!RtlDispatchException+<span class="number">0</span>x297</span><br><span class="line"><span class="number">10</span> fffff804`770b88f0 fffff804`7460ef82     : <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 : nt!KiDispatchException+<span class="number">0</span>x186</span><br><span class="line"><span class="number">11</span> fffff804`770b8fb0 fffff804`7460ef50     : fffff804`746201a5 ffff858b`bf363010 fffff804`760f3877 <span class="number">00000000</span>`00000001 : nt!KxExceptionDispatchOnExceptionStack+<span class="number">0</span>x12 (TrapFrame <span class="selector-tag">@</span> fffff804`770b8e70)</span><br><span class="line"><span class="number">12</span> fffff804`770a3308 fffff804`746201a5     : ffff858b`bf363010 fffff804`760f3877 <span class="number">00000000</span>`00000001 fffff804`74531af0 : nt!KiExceptionDispatchOnExceptionStackContinue</span><br><span class="line"><span class="number">13</span> fffff804`770a3310 fffff804`7461bee0     : <span class="number">00000000</span>`00000000 fffff804`74012c9d <span class="number">00000000</span>`00000000 <span class="number">00000001</span>`74610114 : nt!KiExceptionDispatch+<span class="number">0</span>x125</span><br><span class="line"><span class="number">14</span> fffff804`770a34f0 fffff804`7461836d     : fffff804`7326b180 fffff804`7466e8b3 <span class="number">00000000</span>`000020<span class="built_in">cd</span> <span class="number">00000000</span>`00000000 : nt!KiGeneralProtectionFault+<span class="number">0</span>x320 (TrapFrame <span class="selector-tag">@</span> fffff804`770a34f0)</span><br><span class="line"><span class="number">15</span> fffff804`770a3680 fffff804`746182ad     : fffff7fe`40016900 ffff8773`c142a624 <span class="number">00000000</span>`89170ad2 ffff858b`bb8e8100 : nt!KiCustomRecurseRoutine2+<span class="number">0</span>xd</span><br><span class="line"><span class="number">16</span> fffff804`770a36b0 fffff804`746187ed     : <span class="number">00000000</span>`00000003 fffff804`744e9d7b ffff858b`bb8e8328 <span class="number">00000000</span>`00000000 : nt!KiCustomRecurseRoutine1+<span class="number">0</span>xd</span><br><span class="line"><span class="number">17</span> fffff804`770a36e0 fffff804`7461872d     : ffff858b`bb8e8330 <span class="number">00000000</span>`89170ad2 ffff858b`bb8e8300 fffff804`770a38a0 : nt!KiCustomRecurseRoutine0+<span class="number">0</span>xd</span><br><span class="line"><span class="number">18</span> fffff804`770a3710 fffff804`74618762     : <span class="number">00000003</span>`01010000 <span class="number">00000008</span>`00000001 ffff858b`bb8e8010 <span class="number">00000000</span>`00000000 : nt!KiCustomRecurseRoutine9+<span class="number">0</span>xd</span><br><span class="line"><span class="number">19</span> fffff804`770a3740 fffff804`7454158b     : <span class="number">00000000</span>`00000003 <span class="number">00000000</span>`89170ad2 <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`ffffffff : nt!KiCustomAccessRoutine9+<span class="number">0</span>x22</span><br><span class="line"><span class="number">1</span>a fffff804`770a3770 fffff804`74431a72     : <span class="number">00000000</span>`00000002 <span class="number">0</span>a266942`5a5f252b fffff804`7326b180 <span class="number">00000000</span>`00000080 : nt!ExpCenturyDpcRoutine+<span class="number">0</span>x9b</span><br><span class="line"><span class="number">1</span>b fffff804`770a38e0 fffff804`74449369     : <span class="number">00000000</span>`00000000 fffff804`744937f5 <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`000013a5 : nt!KiProcessExpiredTimerList+<span class="number">0</span>x172</span><br><span class="line"><span class="number">1</span>c fffff804`770a39d0 fffff804`74611c8e     : <span class="number">00000000</span>`00000000 fffff804`7326b180 fffff804`74f3ca00 ffff858b`bf66e080 : nt!KiRetireDpcList+<span class="number">0</span>x9d9</span><br><span class="line"><span class="number">1</span>d fffff804`770a3c60 <span class="number">00000000</span>`00000000     : fffff804`770a4000 fffff804`7709e000 <span class="number">00000000</span>`00000000 <span class="number">00000000</span>`00000000 : nt!KiIdleLoop+<span class="number">0</span>x9e</span><br></pre></td></tr></table></figure>
+
+
+
+<p>从 <code>#1a</code> 号堆栈可以看到，PatchGuard 检查时在 DPC 函数 <code>nt!ExpCenturyDpcRoutine</code> 执行时，调用 <code>nt!KiCustomAccessRoutine9 —&gt; .. nt!KiCustomRecurseRoutine2</code> 触发的异常。</p>
+<p>然后使用上一篇的定位小技巧，静态分析 <code>nt!ExpCenturyDpcRoutine</code> 的每一个异常过滤器或 <code>__finally</code> 找到 <code>KiWaitNever/KiWaitAlways</code>。发现在 <code>__finally(ExpCenturyDpcRoutine$fin$0)</code>，对应上 <code>#09</code> 号堆栈。此时也能看到 <code>0xffff858bb8d0251d</code>就是 <code>pg_entry</code>。所以方法二就是 HOOK <code>ExpCenturyDpcRoutine$fin$0</code> 函数。</p>
+<h2 id="3-HOOK-ExpCenturyDpcRoutine-fin-0"><a href="#3-HOOK-ExpCenturyDpcRoutine-fin-0" class="headerlink" title="3  HOOK ExpCenturyDpcRoutine$fin$0"></a>3  HOOK ExpCenturyDpcRoutine$fin$0</h2><h3 id="3-1-寻找-HOOK-点"><a href="#3-1-寻找-HOOK-点" class="headerlink" title="3.1 寻找 HOOK 点"></a>3.1 寻找 HOOK 点</h3><p>在 x64 下，不能使用 <code>jmp/call 立即数地址</code>，可以修改成 <code>jmp/call 通用寄存器</code>。</p>
+<p>如下图，ShellCode 一共 12 字节，分析了一下 <code>ExpCenturyDpcRoutine$fin$0</code> 函数。</p>
+<p><img data-src="https://s2.loli.net/2022/12/27/gMAmOUbdG7on4YN.png" alt="20.png"></p>
+<p>观察 <code>ExpCenturyDpcRoutine$fin$0</code> 函数找一个 12 字节，尽量不要找有 <code>jcc/call</code> 的位置。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00000001404129</span>AF                         ExpCenturyDpcRoutine$fin$<span class="number">0</span>:             </span><br><span class="line">.text:<span class="number">00000001404129</span>AF                         ;   __finally <span class="comment">// owned by 1403319E3</span></span><br><span class="line">.text:<span class="number">00000001404129</span>AF <span class="number">40</span> <span class="number">53</span>                                   push    rbx</span><br><span class="line">.text:<span class="number">00000001404129B</span>1 <span class="number">55</span>                                      push    rbp</span><br><span class="line">.text:<span class="number">00000001404129B</span>2 <span class="number">56</span>                                      push    rsi</span><br><span class="line">.text:<span class="number">00000001404129B</span>3 <span class="number">57</span>                                      push    rdi</span><br><span class="line">.text:<span class="number">00000001404129B</span>4 <span class="number">41</span> <span class="number">56</span>                                   push    r14</span><br><span class="line">.text:<span class="number">00000001404129B</span>6 <span class="number">48</span> <span class="number">83</span> EC <span class="number">30</span>                             sub     rsp, <span class="number">30</span>h</span><br><span class="line">.text:<span class="number">00000001404129B</span>A <span class="number">48</span> <span class="number">8B</span> EA                                mov     rbp, rdx</span><br><span class="line">.text:<span class="number">00000001404129B</span>D <span class="number">88</span> <span class="number">4</span>D <span class="number">50</span>                                mov     [rbp+<span class="number">50</span>h], cl</span><br><span class="line">.text:<span class="number">00000001404129</span>C0 <span class="number">84</span> C9                                   test    cl, cl</span><br><span class="line">.text:<span class="number">00000001404129</span>C2 <span class="number">0F</span> <span class="number">84</span> <span class="number">9</span>C <span class="number">02</span> <span class="number">00</span> <span class="number">00</span>                       jz      loc_140412C64</span><br><span class="line">.text:<span class="number">00000001404129</span>C8 <span class="number">8B</span> <span class="number">45</span> <span class="number">30</span>                                mov     eax, [rbp+<span class="number">30</span>h]</span><br><span class="line">.text:<span class="number">00000001404129</span>CB <span class="number">83</span> F8 <span class="number">02</span>                                cmp     eax, <span class="number">2</span></span><br><span class="line">.text:<span class="number">00000001404129</span>CE <span class="number">0F</span> <span class="number">85</span> <span class="number">6</span>C <span class="number">02</span> <span class="number">00</span> <span class="number">00</span>                       jnz     loc_140412C40</span><br><span class="line">.text:<span class="number">00000001404129</span>D4 <span class="number">48</span> <span class="number">83</span> <span class="number">65</span> <span class="number">78</span> <span class="number">00</span>                          <span class="keyword">and</span>     qword ptr [rbp+<span class="number">78</span>h], <span class="number">0</span></span><br><span class="line">.text:<span class="number">00000001404129</span>D9 <span class="number">48</span> <span class="number">8B</span> <span class="number">8</span>D FA <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    mov     rcx, [rbp+<span class="number">0F</span>Ah]</span><br><span class="line">.text:<span class="number">00000001404129E0</span> <span class="number">48</span> <span class="number">89</span> <span class="number">4</span>D <span class="number">78</span>                             mov     [rbp+<span class="number">78</span>h], rcx</span><br><span class="line">.text:<span class="number">00000001404129E4</span> <span class="number">4</span>C <span class="number">8B</span> <span class="number">85</span> F2 <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    mov     r8, [rbp+<span class="number">0F</span>2h]</span><br><span class="line">.text:<span class="number">00000001404129</span>EB <span class="number">48</span> <span class="number">83</span> A5 <span class="number">80</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                 <span class="keyword">and</span>     qword ptr [rbp+<span class="number">80</span>h], <span class="number">0</span></span><br><span class="line">.text:<span class="number">00000001404129F</span>3 <span class="number">48</span> <span class="number">8B</span> <span class="number">85</span> FA <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    mov     rax, [rbp+<span class="number">0F</span>Ah]</span><br><span class="line">.text:<span class="number">00000001404129F</span>A <span class="number">48</span> <span class="number">89</span> <span class="number">85</span> <span class="number">80</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    mov     [rbp+<span class="number">80</span>h], rax</span><br><span class="line">.text:<span class="number">0000000140412</span>A01 <span class="number">48</span> <span class="number">8B</span> <span class="number">95</span> AA <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    mov     rdx, [rbp+<span class="number">0</span>AAh]</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+<p>如上找到如下 12 字节。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">.text:<span class="number">00000001404129</span>D4 <span class="number">48</span> <span class="number">83</span> <span class="number">65</span> <span class="number">78</span> <span class="number">00</span>                          <span class="keyword">and</span>     qword ptr [rbp+<span class="number">78</span>h], <span class="number">0</span></span><br><span class="line">.text:<span class="number">00000001404129</span>D9 <span class="number">48</span> <span class="number">8B</span> <span class="number">8</span>D FA <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>                    mov     rcx, [rbp+<span class="number">0F</span>Ah]</span><br></pre></td></tr></table></figure>
+
+
+
+<p><strong>注意</strong>：这里的要跳转的目标地址是动态的，且驱动中无法关闭动态随机基址（<em>项目属性—链接器—随机基址、固定基址</em>），所以可以在驱动设置断点然后在 Windbg 中手动修改目标地址。</p>
+<p>恢复快照后，得到 HOOK 点的地址如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; u fffff8047462819b</span><br><span class="line">nt!ExpCenturyDpcRoutine$fin$<span class="number">0</span>+<span class="number">0x25</span>:</span><br><span class="line">fffff804`<span class="number">7462819b</span> <span class="number">4883657800</span>      <span class="keyword">and</span>     qword ptr [rbp+<span class="number">78</span>h],<span class="number">0</span></span><br><span class="line">fffff804`<span class="number">746281</span>a0 <span class="number">488b</span>8dfa000000  mov     rcx,qword ptr [rbp+<span class="number">0F</span>Ah]</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-2-HOOK-代码"><a href="#3-2-HOOK-代码" class="headerlink" title="3.2 HOOK 代码"></a>3.2 HOOK 代码</h3><p>Main.c</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> NTDDK</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NTDDK</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ntddk.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;common.h&gt;</span></span></span><br><span class="line"></span><br><span class="line">ULONG64 g_PTE_BASE;</span><br><span class="line">ULONG64 g_PDE_BASE;</span><br><span class="line">ULONG64 g_PPE_BASE;</span><br><span class="line">ULONG64 g_PXE_BASE;</span><br><span class="line"></span><br><span class="line"><span class="function">EXTERN_C  VOID _fastcall <span class="title">HookFuck</span><span class="params">(<span class="keyword">void</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">ULONG64 <span class="title">get_pte_base</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    PHYSICAL_ADDRESS physical_address;</span><br><span class="line">    ULONG64 pte_base = <span class="number">0</span>;</span><br><span class="line">    physical_address.QuadPart = __readcr3() &amp; <span class="number">0xfffffffffffff000</span>;   <span class="comment">// 获取CR3寄存器，清除低12位</span></span><br><span class="line">    PULONG64 pxe_ptr = MmGetVirtualForPhysical(physical_address);   <span class="comment">// 获取其所在的虚拟地址 - 页表自映射</span></span><br><span class="line">    ULONG64 index = <span class="number">0</span>;</span><br><span class="line">    <span class="comment">// 遍历比较</span></span><br><span class="line">    <span class="keyword">while</span> ((pxe_ptr[index] &amp; <span class="number">0xfffffffff000</span>) != physical_address.QuadPart) &#123;</span><br><span class="line">        index++;</span><br><span class="line">        <span class="keyword">if</span> (index &gt;= <span class="number">512</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">// 计算pte基址</span></span><br><span class="line">    pte_base = ((index + <span class="number">0x1fffe00</span>) &lt;&lt; <span class="number">39</span>);</span><br><span class="line">  </span><br><span class="line">    g_PXE_BASE = (ULONG64)pxe_ptr &amp; <span class="number">0xFFFFFFFFFFFFF000</span>;		<span class="comment">// PLM4E</span></span><br><span class="line">    g_PPE_BASE = (ULONG64)(g_PXE_BASE &gt;&gt; (<span class="number">9</span> + <span class="number">12</span>)) &lt;&lt; <span class="number">21</span>;	<span class="comment">// PDPTE</span></span><br><span class="line">    g_PDE_BASE = (ULONG64)((ULONG64)pxe_ptr &gt;&gt; (<span class="number">9</span> * <span class="number">2</span> + <span class="number">12</span>)) &lt;&lt; <span class="number">30</span>;</span><br><span class="line">    g_PTE_BASE = ((ULONG64)pxe_ptr &gt;&gt; (<span class="number">9</span> * <span class="number">3</span> + <span class="number">12</span>) &lt;&lt; <span class="number">39</span>);</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">return</span> pte_base;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">DriverUnload</span><span class="params">(PDRIVER_OBJECT driver)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    DbgPrint(<span class="string">&quot;Driver is unloading...\r\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">ULONG64 KeepPreAddress_1 = <span class="number">0</span>;</span><br><span class="line">ULONG KeepPreAddress_2 = <span class="number">0</span>;</span><br><span class="line">ULONG64 VA = <span class="number">0xfffff8047462819b</span>;  <span class="comment">//fffff804`7462819b</span></span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">HookTargetAddress</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 将 HOOK 点的地址 R/W = 1</span></span><br><span class="line">    __try</span><br><span class="line">    &#123;   </span><br><span class="line">        KeepPreAddress_1 = *(PULONG64)VA;</span><br><span class="line">        KeepPreAddress_2 = *(PULONG)(VA + <span class="number">8</span>);</span><br><span class="line"></span><br><span class="line">        ULONG64 PLM4E = (((VA &amp; <span class="number">0x0000FFFFFFFFFFFF</span>) &gt;&gt; <span class="number">39</span>) &lt;&lt; <span class="number">3</span>) + (ULONG64)g_PXE_BASE;</span><br><span class="line">        ULONG64 PDPTE = (((VA &amp; <span class="number">0x0000FFFFFFFFFFFF</span>) &gt;&gt; <span class="number">30</span>) &lt;&lt; <span class="number">3</span>) + (ULONG64)g_PPE_BASE;</span><br><span class="line">        ULONG64 PDE = (((VA &amp; <span class="number">0x0000FFFFFFFFFFFF</span>) &gt;&gt; <span class="number">21</span>) &lt;&lt; <span class="number">3</span>) + (ULONG64)g_PDE_BASE;</span><br><span class="line">        ULONG64 PTE = (((VA &amp; <span class="number">0x0000FFFFFFFFFFFF</span>) &gt;&gt; <span class="number">12</span>) &lt;&lt; <span class="number">3</span>) + (ULONG64)g_PTE_BASE;</span><br><span class="line"></span><br><span class="line">        *(PULONG64)PLM4E = *(PULONG64)PLM4E | <span class="number">2</span>;</span><br><span class="line">        *(PULONG64)PDPTE = *(PULONG64)PDPTE | <span class="number">2</span>;</span><br><span class="line">        *(PULONG64)PDE = *(PULONG64)PDE | <span class="number">2</span>;</span><br><span class="line">        *(PULONG64)PTE = *(PULONG64)PTE | <span class="number">2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    __except (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        DbgPrint(<span class="string">&quot;Target address PTE Failed to modify!\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 修改 HOOK 点，注入 ShellCode</span></span><br><span class="line">    __try</span><br><span class="line">    &#123;</span><br><span class="line">        CR0 = __readcr0();</span><br><span class="line">        CR4 = __readcr4();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// CR.WP = 0，supervisor 权限的程序允许修改 only-read 页面</span></span><br><span class="line">        <span class="comment">// 必须在 CR0.WP 被清零之前将 CR4.CET = 0, CET : 控制流强制技术</span></span><br><span class="line">        __writecr4(CR4 &amp; <span class="number">0xFFFFFFFFFF7FFFFF</span>);   <span class="comment">// bit 23(CR4.CET) 清 0</span></span><br><span class="line">        __writecr0(CR0 &amp; <span class="number">0xFFFFFFFFFFFEFFFF</span>);   <span class="comment">// bit 16(CR0.WP) 清 0</span></span><br><span class="line"></span><br><span class="line">        DbgBreakPoint(); <span class="comment">// 手动将HOOK点地址修改为HookFuck()函数地址</span></span><br><span class="line">        *(PULONG64)VA = <span class="number">0xF804810C1000BE48</span>;     <span class="comment">//FFFFF804810C1000  48 BE 00 10 0C 81 04 F8 FF FF</span></span><br><span class="line">        *(PULONG)((ULONG64)VA + <span class="number">8</span>) = <span class="number">0xD6FFFFFF</span>;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 只有在 CR0.WP = 1 时才可以将 CR4.CET = 1</span></span><br><span class="line">        __writecr0(CR0);  </span><br><span class="line">        __writecr4(CR4);</span><br><span class="line">    &#125;</span><br><span class="line">    __except (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        DbgPrint(<span class="string">&quot;Target address Failed to modify with hook function!\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">DriverEntry</span><span class="params">( PDRIVER_OBJECT  driver, PUNICODE_STRING RegistryPath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// DbgPrint(&quot;HookAddress =  %llX\n&quot;, HookFuck);    // FFFFF804810C1000</span></span><br><span class="line">    <span class="comment">// DbgBreakPoint();</span></span><br><span class="line">  </span><br><span class="line">    HookTargetAddress();</span><br><span class="line"></span><br><span class="line">    driver-&gt;DriverUnload = DriverUnload;</span><br><span class="line">    <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>HookFuck.asm</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">option casemap :none</span><br><span class="line"></span><br><span class="line">EXTERN VA:qword</span><br><span class="line">EXTERN KeepPreAddress_1:qword</span><br><span class="line">EXTERN KeepPreAddress_2:dword</span><br><span class="line"></span><br><span class="line">.data</span><br><span class="line">;Valid_1 qword ?</span><br><span class="line"></span><br><span class="line">.CODE </span><br><span class="line">HookFuck PROC</span><br><span class="line">	push rax;</span><br><span class="line">	push rcx;</span><br><span class="line">	push rdx;</span><br><span class="line">	push <span class="built_in">rbp</span>;</span><br><span class="line">	pushfq;</span><br><span class="line"></span><br><span class="line">  ; 将 HOOK 点原先的硬编码写回去</span><br><span class="line">	int <span class="number">3</span>;</span><br><span class="line">	xor edx, edx;</span><br><span class="line">	mov rcx, qword ptr [<span class="type">KeepPreAddress_1</span>];</span><br><span class="line">	mov edx, dword ptr [<span class="type">KeepPreAddress_2</span>];</span><br><span class="line">	mov rax, qword ptr [<span class="type">VA</span>];</span><br><span class="line">	mov qword ptr [<span class="type">rax</span>], rcx;</span><br><span class="line">	lea rax, qword ptr [<span class="type">rax</span>+<span class="number">8</span><span class="type">h</span>];</span><br><span class="line">	mov dword ptr [<span class="type">rax</span>], edx;</span><br><span class="line"></span><br><span class="line">	popfq;</span><br><span class="line">	pop <span class="built_in">rbp</span>;</span><br><span class="line">	pop rdx;</span><br><span class="line">	pop rcx;</span><br><span class="line">	pop rax;</span><br><span class="line"></span><br><span class="line">  ; 执行被 HOOK 的代码</span><br><span class="line">	and     qword ptr [<span class="type">rbp</span>+<span class="number">78</span><span class="type">h</span>],<span class="number">0</span>;</span><br><span class="line">	mov     rcx,qword ptr [<span class="type">rbp</span>+<span class="number">0</span><span class="type">FAh</span>];</span><br><span class="line"></span><br><span class="line">	ret;</span><br><span class="line">HookFuck ENDP</span><br><span class="line">  </span><br><span class="line"><span class="keyword">END</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>驱动成功运行后，可以看到目标地址已经被 ShellCode HOOK 了：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; u fffff8047462819b</span><br><span class="line">nt!ExpCenturyDpcRoutine$fin$<span class="number">0</span>+<span class="number">0x25</span>:</span><br><span class="line">fffff804`<span class="number">7462819b</span> <span class="number">48b</span>e0010f18004f8ffff   mov   rsi,offset <span class="number">20221226</span>_GetPGContext!HookFuck (fffff804`<span class="number">80f</span>11000)</span><br><span class="line">fffff804`<span class="number">746281</span>a5 ffd6                   call  rsi</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="3-3-解密得到CmpAppendDllSection"><a href="#3-3-解密得到CmpAppendDllSection" class="headerlink" title="3.3 解密得到CmpAppendDllSection"></a>3.3 解密得到CmpAppendDllSection</h3><h4 id="命中ShellCode"><a href="#命中ShellCode" class="headerlink" title="命中ShellCode"></a>命中ShellCode</h4><p>PatchGuard 检查时，当 ShellCode 被命中后，<code>HookFuck</code> 函数就会被执行。接下来<strong>单步调试</strong>，根据 1.2 章节的分析，解密得到 <code>Pg_entry</code> 入口地址和 <code>CmpAppendDllSection</code> 的解密秘钥。</p>
+<p>单步到如下指令，此时 <code>rax = rcx = r11 = &amp;Pg_entry = 0xffff858bb8d0251d</code>，密钥 <code>rdx = 0xdca6e531adcf3a55</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">fffff804`<span class="number">746283</span>d8 <span class="number">498b</span>cb          mov     rcx,r11</span><br><span class="line">fffff804`<span class="number">746283</span>db <span class="number">498b</span>c3          mov     rax,r11</span><br><span class="line">fffff804`<span class="number">746283</span>de e8dde8feff      call    nt!guard_dispatch_icall (fffff804`<span class="number">74616</span>cc0)</span><br></pre></td></tr></table></figure>
+
+
+
+<ol>
+<li><p>在 <code>0xffff858bb8d0251d</code> 下硬件断点（不要下软件断点）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; ba e1 ffff858bb8d0251d</span><br><span class="line">kd&gt; bl</span><br><span class="line">     <span class="number">0</span> e Disable Clear  ffff858b`b8d0251d e <span class="number">1</span> <span class="number">0001</span> (<span class="number">0001</span>)</span><br></pre></td></tr></table></figure>
+
+<p>继续运行后硬件断点即被命中。</p>
+</li>
+<li><p>查看 <code>CmpAppendDllSection</code> 解密上半部分。</p>
+<p>单步运行后，<code>Pg_entry</code> 被命中，下面就开始自解密。</p>
+<p><img data-src="https://s2.loli.net/2022/12/27/Pesx6JWfCFIybON.png" alt="22.png"></p>
+<p>每次自解密并写入 8 字节，而每次指令执行 4 字节，所以会提前解密好指令序列。</p>
+<p><img data-src="https://s2.loli.net/2022/12/27/qAbVhPvs3cRuFL8.png" alt="23.png"></p>
+</li>
+<li><p>下半部分（1）。上半部分解密结束后，下半部分会迎来一个循环。循环之前，首先会取 <code>CmpAppendDllSection + 0xC4</code>，即为 <code>PGContext_FirstSec.Index</code>。</p>
+<p>此时的 <code>PGContext_FirstSec.Index = 0x3914</code>。此次 <code>PGContext_FirstSec.Length = Index*8+0xC0 == 0x1C960</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; r rcx</span><br><span class="line">rcx=<span class="number">0000000000003914</span></span><br><span class="line">  ...</span><br><span class="line">ffff858b`b8d0259c <span class="number">483184</span>cac0000000 <span class="keyword">xor</span>     qword ptr [rdx+rcx*<span class="number">8</span>+<span class="number">0</span>C0h],rax ds:<span class="number">002b</span>:ffff858b`b8d1ee7d=dca6e531adcf3a55</span><br><span class="line">ffff858b`b8d025a4 <span class="number">48</span>d3c8          ror     rax,cl</span><br></pre></td></tr></table></figure>
+
+<div class="note success"><p><strong>注意</strong>：由于 PGContext 所处的内存一般会在两分半钟左右刷新一次，也就是这次 PatchGuard 检查没问题之后，会将<mark class="label primary">完整的</mark> PGContext 拷贝至新分配的非分页内存中，并且 PGContext <mark class="label danger">大小</mark>和<mark class="label default">基地址</mark>都是动态变化的。</p>
+</div>
+
+<p>此时将解密前的 <code>PGContext_FirstSec</code> Dump 到文件：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; .writemem c:\Dump\dump  ffff858bb8d0251d L?<span class="number">1</span>c96+<span class="number">1</span></span><br><span class="line">Writing <span class="number">1</span>c961 bytes..........................................................</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="https://s2.loli.net/2022/12/28/JVib6Q4lSuZ91eq.png" alt="24.png"></p>
+<div class="note danger"><p>解密的 LOOP 循环。这里是将 PGContext_FirstSec 进行解密，从高地址向低地址进行解密。</p>
+<p><strong>注意：</strong></p>
+<ol>
+<li><strong>这里每一轮解密都会使用</strong> <mark class="label info">btc</mark> <strong>修改密钥</strong>——<code>ror  rax,cl; btc  rax, rax</code>（LOOP中RCX-&#x3D;1）。</li>
+<li>第一轮解密的密钥和一开始解密 <code>CmpAppendDllSection</code> 的密钥是相同的，都是 <code>0xdca6e531adcf3a55</code>。</li>
+</ol>
+</div>
+</li>
+<li><p>下半部分的 LOOP 循环解密完成后，再 Dump 一次解密后的内存。</p>
+<p>可以看到，LOOP 循环解密后，<code>CmpAppendDllSection</code> 的代码又被完整解密出来了（但是其他内容是加密的）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; u ffff858bb8d0251d l30</span><br><span class="line">ffff858b`b8d0251d <span class="number">2e483111</span>        <span class="keyword">xor</span>     qword ptr cs:[rcx],rdx</span><br><span class="line">ffff858b`b8d02521 <span class="number">48315108</span>        <span class="keyword">xor</span>     qword ptr [rcx+<span class="number">8</span>],rdx</span><br><span class="line">ffff858b`b8d02525 <span class="number">48315110</span>        <span class="keyword">xor</span>     qword ptr [rcx+<span class="number">10</span>h],rdx</span><br><span class="line">ffff858b`b8d02529 <span class="number">48315118</span>        <span class="keyword">xor</span>     qword ptr [rcx+<span class="number">18</span>h],rdx</span><br><span class="line">ffff858b`b8d0252d <span class="number">48315120</span>        <span class="keyword">xor</span>     qword ptr [rcx+<span class="number">20</span>h],rdx</span><br><span class="line">ffff858b`b8d02531 <span class="number">48315128</span>        <span class="keyword">xor</span>     qword ptr [rcx+<span class="number">28</span>h],rdx</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>下半部分（2）。这部分主要就是调用 <code>PatchGuardEntryPoint</code> 函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ffff858b`b8d025ab e2ef            loop    ffff858b`b8d0259c</span><br><span class="line">ffff858b`b8d025ad <span class="number">8b</span>82e8070000    mov     eax,dword ptr [rdx+<span class="number">7E8</span>h] ds:<span class="number">002b</span>:ffff858b`b8d02d05=<span class="number">0001</span>a371</span><br><span class="line">ffff858b`b8d025b3 <span class="number">4803</span>c2          add     rax,rdx</span><br><span class="line">ffff858b`b8d025b6 <span class="number">4883</span>ec28        sub     rsp,<span class="number">28</span>h</span><br><span class="line">ffff858b`b8d025ba ffd0            call    rax	<span class="comment">// PatchGuardEntryPoint</span></span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+<p>调用 <code>PatchGuardEntryPoint</code> 函数前的寄存器状态</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; r</span><br><span class="line">rax=ffff858bb8d1c88e rbx=<span class="number">000000000000392</span>d rcx=<span class="number">0000000000000000</span></span><br><span class="line">rdx=ffff858bb8d0251d rsi=<span class="number">0000000000000001</span> rdi=<span class="number">000000000000392</span>d</span><br><span class="line">rip=ffff858bb8d025b6 rsp=fffff804770b7908 rbp=fffff804770a3770</span><br><span class="line"> r8=<span class="number">0000000000000000</span>  r9=<span class="number">0000000000000000</span> r10=ffff858bb8d0251d</span><br><span class="line">r11=<span class="number">0000000000000000</span> r12=fffff804770a3770 r13=fffff804770a3448</span><br><span class="line">r14=<span class="number">97</span>d1c8152fd921c5 r15=fffff80474215000</span><br><span class="line">iopl=<span class="number">0</span>         nv up ei ng nz na po nc</span><br><span class="line">cs=<span class="number">0010</span>  ss=<span class="number">0018</span>  ds=<span class="number">002b</span>  es=<span class="number">002b</span>  fs=<span class="number">0053</span>  gs=<span class="number">002b</span>             efl=<span class="number">00000286</span></span><br><span class="line">ffff858b`b8d025b6 <span class="number">4883</span>ec28        sub     rsp,<span class="number">28</span>h</span><br></pre></td></tr></table></figure>
+
+<p>堆栈情况如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dq rsp</span><br><span class="line">fffff804`<span class="number">770b</span>7908  fffff804`<span class="number">746283e3</span> <span class="number">00000000</span>`<span class="number">00000000</span></span><br><span class="line">fffff804`<span class="number">770b</span>7918  <span class="number">00000000</span>`<span class="number">00000000</span> fffff804`<span class="number">742</span>eb2f0</span><br><span class="line">fffff804`<span class="number">770b</span>7928  fffff804`<span class="number">770b</span>7fd0 fffff804`<span class="number">770b</span>8210</span><br><span class="line">fffff804`<span class="number">770b</span>7938  fffff804`<span class="number">74555895</span> fffff804`<span class="number">770b</span>7fd0</span><br><span class="line">fffff804`<span class="number">770b</span>7948  <span class="number">00000000</span>`<span class="number">00000000</span> <span class="number">00000000</span>`<span class="number">0032</span>c58e</span><br><span class="line">fffff804`<span class="number">770b</span>7958  <span class="number">00000000</span>`<span class="number">0032</span>c58b fffff804`<span class="number">74294878</span></span><br><span class="line">fffff804`<span class="number">770b</span>7968  fffff804`<span class="number">745e3441</span> fffff804`<span class="number">00000003</span></span><br><span class="line">fffff804`<span class="number">770b</span>7978  fffff804`<span class="number">770</span>a3700 fffff804`<span class="number">7709e000</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="4-PatchGuardEntryPoint-函数分析"><a href="#4-PatchGuardEntryPoint-函数分析" class="headerlink" title="4 PatchGuardEntryPoint 函数分析"></a>4 PatchGuardEntryPoint 函数分析</h2><p>我们主要关注这个函数做的三件事：</p>
+<ol>
+<li><p>清空 <code>DR7</code> 寄存器，屏蔽硬件断点。</p>
+<ul>
+<li><code>IDTR.Base = [&amp;pg_entry + 0x8E0]</code> 获取新的 IDTR 寄存器基址，<code>IDTR.Limit = 0x12F</code>。</li>
+<li>拷贝 <code>CmpAppendDllSection</code> 前 64 字节至 <code>IDTR.Base + 0x10</code> 的位置。</li>
+<li>清空 <code>DR7</code> 寄存器，屏蔽硬件断点。</li>
+</ul>
+</li>
+<li><p>验证多个关键函数是否被修改过，如 <code>ExpWorkerThread</code>。</p>
+<p>如果这些关键函数已经被修改过，则会调用 <code>KeBugCheck</code> 触发蓝屏。 </p>
+<p>如果检查结果成功，则会向初始化一个<a target="_blank" rel="noopener" href="https://catecat.top/post/Windows-WorkItem/">工作项</a>  <code>IO_WORKITEM</code> 。该工作项关联的回调函数 <code>WorkerRoutine</code> 是从以下三个函数之一。</p>
+<ul>
+<li>KiMachineCheckControl（从该数组中选择一个），如果是方法 ⑦ 初始化的 PG，则传给该函数的参数是 <code>&amp;PGcontext</code>。</li>
+<li>FsRtlUninitializeSmallMcb，传给该函数的参数也是 <code>&amp;PGcontext</code>。（<em>多数情况下将挑选该函数</em>）</li>
+<li>sub_140xxxxxx，该函数目前尚不明确。</li>
+</ul>
+</li>
+<li><p>初始化一个工作项 <code>IO_WORKITEM</code> 。</p>
+</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">v2 = a2;                                      <span class="comment">// a1 = 0(循环结束条件)</span></span><br><span class="line">                                                <span class="comment">// a2 = &amp;pg_entry</span></span><br><span class="line">  <span class="keyword">if</span> ( (*(_DWORD *)(a2 + <span class="number">2448</span>) &amp; <span class="number">0x110000</span>) != <span class="number">1114112</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    v3 = *(__m128i **)(a2 + <span class="number">2272</span>);              <span class="comment">// 新的 IDTR.base（ffff858bb8d0251d+8e0）</span></span><br><span class="line">    v4 = <span class="number">38</span>i64;</span><br><span class="line">    v5 = (__int64 *)v3;</span><br><span class="line">    v6 = <span class="number">304</span>;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      *v5 = <span class="number">0</span>i64;                               <span class="comment">// 往 v3 填充 304 字节 0</span></span><br><span class="line">      v6 -= <span class="number">8</span>;</span><br><span class="line">      ++v5;</span><br><span class="line">      --v4;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ( v4 );</span><br><span class="line">    <span class="keyword">for</span> ( ; v6; --v6 )                          <span class="comment">// v6 == 0，不会执行 for 循环</span></span><br><span class="line">    &#123;</span><br><span class="line">      *(_BYTE *)v5 = <span class="number">0</span>;</span><br><span class="line">      v5 = (__int64 *)((<span class="keyword">char</span> *)v5 + <span class="number">1</span>);</span><br><span class="line">    &#125;                                           <span class="comment">// 拷贝已解密的 pg_entry（CmpAppendDllSection） 前 64 字节</span></span><br><span class="line">                                                <span class="comment">// </span></span><br><span class="line">                                                <span class="comment">// 注意拷贝至目标地址第 16 字节开始的地方因为：</span></span><br><span class="line">                                                <span class="comment">// 前 10 字节存放新的 IDTR.Base、IDTR.Limit，剩下 6 字节用来内存对齐</span></span><br><span class="line">    _mm_storeu_si128(v3 + <span class="number">1</span>, *(__m128i *)(v2 + <span class="number">2120</span>));</span><br><span class="line">    _mm_storeu_si128(v3 + <span class="number">2</span>, *(__m128i *)(v2 + <span class="number">2136</span>));</span><br><span class="line">    _mm_storeu_si128(v3 + <span class="number">18</span>, *(__m128i *)(v2 + <span class="number">2152</span>));</span><br><span class="line">    *(_WORD *)v115 = <span class="number">303</span>;                       <span class="comment">// IDTR.limit（低 16 位）</span></span><br><span class="line">    *(_QWORD *)&amp;v115[<span class="number">2</span>] = v3;                   <span class="comment">// IDTR.Base（64 位）</span></span><br><span class="line">    v3[<span class="number">1</span>].m128i_i16[<span class="number">0</span>] = v2 + <span class="number">2168</span>;             <span class="comment">// 共 64 字节</span></span><br><span class="line">    v3[<span class="number">1</span>].m128i_i32[<span class="number">2</span>] = (<span class="keyword">unsigned</span> __int64)(v2 + <span class="number">2168</span>) &gt;&gt; <span class="number">32</span>;</span><br><span class="line">    v3[<span class="number">1</span>].m128i_i16[<span class="number">3</span>] = (<span class="keyword">unsigned</span> <span class="keyword">int</span>)(v2 + <span class="number">2168</span>) &gt;&gt; <span class="number">16</span>;</span><br><span class="line">    _disable();</span><br><span class="line">    <span class="keyword">if</span> ( *(_DWORD *)(v2 + <span class="number">2448</span>) &gt;= <span class="number">0</span> )</span><br><span class="line">    &#123;                                           <span class="comment">// IDTR 寄存器：高 8 字节为 64 位基址，低 2 字节为表大小</span></span><br><span class="line">      __sidt(v116);                             <span class="comment">// 保存 IDT 寄存器 80 位的值</span></span><br><span class="line">      __lidt(v115);                             <span class="comment">// 加载 80 位到 IDTR 寄存器</span></span><br><span class="line">      __writedr(<span class="number">7u</span>, <span class="number">0</span>i64);                      <span class="comment">// 将 DR7 清零，屏蔽硬件中断</span></span><br><span class="line">      __lidt(v116);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      __writedr(<span class="number">7u</span>, <span class="number">0</span>i64);                      <span class="comment">// 将 DR7 清零，屏蔽硬件中断</span></span><br><span class="line">    &#125;</span><br><span class="line">    _enable();</span><br><span class="line">  &#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+
+
+<p>Windbg 一些小技巧：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">dt _TEB -ny LastError;</span><br><span class="line">dt _TEB *LastError*;</span><br><span class="line">～;	<span class="comment">//使用～命令列出当前进程的所有线程</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-执行-WorkItem"><a href="#5-执行-WorkItem" class="headerlink" title="5 执行 WorkItem"></a>5 执行 WorkItem</h2><p>下面回到 <code>CmpAppendDllSection</code> 函数继续分析。上一小节已经分析了 <code>PatchGuardEntryPoint</code> 函数，目前代码执行到地址 <code>INIT:0000000140A3622F</code>。</p>
+<p>下面跳转 <code>r8</code> 就是去将工作项插入队列（<code>ExQueueWorkltem/IoQueueWorkItem</code>），然后让 <code>System</code> 进程的线程池中的某个工作线程去执行回调例程。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">INIT:<span class="number">0000000140</span>A36220 loc_140A36220:                          </span><br><span class="line">INIT:<span class="number">0000000140</span>A36220                 mov     eax, [rdx+<span class="number">7E8</span>h] <span class="comment">// 0x1a371</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A36226                 add     rax, rdx        <span class="comment">// rax = ffff858b`b8d1c88e</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A36229                 sub     rsp, <span class="number">28</span>h</span><br><span class="line">INIT:<span class="number">0000000140</span>A3622D                 call    rax	<span class="comment">// PatchGuardEntryPoint 函数</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A3622F                 add     rsp, <span class="number">28</span>h</span><br><span class="line">INIT:<span class="number">0000000140</span>A36233                 mov     r8, [rax+<span class="number">110</span>h]</span><br><span class="line">INIT:<span class="number">0000000140</span>A3623A                 lea     rcx, [rax+<span class="number">798</span>h]</span><br><span class="line">INIT:<span class="number">0000000140</span>A36241                 mov     edx, <span class="number">1</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A36246                 jmp     r8	<span class="comment">// ExQueueWorkltem/IoQueueWorkItem 工作项</span></span><br><span class="line">INIT:<span class="number">0000000140</span>A36246 ; ---------------------------------------------------------------------------</span><br><span class="line">INIT:<span class="number">0000000140</span>A36249                 db <span class="number">0F</span><span class="function">h <span class="title">dup</span><span class="params">(<span class="number">90</span>h)</span></span></span><br><span class="line"><span class="function">INIT:0000000140A36249 CmpAppendDllSection endp</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="6-FsRtlUninitializeSmallMcb"><a href="#6-FsRtlUninitializeSmallMcb" class="headerlink" title="6 FsRtlUninitializeSmallMcb"></a>6 FsRtlUninitializeSmallMcb</h2><p>如上两节分析，在函数 <code>PatchGuardEntryPoint</code> 中初始化一个工作项 <code>IO_WORKITEM</code>，该 WorkItem 回调例程是三选一，大概率情况下一般回调例程会是 <code>FsRtlUninitializeSmallMcb</code> 函数。然后 <code>jmp r8</code> 去插入该工作项（<code>ExQueueWorkltem/IoQueueWorkItem</code>）。</p>
+<div class="note danger"><p>在 <code>PatchGuardEntryPoint</code> 函数中会对部分重要的函数进行完整性检查，<strong>但是对 PGContext 内容的完整检查是由 <code>FsRtlUninitializeSmallMcb</code>调用 <code>FsRtlMdlReadCompleteDevEx</code> 函数完成的</strong>。这些完整性检查包括核心驱动的 IAT、GDT、IDT（包括中断向量表）、SSDT、CRx、MSR寄存器、内核全局变量、内核全局指针、进程模块链表、内核堆栈、对象类型、Local APIC、第三方通知回调、某些配置和 Flags、KPP Self 等。</p>
+<p><code>FsRtlUninitializeSmallMcb</code>、<code>FsRtlMdlReadCompleteDevEx</code> 这些函数原型都在 <code>INITKDBG</code> 节中。</p>
+</div>
+
+<p><img data-src="https://s2.loli.net/2022/12/30/wJ1ruDp5kHZclME.png" alt="26.png"></p>
+<h2 id="7-DPC-方式检查过程"><a href="#7-DPC-方式检查过程" class="headerlink" title="7 DPC 方式检查过程"></a>7 DPC 方式检查过程</h2><p><img data-src="https://s2.loli.net/2022/12/29/4UaiYsOJE5N8cVW.png" alt="25.png"></p>
+<p><img data-src="https://s2.loli.net/2022/12/30/wJ1ruDp5kHZclME.png" alt="26.png"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Kernel-Patch-Protection3/" title="内核补丁保护（三）DPC 方式触发检查">https://directoree.github.io/post/Kernel-Patch-Protection3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/x64-PG/" rel="tag"><i class="fa fa-tag"></i> x64 PG</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Kernel-Patch-Protection2/" rel="prev" title="内核补丁保护（二）初始化">
+                  <i class="fa fa-chevron-left"></i> 内核补丁保护（二）初始化
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/Windows-WorkItem/" rel="next" title="Windows 工作项（WorkItem）">
+                  Windows 工作项（WorkItem） <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">32:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Kernel-Patch-Protection3/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

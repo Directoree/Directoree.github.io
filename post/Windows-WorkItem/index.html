@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows 工作项（WorkItem）">
+<meta property="og:url" content="https://directoree.github.io/post/Windows-WorkItem/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-12-28T06:11:03.000Z">
+<meta property="article:modified_time" content="2022-12-29T07:14:40.177Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="Windows WorkItem">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Windows-WorkItem/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows 工作项（WorkItem） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%B7%A5%E4%BD%9C%E9%A1%B9%EF%BC%88WorkItem%EF%BC%89"><span class="nav-text">1 工作项（WorkItem）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%B7%A5%E4%BD%9C%E9%A1%B9%E5%92%8C%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-text">1.1 工作项和线程池</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-WorkItem%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">1.2 WorkItem数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-WorkItem-API-%E4%BD%BF%E7%94%A8"><span class="nav-text">1.3 WorkItem API 使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IoAllocateWorkItem-%E6%96%B9%E5%BC%8F"><span class="nav-text">IoAllocateWorkItem 方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IoInitializeWorkItem-%E6%96%B9%E5%BC%8F"><span class="nav-text">IoInitializeWorkItem 方式</span></a></li></ol></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">142</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">63</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">79</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows-WorkItem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows 工作项（WorkItem）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-12-28 14:11:03" itemprop="dateCreated datePublished" datetime="2022-12-28T14:11:03+08:00">2022-12-28</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2022-12-29 15:14:40" itemprop="dateModified" datetime="2022-12-29T15:14:40+08:00">2022-12-29</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/x64%E5%86%85%E6%A0%B8/" itemprop="url" rel="index"><span itemprop="name">x64内核</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Windows-WorkItem/" class="post-meta-item leancloud_visitors" data-flag-title="Windows 工作项（WorkItem）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Windows-WorkItem/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows-WorkItem/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>10k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>9 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-工作项（WorkItem）"><a href="#1-工作项（WorkItem）" class="headerlink" title="1 工作项（WorkItem）"></a>1 工作项（WorkItem）</h2><h3 id="1-1-工作项和线程池"><a href="#1-1-工作项和线程池" class="headerlink" title="1.1 工作项和线程池"></a>1.1 工作项和线程池</h3><p>用户模式的工作项（WorkItem）参见 Windows 10 System Programming Chapter9 Thread Pools，本文关注内核模式的工作项（WorkItem）。</p>
+<p>有时需要在与执行线程不同的线程上运行一段代码。 一种方法是显式创建一个线程并为其分配运行代码的任务。 内核提供允许驱动程序创建单独执行线程的函数：<code>PsCreateSystemThread</code> 和 <code>IoCreateSystemThread</code>（在 Windows 8+ 中可用）。 如果驱动程序需要长时间在后台运行代码，这些功能是合适的。 但是，对于限时操作，最好使用内核提供的线程池，它会在某个系统工作线程上执行您的代码。创建线程开销比较大，如果我们有执行某些代码片段的需求，就可以借助线程池中的线程来执行。</p>
+<blockquote>
+<p><code>IoCreateSystemThread</code> 优于 <code>PsCreateSystemThread</code>，因为它允许将设备或驱动程序对象与线程相关联。 这使得 I&#x2F;O 系统添加对该对象的引用，从而确保驱动程序不会在线程仍在执行时过早卸载。驱动程序创建的线程最终必须通过调用 <code>PsTerminateSystemThread</code> 自行终止。 如果成功，此函数永远不会返回。</p>
+</blockquote>
+<div class="note default"><p>工作项是用于描述排队到系统线程池的函数的术语。 驱动程序可以分配和初始化工作项，指向驱动程序希望执行的函数，然后工作项可以排队到池中。 这看起来与 DPC 非常相似，主要区别在于工作项始终在 IRQL <code>PASSIVE_LEVEL(0)</code> 执行。 因此，IRQL 2 代码（例如 DPC）可以使用工作项来执行 IRQL 2 通常不允许的操作（例如 I&#x2F;O 操作）。</p>
+</div>
+
+<div class="note danger"><p>从 Windows 2000 之后，<strong>每个进程可以创建一个或多个线程池</strong>。<mark class="label success">系统线程池</mark>实际上就是<mark class="label danger">System</mark>进程的线程池，内核中驱动程序都是由 <code>System</code> 进程的线程来执行的。</p>
+</div>
+
+<p>Creating and initializing a work item can be done in one of two ways:</p>
+<ol>
+<li><p>Allocate and initialize the work item with <code>IoAllocateWorkItem</code>. The function <strong>returns</strong> a pointer to the opaque <code>IO_WORKITEM</code>. When finished with the work item it must be freed with <code>IoFreeWorkItem</code>.</p>
+</li>
+<li><p>Allocate an <code>IO_WORKITEM</code> structure dynamically with size provided by <code>IoSizeofWorkItem</code>. Then call <code>IoInitializeWorkItem</code>. When finished with the work item, call <code>IoUninitializeWorkItem</code>.</p>
+<p>这些函数接受设备对象，因此请确保在有工作项排队或执行时<strong>不要卸载驱动程序</strong>。</p>
+</li>
+</ol>
+<div class="note success"><p><code>Io</code> 和 <code>Ex</code> 开头函数的区别：</p>
+<p>还有另外一组工作项的API，都是 <code>Ex</code> 开头的，比如 <code>ExQueueWorkItem</code>。 这些函数不会将工作项与驱动程序中的任何内容相关联，因此有可能在工作项仍在执行时卸载驱动程序。 这些 API 被标记为已弃用 - 总是更喜欢使用 <code>Io</code> 函数。</p>
+</div>
+
+<p><strong><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/procthread/thread-pools">线程池</a><strong>是</strong>工作线程</strong>的集合，可用来高效执行异步回调。可以通过 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/kernel/system-worker-threads">工作项（WorkItem）</a>来使用线程池中的线程（工作线程）。</p>
+<p>工作项可以简单理解为 PASSIVE_LEVEL 级别的异步过程调用。</p>
+<div class="note danger"><p>DPC、APC、WorkItem 区别：</p>
+<ul>
+<li>DPC 对象、函数需要插入到指定的 CPU 编号。工作在 **DPC_LEVEL(2)**。</li>
+<li>APC 对象、函数需要插入到指定的线程。工作在 <strong>APC_LEVEL(1)</strong></li>
+<li>WorkItem 使用<strong>回调机制</strong>，不需要自己创建线程，只需要提供好回调函数即可。只要成功向系统插入工作项函数，系统会调度线程池的么某个线程去调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nc-wdm-io_workitem_routine">工作项回调例程</a> 。工作在 **PASSIVE_LEVEL(0)**。</li>
+</ul>
+</div>
+
+
+
+<p>使用工作项的步骤如下：</p>
+<ol>
+<li><p>分配并初始化新的工作项。</p>
+<p>系统使用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/kernel/eprocess"><strong>IO_WORKITEM</strong></a> 结构来保存工作项。 若要分配新的 <strong>IO_WORKITEM</strong> 结构并将其初始化为工作项，驱动程序可以调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-ioallocateworkitem">IoAllocateWorkItem</a>。或者手动分配 IO_WORKITEM 结构，并调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-ioinitializeworkitem">IoInitializeWorkItem</a> 将结构初始化为一个工作项。 (驱动程序应调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-iosizeofworkitem">IoSizeofWorkItem</a> 来确定保存工作项所需的字节数。 )</p>
+</li>
+<li><p>将回调例程与工作项关联，并将该工作项插入队列，以便系统工作线程可以对其进行处理。</p>
+<p>若要将工作项例程与工作项关联，并将工作项排队，驱动程序应调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-ioqueueworkitem">IoQueueWorkItem</a>。 若要将 <em>WorkItemEx</em> 例程与工作项关联，并将该工作项排队，则驱动程序应调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-ioqueueworkitemex">IoQueueWorkItemEx</a>。</p>
+<p><code>IoQueueworkItemEx</code> 函数使用一个不同的回调，该回调具有一个附加参数，即工作项本身。 这很有用，工作项函数需要在退出前释放工作项。</p>
+</li>
+<li><p>不再需要该工作项后，请将其释放。</p>
+<p><code>IoAllocateWorkItem</code> 分配的工作项应由 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-iofreeworkitem">IoFreeWorkItem</a> 释放。 <code>IoInitializeWorkItem</code> 初始化的工作项必须先由 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/nf-wdm-iouninitializeworkitem">IoUninitializeWorkItem</a> 取消初始化，然后才能释放。</p>
+<p>仅当工作项当前未排队时，才能取消初始化或释放工作项。 在调用工作项的回调例程之前，系统会取消排队工作项，因此可以从回调内调用 <code>IoFreeWorkItem</code> 和 <code>IoUninitializeWorkItem</code>。</p>
+</li>
+</ol>
+<h3 id="1-2-WorkItem数据结构"><a href="#1-2-WorkItem数据结构" class="headerlink" title="1.2 WorkItem数据结构"></a>1.2 WorkItem数据结构</h3><p>内核 <code>System</code> 进程的线程池提供的工作线程，通过 <code>ExpWorkerThread</code>  函数来将工作项从工作队列中摘除，并调用其中的工作例程来服务这些工作队列。</p>
+<p>WorkItem 结构为 <code>IO_WORKITEM</code>（一个 <code>IO_WORKITEM</code> 结构表示一个工作项。）：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt nt!_IO_WORKITEM</span><br><span class="line">   +<span class="number">0x000</span> WorkItem         : _WORK_QUEUE_ITEM	<span class="comment">// 是一个链表，串着 IoObject 上的工作项</span></span><br><span class="line">   +<span class="number">0x020</span> Routine          : Ptr64     <span class="keyword">void</span> 	<span class="comment">// 当前工作项关联的例程</span></span><br><span class="line">   +<span class="number">0x028</span> IoObject         : Ptr64 Void		<span class="comment">// 与之关联的 IO 设备对象</span></span><br><span class="line">   +<span class="number">0x030</span> Context          : Ptr64 Void		<span class="comment">// 工作项例程的参数</span></span><br><span class="line">   +<span class="number">0x038</span> WorkOnBehalfThread : Ptr64 _ETHREAD</span><br><span class="line">   +<span class="number">0x040</span> Type             : Uint4B		<span class="comment">// 优先级，_WORK_QUEUE_TYPE 枚举的类型</span></span><br><span class="line">   +<span class="number">0x044</span> ActivityId       : _GUID</span><br><span class="line"></span><br><span class="line"><span class="comment">//0x58 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">IO_WORKITEM</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">WORK_QUEUE_ITEM</span> <span class="title">WorkItem</span>;</span>                                       <span class="comment">//0x0</span></span><br><span class="line">    VOID (*Routine)(VOID* arg1, VOID* arg2, struct _IO_WORKITEM* arg3);     <span class="comment">//0x20</span></span><br><span class="line">    VOID* IoObject;                                                         <span class="comment">//0x28</span></span><br><span class="line">    VOID* Context;                                                          <span class="comment">//0x30</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">ETHREAD</span>* <span class="title">WorkOnBehalfThread</span>;</span>                                    <span class="comment">//0x38</span></span><br><span class="line">    ULONG Type;                                                             <span class="comment">//0x40</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">GUID</span> <span class="title">ActivityId</span>;</span>                                                <span class="comment">//0x44</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p><code>IO_WORKITEM</code> 第一个成员 <code>WorkItem</code> 是一个 <code>_WORK_QUEUE_ITEM</code> 结构，上面串着与 <code>IoObject</code> 成员关联的所有工作项。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _WORK_QUEUE_ITEM -r1</span><br><span class="line">nt!_WORK_QUEUE_ITEM</span><br><span class="line">   +<span class="number">0x000</span> List             : _LIST_ENTRY</span><br><span class="line">      +<span class="number">0x000</span> Flink            : Ptr64 _LIST_ENTRY</span><br><span class="line">      +<span class="number">0x008</span> Blink            : Ptr64 _LIST_ENTRY</span><br><span class="line">   +<span class="number">0x010</span> WorkerRoutine    : Ptr64     <span class="keyword">void</span> </span><br><span class="line">   +<span class="number">0x018</span> Parameter        : Ptr64 Void</span><br><span class="line"></span><br><span class="line"><span class="comment">//0x20 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">WORK_QUEUE_ITEM</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">LIST_ENTRY</span> <span class="title">List</span>;</span>                                                <span class="comment">//0x0</span></span><br><span class="line">    VOID (*WorkerRoutine)(VOID* arg1);                                      <span class="comment">//0x10</span></span><br><span class="line">    VOID* Parameter;                                                        <span class="comment">//0x18</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p><code>Type</code> 成员表示工作项的优先级，是一个 <code>_WORK_QUEUE_TYPE</code> 枚举类型，具体成员含义见 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/ne-wdm-_work_queue_type">MSDN—WORK_QUEUE_TYPE枚举</a>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">enum</span> _<span class="title">WORK_QUEUE_TYPE</span> &#123;</span></span><br><span class="line">  CriticalWorkQueue,</span><br><span class="line">  DelayedWorkQueue,</span><br><span class="line">  HyperCriticalWorkQueue,</span><br><span class="line">  NormalWorkQueue,</span><br><span class="line">  BackgroundWorkQueue,</span><br><span class="line">  RealTimeWorkQueue,</span><br><span class="line">  SuperCriticalWorkQueue,</span><br><span class="line">  MaximumWorkQueue,</span><br><span class="line">  CustomPriorityWorkQueue</span><br><span class="line">&#125; WORK_QUEUE_TYPE;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-3-WorkItem-API-使用"><a href="#1-3-WorkItem-API-使用" class="headerlink" title="1.3 WorkItem API 使用"></a>1.3 WorkItem API 使用</h3><p>上面讲过，有两种方法使用 WorkItem 有以下三个步骤：</p>
+<ol>
+<li>分配并初始化新的工作项。<ul>
+<li>IoAllocateWorkItem、IoFreeWorkItem。</li>
+<li>IoInitializeWorkItem、IoUninitializeWorkItem、IoSizeofWorkItem。</li>
+</ul>
+</li>
+<li>将回调例程与工作项关联，并将该工作项插入队列，以便系统工作线程可以对其进行处理，IoQueueWorkItem。</li>
+<li>不再需要该工作项后，请将其释放。</li>
+</ol>
+<h4 id="IoAllocateWorkItem-方式"><a href="#IoAllocateWorkItem-方式" class="headerlink" title="IoAllocateWorkItem 方式"></a>IoAllocateWorkItem 方式</h4><ol>
+<li><p>创建工作项。</p>
+<p>使用 <code>IoAllocateWorkItem</code> 方式由系统创建的 <code>WorkItem</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">PIO_WORKITEM <span class="title">IoAllocateWorkItem</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  IN PDEVICE_OBJECT DeviceObject	<span class="comment">// 关联的驱动设备对象</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>通过这种方式工作项创建好后，就已经和设备进行关联了。</p>
+</li>
+<li><p>将工作项插入队列。使用 <code>IoQueueWorkItem</code> 函数或 <code>IoQueueWorkItemEx</code> 函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">IoQueueWorkItem</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PIO_WORKITEM IoWorkItem,			<span class="comment">// 工作项结构指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PIO_WORKITEM_ROUTINE WorkerRoutine,	<span class="comment">// 工作项例程指针,WorkItem</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN WORK_QUEUE_TYPE QueueType,		<span class="comment">// 指定一个 WORK_QUEUE_TYPE 值，该值规定处理工作项的系统工作线程的类型。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  						<span class="comment">// 驱动程序必须指定 DelayedWorkQueue。</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Context				<span class="comment">// 工作项的参数</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">IoQueueWorkItemEx</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PIO_WORKITEM IoWorkItem,			<span class="comment">// 工作项结构指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PIO_WORKITEM_ROUTINE_EX WorkerRoutine,	<span class="comment">// 工作项例程指针,WorkItemEx</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN WORK_QUEUE_TYPE QueueType,		<span class="comment">// 指定一个 WORK_QUEUE_TYPE 值，该值规定处理工作项的系统工作线程的类型。</span></span></span></span><br><span class="line"><span class="function"><span class="params">  						<span class="comment">// 驱动程序必须指定 DelayedWorkQueue。</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Context				<span class="comment">// 工作项的参数</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，这两个函数都可以将工作项插入到队列中，只不过仅<strong>工作项回调例程指针类型不同</strong>。</p>
+<p>注意：<code>QueueType</code> 成员，驱动程序必须指定 <strong>DelayedWorkQueue</strong>。</p>
+<p>工作项的回调例程由系统调用 <code>ExpWorkerThread</code> 函数来执行，回调例程执行之前，该函数会先将工作项从队列中摘除（类似于APC摘出）。</p>
+</li>
+<li><p>准备工作项回调例程：</p>
+<ul>
+<li>如果是 <code>IoQueueWorkItem</code> 函数插入队列，工作项回调例程为 <code>WorkItem</code> 例程。</li>
+<li>如果是 <code>IoQueueWorkItemEx</code> 函数插入队列，工作项回调例程为 <code>WorkItemEx</code> 例程。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">VOID</span> <span class="params">(*PIO_WORKITEM_ROUTINE)</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PDEVICE_OBJECT DeviceObject,	<span class="comment">// 工作项关联的设备对象</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Context			<span class="comment">// 工作项指针参数，和 IoQueueWorkItem 参数 4 一致</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">typedef</span> <span class="title">VOID</span> <span class="params">(*IO_WORKITEM_ROUTINE_EX)</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PDEVICE_OBJECT DeviceObject,	<span class="comment">// 工作项关联的设备对象</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Context			<span class="comment">// 工作项指针参数，和 IoQueueWorkItemEx 参数 4 一致</span></span></span></span><br><span class="line"><span class="function"><span class="params">    IN PIO_WORKITEM IoWorkItem		<span class="comment">// 指向当前工作项结构的指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>注意：<em>WorkItemEx</em> 例程<strong>必须运行有限的时间</strong>。否则，系统可能会死锁。所以一般情况下可不使用该结构例程。</p>
+</li>
+<li><p>使用由 <code>IoAllocateWorkItem</code> 分配的工作项。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">IoFreeWorkItem</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  IN PIO_WORKITEM IoWorkItem	<span class="comment">// 指向工作项结构的指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>使用范例如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">IoWorkitemRoutine</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PDEVICE_OBJECT DeviceObject,	</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Context		</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  PIO_WORKITEM pIoWorkItem = <span class="literal">NULL</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// *************</span></span><br><span class="line">  <span class="comment">// 执行其他代码逻辑</span></span><br><span class="line">  <span class="comment">// *************</span></span><br><span class="line">  pIoWorkItem = (PIO_WORKITEM)Context;</span><br><span class="line">  IoFreeWorkItem(pIoWorkItem);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">DriverEntry</span><span class="params">(PDRIVER_OBJECT DriverObject, PUNICODE_STRING <span class="comment">/*RegistryPath*/</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  DriverObject-&gt;DriverUnload = UnloadDriver;</span><br><span class="line">  </span><br><span class="line">  PIO_WORKITEM pIoWorkItem;</span><br><span class="line">  pIoWorkItem = IoAllocateWorkItem(DeviceObject);</span><br><span class="line">  IoQueueWorkItem(pIoWorkItem, IoWorkitemRoutine, DelayedWorkQueue, pIoWorkItem);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="IoInitializeWorkItem-方式"><a href="#IoInitializeWorkItem-方式" class="headerlink" title="IoInitializeWorkItem 方式"></a>IoInitializeWorkItem 方式</h4><p>使用 <code>IoInitializeWorkItem</code> 方式来使用工作项时，工作项结构 <code>IO_WORKITEM</code> 的内存空间需要自己手动申请。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">IoInitializeWorkItem</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] PVOID        IoObject,	<span class="comment">// 设备对象指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in] PIO_WORKITEM IoWorkItem	<span class="comment">// 工作项结构指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>注意：存放工作项的内存<strong>必须是非分页内存</strong>。内存大小由 <code>IoSizeofWorkItem</code> 函数指定。</p>
+<p>在释放 <code>IO_WORKITEM</code> 结构之前，应该调用 <code>IoUninitializeWorkItem</code> 函数对工作项进行卸载。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">IoUninitializeWorkItem</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] PIO_WORKITEM IoWorkItem	<span class="comment">// 工作项结构指针</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>使用范例：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">IoWorkitemRoutine</span> <span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PDEVICE_OBJECT DeviceObject,	</span></span></span><br><span class="line"><span class="function"><span class="params">    IN PVOID Context		</span></span></span><br><span class="line"><span class="function"><span class="params">    )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  PIO_WORKITEM pIoWorkItem = <span class="literal">NULL</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// *************</span></span><br><span class="line">  <span class="comment">// 执行其他代码逻辑</span></span><br><span class="line">  <span class="comment">// *************</span></span><br><span class="line">  pIoWorkItem = (PIO_WORKITEM)Context;</span><br><span class="line">  IoUninitializeWorkItem(pIoWorkItem);</span><br><span class="line">  IoFreeWorkItem(pIoWorkItem);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">DriverEntry</span><span class="params">(PDRIVER_OBJECT DriverObject, PUNICODE_STRING <span class="comment">/*RegistryPath*/</span>)</span> </span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  DriverObject-&gt;DriverUnload = UnloadDriver;</span><br><span class="line">  </span><br><span class="line">  PIO_WORKITEM pIoWorkItem;</span><br><span class="line">  pIoWorkItem = (PIO_WORKITEM)ExAllocatePool(NonPagedPool, IoSizeofWorkItem());</span><br><span class="line">  IoInitializeWorkItem(DeviceObject, pIoWorkItem);</span><br><span class="line">  IoQueueWorkItem(pIoWorkItem, IoWorkitemRoutine, DelayedWorkQueue, pIoWorkItem);</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<p>参考：</p>
+<ul>
+<li>Windows Internals 7 Chapter4 Worker factories</li>
+<li>Windows Kernel Programming, 2nd Edition (Pavel Yosifovich) Chapter6 Work Item</li>
+<li>Windows 10 System Programming Chapter9 Thread Pools</li>
+</ul>
+<blockquote>
+<p>工作项 WorkItem</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/jyl_sh/article/details/118278118?spm=1001.2101.3001.6650.3&amp;utm_medium=distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~default-3-118278118-blog-112556264.pc_relevant_landingrelevant&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2~default~OPENSEARCH~default-3-118278118-blog-112556264.pc_relevant_landingrelevant&amp;utm_relevant_index=4">https://blog.csdn.net/jyl_sh/article/details/118278118?spm=1001.2101.3001.6650.3&amp;utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7Edefault-3-118278118-blog-112556264.pc_relevant_landingrelevant&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EOPENSEARCH%7Edefault-3-118278118-blog-112556264.pc_relevant_landingrelevant&amp;utm_relevant_index=4</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/jadeshu/p/10663605.html">https://www.cnblogs.com/jadeshu/p/10663605.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.matteomalvica.com/blog/2021/03/10/practical-re-win-solutions-ch3-work-items/">https://www.matteomalvica.com/blog/2021/03/10/practical-re-win-solutions-ch3-work-items/</a></p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/kernel/system-worker-threads">https://learn.microsoft.com/zh-cn/windows-hardware/drivers/kernel/system-worker-threads</a></p>
+<p><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/ne-wdm-_work_queue_type">https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/wdm/ne-wdm-_work_queue_type</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/pureman_mega/article/details/112556264">https://blog.csdn.net/pureman_mega/article/details/112556264</a></p>
+</blockquote>
+<p>内核队列（KQUEUE）管理线程池。</p>
+<p><a target="_blank" rel="noopener" href="https://www.yhvod.net/play/97330-0-1.html">https://www.yhvod.net/play/97330-0-1.html</a></p>
+<p>旧实现的一个问题是一个进程中只能创建一个线程池，这使得一些场景难以实现。 例如，尝试通过构建两个线程池来确定工作项的优先级是不可能的，这两个线程池将服务于不同的请求集。 另一个问题是实现本身，它处于用户模式（在 Ntdll.dll 中）。 由于内核可以直接控制线程调度、创建和终止，而无需从用户模式执行这些操作的典型成本，因此支持 Windows 中的用户模式线程池实现所需的大部分功能现在都位于内核中 . 这也简化了开发人员需要编写的代码。 例如，在远程进程中创建工作池可以通过单个 API 调用完成，而不是通常需要的一系列复杂的虚拟内存调用。 在此模型下，Ntdll.dll 仅提供与工作工厂内核代码交互所需的接口和高级 API。</p>
+<p>Windows 中的此内核线程池功能由称为 TpWorkerFactory 的对象管理器类型以及用于管理工厂及其工人的四个本机系统调用（NtCreateWorkerFactory、NtWorkerFactoryWorkerReady、NtReleaseWorkerFactoryWorker 和 NtShutdownWorkerFactory）管理； 两个查询&#x2F;设置本机调用（NtQueryInformationWorkerFactory 和 NtSetInformationWorkerFactory）； 和等待调用 (NtWaitForWorkViaWorkerFactory)。 就像其他本机系统调用一样，这些调用为用户模式提供了 TpWorkerFactory 对象的句柄，其中包含名称和对象属性、所需的访问掩码和安全描述符等信息。 然而，与 Windows API 包装的其他系统调用不同，线程池管理由 Ntdll.dll 的本机代码处理。 这意味着开发人员使用不透明的描述符：线程池的 TP_POOL 指针和从池中创建的对象的其他不透明指针，包括 TP_WORK（工作回调）、TP_TIMER（计时器回调）、TP_WAIT（等待回调）等。这些结构持有 各种信息，例如 TpWorkerFactory 对象的句柄。</p>
+<p>顾名思义，工作工厂实现负责分配工作线程（并调用给定的用户模式工作线程入口点）并维护最小和最大线程数（允许永久工作池或完全动态池） 作为其他会计信息。 这使得关闭线程池等操作只需调用一次内核即可执行，因为内核一直是负责线程创建和终止的唯一组件。</p>
+<p>因为内核根据需要动态创建新线程（基于提供的最小和最大数量），这增加了使用新线程池实现的应用程序的可伸缩性。 只要满足以下所有条件，工作工厂就会创建一个新线程：</p>
+<p>■ 启用动态线程创建。<br>■ 可用工人数低于为工厂配置的最大工人数（默认为500）。<br>■ 工作工厂有绑定对象（例如，这个工作线程所在的 ALPC 端口waiting on) 或者一个线程已经被激活到池中。<br>■ 有关联的挂起的 I&#x2F;O 请求数据包（IRP；有关详细信息，请参阅第 6 章）<br>与工作线程。</p>
+<p>此外，只要线程变为空闲状态（即它们未处理任何工作项）超过 10 秒（默认情况下），它就会终止线程。 此外，尽管开发人员始终能够通过旧实现利用尽可能多的线程（基于系统上的处理器数量），但现在使用线程池的应用程序可以自动利用添加的新处理器 运行。 这是通过其对 Windows Server 中的动态处理器的支持（如本章前面所述）实现的。</p>
+<p><strong>Worker factory creation</strong></p>
+<p>工人工厂支持只是一个包装器，用于管理平凡的任务，否则这些任务必须在用户模式下执行（性能损失）。 新线程池代码的大部分逻辑保留在该体系结构的 Ntdll.dll 端。 （理论上，通过使用未记录的函数，可以围绕工作工厂构建不同的线程池实现。）此外，提供可伸缩性、内部等待和工作处理效率的不是工作工厂代码。 相反，它是 Windows 的一个更古老的组件：I&#x2F;O 完成端口，或者更准确地说，内核队列 (KQUEUE)。 其实在创建worker factory的时候，用户态肯定已经创建了一个I&#x2F;O完成端口，需要传入句柄。</p>
+<p>正是通过这个 I&#x2F;O 完成端口，用户模式实现将排队并等待工作——但是通过调用工作工厂系统调用而不是 I&#x2F;O 完成端口 API。 然而，在内部，“release”worker factory 调用（排队工作）是 IoSetIoCompletionEx 的包装器，它增加了待处理的工作，而“wait”调用是 IoRemoveIoCompletion 的包装器。 这两个例程都调用内核队列实现。 因此，worker factory 代码的工作是管理一个持久的、静态的或动态的线程池； 将 I&#x2F;O 完成端口模型包装到接口中，试图通过自动创建动态线程来防止停滞的工作队列； 并在工厂关闭请求期间简化全局清理和终止操作（以及在这种情况下轻松阻止对工厂的新请求）。</p>
+<p>创建工作工厂的执行函数 NtCreateWorkerFactory 接受多个允许自定义线程池的参数，例如要创建的最大线程数以及初始提交和保留的堆栈大小。 但是，CreateThreadpool Windows API 使用嵌入在可执行映像中的默认堆栈大小（就像默认的 CreateThread 一样）。 但是，Windows API 不提供覆盖这些默认值的方法。 这有点不妥当，因为在许多情况下线程池线程不需要很深的调用堆栈，分配较小的堆栈将是有益的。</p>
+<p>工人工厂实现使用的数据结构不在公共符号中，但仍然可以查看一些工人池，正如您将在下一个实验中看到的那样。 此外，NtQueryInformationworkerFactory APl 几乎转储了工作工厂结构中的每个字段。</p>
+<p>EXPERIMENT: Looking at thread pools</p>
+<p>由于线程池机制的优势，许多核心系统组件和应用程序都使用它，尤其是在处理 ALPC 端口等资源时（以适当和可扩展的级别动态处理传入请求）。 识别哪些进程正在使用工作工厂的方法之一是查看 Process Explorer 中的句柄列表。 按照以下步骤查看它们背后的一些细节：</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Windows-WorkItem/" title="Windows 工作项（WorkItem）">https://directoree.github.io/post/Windows-WorkItem/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/Windows-WorkItem/" rel="tag"><i class="fa fa-tag"></i> Windows WorkItem</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Kernel-Patch-Protection3/" rel="prev" title="内核补丁保护（三）DPC 方式触发检查">
+                  <i class="fa fa-chevron-left"></i> 内核补丁保护（三）DPC 方式触发检查
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/Kernel-Patch-Protection4/" rel="next" title="内核补丁保护（四）其他触发 PG 检查方式">
+                  内核补丁保护（四）其他触发 PG 检查方式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2.1m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">32:33</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Windows-WorkItem/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
