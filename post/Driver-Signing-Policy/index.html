@@ -32,8 +32,9 @@
 <meta property="og:image" content="https://s2.loli.net/2023/01/05/w1fCIGdyQsnWcM7.jpg">
 <meta property="og:image" content="https://s2.loli.net/2023/01/04/AJ415NnbyoezlqB.png">
 <meta property="og:image" content="https://s2.loli.net/2023/01/05/5oYS8bGnfJ3LC7F.png">
+<meta property="og:image" content="https://s2.loli.net/2023/01/06/cKPx3QZegMHDhA9.png">
 <meta property="article:published_time" content="2023-01-04T13:30:24.000Z">
-<meta property="article:modified_time" content="2023-01-04T16:56:47.142Z">
+<meta property="article:modified_time" content="2023-01-05T16:56:46.584Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="DSE驱动强制签名">
@@ -235,7 +236,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-PE-%E6%96%87%E4%BB%B6%E7%AD%BE%E5%90%8D%E6%A6%82%E8%BF%B0"><span class="nav-text">1 PE 文件签名概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D"><span class="nav-text">1.1 代码签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%A9%B1%E5%8A%A8%E5%BC%BA%E5%88%B6%E7%AD%BE%E5%90%8D"><span class="nav-text">1.2 驱动强制签名</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-PE-%E6%96%87%E4%BB%B6%E7%AD%BE%E5%90%8D%E6%A6%82%E8%BF%B0"><span class="nav-text">1 PE 文件签名概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E4%BB%A3%E7%A0%81%E7%AD%BE%E5%90%8D"><span class="nav-text">1.1 代码签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%A9%B1%E5%8A%A8%E5%BC%BA%E5%88%B6%E7%AD%BE%E5%90%8D"><span class="nav-text">1.2 驱动强制签名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%AE%89%E5%85%A8%E5%90%AF%E5%8A%A8"><span class="nav-text">1.3 安全启动</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -359,7 +360,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-01-05 00:56:47" itemprop="dateModified" datetime="2023-01-05T00:56:47+08:00">2023-01-05</time>
+        <time title="修改时间：2023-01-06 00:56:46" itemprop="dateModified" datetime="2023-01-06T00:56:46+08:00">2023-01-06</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -400,14 +401,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>2.2k</span>
+      <span>4.5k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>2 分钟</span>
+      <span>4 分钟</span>
     </span>
 </div>
 
@@ -455,6 +456,52 @@
 </div>
 
 <p><img data-src="https://s2.loli.net/2023/01/05/5oYS8bGnfJ3LC7F.png" alt="2.png"></p>
+<h3 id="1-3-安全启动"><a href="#1-3-安全启动" class="headerlink" title="1.3 安全启动"></a>1.3 安全启动</h3><p><strong><a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/security/information-protection/secure-the-windows-10-boot-process">Rootkit</a></strong></p>
+<p>Rootkit 是一种复杂且危险的恶意软件。 它们在内核模式下运行，使用与 OS 相同的权限。 由于 rootkit 与 OS 具有相同的权限并在其之前&#x2F;后启动，因此它们可以完全隐藏自身和其他应用程序。 通常，rootkit 是整套恶意软件的一部分，可以绕过本地登录、记录密码和按键、传输私有文件以及捕获加密数据。</p>
+<p>不同类型的 rootkit 在启动过程的不同阶段中进行加载：</p>
+<ul>
+<li><strong>固件 rootkit</strong>（Firmware rootkits）。 这些工具包覆盖电脑的基本输入&#x2F;输出系统或其他硬件的固件，因此 rootkit 可以在 Windows 之前启动。</li>
+<li><strong>Bootkit。</strong> 这些工具包取代了操作系统的启动加载程序， 以便电脑在 OS 之前加载引导工具包的小型软件。</li>
+<li><strong>内核 rootkit</strong>（Kernel rootkits）。 这些工具包替换了 OS 内核的一部分，因此在 OS 加载时，rootkit 可以自动启动。</li>
+<li><strong>驱动程序 rootkit</strong>（Driver rootkits）。 这些套件假装成 Windows 与电脑硬件进行通信所使用的其中一款受信任的驱动程序。</li>
+</ul>
+<p>为了应对 Rootkit 攻击，微软在系统启动过程中使用以下四项保护：</p>
+<ol>
+<li><strong>安全启动</strong>（Secure Boot）：可以将具有 UEFI 固件和受信任的平台模块 (TPM) 的电脑配置为仅<strong>加载受信任的 OS 启动加载程序</strong>（OS Loader）。</li>
+<li><strong>受信任的启动</strong>（Trusted Boot）：Windows 先检查启动过程的每个组件的完整性，然后再加载组件（主要是<strong>系统相关的内核模块</strong>）。</li>
+<li><strong>开机初期启动的反恶意软件</strong> （Early Launch Anti-Malware, ELAM）：ELAM 先测试所有驱动程序然后再进行加载，并且会阻止加载未经批准的驱动程序。</li>
+<li><strong>测量的启动</strong>（Measured Boot）：电脑的固件记录启动过程，Windows 可以将它发送到可客观评估电脑运行状况的受信任服务器（联网）。</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2023/01/06/cKPx3QZegMHDhA9.png" alt="4.png"></p>
+<table>
+<thead>
+<tr>
+<th>启动阶段</th>
+<th>描述</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>安全启动</td>
+<td>配备有 UEFI 的电脑启动时，电脑首先验证固件是否经过了<strong>数字签名</strong>，从而减少了固件 rootkit 风险。 如果启用了安全启动，固件将检查 <strong>OS 引导加载程序</strong>的数字签名，以验证它是否已修改。 如果启动加载程序未被改动，则只有满足以下条件之一时，固件才会启动此启动加载程序：<br />1、<strong>使用受信任证书对启动加载程序进行了签名。</strong> 对于经过 Windows 认证的电脑，Microsoft证书是受信任的。<br />2、<strong>用户已手动批准启动加载程序的数字签名。</strong> 此操作允许用户加载非Microsoft操作系统。</td>
+<td>所有基于 x86 的 Windows 电脑认证都必须满足与安全启动相关的几个要求：<br />1、<strong>默认情况下，电脑必须启用安全启动</strong>。<br />2、电脑必须信任 Microsoft 的证书 (因此任何启动加载程序都已通过  Microsoft 签名。<br />3、必须允许用户将电脑安全启动配置为信任其他启动加载程序。<br />4、<strong>必须允许用户彻底禁用安全启动</strong>。<br />&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;<br />可以使用以下三个选项来运行非 Microsoft 操作系统：<br />1、<strong>将 OS 与经过认证的引导加载程序配合使用。</strong> 由于所有经 Windows 认证的电脑都必须信任Microsoft的证书，Microsoft会提供一项服务来分析和签署任何非Microsoft引导加载程序，以便所有 Windows 认证电脑都信任它。<br />2、<strong>将 UEFI 配置为信任自定义的启动加载程序。</strong> 所有经 Windows 认证的电脑都允许你通过向 UEFI 数据库添加签名来信任未经认证的引导加载程序，从而允许运行任何 OS，包括自制操作系统。<br />3、<strong>关闭安全启动。</strong> <strong>所有经 Windows 认证的电脑都允许关闭安全启动，以便可以运行任何软件</strong>。 但是，此操作无助于保护你免受启动工具包的防护。</td>
+</tr>
+<tr>
+<td>受信任的启动</td>
+<td>受信任的启动接管安全启动结束的位置。启动加载程序将先验证 Windows 10 <strong>内核的数字签名</strong>，然后再加载它。 而 Windows 10 内核将验证 Windows 启动过程的每一个其他组件，包括启动驱动程序、启动文件和 ELAM。 如果文件已被修改，则启动加载程序会检测到问题并拒绝加载损坏的组件。 通常，Windows 可以自动修复损坏的组件、还原 Windows 的完整性并允许电脑正常启动。</td>
+<td></td>
+</tr>
+<tr>
+<td>开机初期启动的反恶意软件</td>
+<td>因为<strong>安全启动已经保护了启动加载程序，受信任启动已经保护了 Windows 内核，所以恶意软件启动的下一个机会就是感染非 Microsoft 启动驱动程序</strong>。 传统的反恶意软件应用直到加载启动驱动程序后才会启动，这让伪装成驱动程序的 rootkit 有机会工作。</td>
+<td>开机初期启动的反恶意软件 (ELAM) 可以在所有非 Microsoft 启动驱动程序和应用程序之前加载 Microsoft 或非 Microsoft 反恶意软件驱动程序，因此可以继续形成安全启动和受信任启动所建立的任信链。 由于操作系统尚未启动，并且 Windows 需要尽快启动，ELAM 有一个简单的任务：检查每个启动驱动程序，并确定它是否在受信任的驱动程序列表中。 如果它不受信任，Windows 不会加载它。</td>
+</tr>
+<tr>
+<td>测量的启动</td>
+<td>测量启动适用于 Windows 中的 TPM 和非Microsoft软件。 它允许网络上的受信任服务器验证 Windows 启动过程的完整性。</td>
+<td>该启动最后验证失败，似乎不会影响系统的运行。因为系统有时是在断网的情况下启动的。</td>
+</tr>
+</tbody></table>
 <p>驱动签名 2023-01-05 00:53</p>
 <ul>
 <li><a target="_blank" rel="noopener" href="https://www.kdocs.cn/latest">金山文档 · 一起办公才高效</a></li>
@@ -604,7 +651,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">32:35</span>
+    <span title="站点阅读时长">32:37</span>
   </span>
 </div>
 <div class="busuanzi-count">
