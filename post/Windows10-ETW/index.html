@@ -34,7 +34,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/01/17/8xNFscRTb3oJCeD.png">
 <meta property="og:image" content="https://s2.loli.net/2023/01/19/DzJw1RXy8ubgedN.png">
 <meta property="article:published_time" content="2023-01-15T08:40:28.000Z">
-<meta property="article:modified_time" content="2023-01-19T16:28:35.878Z">
+<meta property="article:modified_time" content="2023-02-01T16:01:33.146Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="ETW">
@@ -360,7 +360,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-01-20 00:28:35" itemprop="dateModified" datetime="2023-01-20T00:28:35+08:00">2023-01-20</time>
+        <time title="修改时间：2023-02-02 00:01:33" itemprop="dateModified" datetime="2023-02-02T00:01:33+08:00">2023-02-02</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -401,14 +401,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>14k</span>
+      <span>26k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>13 分钟</span>
+      <span>24 分钟</span>
     </span>
 </div>
 
@@ -861,6 +861,80 @@
 </ul>
 <h2 id="8-ETW-整体架构"><a href="#8-ETW-整体架构" class="headerlink" title="8 ETW 整体架构"></a>8 ETW 整体架构</h2><p>这部分应该重启一篇文章，包括分析内核 ETW。</p>
 <p>参考《Windows Internals 7th, Part 2,Chapter 10》。</p>
+<p><a target="_blank" rel="noopener" href="https://binarly.io/posts/Design_issues_of_modern_EDRs_bypassing_ETW-based_solutions">https://binarly.io/posts/Design_issues_of_modern_EDRs_bypassing_ETW-based_solutions</a></p>
+<p><strong>Session</strong>：</p>
+<p>ETW 最重要的实体之一是会话（内部称为记录器实例），它是提供者和消费者之间的粘合剂。 事件跟踪会话记录来自控制器已启用的一个或多个提供程序的事件。 会话通常包含描述哪些事件应由哪些提供者记录以及应如何处理这些事件的所有信息。 例如，一个会话可能被配置为接受来自 Microsoft Windows-Hyper-V-Hypervisor 提供程序（使用 (52fc89f8-995e-434c-a9le-199986449890) GUID 进行内部标识）的所有事件。 用户还可以配置过滤器。 提供者（或提供者组）生成的每个事件都可以根据事件级别（信息、警告、错误或严重）、事件关键字、事件 ID 和其他特征进行过滤。 会话配置还可以为会话定义各种其他细节，例如什么时间源应该用于事件时间戳（例如，QPC、TSC 或系统时间），哪些事件应该捕获堆栈跟踪，等等。 会话具有托管 ETW 记录器线程的重要规则，它是将事件刷新到日志文件或将它们传递给实时使用者的主要实体。</p>
+<p>会话使用 StartTrace APl 创建并使用 ControlTrace 和 EnableTraceEx2 配置。 xperf、logman、tracelog 和 wevtutil 等命令行工具使用这些 API 来启动或控制跟踪会话。 会话也可以配置为对创建它的进程私有。 在这种情况下，ETW 用于使用仅由同时充当提供者的同一应用程序创建的事件。 因此，该应用程序消除了与内核模式转换相关的开销。 私有 ETW 会话只能记录其正在执行的进程线程的事件，不能用于实时交付。 私有ETW的内部架构本书不做描述。</p>
+<p>创建全局会话时，StartTrace API 验证参数并将它们复制到数据结构中，NtTraceControl APl 使用该数据结构调用内核中的内部函数 EtwpStartLogger。 ETW 会话在内部通过 ETW_LOGGER_CONTEXT 数据结构表示，该数据结构包含指向会话内存缓冲区的重要指针，事件被写入其中。 如“ETW 初始化”部分所述，系统可以支持有限数量的 ETW 会话，这些会话存储在位于全局 per-SILO 数据结构中的数组中。EtwpStartLogger 检查全局会话数组，确定是否有空闲 空间或者如果同名会话已经存在。如果是这种情况，它会退出并发出错误信号。否则，它会生成一个会话 GUID（如果调用者尚未指定），分配并初始化一个 ETW_LOGGER_CONTEXT 数据 表示会话的结构，为其分配一个索引，并将其插入到每个筒仓数组中。</p>
+<p>ETW 查询位于 HKLM\SystemlCurrentControlSet\ControlWmil 安全注册表项中的会话安全描述符。 如图 10-33 所示，注册表项中的每个注册表值都被命名为会话 GUID（但是，注册表项也包含提供者的 GUID）并包含自相关安全描述符的二进制表示如果安全描述符用于 会话不存在，则返回会话的默认会话（有关详细信息，请参阅本章后面的“见证 ETw 会话的默认安全描述符”实验）。</p>
+<p>EtwpStartLogger 函数对会话的安全描述符执行访问检查，使用当前进程的访问令牌请求 TRACELOG_GUID_ENABLE 访问权限（以及 TRACELOG_CREATE_REALTIME 或 TRACELOG_CREATE_OND&#x2F;SK，具体取决于日志文件模式）。 如果检查成功，则例程计算事件缓冲区的默认大小和数量，这些大小是根据系统物理内存的大小计算的（默认缓冲区大小为 8、16 或 64KB）。 缓冲区的数量取决于系统处理器的数量和 EVENT_TRACE_NO PER PROCESSOR_BUFFERING 记录器模式标志的存在，它可以防止事件（可以从不同的处理器生成）被写入每个处理器的缓冲区。</p>
+<p>ETW 获取会话的初始参考时间戳。 目前支持三种时钟分辨率 Query performance counter（QPC，一种不受系统时钟影响的高分辨率时间戳）、System time 和 CPU cycle counter。 EtwpAllocate TraceBuffer 函数用于分配与记录器会话关联的每个缓冲区（缓冲区的数量在之前计算或指定为用户的输入）。 可以从分页池、非分页池或直接从物理大页面分配缓冲区，具体取决于日志记录模式。 每个缓冲区都存储在多个内部每会话列表中，这些列表能够为 ETW 主记录器线程和 ETW 提供程序提供快速查找。 最后，如果日志模式未设置为循环缓冲区，则 Etwp StartLogger 函数启动主 ETW 记录器线程，其目的是将与会话关联的提供程序写入的事件刷新到日志文件或实时 消费者。 主线程启动后，ETW 向已注册的会话通知提供程序 (GUID 2a6e185b-90de-4fc5-826c-9f44e608a427) 发送会话通知，这是一个特殊的提供程序，允许其消费者在某些 ETW 事件发生时得到通知（如 创建或销毁新会话、创建新日志文件或引发日志错误）。</p>
+<p><strong>ETW providers</strong>：</p>
+<p>如前几节所述，提供者是产生事件的组件（而包含提供者的应用程序包含事件跟踪工具）。 ETW 支持不同类型的提供程序，它们都共享相似的编程模型。 （它们的主要区别在于它们对事件进行编码的方式）提供者必须首先向 ETW 注册，然后才能生成事件。 以类似的方式，控制器应用程序应启用提供者并将其与 ETw 会话相关联，以便能够从提供者接收事件。 如果没有会话启用提供者，则提供者将不会生成任何事件。 提供者定义其对启用或禁用的解释。 通常，启用的提供程序会生成事件，而禁用的提供程序则不会。</p>
+<p><strong>Providers registration：</strong></p>
+<p>每个提供者的类型都有自己的 API，需要由提供者应用程序（或驱动程序）调用以注册提供者。 例如，基于清单的提供程序依赖 EventRegister APl 进行用户模式注册，并依赖 EtwRegister 进行内核模式注册。 所有提供者类型最终都会调用内部的 EtwpRegisterProvider 函数，该函数执行实际的注册过程（并在 NT 内核和 NTDLL 中实现）。 后者分配并初始化一个 ETW_GUID_ENTRY 数据结构，它表示提供者（相同的数据结构用于通知和特征）。 该数据结构包含重要信息，如提供者 GUID、安全描述符、引用计数器、启用信息（针对启用提供者的每个 ETW 会话）和提供者注册列表。</p>
+<p>对于用户模式提供程序注册，NT 内核对调用进程的令牌执行访问检查，请求 TRACELOG.<em>REGISTER_GUIDS 访问权限。 如果检查成功，或者如果注册请求源自内核代码，则 ET W 插入新的 ETV</em> GUID。 ENTRY 数据结构位于全局 ETW 每筒仓数据结构中的哈希表中，使用提供者 GUID 的哈希作为表的键（这允许快速查找系统中注册的所有提供者）。 哈希表中已存在相同的 GUID，ETW 使用现有条目而不是新条目。 GUID 可能已经存在于哈希表中，主要有两个原因：</p>
+<ul>
+<li>另一个驱动程序或应用程序在实际注册之前启用了提供程序（有关更多详细信息，请参阅本章后面的“提供程序启用”部分）。</li>
+<li>该提供者已经注册过一次。 支持同一提供者 GUID 的多次注册。</li>
+</ul>
+<p>提供者成功添加到全局列表后，ETW 创建并初始化一个 ETW 注册对象，该对象表示一次注册。 该对象封装了一个 ETW_REG_ENTRY 数据结构，它将提供者与请求其注册的进程和会话联系起来。 （ETW 还支持从不同的会话注册。）对象被插入到位于 ETW.<em>GUID_ENTRY 的列表中（EtwRegistration 对象类型先前已在 ETW 初始化时创建并注册到 NT 对象管理器）。 图 10-34 显示了这两个数据结构及其关系。 图中有两个提供者的进程（进程A，生活在session 4，进程B，生活在session 16）已经注册了provider 这样两个ETW REG</em> ENTRY数据结构就被创建并链接到代表provider的ETW_ GUID_ ENTRY 1.</p>
+<p>在此阶段，提供程序已注册并准备好在请求它的会话中启用（通过 EnableTrace API）。 如果提供者在其注册之前已经在至少一个会话中启用，ETW 将启用它（有关详细信息，请参阅下一节）并调用启用回调，这可以由 EventRegister（或 EtwRegister）API 的调用者指定 开始了注册过程。</p>
+<p><strong>Provider Enablement</strong>：</p>
+<p>如上一节所述，提供者应与 ETW 会话相关联才能生成事件。 这种关联称为提供者启用，它可以通过两种方式发生：在提供者注册之前或之后。 控制器应用程序可以通过 EnableTraceEx APl 在会话中启用提供程序。 APl 允许您指定关键字的位掩码，以确定会话要接收的事件类别。 同样，API 支持对其他类型数据的高级过滤器，例如生成事件的进程 ID、程序包 ID、可执行文件名称等。 （您可以在 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/evntprov/ns-evntprov-event_filter_descriptor">https://docs.microsoft.com/en-us/windows/win32/api/evntprov/ns-evntprov-event_filter_descriptor</a> 找到更多信息）</p>
+<p>Provider Enablement 由 ETW 在内核模式下通过内部 EtwpEnableGuid 函数进行管理。 对于用户模式请求，该函数对会话和提供者安全描述符执行访问检查，代表调用进程的令牌请求 TRACELOG_ GUID_ ENABLE 访问权限。 如果记录器会话包含 SECURITY TRACE 标志，则 EtwpEnableGuid 要求调用进程是 PPL（有关更多详细信息，请参阅本章后面的“ETW 安全”部分）。如果检查成功，该函数将执行与 之前讨论过提供者注册：</p>
+<ul>
+<li>它分配并初始化一个 ETW_ GUID_ ENTRY 数据结构来表示提供者，或者在提供者已经注册的情况下使用已经链接到全局 ETW per-silo 数据结构中的那个。</li>
+<li>通过在 ETW GUID_ENTRY 中添加相关会话启用信息，将提供程序链接到记录器会话。</li>
+</ul>
+<p>如果提供程序之前未注册过，则不存在链接到 ETW_GUID_ENTRY 数据结构中的 ETW 注册对象，因此过程终止。 （提供者将在首次注册后启用。）否则，提供者将被启用。</p>
+<p>虽然传统 MOF 提供程序和 WPP 提供程序一次只能启用一个会话，但基于清单和跟踪日志记录的提供程序最多可以启用八个会话。 如前面的图 10-32 所示，ETV_GUID_ENTRY 数据结构包含启用提供程序的每个可能的 ETW 会话的启用信息（最多八个）。 基于启用的会话，EtwpEnableGuid 函数计算出一个新的会话启用掩码，并将其存储在 ETW REG_ENTRY 数据结构（代表提供者注册）中。 掩码非常重要，因为它是事件生成的关键。 当应用程序或驱动程序将事件写入提供者时，会进行检查：如果启用掩码中的某个位等于 1，则意味着应将事件写入由特定 ETW 会话维护的缓冲区； 否则，会话将被跳过并且事件不会写入其缓冲区。</p>
+<p>请注意，对于安全会话，在更新提供者注册中的会话启用掩码之前执行补充访问检查。 ETW 会话的安全描述符应允许 TRACELOG_LOG_EVENT 访问调用进程的访问令牌。 否则，启用掩码中的相对位不会设置为 1。（目标 ET W 会话将不会从提供者注册中接收任何事件。）有关安全会话的更多信息，请参阅后面的“安全记录器和 ETw 安全”部分 在这一章当中。</p>
+<p><strong>Providing events</strong>:</p>
+<p>注册一个或多个 ETW 提供程序后，提供程序应用程序可以开始生成事件。 请注意，即使控制器应用程序没有机会在 ETW 会话中启用提供程序，也可以生成事件。 应用程序或驱动程序生成事件的方式取决于提供者的类型。 例如，将事件写入基于清单的提供程序的应用程序通常会直接创建一个事件描述符（遵循 XML 清单）并使用 EventWrite API 将事件写入启用了提供程序的 ETW 会话。 管理 MOF 和 WPP 提供程序的应用程序依赖于 TraceEvent APl。</p>
+<p>正如前面“ETW 会话”部分所讨论的，基于清单的提供程序生成的事件可以通过多种方式进行过滤。ETW 从提供程序注册对象中定位 ETV_GUID_ENTRY 数据结构，该对象由应用程序通过句柄提供 . 内部 Etwp EventWriteFul&#x2F;l 函数使用提供者的注册会话启用掩码在与提供者关联的所有启用的 ETW 会话之间循环（由 ETV LOGGER_CONTEXT 表示）。对于每个会话，它检查事件是否满足所有过滤器。如果 因此，它会计算 vent 有效负载的完整大小，并检查会话的当前缓冲区中是否有足够的可用空间。</p>
+<p>如果没有可用空间，ETW 会检查会话中是否还有另一个空闲缓冲区：空闲缓冲区存储在 FIFO（先进先出）队列中。 如果有空闲缓冲区，ETW 会将旧缓冲区标记为“脏”并切换到新的空闲缓冲区。 通过这种方式，Logger 线程可以唤醒并将整个缓冲区刷新到日志文件或将其交付给实时消费者。 <strong>如果会话的日志模式是循环记录器，则永远不会创建记录器线程</strong>：ETW 只是将旧的完整缓冲区链接到空闲缓冲区队列的末尾（因此队列永远不会为空）。 否则，如果队列中没有空闲缓冲区，ETW 会在向调用者返回错误之前尝试分配一个额外的缓冲区。</p>
+<p>在缓冲区中找到足够的空间后，EtwpEventWriteFull 自动将整个事件负载写入缓冲区并退出。 请注意，如果会话启用掩码为 O，则意味着没有会话与提供者相关联。 因此，该事件是 ost 并且没有记录在任何地方。</p>
+<p>MOF 和 WPP 事件经过类似的过程，但仅支持单个 ETW 会话并且通常支持较少的筛选器。 对于这些类型的提供者，将对关联的会话执行补充检查：如果控制器应用程序已将会话标记为安全，则没有人可以写入任何事件。 在这种情况下，将向调用方返回一个错误（安全会话将在稍后的“安全记录器和 ETW 安全性”部分中讨论）。</p>
+<p><strong>ETW Logger thread</strong>:</p>
+<p>Logger 线程是 ETW 中最重要的实体之一。 它的主要目的是将事件刷新到日志文件或将它们传递给实时消费者，跟踪传递和丢失事件的数量。 每次最初创建 ETW 会话时都会启动记录器线程，但前提是会话不使用循环日志模式。 它的执行逻辑很简单。 启动后，它会将自己链接到表示关联 ETW 会话的 ETW_LOGGER_CONTEXT 数据结构，并等待两个主要的同步对象。 每次属于会话的缓冲区变满时，ETW 都会发出 Flush 事件信号（这可能发生在提供者生成新事件之后——例如，如前一节“提供事件”中所讨论的），当一个新的 实时消费者已请求连接，或者当记录器会话将要停止时。只有在会话是实时会话或用户 在调用 StartTrace APl 以创建新会话时已明确要求它。</p>
+<p>当两个同步对象之一收到信号时，记录器线程重新装备它们并检查文件系统是否准备就绪。 如果不是，则主记录器线程再次返回睡眠状态（在早期引导阶段不应刷新任何会话）。 否则，它开始将属于会话的每个缓冲区刷新到日志文件或实时消费者。</p>
+<p>对于实时会话，记录器线程首先在％SystemRoot%\System32\LogFileslWMl\RtBackup文件夹中创建一个临时的per-session ETL文件（如图10-35所示）。日志文件名是通过添加EtwRT生成的 实时会话名称的前缀。 该文件用于在将临时事件传递给实时消费者之前保存它们（日志文件还可以存储在适当的时间范围内未传递给消费者的丢失事件）。 启动时，实时自动记录器会从日志文件中恢复丢失的事件，目的是将它们传递给消费者。</p>
+<p><strong>记录器线程是唯一能够在实时消费者和会话之间建立连接的实体</strong>。 消费者第一次调用 ProcessTrace APl 以从实时会话接收事件时，ETW 会设置一个新的实时消费者对象并使用它来创建消费者与实时会话之间的链接。 解析为 ETW_REALTIME 的对象。 NT 内核中的 CONSUMER 数据结构允许将事件“注入”到消费者的进程地址空间（另一个用户模式缓冲区由消费者应用程序提供）。</p>
+<p>对于非实时会话，记录器线程打开（或创建，以防文件不存在）创建会话的实体指定的初始 ETL 日志文件。 如果会话的日志模式指定了 EVENT_TRACE_FILE，Iogger 线程还可以创建全新的日志文件。 模式。 NEWFILE 标志，当前日志文件达到最大大小。</p>
+<p>在此阶段，ETW 记录器线程启动将与会话关联的所有缓冲区刷新到当前日志文件（如前所述，对于实时会话，该文件可以是临时文件）。 刷新是通过向缓冲区中的每个事件添加事件头并使用 NtWriteFile API 将二进制内容写入 ETL 日志文件来执行的。 对于实时会话，下次记录器线程唤醒时，它能够将存储在临时日志文件中的所有事件注入目标用户模式实时消费者应用程序。 因此，对于实时会话，ETW 事件永远不会同步传递。</p>
+<p><strong>Consuming events</strong>:</p>
+<p>由于 Sechost.dll 提供的服务，ETW 中的事件消费几乎完全由消费者应用程序在用户模式下执行。 消费者应用程序使用 OpenTrace API 打开由主记录器线程生成的 ETL 日志文件或建立与实时记录器的连接。 应用程序指定一个事件回调函数，每次 ETW 使用单个事件时都会调用该函数。 此外，对于实时会话，应用程序可以提供一个可选的缓冲区回调函数，该函数接收 ETW 刷新的每个缓冲区的统计信息，并在每次单个缓冲区已满并已交付给消费者时调用。</p>
+<p>实际的事件消费是由 ProcessTrace APl 启动的。 APl 适用于标准和实时会话，具体取决于先前传递给 OpenTrace 的日志文件模式标志。</p>
+<p>对于实时会话，API 使用内核模式服务（通过 NtTraceControl 系统调用访问）来验证 ETW 会话是否真的是实时会话。 NT 内核验证 ETW 会话的安全描述符是否授予 TRACELOG。 ACCESS_ REALTIME 对调用进程令牌的访问权限。 如果它没有访问权，API 就会失败并向控制器应用程序返回一个错误。 否则，它会分配一个临时用户模式缓冲区和一个用于接收事件的位图，并连接到主记录器线程（创建关联的 EtwConsumer 对象；有关详细信息，请参阅本章前面的“ETW 记录器线程”部分）。 建立连接后，API 会等待来自会话记录器线程的新数据。 当数据到来时，API 枚举每个事件并调用事件回调。</p>
+<p>对于非实时 ETW 会话，ProcessTrace API 执行类似的处理，但它不是连接到记录器线程，而是打开并解析 ETL 日志文件，逐个读取每个缓冲区并调用事件回调 每个找到的事件（事件按时间顺序排序）。 与每次可以消耗一个的实时记录器不同，在这种情况下，API 甚至可以使用 OpenTrace APl 创建的多个跟踪句柄，这意味着它可以解析来自不同 ETL 日志文件的事件。</p>
+<p>属于使用循环缓冲区的 ETW 会话的事件不会使用所描述的方法进行处理。 （确实没有转储 : 事件的记录器线程。）通常，当控制器应用程序想要将属于配置为使用循环缓冲区的 ETW 会话的当前缓冲区的快照转储到日志文件中时，它会使用 FlushTrace API。 APl 通过 NtTraceControl 系统调用调用 NT 内核，该系统调用定位 ET W 会话并验证其安全描述符授予 TRACELOG_CREATE_OND&#x2F;SK 对调用进程的访问令牌的访问权。 如果是这样，并且如果控制器应用程序指定了一个有效的日志文件名，NT 内核调用内部 EtwpBufferingModeFlush 例程，创建新的 ETL 文件，添加适当的标题，并写入与会话相关的所有缓冲区。 然后，消费者应用程序可以使用 OpenTrace 和 ProcessTrace APl 解析写入新日志文件的事件，如前所述。</p>
+<p><strong>System loggers:</strong></p>
+<p>到目前为止，我们所描述的是正常的 ETW 会话和提供程序是如何工作的。 从 Windows XP 开始，ETW 就支持系统记录器的概念，它允许 NT 内核全局发出不依赖于任何提供程序并且通常用于性能测量的日志事件。 在撰写本文时，有两个主要的系统记录器可用，分别是 NT 内核记录器和循环内核上下文记录器（而全局记录器是 NT 内核记录器的子集）。 NT 内核最多支持八个系统记录器会话。 从系统记录器接收事件的每个会话都被视为系统会话。</p>
+<p>为了启动系统会话，应用程序使用 StartTrace APl，但它指定 EVENT TRACE_SYSTEM_LOGGER_MODE 标志或系统记录器会话的 GUID 作为输入参数。 表 10-16 列出了系统记录器及其 GUID。 NT 内核中的 EtwpStartLogger 函数识别标志或特殊 GUID，并对 NT kernellogger 安全描述符执行额外检查，代表调用者进程访问令牌请求 TRACELOG_GUID_ENABLE 访问权限。 如果检查通过，ETW 将计算系统记录器索引并更新记录器组掩码和系统全局性能组掩码。</p>
+<p>最后一步是驱动系统记录器的关键。 可以在高 IRQL（Context Swapper 是一个很好的例子）的多个低级系统函数分析性能组掩码并决定是否将事件写入系统记录器。 控制器应用程序可以通过修改 StartTrace APl 和 Contro&#x2F;Trace API 使用的 EnableFlags 位掩码来启用或禁用系统记录器记录的不同事件。 系统记录器记录的事件以明确定义的顺序内部存储在全局性能组掩码中。 掩码由八个 32 位值的数组组成。 数组中的每个索引代表一组事件。 可以使用 Xperf 工具枚举系统事件集（也称为组）。 表 10-17 列出了系统记录器事件及其分组的分类。 大多数系统记录器事件都记录在 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/windows/win32/api/evntrace/ns-evntrace-event_trace_properties">https://docs.microsoft.com/en-us/windows/win32/api/evntrace/ns-evntrace-event_trace_properties</a> 中。</p>
+<p>当系统会话启动时，会立即记录事件。 没有需要启用的提供程序。 这意味着消费者应用程序无法对事件进行通用解码。 系统记录器事件使用精确的事件编码格式（称为 NTPERF），这取决于事件类型。 然而，大多数表示不同 NT 内核记录器事件的数据结构通常记录在 Windows 平台 SDK 中。</p>
+<p><strong>The Global logger and Autologgers</strong>：</p>
+<p>某些记录器会话会在系统启动时自动启动。 全局记录器会话记录操作系统启动过程早期发生的事件，包括 NT 内核记录器生成的事件。 （全局记录器实际上是一个系统记录器，如表 10-16 所示。）应用程序和设备驱动程序可以使用全局记录器会话在用户登录之前捕获跟踪（某些设备驱动程序，例如磁盘设备驱动程序，不是 在全局记录器会话开始时加载）虽然全局记录器主要用于捕获由 NT 内核提供程序生成的跟踪（请参阅表 10-17），但自动记录器（Autologgers）旨在捕获来自经典 ETW 提供程序的跟踪（而不是来自 NT 内核记录器）。</p>
+<p>如本章前面的“ETW 初始化”部分所述，ETW 在 NT 内核初始化的早期阶段几乎同时启动 Global logger 和 Autologgers。Etw&#x2F;StartAutologger 内部函数查询所有记录器配置数据 从注册表中验证它，并使用 EtwpStartLogger 例程创建记录器会话，该例程已在“ETW 会话”部分中进行了广泛讨论。全局记录器是系统记录器，因此在创建会话后，不再提供其他提供程序 已启用。与 Globallogger 不同，Autologgers 需要启用提供程序。它们通过从 Autologger 注册表项中枚举每个会话的名称来启动。创建会话后，ETW 枚举应在会话中启用的提供程序，这些提供程序列为 Autologger 项的子项（提供程序由 GUID 标识）。图 10-36 显示了在 EventLog-System 会话中启用的多个提供程序。这 se ssion 是 Windows 事件查看器显示的主要 Windows 日志之一（由事件记录器服务捕获）。</p>
+<p>验证提供者的配置数据后，与经典 ETW 会话一样，通过内部 EtwpEnableTrace 函数在会话中启用提供者。</p>
+<p><strong>ETW security</strong>：</p>
+<p>启动和停止 ETW 会话被视为高权限操作，因为事件可以包括可用于利用系统完整性的系统数据（这对于系统日志记录器尤其如此）。 Windows 安全模型已扩展为支持 ETW 安全。 如前几节所述，ETW 执行的每个操作都需要定义明确的访问权限，该访问权限必须由保护会话、提供程序或提供程序组（取决于操作）的安全描述符授予。 表 10-18 列出了为 ETW 引入的所有新访问权限及其用法。</p>
+<p>大多数 ETW 访问权限会自动授予 SYSTEM 帐户以及 Administrators、Local Service 和 Network Service 组的成员。 这意味着不允许普通用户与 ETW 交互（除非显式会话和提供程序安全描述符允许这样做）。 为了解决这个问题，Windows 包含了 Performance Log Users 组，该组旨在允许普通用户与 ETW 交互（特别是用于控制跟踪会话）。 尽管所有 ETW 访问权限都由默认安全描述符授予 Performance Log Users 组，但 Windows 支持另一个名为 Performance Monitor Users 的组，该组被设计为仅接收或向会话通知提供程序发送通知。 这是因为该组旨在访问系统性能计数器，由性能监视器和资源监视器等工具枚举，而不是访问完整的 ETW 事件。 这两个工具已经在第 1 部分第 1 章的“性能监视器和资源监视器”部分进行了描述。</p>
+<p>正如前面在本章“ETW 会话”部分介绍的那样，所有 ETW 安全描述符都以二进制格式存储在 HKLM\Systeml\CurrentControlSet\ControlWmil\Security 注册表项中。 在 ETW 中，GUID 表示的所有内容都可以通过自定义的安全描述符进行保护。 为了管理 ETW 安全，应用程序通常不直接与存储在注册表中的安全描述符交互，而是使用在 Sechost.all 中实现的 EventAccessControl 和 EventAccessQuery API。</p>
+<p><strong>Security Audit logger:</strong></p>
+<p>安全审计记录器是 Windows 事件记录器服务 (wevtsvc.dll) 用来侦听安全 Lsass 提供程序生成的事件的 ETW 会话。 Security Lsass 提供程序（由 (54849625-5478-4994-a5ba-3e3b0328c30d GUID 标识）只能在 ET W 初始化时由 NT 内核注册，并且永远不会插入到全局提供程序的哈希表中。只有 Security 将 Enab&#x2F;eSecurityProvider 注册表值设置为 1 的审计记录器和自动记录器可以接收来自安全 Lsass 提供程序的事件。当 EtwStartAutoLogger 内部函数遇到设置为 1 的值时，它会在关联的 ETW 会话上启用 SECURITY_TRACE 标志， 将会话添加到可以接收安全审计事件的记录器列表中。</p>
+<p>该标志还具有用户模式应用程序不能再查询、停止、刷新或控制会话的重要影响，除非它们作为受保护的进程轻运行（在反恶意软件、Windows 或 WinTcb 级别；有关受保护的更多详细信息 第 1 部分第 3 章中提供了流程）。</p>
+<p><strong>Secure loggers</strong></p>
+<p>经典 (MOF) 和 WPP 提供程序并未设计为支持为基于清单和跟踪记录提供程序实现的所有安全功能。因此，可以使用 EVENT_TRACE_SECURE_MODE 标志创建自动记录器或通用 ETW 会话，该标志将会话标记为 安全的。 安全会话的目标是确保它仅从受信任的身份接收事件。 该标志有两个主要作用：</p>
+<ul>
+<li>防止经典 (MOF) 和 WPP 提供程序将任何事件写入安全会话。 如果在安全部分启用了经典提供程序，则该提供程序将无法生成任何事件。</li>
+<li>需要补充的 TRACELOG._LOG_EVENT 访问权限，该权限应由会话的安全描述符授予控制器应用程序的访问令牌，同时启用安全会话的提供程序。</li>
+</ul>
+<p>TRACELOG_EVENT 访问权限允许在会话的安全描述符中指定更细粒度的安全性。 如果安全描述符仅将 TRACELOG_ GUID_ ENABLE 授予不受信任的用户，并且 ETW 会话由另一个实体（内核驱动程序或更高特权的应用程序）创建为安全的，则不受信任的用户无法在安全部分启用任何提供程序。 如果该部分创建为非安全部分，则不受信任的用户可以在其上启用任何提供程序。</p>
+<p><strong>Dynamic tracing (DTrace)</strong></p>
+<p>如前一节所述，Windows 事件跟踪是一种集成到操作系统中的强大跟踪技术，但它是静态的，这意味着最终用户只能跟踪和记录由属于操作系统的定义明确的组件生成的事件 或第三方框架&#x2F;应用程序（例如 .NET CLR）为了克服限制，Windows 10 的 2019 年 5 月更新 (19H1) 引入了 DTrace，这是 Windows 中内置的动态跟踪工具。 实时系统上的管理员可以使用 DTrace 检查用户程序和操作系统本身的行为。 DTrace 是一种开源技术，专为 Solaris 操作系统（及其后代 illumos，两者均基于 Unix）而开发，并已移植到 Windows 以外的多个操作系统。</p>
+<p>DTrace 可以在某些感兴趣的位置（称为探测器）动态跟踪操作系统和用户应用程序的各个部分。 探测是一个二进制代码位置或活动，DTrace 可以将请求绑定到该位置以执行一组操作，例如记录消息、记录堆栈跟踪、时间戳等。 当探测器触发时，DTrace 从探测器收集数据并执行与探测器关联的操作。 使用 D 编程语言在脚本文件中（或通过命令行直接在 DTrace 应用程序中）指定探测器和操作。 对探测的支持由称为提供者的内核模块提供。 最初的 illumos DTrace 支持大约 20 个提供程序，这些提供程序与基于 Unix 的操作系统紧密相关。 在撰写本文时，Windows 支持以下提供程序：</p>
 
     </div>
 
@@ -988,7 +1062,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">32:51</span>
+    <span title="站点阅读时长">33:02</span>
   </span>
 </div>
 <div class="busuanzi-count">
