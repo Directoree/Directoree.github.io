@@ -24,8 +24,8 @@
 
   <meta name="description" content="😄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Windows 回调机制">
-<meta property="og:url" content="https://directoree.github.io/post/Windows-Callback-Object/index.html">
+<meta property="og:title" content="Windows 通知机制（一）">
+<meta property="og:url" content="https://directoree.github.io/post/Windows-Notify/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
@@ -40,15 +40,15 @@
 <meta property="og:image" content="https://s2.loli.net/2023/02/15/yUZcINRO5A9uBQT.png">
 <meta property="og:image" content="https://s2.loli.net/2023/02/15/6Ln5ziSjODVrF2y.png">
 <meta property="article:published_time" content="2023-02-05T13:38:25.000Z">
-<meta property="article:modified_time" content="2023-02-20T15:20:16.809Z">
+<meta property="article:modified_time" content="2023-02-21T15:54:05.306Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
-<meta property="article:tag" content="回调对象">
+<meta property="article:tag" content="通知机制">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2023/02/05/Jr6g4hjiOu81Klc.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/Windows-Callback-Object/">
+<link rel="canonical" href="https://directoree.github.io/post/Windows-Notify/">
 
 
 <script class="page-configurations">
@@ -61,7 +61,7 @@
   };
 </script>
 
-  <title>Windows 回调机制 | Catecat</title>
+  <title>Windows 通知机制（一） | Catecat</title>
   
 
 
@@ -258,7 +258,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">144</span>
+          <span class="site-state-item-count">145</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -335,7 +335,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows-Callback-Object/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows-Notify/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -348,7 +348,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Windows 回调机制
+          Windows 通知机制（一）
         </h1>
 
         <div class="post-meta-container">
@@ -366,7 +366,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-02-20 23:20:16" itemprop="dateModified" datetime="2023-02-20T23:20:16+08:00">2023-02-20</time>
+        <time title="修改时间：2023-02-21 23:54:05" itemprop="dateModified" datetime="2023-02-21T23:54:05+08:00">2023-02-21</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -374,12 +374,12 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/x64%E5%86%85%E6%A0%B8%E5%9B%9E%E8%B0%83/" itemprop="url" rel="index"><span itemprop="name">x64内核回调</span></a>
+          <a href="/categories/x64%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6/" itemprop="url" rel="index"><span itemprop="name">x64通知机制</span></a>
         </span>
     </span>
 
   
-    <span id="/post/Windows-Callback-Object/" class="post-meta-item leancloud_visitors" data-flag-title="Windows 回调机制" title="阅读次数">
+    <span id="/post/Windows-Notify/" class="post-meta-item leancloud_visitors" data-flag-title="Windows 通知机制（一）" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -394,8 +394,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/Windows-Callback-Object/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows-Callback-Object/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/Windows-Notify/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows-Notify/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -824,7 +824,9 @@
 <h3 id="3-2-线程通知函数"><a href="#3-2-线程通知函数" class="headerlink" title="3.2 线程通知函数"></a>3.2 线程通知函数</h3><p>创建线程通知函数的 <code>PsSetCreateThreadNotifyRoutine/PsSetCreateThreadNotifyRoutineEx</code> 线程通知函数都是 <code>CREATE_THREAD_NOTIFY_ROUTINE</code>。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">PCREATE_THREAD_NOTIFY_ROUTINE PcreateThreadNotifyRoutine;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PcreateThreadNotifyRoutine</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [in] HANDLE ProcessId,	<span class="comment">// ThreadId 所属的进程 ID</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in] HANDLE ThreadId,	<span class="comment">// 引发线程通知的线程 ID</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in] BOOLEAN Create	<span class="comment">// 是否是创建</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span></span><br><span class="line"><span class="function"></span>&#123;...&#125;</span><br></pre></td></tr></table></figure>
 
-<p><strong>需要说明</strong>：</p>
+
+
+<div class="note danger"><p><strong>需要说明</strong>：</p>
 <ol>
 <li>对于 <code>PsSetCreateThreadNotifyRoutine</code> 函数：<ul>
 <li>Create &#x3D;&#x3D; TRUE，<code>ThreadId</code> 表示创建者线程的 TID，而不是被创建的线程 TID。</li>
@@ -836,7 +838,17 @@
 </ul>
 </li>
 </ol>
-<p>特别说明：<strong>驱动程序必须在卸载之前删除它注册的任何回调函数</strong>。 可以通过调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/ntddk/nf-ntddk-psremovecreatethreadnotifyroutine">PsRemoveCreateThreadNotifyRoutine</a> 例程来删除回调。</p>
+</div>
+
+<div class="note default"><p>特别说明：<strong>驱动程序必须在卸载之前删除它注册的任何回调函数</strong>。 可以通过调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows-hardware/drivers/ddi/ntddk/nf-ntddk-psremovecreatethreadnotifyroutine">PsRemoveCreateThreadNotifyRoutine</a> 例程来删除回调。</p>
+</div>
+
+
+
+
+
+
+
 <h2 id="4-模块通知"><a href="#4-模块通知" class="headerlink" title="4 模块通知"></a>4 模块通知</h2><p>PsSetLoadImageNotifyRoutine:</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">__int64 __fastcall <span class="title">PsSetLoadImageNotifyRoutine</span><span class="params">(__int64 a1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">return</span> PsSetLoadImageNotifyRoutineEx(a1, <span class="number">0</span>i64);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -884,7 +896,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/Windows-Callback-Object/" title="Windows 回调机制">https://directoree.github.io/post/Windows-Callback-Object/</a>
+      <a href="https://directoree.github.io/post/Windows-Notify/" title="Windows 通知机制（一）">https://directoree.github.io/post/Windows-Notify/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -894,7 +906,7 @@
 
           <div class="post-tags">
               <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
-              <a href="/tags/%E5%9B%9E%E8%B0%83%E5%AF%B9%E8%B1%A1/" rel="tag"><i class="fa fa-tag"></i> 回调对象</a>
+              <a href="/tags/%E9%80%9A%E7%9F%A5%E6%9C%BA%E5%88%B6/" rel="tag"><i class="fa fa-tag"></i> 通知机制</a>
           </div>
 
         
@@ -906,8 +918,8 @@
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/post/WinXP-Struct/" rel="next" title="WinXP 结构/指令查询">
-                  WinXP 结构/指令查询 <i class="fa fa-chevron-right"></i>
+                <a href="/post/Windows-Notify2/" rel="next" title="Windows 通知机制（二）">
+                  Windows 通知机制（二） <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
@@ -976,7 +988,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">33:38</span>
+    <span title="站点阅读时长">33:42</span>
   </span>
 </div>
 <div class="busuanzi-count">
@@ -1127,7 +1139,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/Windows-Callback-Object/",
+      path: "/post/Windows-Notify/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
