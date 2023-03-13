@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Windows 对象管理">
+<meta property="og:url" content="https://directoree.github.io/post/Windows-Objects/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/03/13/A5suZl7gw3Mda2j.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/13/79WPXCALfMBn2hN.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/13/VDR8w5YjFOJuxsL.png">
+<meta property="article:published_time" content="2023-03-11T16:24:46.000Z">
+<meta property="article:modified_time" content="2023-03-13T15:23:09.197Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="内核对象">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/03/13/A5suZl7gw3Mda2j.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Windows-Objects/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Windows 对象管理 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E5%AF%B9%E8%B1%A1"><span class="nav-text">1 内核对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AF%B9%E8%B1%A1%E7%9B%AE%E5%BD%95"><span class="nav-text">1.1 对象目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%AF%B9%E8%B1%A1%E9%81%8D%E5%8E%86"><span class="nav-text">1.2 对象遍历</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%8F%A5%E6%9F%84"><span class="nav-text">2 句柄</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">147</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">66</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">84</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows-Objects/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Windows 对象管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-12 00:24:46" itemprop="dateCreated datePublished" datetime="2023-03-12T00:24:46+08:00">2023-03-12</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-03-13 23:23:09" itemprop="dateModified" datetime="2023-03-13T23:23:09+08:00">2023-03-13</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Windows%E5%86%85%E6%A0%B8%E5%AF%B9%E8%B1%A1/" itemprop="url" rel="index"><span itemprop="name">Windows内核对象</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Windows-Objects/" class="post-meta-item leancloud_visitors" data-flag-title="Windows 对象管理" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Windows-Objects/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows-Objects/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-内核对象"><a href="#1-内核对象" class="headerlink" title="1 内核对象"></a>1 内核对象</h2><p>对象分为内核对象、用户对象。用户对象主要用于 GUI 下（没有对象头）。</p>
+<ul>
+<li>内核对象：包含对象头、对象体。<ul>
+<li>无名对象，其他进程不能通过对象名打开对象，对象不可以共享。不命名的对象一般意义不大。</li>
+<li>命名对象，可以通过对象名与其他进程共享内核对象。</li>
+</ul>
+</li>
+<li>用户对象：不具有对象头，参见《<a target="_blank" rel="noopener" href="https://catecat.top/post/Windows-GUI-Subsystem/">GUI Subsystem 用户对象</a>》。</li>
+</ul>
+<h3 id="1-1-对象目录"><a href="#1-1-对象目录" class="headerlink" title="1.1 对象目录"></a>1.1 对象目录</h3><div class="note primary"><p>在系统中，通过<mark class="label danger">对象目录</mark>对命名对象进行组织管理，对象目录是树状结构而非网状结构。</p>
+<ol>
+<li>根节点： 目录对象（<code>_OBJECT_DIRECTORY</code>）。根节点对象名为<mark class="label success">\</mark>。</li>
+<li>中间节点：目录对象（<code>_OBJECT_DIRECTORY</code>）、符号链接对象（<code>_OBJECT_SYMBOLIC_LINK</code>）。</li>
+<li>叶节点：普通内核对象、目录对象（<code>_OBJECT_DIRECTORY</code>）。</li>
+</ol>
+</div>
+
+<div class="note danger"><p><strong>说明</strong>：根节点是一个数据目录类型，节点名为 “\”，其为 37 个元素的哈希数组，每个元素串起一个单链表队列，<strong>同一个链表上的所有节点对象名的 Hash 值相同</strong>。</p>
+</div>
+
+<p><img data-src="https://s2.loli.net/2023/03/13/A5suZl7gw3Mda2j.png" alt="2.png"></p>
+<p><strong>目录对象</strong>：可以是根节点、中间节点、叶节点。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x158 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">OBJECT_DIRECTORY</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">OBJECT_DIRECTORY_ENTRY</span>* <span class="title">HashBuckets</span>[37];</span>                        <span class="comment">//0x0</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">EX_PUSH_LOCK</span> <span class="title">Lock</span>;</span>                                              <span class="comment">//0x128</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">DEVICE_MAP</span>* <span class="title">DeviceMap</span>;</span>                                          <span class="comment">//0x130</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">OBJECT_DIRECTORY</span>* <span class="title">ShadowDirectory</span>;</span>                              <span class="comment">//0x138</span></span><br><span class="line">    VOID* NamespaceEntry;                                                   <span class="comment">//0x140</span></span><br><span class="line">    VOID* SessionObject;                                                    <span class="comment">//0x148</span></span><br><span class="line">    ULONG Flags;                                                            <span class="comment">//0x150</span></span><br><span class="line">    ULONG SessionId;                                                        <span class="comment">//0x154</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p>主要关注第一个成员，可以看到它是一个含有 <code>37 = NUMBER_HASH_BUCKETS</code> 个成员的指针数组，每个成员都指向 <code>_OBJECT_DIRECTORY_ENTRY</code> 结构。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x18 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">OBJECT_DIRECTORY_ENTRY</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> _<span class="title">OBJECT_DIRECTORY_ENTRY</span>* <span class="title">ChainLink</span>;</span>                              <span class="comment">//0x0</span></span><br><span class="line">    VOID* Object;                                                           <span class="comment">//0x8</span></span><br><span class="line">    ULONG HashValue;                                                        <span class="comment">//0x10</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>ChainLink：指向下一个 <code>_OBJECT_DIRECTORY_ENTRY</code>，是个单向链表。<mark class="label danger">同一条链表上的所有节点对象名的 Hash 值相同</mark>。</li>
+<li>Object：指向该 Entry 所管理的那个对象，比如 <code>EPROCESS</code>，<code>ETHREAD</code> 等等。</li>
+<li>HashValue：该 Entry 的 Hash 值</li>
+</ul>
+<p><strong>注意</strong>：目录项 <code>_OBJECT_DIRECTORY_ENTRY</code> 并非内核对象，但是每一个内核对象插入到对象目录树时，必须有目录项来进行承接才行。</p>
+<p>符号链接 <code>_OBJECT_SYMBOLIC_LINK</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//0x28 bytes (sizeof)</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">OBJECT_SYMBOLIC_LINK</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span> _<span class="title">LARGE_INTEGER</span> <span class="title">CreationTime</span>;</span>                                      <span class="comment">//0x0</span></span><br><span class="line">    <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span> _<span class="title">UNICODE_STRING</span> <span class="title">LinkTarget</span>;</span>                                  <span class="comment">//0x8</span></span><br><span class="line">        <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">        &#123;</span></span><br><span class="line">            LONG (*Callback)(struct _OBJECT_SYMBOLIC_LINK* arg1, VOID* arg2, struct _UNICODE_STRING* arg3, VOID** arg4); <span class="comment">//0x8</span></span><br><span class="line">            VOID* CallbackContext;                                          <span class="comment">//0x10</span></span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;;</span><br><span class="line">    ULONG DosDeviceDriveIndex;                                              <span class="comment">//0x18</span></span><br><span class="line">    ULONG Flags;                                                            <span class="comment">//0x1c</span></span><br><span class="line">    ULONG AccessMask;                                                       <span class="comment">//0x20</span></span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
+
+<p>其中 <code>LinkTarget</code> 就是其关联的对象名，关于该对象的解析可看 <a target="_blank" rel="noopener" href="https://windows-internals.com/dkom-now-with-symbolic-links/">DKOM – Now with Symbolic Links!</a>。</p>
+<p><strong>节点遍历</strong>：</p>
+<p>如果从根节点或某个中间节点开始遍历某个对象，在路径上的每个节点前加 “\” 进行分隔，就形成一个路径名。</p>
+<ul>
+<li>绝对路径：根节点\中间节点\叶节点。</li>
+<li>相对路径：中间节点\叶节点。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2023/03/13/79WPXCALfMBn2hN.png" alt="1.png"></p>
+<h3 id="1-2-对象遍历"><a href="#1-2-对象遍历" class="headerlink" title="1.2 对象遍历"></a>1.2 对象遍历</h3><p>查看&#x2F;遍历内核对象主要有三种方法：</p>
+<ol>
+<li>通过 WinObj.exe 工具（以管理员权限运行）。</li>
+<li>通过 Windbg（使用全局指针 <code>ObpRootDirectoryObject</code>）。</li>
+<li>通过代码遍历。</li>
+</ol>
+<p><strong>一、WinObj.exe 工具查看内核对象</strong>（以管理员权限运行）</p>
+<p>可以从微软官方 SysinternalsSuite 下载该工具。</p>
+<p><img data-src="https://s2.loli.net/2023/03/13/VDR8w5YjFOJuxsL.png" alt="3.png"></p>
+<p>可以看到根节点是 <code>\</code>，然后下面的中间节点是目录对象或符号链接对象。如子目录 <code>Device</code> 二级目录下还有 4 个三级目录。</p>
+<p><strong>二、通过 Windbg 查看</strong></p>
+<ol>
+<li><p>通过全局指针 <code>ObpRootDirectoryObject</code> 找到根目录节点。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dq ObpRootDirectoryObject</span><br><span class="line">fffff800`<span class="number">588440</span>a8  ffff9e02`<span class="number">12423</span>ce0 ffffaf8f`<span class="number">846b</span>1380</span><br><span class="line">fffff800`<span class="number">588440b</span>8  <span class="number">00000000</span>`<span class="number">00000000</span> ffffaf8f`<span class="number">846b</span>1380</span><br></pre></td></tr></table></figure>
+
+<p>可以看到根节点的地址为 <code>0xffff9e02’12423ce0</code>。</p>
+</li>
+<li><p>查看根节点目录。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dt _OBJECT_DIRECTORY ffff9e02`<span class="number">12423</span>ce0</span><br><span class="line">ntdll!_OBJECT_DIRECTORY</span><br><span class="line">   +<span class="number">0x000</span> HashBuckets      : [<span class="number">37</span>] (null) </span><br><span class="line">   +<span class="number">0x128</span> Lock             : _EX_PUSH_LOCK</span><br><span class="line">   +<span class="number">0x130</span> DeviceMap        : (null) </span><br><span class="line">   +<span class="number">0x138</span> ShadowDirectory  : (null) </span><br><span class="line">   +<span class="number">0x140</span> NamespaceEntry   : (null) </span><br><span class="line">   +<span class="number">0x148</span> SessionObject    : (null) </span><br><span class="line">   +<span class="number">0x150</span> Flags            : <span class="number">0</span></span><br><span class="line">   +<span class="number">0x154</span> SessionId        : <span class="number">0xffffffff</span></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>查看 <code>HashBuckets</code> 数组。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dx -id <span class="number">0</span>,<span class="number">0</span>,ffffaf8f846a1040 -r1 (*((nt!_OBJECT_DIRECTORY_ENTRY * (*)[<span class="number">37</span>])<span class="number">0xffff9e0212423ce0</span>))</span><br><span class="line">(*((nt!_OBJECT_DIRECTORY_ENTRY * (*)[<span class="number">37</span>])<span class="number">0xffff9e0212423ce0</span>))                 [Type: _OBJECT_DIRECTORY_ENTRY * [<span class="number">37</span>]]</span><br><span class="line">    [<span class="number">0</span>]              : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">1</span>]              : <span class="number">0xffff9e0212bbbd00</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">2</span>]              : <span class="number">0xffff9e02183524e0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">3</span>]              : <span class="number">0xffff9e0212547550</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">4</span>]              : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">5</span>]              : <span class="number">0xffff9e02124b45d0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">6</span>]              : <span class="number">0xffff9e0215b52f60</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">7</span>]              : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">8</span>]              : <span class="number">0xffff9e02124b43c0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">9</span>]              : <span class="number">0xffff9e0218351d90</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">10</span>]             : <span class="number">0xffff9e021883a0e0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">11</span>]             : <span class="number">0xffff9e0212bbbdc0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">12</span>]             : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">13</span>]             : <span class="number">0xffff9e0212bbeaf0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">14</span>]             : <span class="number">0xffff9e02125450f0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">15</span>]             : <span class="number">0xffff9e0212cfe6e0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">16</span>]             : <span class="number">0xffff9e02124af630</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">17</span>]             : <span class="number">0xffff9e0212bbc330</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">18</span>]             : <span class="number">0xffff9e02124b49f0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">19</span>]             : <span class="number">0xffff9e0212cfe860</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">20</span>]             : <span class="number">0xffff9e0212b66be0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">21</span>]             : <span class="number">0xffff9e0217efd440</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">22</span>]             : <span class="number">0xffff9e0212bbc090</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">23</span>]             : <span class="number">0xffff9e0212537580</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">24</span>]             : <span class="number">0xffff9e02125472e0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">25</span>]             : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">26</span>]             : <span class="number">0xffff9e0215b52360</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">27</span>]             : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">28</span>]             : <span class="number">0xffff9e02183523f0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">29</span>]             : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">30</span>]             : <span class="number">0xffff9e0212547130</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">31</span>]             : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">32</span>]             : <span class="number">0xffff9e0212565a40</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">33</span>]             : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">34</span>]             : <span class="number">0xffff9e0215b52db0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">35</span>]             : <span class="number">0xffff9e0218352870</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [<span class="number">36</span>]             : <span class="number">0xffff9e0217ef8a00</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，如下标 0、4、7、12 的目录项下面没有数据。</p>
+</li>
+<li><p>以下标 <code>1</code> 为例查看其链表队列。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; dx -id <span class="number">0</span>,<span class="number">0</span>,ffffaf8f846a1040 -r1 ((ntkrnlmp!_OBJECT_DIRECTORY_ENTRY *)<span class="number">0xffff9e0212bbbd00</span>)</span><br><span class="line">((ntkrnlmp!_OBJECT_DIRECTORY_ENTRY *)<span class="number">0xffff9e0212bbbd00</span>)                 : <span class="number">0xffff9e0212bbbd00</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [+<span class="number">0x000</span>] ChainLink        : <span class="number">0xffff9e02124af3c0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [+<span class="number">0x008</span>] Object           : <span class="number">0xffffaf8f87c66e50</span> [Type: <span class="keyword">void</span> *]</span><br><span class="line">    [+<span class="number">0x010</span>] HashValue        : <span class="number">0xb8888f8d</span> [Type: <span class="keyword">unsigned</span> <span class="keyword">long</span>]</span><br><span class="line">  </span><br><span class="line">kd&gt; dx -id <span class="number">0</span>,<span class="number">0</span>,ffffaf8f846a1040 -r1 ((ntkrnlmp!_OBJECT_DIRECTORY_ENTRY *)<span class="number">0xffff9e02124af3c0</span>)</span><br><span class="line">((ntkrnlmp!_OBJECT_DIRECTORY_ENTRY *)<span class="number">0xffff9e02124af3c0</span>)                 : <span class="number">0xffff9e02124af3c0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [+<span class="number">0x000</span>] ChainLink        : <span class="number">0x0</span> [Type: _OBJECT_DIRECTORY_ENTRY *]</span><br><span class="line">    [+<span class="number">0x008</span>] Object           : <span class="number">0xffff9e0212426230</span> [Type: <span class="keyword">void</span> *]</span><br><span class="line">    [+<span class="number">0x010</span>] HashValue        : <span class="number">0x6c1c47fb</span> [Type: <span class="keyword">unsigned</span> <span class="keyword">long</span>]</span><br></pre></td></tr></table></figure>
+
+<p>可以看到根节点 <code>OBJECT_DIRECTORY.HashBuckets[1]</code> 链表上挂着两个节点，下面分别查看一下节点类型。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">kd&gt; !object <span class="number">0xffffaf8f87c66e50</span></span><br><span class="line">Object: ffffaf8f87c66e50  Type: (ffffaf8f8468e4e0) Mutant</span><br><span class="line">    ObjectHeader: ffffaf8f87c66e20 (<span class="keyword">new</span> version)</span><br><span class="line">    HandleCount: <span class="number">0</span>  PointerCount: <span class="number">1</span></span><br><span class="line">    Directory Object: ffff9e0212423ce0  Name: PendingRenameMutex</span><br><span class="line"></span><br><span class="line">kd&gt; !object <span class="number">0xffff9e0212426230</span></span><br><span class="line">Object: ffff9e0212426230  Type: (ffffaf8f846b14e0) Directory</span><br><span class="line">    ObjectHeader: ffff9e0212426200 (<span class="keyword">new</span> version)</span><br><span class="line">    HandleCount: <span class="number">0</span>  PointerCount: <span class="number">69</span></span><br><span class="line">    Directory Object: ffff9e0212423ce0  Name: ObjectTypes</span><br><span class="line"></span><br><span class="line">    Hash Address          Type                      Name</span><br><span class="line">    ---- -------          ----                      ----</span><br><span class="line">     <span class="number">00</span>  ffffaf8f846b9380 Type                      TmTm</span><br><span class="line">     <span class="number">01</span>  ffffaf8f8468ed20 Type                      Desktop</span><br><span class="line">         ffffaf8f8468f140 Type                      Process</span><br><span class="line">     <span class="number">02</span>  ffffaf8f846b9d20 Type                      EnergyTracker</span><br><span class="line">         ffffaf8f846b9220 Type                      RegistryTransaction</span><br><span class="line">     <span class="number">03</span>  ffffaf8f8468ff00 Type                      DebugObject</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<p>第一个节点是 <code>Mutant</code>、第二个节点为 <code>Directory</code>。</p>
+</li>
+<li></li>
+</ol>
+<h2 id="2-句柄"><a href="#2-句柄" class="headerlink" title="2 句柄"></a>2 句柄</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Windows-Objects/" title="Windows 对象管理">https://directoree.github.io/post/Windows-Objects/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/%E5%86%85%E6%A0%B8%E5%AF%B9%E8%B1%A1/" rel="tag"><i class="fa fa-tag"></i> 内核对象</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Windows-Callback/" rel="prev" title="Windows 回调机制">
+                  <i class="fa fa-chevron-left"></i> Windows 回调机制
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="自制内核数据结构/指令 快速查询">
+                  自制内核数据结构/指令 快速查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2.3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">34:36</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Windows-Objects/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
