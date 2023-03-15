@@ -32,8 +32,9 @@
 <meta property="og:image" content="https://s2.loli.net/2023/03/13/A5suZl7gw3Mda2j.png">
 <meta property="og:image" content="https://s2.loli.net/2023/03/13/79WPXCALfMBn2hN.png">
 <meta property="og:image" content="https://s2.loli.net/2023/03/13/VDR8w5YjFOJuxsL.png">
+<meta property="og:image" content="https://s2.loli.net/2023/03/15/GguH5mxtqMv4BDW.png">
 <meta property="article:published_time" content="2023-03-11T16:24:46.000Z">
-<meta property="article:modified_time" content="2023-03-13T15:23:09.197Z">
+<meta property="article:modified_time" content="2023-03-15T16:27:18.440Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="内核对象">
@@ -235,7 +236,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%86%85%E6%A0%B8%E5%AF%B9%E8%B1%A1"><span class="nav-text">1 内核对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AF%B9%E8%B1%A1%E7%9B%AE%E5%BD%95"><span class="nav-text">1.1 对象目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%AF%B9%E8%B1%A1%E9%81%8D%E5%8E%86"><span class="nav-text">1.2 对象遍历</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%8F%A5%E6%9F%84"><span class="nav-text">2 句柄</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AF%B9%E8%B1%A1%E7%9B%AE%E5%BD%95"><span class="nav-text">1 对象目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AF%B9%E8%B1%A1%E7%9B%AE%E5%BD%95%E7%AE%A1%E7%90%86"><span class="nav-text">1.1 对象目录管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%88%9B%E5%BB%BA%E7%9B%AE%E5%BD%95%E5%AF%B9%E8%B1%A1"><span class="nav-text">1.2 创建目录对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%AF%B9%E8%B1%A1%E9%81%8D%E5%8E%86"><span class="nav-text">1.2 对象遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E5%AF%B9%E8%B1%A1%E5%90%8D%E5%93%88%E5%B8%8C%E5%80%BC"><span class="nav-text">1.3 对象名哈希值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%AF%B9%E8%B1%A1%E7%BB%93%E6%9E%84"><span class="nav-text">2 对象结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-POOL-HEADER"><span class="nav-text">1.1 POOL_HEADER</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E5%8F%AF%E9%80%89%E4%BF%A1%E6%81%AF%E5%A4%B4"><span class="nav-text">1.2 可选信息头</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%8F%A5%E6%9F%84"><span class="nav-text">3 句柄</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -359,7 +360,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-03-13 23:23:09" itemprop="dateModified" datetime="2023-03-13T23:23:09+08:00">2023-03-13</time>
+        <time title="修改时间：2023-03-16 00:27:18" itemprop="dateModified" datetime="2023-03-16T00:27:18+08:00">2023-03-16</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -400,14 +401,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6.1k</span>
+      <span>8.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>7 分钟</span>
     </span>
 </div>
 
@@ -421,7 +422,7 @@
         <p>😄</p>
 <span id="more"></span>
 
-<h2 id="1-内核对象"><a href="#1-内核对象" class="headerlink" title="1 内核对象"></a>1 内核对象</h2><p>对象分为内核对象、用户对象。用户对象主要用于 GUI 下（没有对象头）。</p>
+<h2 id="1-对象目录"><a href="#1-对象目录" class="headerlink" title="1 对象目录"></a>1 对象目录</h2><h3 id="1-1-对象目录管理"><a href="#1-1-对象目录管理" class="headerlink" title="1.1 对象目录管理"></a>1.1 对象目录管理</h3><p>对象分为内核对象、用户对象。用户对象主要用于 GUI 下（没有对象头）。</p>
 <ul>
 <li>内核对象：包含对象头、对象体。<ul>
 <li>无名对象，其他进程不能通过对象名打开对象，对象不可以共享。不命名的对象一般意义不大。</li>
@@ -430,7 +431,7 @@
 </li>
 <li>用户对象：不具有对象头，参见《<a target="_blank" rel="noopener" href="https://catecat.top/post/Windows-GUI-Subsystem/">GUI Subsystem 用户对象</a>》。</li>
 </ul>
-<h3 id="1-1-对象目录"><a href="#1-1-对象目录" class="headerlink" title="1.1 对象目录"></a>1.1 对象目录</h3><div class="note primary"><p>在系统中，通过<mark class="label danger">对象目录</mark>对命名对象进行组织管理，对象目录是树状结构而非网状结构。</p>
+<div class="note primary"><p>在系统中，通过<mark class="label danger">对象目录</mark>对命名对象进行组织管理，对象目录是树状结构而非网状结构。</p>
 <ol>
 <li>根节点： 目录对象（<code>_OBJECT_DIRECTORY</code>）。根节点对象名为<mark class="label success">\</mark>。</li>
 <li>中间节点：目录对象（<code>_OBJECT_DIRECTORY</code>）、符号链接对象（<code>_OBJECT_SYMBOLIC_LINK</code>）。</li>
@@ -465,6 +466,50 @@
 <li>相对路径：中间节点\叶节点。</li>
 </ul>
 <p><img data-src="https://s2.loli.net/2023/03/13/79WPXCALfMBn2hN.png" alt="1.png"></p>
+<h3 id="1-2-创建目录对象"><a href="#1-2-创建目录对象" class="headerlink" title="1.2 创建目录对象"></a>1.2 创建目录对象</h3><p>创建目录对象使用 <code>ZwCreateDirectoryObject</code> 函数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">NTSYSAPI NTSTATUS <span class="title">ZwCreateDirectoryObject</span><span class="params">(</span></span></span><br><span class="line"><span class="function"><span class="params">  [out] PHANDLE            DirectoryHandle,	<span class="comment">// 输出值，新创建的目录对象句柄</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  ACCESS_MASK        DesiredAccess,	<span class="comment">// 指定对该目录对象的访问权限</span></span></span></span><br><span class="line"><span class="function"><span class="params">  [in]  POBJECT_ATTRIBUTES ObjectAttributes	<span class="comment">// 该对象的属性（如对象名称）</span></span></span></span><br><span class="line"><span class="function"><span class="params">)</span></span>;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>DesiredAccess：该参数除了可以使用 <code>ACCESS_MASK</code> 值进行定义外，还可以指定以下一个或多个权限：</p>
+<table>
+<thead>
+<tr>
+<th><strong>ACCESS_MASK标志</strong></th>
+<th><strong>访问类型</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DIRECTORY_QUERY</td>
+<td>查询</td>
+</tr>
+<tr>
+<td>DIRECTORY_TRAVERSE</td>
+<td>名称查找</td>
+</tr>
+<tr>
+<td>DIRECTORY_CREATE_OBJECT</td>
+<td>名称创建</td>
+</tr>
+<tr>
+<td>DIRECTORY_CREATE_SUBDIRECTORY</td>
+<td>创建子目录</td>
+</tr>
+<tr>
+<td>DIRECTORY_ALL_ACCESS</td>
+<td>上述所有类型</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>使用 <code>ObjectAttributes</code> 结构指针前，必须先调用 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/ntdef/nf-ntdef-initializeobjectattributes">InitializeObjectAttributes</a> 对其进行初始化。</p>
+</li>
+</ul>
+<p>该函数核心是通过 <code>ObCreateObject</code> 创建目录对象，然后再用 <code>ObInsertObject</code> 将对象插入到句柄表中。</p>
+<p>对象层次目录中插入，查询和删除目录或目录项常用的函数如下：</p>
+<ul>
+<li>ObpLookupDirectoryEntry：在一个指定的目录中查找一个指定名称的对象。</li>
+<li>ObpInsertDirectoryEntry：把一个对象插入到一个目录中。</li>
+<li>ObpDeleteDirectoryEntry：删除指定目录中的指定对象。</li>
+</ul>
 <h3 id="1-2-对象遍历"><a href="#1-2-对象遍历" class="headerlink" title="1.2 对象遍历"></a>1.2 对象遍历</h3><p>查看&#x2F;遍历内核对象主要有三种方法：</p>
 <ol>
 <li>通过 WinObj.exe 工具（以管理员权限运行）。</li>
@@ -500,9 +545,48 @@
 
 <p>第一个节点是 <code>Mutant</code>、第二个节点为 <code>Directory</code>。</p>
 </li>
-<li></li>
 </ol>
-<h2 id="2-句柄"><a href="#2-句柄" class="headerlink" title="2 句柄"></a>2 句柄</h2>
+<h3 id="1-3-对象名哈希值"><a href="#1-3-对象名哈希值" class="headerlink" title="1.3 对象名哈希值"></a>1.3 对象名哈希值</h3><p>待办：需要逆向分析 <code>ObpLookupDirectoryEntry</code> 函数，解析出函数名的 Hash 过程。<a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-262316.htm%E3%80%82">https://bbs.kanxue.com/thread-262316.htm。</a></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/feihuadao/article/details/46620877">https://blog.csdn.net/feihuadao/article/details/46620877</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/oneway1990/p/8496775.html">https://www.cnblogs.com/oneway1990/p/8496775.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/920442">https://developer.aliyun.com/article/920442</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.4hou.com/posts/wkBg">https://www.4hou.com/posts/wkBg</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.pediy.com/kssd/pediy11/114734/820481/44303.pdf">https://www.pediy.com/kssd/pediy11/114734/820481/44303.pdf</a></li>
+<li><a target="_blank" rel="noopener" href="http://mykings.me/2017/04/06/%E5%8F%8D%E6%A3%80%E6%B5%8B%E6%8A%80%E6%9C%AF%E4%B8%89%EF%BC%9AShellcode-%E7%82%BC%E9%87%91%E6%9C%AF/">http://mykings.me/2017/04/06/反检测技术三：Shellcode-炼金术/</a></li>
+<li><a target="_blank" rel="noopener" href="https://paper.seebug.org/1743/">https://paper.seebug.org/1743/</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_37232329/article/details/127268313">https://blog.csdn.net/qq_37232329/article/details/127268313</a></li>
+</ul>
+<h2 id="2-对象结构"><a href="#2-对象结构" class="headerlink" title="2 对象结构"></a>2 对象结构</h2><p>一个内核对象由以下五部分构成：</p>
+<ol>
+<li>对象内存头</li>
+<li>可选信息头</li>
+<li>对象头</li>
+<li>对象体</li>
+<li>对象脚</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2023/03/15/GguH5mxtqMv4BDW.png" alt="4.png"></p>
+<h3 id="1-1-POOL-HEADER"><a href="#1-1-POOL-HEADER" class="headerlink" title="1.1 POOL_HEADER"></a>1.1 POOL_HEADER</h3><p>在每块系统内存池被分配的时候，都会默认分配该结构（在申请返回的内存前）。系统内存池即内核 System 进程的堆。</p>
+<p><code>POOL_HEADER</code> 结构用来描述每一块已经分配的内核内存块属性。该结构从 Windows 10 1909开始发生了使用上的变化。具体需要研究分页&#x2F;非分页内存池的分配相关内容。以下文章较详细描述了 <code>POOL_HEADER</code> 的意义和用途：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://paper.seebug.org/1743/">Scoop the Windows 10 pool ! 翻译 &amp; 复现</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/synacktiv/Windows-kernel-SegmentHeap-Aligned-Chunk-Confusion">Windows-kernel-SegmentHeap-Aligned-Chunk-Confusion</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/synacktiv/Windows-kernel-SegmentHeap-Aligned-Chunk-Confusion/blob/master/Scoop_The_Windows_10_pool.pdf">Scoop the Windows 10 pool!</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/264623">Windows内核池风水利用工具研究</a></li>
+<li><a target="_blank" rel="noopener" href="https://tttang.com/archive/1466/">windows内核之池溢出(七)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-14/materials/us-14-Tarakanov-Data-Only-Pwning-Microsoft-Windows-Kernel-Exploitation-Of-Kernel-Pool-Overflows-On-Microsoft-Windows-8.1.pdf">Data-only Pwning Microsoft Windows Kernel: Exploitation of Kernel Pool Overflows on Microsoft Windows 8.1</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.synacktiv.com/sites/default/files/2021-10/2021_sthack_windows_lpe.pdf">Discovering and exploiting a kernel pool overflow On modern Windows 10</a></li>
+<li><a target="_blank" rel="noopener" href="https://maheshhari.github.io/blog/win7kernelpoolinternals/">Windows 7 Kernel Pool Internals</a></li>
+</ul>
+<h3 id="1-2-可选信息头"><a href="#1-2-可选信息头" class="headerlink" title="1.2 可选信息头"></a>1.2 可选信息头</h3><p>扩展信息可选头如果存在，就意味着有对象脚存在。_OBJECT_HEADER_EXTENDED_INFO 中有成员指向对象脚结构。</p>
+<p>每个可选信息头的大小、位置顺序都是固定的。如何确定一个可选信息头是否存在：</p>
+<ul>
+<li><code>OBJECT_HEADER_CREATOR_INFO</code>：由 <code>OBJECT_HEADER.Flags</code> 决定是否存在。</li>
+<li>其他 7 个可选信息头：由 <code>OBJECT_HEADER.InfoMask</code> 决定是否存在。</li>
+</ul>
+<p>每个可选信息头的 <code>InfoMask</code> 是 1 Byte 大小数据中的一位掩码（如下表8-17），然后使用 -<em>ObpInfoMaskToOffset[ InfoMask &amp; 0xFF]</em> 找到当前可选信息头的偏移，最后用 <code>OBJECT_HEADER</code> 起始地址减去偏移即可得到可选信息头的起始地址。</p>
+<p>可选信息头是否存在，是在系统初始化或者对象创建时决定的，存在的条件如表 8-18.</p>
+<h2 id="3-句柄"><a href="#3-句柄" class="headerlink" title="3 句柄"></a>3 句柄</h2>
     </div>
 
     
@@ -629,7 +713,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">34:36</span>
+    <span title="站点阅读时长">34:37</span>
   </span>
 </div>
 <div class="busuanzi-count">
