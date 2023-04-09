@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="虚拟化（Virtualization）">
+<meta property="og:url" content="https://directoree.github.io/post/Virtualization/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/04/09/7SZahMgNDPo2sJb.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/09/PJBqN8C2DS9Mhvt.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/09/MSi93wzgvoUDE7G.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/09/jt7m6Awy5LsRE2D.png">
+<meta property="article:published_time" content="2023-04-07T14:17:09.000Z">
+<meta property="article:modified_time" content="2023-04-09T16:06:25.234Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="Windows内核">
+<meta property="article:tag" content="虚拟化">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/04/09/7SZahMgNDPo2sJb.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Virtualization/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>虚拟化（Virtualization） | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">0 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hypervisor"><span class="nav-text">Hypervisor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Type-1-hypervisor"><span class="nav-text">1 Type 1 hypervisor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VMware-ESX"><span class="nav-text">VMware ESX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Citrix-Hypervisor-Xen"><span class="nav-text">Citrix Hypervisor (Xen)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Microsoft-Hyper-V"><span class="nav-text">Microsoft Hyper-V</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">149</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">67</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">85</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Virtualization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          虚拟化（Virtualization）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-07 22:17:09" itemprop="dateCreated datePublished" datetime="2023-04-07T22:17:09+08:00">2023-04-07</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-04-10 00:06:25" itemprop="dateModified" datetime="2023-04-10T00:06:25+08:00">2023-04-10</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%99%9A%E6%8B%9F%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">虚拟化</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Virtualization/" class="post-meta-item leancloud_visitors" data-flag-title="虚拟化（Virtualization）" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Virtualization/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Virtualization/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+
+
+<h2 id="0-基本概念"><a href="#0-基本概念" class="headerlink" title="0 基本概念"></a>0 基本概念</h2><h3 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h3><p>Hypervisor 虚拟机监视器（VMM），由它来实现对物理资源虚拟化。并控制着多个虚拟机（VM）对物理硬件资源的访问。</p>
+<ul>
+<li>CPU</li>
+<li>内存</li>
+<li>I&#x2F;O</li>
+<li>网络</li>
+</ul>
+<p>1960s，Hypervisor 是在大型机上用来开发和调试操作系统的。1990s，小型机发展起来后也开发出新的 Hypervisor，Hypervisor 可以运行在操作系统之上，也可以不依赖操作系统直接运行在硬件之上。有两种类型的 Hypervisor：</p>
+<ol>
+<li>👆<mark class="label success">Type 1</mark>：也叫做裸机型（Bare-metal），<strong>直接运行在硬件服务器之上</strong>，其下没有操作系统。比 Type 2 型的 Hypervisor 更高效、更安全。</li>
+<li>✌️<mark class="label warning">Type 2</mark>：也叫做主机型（Hosted），<strong>Hypervisor 只是主机操作系统上的一个应用程序</strong>。这种类型的 Hypervisor 能适应更多类型的硬件，因为操作系统在之下已经进行了适配。这种类型的 Hypervisor 也比 Type 1 Hypervisor 安装方便。但是 VM 执行效率较 Type 1 型的低，比如 VM 发起的 I&#x2F;O 请求会先交给 Hypervisor，然后Hypervisor 再请求操作系统处理，操作系统处理完成后再逐步传回 VM。</li>
+</ol>
+<div class="note danger"><p>Hypervisor 的三个作用：</p>
+<ol>
+<li>提供与物理环境相同的环境。Provide an environment identical to the physical environment.</li>
+<li>以最小的性能成本提供该环境。Provide that environment with minimal performance cost.</li>
+<li>保留对系统资源的完全控制。Retain complete control of the system resources.</li>
+</ol>
+</div>
+
+<p><img data-src="https://s2.loli.net/2023/04/09/7SZahMgNDPo2sJb.png" alt="1.png"></p>
+<h2 id="1-Type-1-hypervisor"><a href="#1-Type-1-hypervisor" class="headerlink" title="1 Type 1 hypervisor"></a>1 Type 1 hypervisor</h2><h3 id="VMware-ESX"><a href="#VMware-ESX" class="headerlink" title="VMware ESX"></a>VMware ESX</h3><p>2001 年，VMware 发布了 ESX 1.0 和 GSX 1.0。 ESX 是 Type 1 hypervisor，而 GSX 是 Type 2 hypervisor。 ESX 今天仍然存在，并且仍在得到增强和更新。 不过，GSX 已更名为 VMware Server，但不再可用。</p>
+<p>ESX 的原始架构由两部分组成，hypervisor + 基于 Linux 的服务控制台模块（充当管理接口）。管理接口往往非常大，如 hypervisor（32MB），服务控制台约 900 MB。服务控制台的安全性也会影响着 hypervisor 的安全性。所以后来<strong>基于相同的 hypervisor 开发出 ESXi，但是不再有控制台</strong>。2011 年后只有 ESXi 架构可用。</p>
+<p><img data-src="https://s2.loli.net/2023/04/09/PJBqN8C2DS9Mhvt.png" alt="2.png"></p>
+<h3 id="Citrix-Hypervisor-Xen"><a href="#Citrix-Hypervisor-Xen" class="headerlink" title="Citrix Hypervisor (Xen)"></a>Citrix Hypervisor (Xen)</h3><p><strong>开源的</strong>，开源的解决方案！但是目前商业市场份额还不到 5%。</p>
+<p>Xen 管理程序始于 1990 年代末剑桥大学的一个研究项目，其目标是为分布式计算创建一个高效的平台。 2002 年，该代码成为一个开源项目，允许任何人为改进特性和功能做出贡献。XenSource 成立于 2004 年，旨在将 Xen 虚拟机管理程序推向市场，该开源项目至今仍保持开放状态。Citrix Systems 收购了 XenSource 以补充其应用程序交付解决方案。 2013 年，Citrix Systems 宣布 Xen 的开发将成为 Linux Foundation Collaborative Project，将开发回归到开源社区。</p>
+<p>Xen 模型有一个称为 <code>Domain 0</code> 的特殊 Guest OS，也称为 <code>Dom0</code>。 这个 Guest 在 hypervisor 启动时被启动，并且它具有不同于其他 Guest 的管理权限，可以直接访问物理硬件资源。Type 1 Hypervisor。</p>
+<p>如下图，当其他 Guest OS 请求访问物理硬件资源时，这些请求首先会传递给 Hypervisor，然后接着传递到 <code>Dom0</code> Guest OS，然后去访问资源。当资源访问到之后再原路返回。</p>
+<p><img data-src="https://s2.loli.net/2023/04/09/MSi93wzgvoUDE7G.png" alt="3.png"></p>
+<p><code>Dom0</code> 的重启将中断所有其他 Guest OS。 因为 <code>Dom0</code> 也是 Guest，它会消耗资源并与系统中的其他 Guest 争夺资源。</p>
+<h3 id="Microsoft-Hyper-V"><a href="#Microsoft-Hyper-V" class="headerlink" title="Microsoft Hyper-V"></a>Microsoft Hyper-V</h3><p>微软在几年前从 Connectix 收购了该解决方案后，于 2005 年通过 Virtual Server 开始涉足虚拟化领域。 与 GSX 一样，Virtual Server 是 Type 2 虚拟机管理程序，但已停产以支持 Hyper-V（Type 1 Hypervisor）。 Microsoft Hyper-V 于 2008 年作为 Windows Server 2008 操作系统的可安装部分发布。 图 2.10 显示了 Hyper-V 的体系结构。</p>
+<p><img data-src="https://s2.loli.net/2023/04/09/jt7m6Awy5LsRE2D.png" alt="4.png"></p>
+<p>Hyper-V 是 Type 1 Hypervisor，Hypervisor 代码直接存在于硬件上。 不过，命名法略有不同——虚拟化工作负载称为分区，而不是 Guest。 <strong>与 Xen 模型类似，它需要一个可以直接访问硬件资源的特殊根分区</strong>。 与 <code>Dom0</code> 一样，根分区运行操作系统——在本例中为 Windows Server。 该分区创建和管理子分区并处理系统管理功能和设备驱动程序。 由于它使用类似于 XenServer 的模型，因此在修补和争用方面也存在相同的可用性漏洞。目前 Hyper-V 拥有大约 20% 的市场份额。</p>
+<blockquote>
+<p>其他一些基本都是在开源的 Xen 进行修改发展起来的，Red Hat 是另一种解决方案，随着时间的推移经历了一些不同的排列。 最初，它还使用开源 Xen 代码，因为它非常适合其开源解决方案的业务模型。 2008 年，红帽收购了 Qumranet 及其基于内核的虚拟机 (KVM) 解决方案。 KVM 与 Linux 本身一样，也是基于同名的开源项目。 有一段时间，Red Hat Enterprise Linux (RHEL) 版本同时支持 KVM 和 Xen 虚拟化技术。 2012年，Red Hat表示KVM是其未来方向，不再支持Xen。 KVM 作为 Linux 内核模块提供，允许您利用 Linux 的许多功能，例如调度程序和内存管理，而无需将它们作为代码的一部分包含在内。 对于 Red Hat 本身的现有用户来说，KVM 的使用随着时间的推移而增长。 然而，开源云计算项目 OpenStack 的兴起有所帮助，因为 KVM 可以用作虚拟机管理程序的选择之一。</p>
+</blockquote>
+<p>参考资料：</p>
+<ul>
+<li>Virtualization Essentials (Matthew Portnoy) Third Edition</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/0voice/Introduce_to_virtualization#nav_vt0_chapter1">500篇关于虚拟化的经典资料</a></li>
+</ul>
+<p>虚拟地址（VA)： 指 Guest OS 提供给其应用程序使用的线性地址空间。<br>物理地址(PA)：  经 VMM 抽象的、虚拟机看到的伪物理地址。<br>机器地址（MA)：真实的机器地址，即地址总线上出现的地址信号。</p>
+<p>这样的话，会存在两张页表：</p>
+<ul>
+<li>VMM 维护一张页表，负责 PA 到 MA 的映射。$VMM:MA &#x3D; g(PA)$。</li>
+<li>Guest OS 维护一张页表，负责 VA 到 PA 的映射。$Guest\ OS:PA &#x3D; f(VA)$。</li>
+</ul>
+<ol>
+<li><a target="_blank" rel="noopener" href="http://front.sjtu.edu.cn/~jinyh/OS_guest/Virtualization.pdf">交大课件</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.nsfocus.net/malicious-sample-analysis-manual-virtual-machine-test-top/">恶意样本分析手册-虚拟机检测篇（上）</a></li>
+<li><a target="_blank" rel="noopener" href="https://rayanfam.com/tutorials/">Hypervisor From Scratch</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.4hou.com/posts/BRQk">从头开始了解和使用Hypervisor（第1部分）</a></li>
+<li>加密与解密第四版</li>
+<li>Windows Internals 7</li>
+<li>Virtualization Essentials 3(Matthew Portnoy)</li>
+<li>New Blue Pill</li>
+<li><a target="_blank" rel="noopener" href="https://revers.engineering/mmu-ept-technical-details/">MMU Virtualization Via Intel EPT: Technical Details</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Virtualization/" title="虚拟化（Virtualization）">https://directoree.github.io/post/Virtualization/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Windows%E5%86%85%E6%A0%B8/" rel="tag"><i class="fa fa-tag"></i> Windows内核</a>
+              <a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag"><i class="fa fa-tag"></i> 虚拟化</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Windows-HandleTable/" rel="prev" title="Windows 句柄表">
+                  <i class="fa fa-chevron-left"></i> Windows 句柄表
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="自制内核数据结构/指令 快速查询">
+                  自制内核数据结构/指令 快速查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2.3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">35:31</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Virtualization/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
