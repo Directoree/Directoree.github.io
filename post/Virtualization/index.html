@@ -33,8 +33,11 @@
 <meta property="og:image" content="https://s2.loli.net/2023/04/09/PJBqN8C2DS9Mhvt.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/09/MSi93wzgvoUDE7G.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/09/jt7m6Awy5LsRE2D.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/10/ptrFhJRTISdC6EQ.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/10/Gzp3edAOJfaKx45.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/11/hjBXrJxA6E7C2fe.png">
 <meta property="article:published_time" content="2023-04-07T14:17:09.000Z">
-<meta property="article:modified_time" content="2023-04-09T16:39:44.780Z">
+<meta property="article:modified_time" content="2023-04-10T16:31:50.696Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="虚拟化">
@@ -236,7 +239,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">0 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hypervisor"><span class="nav-text">Hypervisor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Type-1-hypervisor"><span class="nav-text">1 Type 1 hypervisor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#VMware-ESX"><span class="nav-text">VMware ESX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Citrix-Hypervisor-Xen"><span class="nav-text">Citrix Hypervisor (Xen)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Microsoft-Hyper-V"><span class="nav-text">Microsoft Hyper-V</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-Hypervisor"><span class="nav-text">0 Hypervisor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Type-1-hypervisor"><span class="nav-text">1 Type 1 hypervisor</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-VMware-ESX"><span class="nav-text">1.1 VMware ESX</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Citrix-Hypervisor-Xen"><span class="nav-text">1.2 Citrix Hypervisor (Xen)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-Microsoft-Hyper-V"><span class="nav-text">1.3 Microsoft Hyper-V</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%A1%AC%E4%BB%B6%E8%BE%85%E5%8A%A9%E7%9A%84%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="nav-text">2 硬件辅助的虚拟化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%A1%AC%E4%BB%B6%E8%BE%85%E5%8A%A9%E7%9A%84%E8%99%9A%E6%8B%9F%E5%8C%96"><span class="nav-text">2.1 硬件辅助的虚拟化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%89%A9%E5%B1%95%EF%BC%88VMX%EF%BC%89"><span class="nav-text">2.2 虚拟机扩展（VMX）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-VMCS"><span class="nav-text">3 VMCS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-VMCS-%E6%A6%82%E8%BF%B0"><span class="nav-text">3.1 VMCS 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-VMX-%E6%8C%87%E4%BB%A4"><span class="nav-text">3.2 VMX 指令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-VMCS-%E7%BB%93%E6%9E%84"><span class="nav-text">3.3 VMCS 结构</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -360,7 +363,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-04-10 00:39:44" itemprop="dateModified" datetime="2023-04-10T00:39:44+08:00">2023-04-10</time>
+        <time title="修改时间：2023-04-11 00:31:50" itemprop="dateModified" datetime="2023-04-11T00:31:50+08:00">2023-04-11</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -401,14 +404,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3k</span>
+      <span>6.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>3 分钟</span>
+      <span>6 分钟</span>
     </span>
 </div>
 
@@ -424,7 +427,7 @@
 
 
 
-<h2 id="0-基本概念"><a href="#0-基本概念" class="headerlink" title="0 基本概念"></a>0 基本概念</h2><h3 id="Hypervisor"><a href="#Hypervisor" class="headerlink" title="Hypervisor"></a>Hypervisor</h3><p>Hypervisor 虚拟机监视器（VMM），由它来实现对物理资源虚拟化。并控制着多个虚拟机（VM）对物理硬件资源的访问。</p>
+<h2 id="0-Hypervisor"><a href="#0-Hypervisor" class="headerlink" title="0 Hypervisor"></a>0 Hypervisor</h2><p>Hypervisor 虚拟机监视器（VMM），由它来实现对物理资源虚拟化。并控制着多个虚拟机（VM）对物理硬件资源的访问。</p>
 <ul>
 <li>CPU</li>
 <li>内存</li>
@@ -445,16 +448,16 @@
 </div>
 
 <p><img data-src="https://s2.loli.net/2023/04/09/7SZahMgNDPo2sJb.png" alt="1.png"></p>
-<h2 id="1-Type-1-hypervisor"><a href="#1-Type-1-hypervisor" class="headerlink" title="1 Type 1 hypervisor"></a>1 Type 1 hypervisor</h2><h3 id="VMware-ESX"><a href="#VMware-ESX" class="headerlink" title="VMware ESX"></a>VMware ESX</h3><p>2001 年，VMware 发布了 ESX 1.0 和 GSX 1.0。 ESX 是 Type 1 hypervisor，而 GSX 是 Type 2 hypervisor。 ESX 今天仍然存在，并且仍在得到增强和更新。 不过，GSX 已更名为 VMware Server，但不再可用。</p>
+<h2 id="1-Type-1-hypervisor"><a href="#1-Type-1-hypervisor" class="headerlink" title="1 Type 1 hypervisor"></a>1 Type 1 hypervisor</h2><h3 id="1-1-VMware-ESX"><a href="#1-1-VMware-ESX" class="headerlink" title="1.1 VMware ESX"></a>1.1 VMware ESX</h3><p>2001 年，VMware 发布了 ESX 1.0 和 GSX 1.0。 ESX 是 Type 1 hypervisor，而 GSX 是 Type 2 hypervisor。 ESX 今天仍然存在，并且仍在得到增强和更新。 不过，GSX 已更名为 VMware Server，但不再可用。</p>
 <p>ESX 的原始架构由两部分组成，hypervisor + 基于 Linux 的服务控制台模块（充当管理接口）。管理接口往往非常大，如 hypervisor（32MB），服务控制台约 900 MB。服务控制台的安全性也会影响着 hypervisor 的安全性。所以后来<strong>基于相同的 hypervisor 开发出 ESXi，但是不再有控制台</strong>。2011 年后只有 ESXi 架构可用。</p>
 <p><img data-src="https://s2.loli.net/2023/04/09/PJBqN8C2DS9Mhvt.png" alt="2.png"></p>
-<h3 id="Citrix-Hypervisor-Xen"><a href="#Citrix-Hypervisor-Xen" class="headerlink" title="Citrix Hypervisor (Xen)"></a>Citrix Hypervisor (Xen)</h3><p><strong>开源的</strong>，开源的解决方案！但是目前商业市场份额还不到 5%。</p>
+<h3 id="1-2-Citrix-Hypervisor-Xen"><a href="#1-2-Citrix-Hypervisor-Xen" class="headerlink" title="1.2 Citrix Hypervisor (Xen)"></a>1.2 Citrix Hypervisor (Xen)</h3><p><strong>开源的</strong>，开源的解决方案！但是目前商业市场份额还不到 5%。</p>
 <p>Xen 管理程序始于 1990 年代末剑桥大学的一个研究项目，其目标是为分布式计算创建一个高效的平台。 2002 年，该代码成为一个开源项目，允许任何人为改进特性和功能做出贡献。XenSource 成立于 2004 年，旨在将 Xen 虚拟机管理程序推向市场，该开源项目至今仍保持开放状态。Citrix Systems 收购了 XenSource 以补充其应用程序交付解决方案。 2013 年，Citrix Systems 宣布 Xen 的开发将成为 Linux Foundation Collaborative Project，将开发回归到开源社区。</p>
 <p>Xen 模型有一个称为 <code>Domain 0</code> 的特殊 Guest OS，也称为 <code>Dom0</code>。 这个 Guest 在 hypervisor 启动时被启动，并且它具有不同于其他 Guest 的管理权限，可以直接访问物理硬件资源。Type 1 Hypervisor。</p>
 <p>如下图，当其他 Guest OS 请求访问物理硬件资源时，这些请求首先会传递给 Hypervisor，然后接着传递到 <code>Dom0</code> Guest OS，然后去访问资源。当资源访问到之后再原路返回。</p>
 <p><img data-src="https://s2.loli.net/2023/04/09/MSi93wzgvoUDE7G.png" alt="3.png"></p>
 <p><code>Dom0</code> 的重启将中断所有其他 Guest OS。 因为 <code>Dom0</code> 也是 Guest，它会消耗资源并与系统中的其他 Guest 争夺资源。</p>
-<h3 id="Microsoft-Hyper-V"><a href="#Microsoft-Hyper-V" class="headerlink" title="Microsoft Hyper-V"></a>Microsoft Hyper-V</h3><p>微软在几年前从 Connectix 收购了该解决方案后，于 2005 年通过 Virtual Server 开始涉足虚拟化领域。 与 GSX 一样，Virtual Server 是 Type 2 虚拟机管理程序，但已停产以支持 Hyper-V（Type 1 Hypervisor）。 Microsoft Hyper-V 于 2008 年作为 Windows Server 2008 操作系统的可安装部分发布。 图 2.10 显示了 Hyper-V 的体系结构。</p>
+<h3 id="1-3-Microsoft-Hyper-V"><a href="#1-3-Microsoft-Hyper-V" class="headerlink" title="1.3 Microsoft Hyper-V"></a>1.3 Microsoft Hyper-V</h3><p>微软在几年前从 Connectix 收购了该解决方案后，于 2005 年通过 Virtual Server 开始涉足虚拟化领域。 与 GSX 一样，Virtual Server 是 Type 2 虚拟机管理程序，但已停产以支持 Hyper-V（Type 1 Hypervisor）。 Microsoft Hyper-V 于 2008 年作为 Windows Server 2008 操作系统的可安装部分发布。 图 2.10 显示了 Hyper-V 的体系结构。</p>
 <p><img data-src="https://s2.loli.net/2023/04/09/jt7m6Awy5LsRE2D.png" alt="4.png"></p>
 <p>Hyper-V 是 Type 1 Hypervisor，Hypervisor 代码直接存在于硬件上。 不过，命名法略有不同——虚拟化工作负载称为分区，而不是 Guest。 <strong>与 Xen 模型类似，它需要一个可以直接访问硬件资源的特殊根分区</strong>。 与 <code>Dom0</code> 一样，根分区运行操作系统——在本例中为 Windows Server。 该分区创建和管理子分区并处理系统管理功能和设备驱动程序。 由于它使用类似于 XenServer 的模型，因此在修补和争用方面也存在相同的可用性漏洞。目前 Hyper-V 拥有大约 20% 的市场份额。</p>
 <blockquote>
@@ -464,6 +467,88 @@
 <ul>
 <li>Virtualization Essentials (Matthew Portnoy) Third Edition</li>
 <li><a target="_blank" rel="noopener" href="https://github.com/0voice/Introduce_to_virtualization#nav_vt0_chapter1">500篇关于虚拟化的经典资料</a></li>
+</ul>
+<h2 id="2-硬件辅助的虚拟化"><a href="#2-硬件辅助的虚拟化" class="headerlink" title="2 硬件辅助的虚拟化"></a>2 硬件辅助的虚拟化</h2><h3 id="2-1-硬件辅助的虚拟化"><a href="#2-1-硬件辅助的虚拟化" class="headerlink" title="2.1 硬件辅助的虚拟化"></a>2.1 硬件辅助的虚拟化</h3><p>在虚拟化技术早期，主要有两种在软件层面来将物理 CPU 虚拟成虚拟 vCPU 的技术：</p>
+<ul>
+<li>全虚拟化（Full Virtualization）：以 VMware 为代表，<strong>动态处理</strong>非特权指令“运行时监控，捕捉后在 VMM 中模拟”。（无需修改，直接运行）</li>
+<li>半虚拟化（Para Virtualization）：以 Xen 为代表，<strong>静态处理</strong>非特权指令“将 VM 中全部非特权指令进行替换处理”。提高效率。</li>
+</ul>
+<p>后来 Intel、AMD 硬件厂商均推出了在硬件级支持虚拟化的 CPU——硬件辅助的虚拟化，本文主要关注 Intel 的 CPU 硬件虚拟化。</p>
+<div class="note warning"><p>Intel 推出了以下三种 CPU 级虚拟化技术：</p>
+<ol>
+<li>基于处理器的虚拟化技术（<mark class="label danger">Intel VT-x</mark>)， 全称为 Virtualization Technology for x86。</li>
+<li>基于PCI总线域设备实现的 I&#x2F;O 虚拟化技术（<mark class="label default">Intel VT-d</mark>) ，全称为 Virtualization Technology for Directed I&#x2F;O。</li>
+<li>基于网络的虚拟化技术（<mark class="label warning">Intel VT-c</mark>)， 全称为 Virtualization Technology for Connectify。</li>
+</ol>
+</div>
+
+<div class="note primary"><p>以下几个概念需要弄清楚：</p>
+<ol>
+<li>Intel 处理器级的虚拟化技术叫做 <code>Intel VT-x</code>，用来实现虚拟化的功能叫做 VMX（Virtual Machine Extension，虚拟机扩展），也可以将 <code>Intel VT-x</code> 叫做 <code>VMX</code>，也可以叫做硬件虚拟化技术（Hardware Enabled Virtualization，HEV）。虚拟机扩展定义了在 IA-32 处理器上对虚拟机的处理器级支持。</li>
+<li>虚拟机扩展功能包含两个角色、两种模式、一组指令：<ul>
+<li>两个角色：虚拟机管理器（Virtual Machine Monitor，VMM）和客户机（Guest OS）。</li>
+<li>两种模式：VMX root operation（ring -1），VMX non-root operation。VMM 运行在 VMX root 模式，Guest OS 运行在 VMX non-root 模式。</li>
+<li>一组专门用在 VMM 中的指令，叫做 <strong>VMX 指令</strong>，VMX 指令只能在 VMX root 模式下执行。</li>
+</ul>
+</li>
+</ol>
+</div>
+
+<div class="note info"><p>注意：处理器（Processor）和 CPU 的差别，处理器一般指逻辑处理器（Logical Processor）。在多核 CPU 中，一个 CPU 上可能会有多个核， 而<strong>在操作系统视角中，一个核才是一个逻辑处理器</strong>，因此通过操作系统查看的逻辑处理器数量往往大于真实 CPU 的数量，并且<strong>逻辑处理器才是能够运行 Hypervisor 的基础</strong>。如一个逻辑核对应一个 Type 2 Hypervisor。</p>
+</div>
+
+<p><img data-src="https://s2.loli.net/2023/04/10/ptrFhJRTISdC6EQ.png" alt="5.png"></p>
+<h3 id="2-2-虚拟机扩展（VMX）"><a href="#2-2-虚拟机扩展（VMX）" class="headerlink" title="2.2 虚拟机扩展（VMX）"></a>2.2 虚拟机扩展（VMX）</h3><p>处理器提供 VMX operation 使得处理器支持虚拟化。在硬件虚拟化中，有时也称 VMM 为 “Hypervisor” 专指在使用 VT 技术时创建的特权层，也就是 Ring 0 之 下的 Ring -1。处在这个层次的代码具有“上帝视角”，能监控计算机的各种行为，例如特权指令、内存访问、IO 访问等。该层提供给虚拟机开发者，<strong>Hypervisor 的权限级别要大于或等于操作系统权限</strong>。</p>
+<p>在 VT 技术中，VMX root operation 和 VMX non-root operation 模式切换过程如下：</p>
+<p><img data-src="https://s2.loli.net/2023/04/10/Gzp3edAOJfaKx45.png" alt="6.png"></p>
+<ol>
+<li>对于 VMM 层，进入此层则代表进入了 VMX root 模式。<ul>
+<li>为每个虚拟机提供虚拟处理器，并且可以在恰当的时候把它放在真正的物理处理器上，从而使得这个虚拟处理器可以处理指令。</li>
+<li>VMM 通过虚拟机控制结构（Virtual-Machine Control Strueture，VMCS）设置需要截获的硬件访问，例如指令、中断、内存访问和异常等。如果 Guest OS 在执行时触发了这些条件设置，将引起 VM 退出（<code>#VMExit</code>），此时 CPU 会从 non-Root 模式切换到 Root 模式，VMM 会获得系统控制杈并执行相应的处理程序。</li>
+</ul>
+</li>
+<li>对于 Guest（VM）层，进入此层则代表进入了 VMX non-root 模式。<ul>
+<li>每个虚拟机使用相同的接口来使用虚拟处理器、内存、存储设备等资源。</li>
+<li>每个虚拟机可以独立地不受干扰地运行，虚拟机间都是相互独立的。</li>
+<li>对于虚拟机来说，VMM 层像是完全透明的。</li>
+</ul>
+</li>
+<li>软件通过执行 <code>VMXON</code> 指令进入 VMX Root 模式下，开启了虚拟机管理器的运行环境。然后通过使用 <code>VMLAUNCH</code> 指令使得目标系统正式运行在虚拟机中（开启 VM）。 当 VM 中某条指令产生了 <code>#VMEXIT</code> 事件后，会陷入虚拟机管理器中，待其处理完这个事件， 可以通过 <code>VMRESUME</code> 指令将控制权移交回发生 <code>#VMEXIT</code> 事件的虚拟机。直到某个时刻，在 Hypervisor 中显式地调用了 <code>VMXOFF</code> 指令，Hypervisor 才会被关闭。</li>
+</ol>
+<div class="note danger"><p>创建一个典型的 VT 技术 Hypervisor 例子主要有以下几个步骤：</p>
+<ol>
+<li>先检测当前处理器是否支持 VMX（VT-x）。</li>
+<li>分配 4KB（0x1000）对齐的 VMXON 区域和 VMCS 控制块。</li>
+<li>填写 VMCS 控制块。VMCS 控制块用于控制要监控什么特权指令、是否开启 EPT 机制、是否监控 I&#x2F;O 访问等。</li>
+<li>调用 <code>VMLAUNCH</code> 指令启动虚拟机。</li>
+<li>当产生 <code>#VMExit</code> 事件时调用 <code>VMExitProc</code> 函数，并处理各种感兴趣的虚拟机陷入消息。</li>
+</ol>
+</div>
+
+<p>关于 VMX 指令，将在后面章节进行介绍。</p>
+<h2 id="3-VMCS"><a href="#3-VMCS" class="headerlink" title="3 VMCS"></a>3 VMCS</h2><h3 id="3-1-VMCS-概述"><a href="#3-1-VMCS-概述" class="headerlink" title="3.1 VMCS 概述"></a>3.1 VMCS 概述</h3><p>VMM 通过虚拟机控制结构（Virtual-Machine Control Strueture，VMCS）来设置和保存 VMX root、VMX non-root 模式切换中涉及的数据、寄存器值等。VMCS 具有以下几点特征：</p>
+<ol>
+<li><strong>一个逻辑处理器对应 VMM 中的一块 VMCS</strong>（该区域称为 VMCS region）。如果一个 VM 使用了几个逻辑处理器 vCPU，则就应该有几个对应的 VMCS 结构。可以使用 MSR <code>IA32_VMX_BASIC</code> 来确定 VMCS 区域的大小。</li>
+<li>每个逻辑处理器中都有一个 VMCS 指针（64 bits）指向 VMCS 块的<strong>物理地址</strong>，应与 4KB 边界对齐。使用 <code>VMPTRST</code> 和 <code>VMPTRLD</code> 读取和写入 VMCS 指针的值。如果 <code>IA32_VMX_BASIC[48] = 1</code>，则这些指针不得设置 <code>63:32</code> 范围内的任何位，见附录 A.1。</li>
+<li>VMM 使用 <code>VMREAD</code>、<code>VMWRITE</code> 和 <code>VMCLEAR</code> 指令配置 VMCS。</li>
+</ol>
+<p><code>VMPTRST</code> 指令将逻辑处理器的当前 VMCS 地址存储到指定的内存位置（如果没有当前 VMCS，它存储值 <code>FFFFFFFF_FFFFFFFFH</code>）</p>
+<p><code>VMPTRLD Address</code> 表示将某个 VMCS_y 的地址写入当前 VMCS，相当于让 VMCS_y 称为当前的 VMCS。</p>
+<p><code>VMLAUNCH</code> 指令需要一个启动状态为 <code>clear</code> 的 VMCS；<code>VMRESUME</code> 指令需要一个启动状态为“已启动”的 VMCS。</p>
+<p>以下各项描述了逻辑处理器如何管理 VMCS 的启动状态：</p>
+<ul>
+<li>如果当前 VMCS 的启动状态为“清除”，则成功执行 <code>VMLAUNCH</code> 指令会将启动状态更改为“已启动”。</li>
+<li><code>VMCLEAR</code> 指令的内存操作数是 VMCS 的地址。 指令执行后，该 VMCS 的启动状态是 <code>clear</code> 的。</li>
+<li>没有其他方法可以修改 VMCS 的启动状态（它不能使用 <code>VMWRITE</code> 修改），也没有直接的方法来发现它（它不能使用 <code>VMREAD</code> 读取）。</li>
+</ul>
+<p>下图描述了 VMCS 的状态变化，在 Intel 手册中使用 “The VMCS” 表示 “Current VMCS”。</p>
+<p><img data-src="https://s2.loli.net/2023/04/11/hjBXrJxA6E7C2fe.png" alt="7.png"></p>
+<p>—23.6—</p>
+<h3 id="3-2-VMX-指令"><a href="#3-2-VMX-指令" class="headerlink" title="3.2 VMX 指令"></a>3.2 VMX 指令</h3><h3 id="3-3-VMCS-结构"><a href="#3-3-VMCS-结构" class="headerlink" title="3.3 VMCS 结构"></a>3.3 VMCS 结构</h3><p>参考资料：</p>
+<ul>
+<li>New Blue Pill 深入理解硬件虚拟机</li>
+<li>加密与解密第 4 版 Chapter 10</li>
+<li>Intel® 64 and IA-32 Architectures Software Developer’s Manual Volume 3 (3A, 3B, 3C &amp; 3D): System Programming Guide Chapter 23</li>
 </ul>
 <p>虚拟地址（VA)： 指 Guest OS 提供给其应用程序使用的线性地址空间。<br>物理地址(PA)：  经 VMM 抽象的、虚拟机看到的伪物理地址。<br>机器地址（MA)：真实的机器地址，即地址总线上出现的地址信号。</p>
 <p>这样的话，会存在两张页表：</p>
@@ -610,7 +695,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">35:31</span>
+    <span title="站点阅读时长">35:34</span>
   </span>
 </div>
 <div class="busuanzi-count">
