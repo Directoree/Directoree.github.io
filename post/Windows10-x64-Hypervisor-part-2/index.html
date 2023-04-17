@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hypervisor（二）：VMCS region">
+<meta property="og:url" content="https://directoree.github.io/post/Windows10-x64-hypervisor-part-2/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/04/11/bxKdOwB1L4AehvD.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/15/Fszai4l7tqYZxcd.png">
+<meta property="og:image" content="https://s2.loli.net/2023/04/15/vwjoD12tnNhxWrl.png">
+<meta property="article:published_time" content="2023-04-17T11:15:53.000Z">
+<meta property="article:modified_time" content="2023-04-17T15:45:01.460Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="虚拟化">
+<meta property="article:tag" content="VT-x">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/04/11/bxKdOwB1L4AehvD.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Windows10-x64-hypervisor-part-2/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Hypervisor（二）：VMCS region | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-VMCS-region"><span class="nav-text">1 VMCS region</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-VMCS-%E6%A6%82%E8%BF%B0"><span class="nav-text">1.1 VMCS 概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-VMCS-%E7%9A%84%E7%8A%B6%E6%80%81"><span class="nav-text">1.2 VMCS 的状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%94%B3%E8%AF%B7-VMCS-region"><span class="nav-text">1.3 申请 VMCS region</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-VMCS-%E7%BB%93%E6%9E%84"><span class="nav-text">1.3 VMCS 结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Guest-state-area"><span class="nav-text">2 Guest-state area</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Host-state-area"><span class="nav-text">3 Host-state area</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-VM-execution-control-fields"><span class="nav-text">4 VM-execution control fields</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-VM-exit-control-fields"><span class="nav-text">5 VM-exit control fields</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-VM-entry-control-fields"><span class="nav-text">6 VM-entry control fields</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-VM-exit-information-fields"><span class="nav-text">7 VM-exit information fields</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">152</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows10-x64-hypervisor-part-2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hypervisor（二）：VMCS region
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-04-17 19:15:53 / 修改时间：23:45:01" itemprop="dateCreated datePublished" datetime="2023-04-17T19:15:53+08:00">2023-04-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/VT-x/" itemprop="url" rel="index"><span itemprop="name">VT-x</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Windows10-x64-hypervisor-part-2/" class="post-meta-item leancloud_visitors" data-flag-title="Hypervisor（二）：VMCS region" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Windows10-x64-hypervisor-part-2/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows10-x64-hypervisor-part-2/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>19k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>17 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+
+
+<h2 id="1-VMCS-region"><a href="#1-VMCS-region" class="headerlink" title="1 VMCS region"></a>1 VMCS region</h2><p>在 VMX 架构下，至少需要实现一个被称为 <mark class="label danger">VMXON region</mark>，以及一个被称为 <mark class="label success">VMCS region</mark> 的物理区域。</p>
+<ul>
+<li><strong>VMXON 区域对应于 VMM</strong>，VMM 使用 VMXON 区域对一些数据进行记录和维护。</li>
+<li>每个 VMCS（Virtual Machine Control Structure，虚拟机控制结构）<strong>区域对应着一个 VM</strong>。VMM 使用 VMCS 区域来配置 VM 的运行环境，以及控制 VM 的运行。</li>
+<li>在进入 VMX operation 模式前，必须先为 VMM 准备一份 VMXON 区域，同样在进入 VM 前也必须准备相应的 VMCS 区域，并配置 VM 的运行环境。</li>
+</ul>
+<h3 id="1-1-VMCS-概述"><a href="#1-1-VMCS-概述" class="headerlink" title="1.1 VMCS 概述"></a>1.1 VMCS 概述</h3><p>VMM 通过虚拟机控制结构 VMCS 来设置和保存 VMX root、VMX non-root 模式切换中涉及的数据、寄存器值等。VMCS 具有以下几点特征：</p>
+<ol>
+<li><strong>一个逻辑处理器对应 VMM 中的一块 VMCS</strong>（该区域称为 VMCS region），而不是一个 VM 对应着一个 VMCS。如果一个 VM 使用了几个逻辑处理器 vCPU，则就应该有几个对应的 VMCS 结构。可以使用 MSR <code>IA32_VMX_BASIC</code> 来确定 VMCS 区域的大小。</li>
+<li>每个逻辑处理器中都有一个 VMCS 指针（64 bits）指向 VMCS 块的<strong>物理地址</strong>，应与 4KB 边界对齐。使用 <code>VMPTRST</code> 和 <code>VMPTRLD</code> 读取和写入 VMCS 指针的值。如果 <code>IA32_VMX_BASIC[48] = 1</code>，则这些指针不得设置 <code>63:32</code> 范围内的任何位，见附录 A.1。</li>
+<li>VMM 使用 <code>VMREAD</code>、<code>VMWRITE</code> 和 <code>VMCLEAR</code> 指令配置 VMCS。</li>
+</ol>
+<h3 id="1-2-VMCS-的状态"><a href="#1-2-VMCS-的状态" class="headerlink" title="1.2 VMCS 的状态"></a>1.2 VMCS 的状态</h3><p>在 VMX root、VMX non-root 模式切换中，从 VMX root 切换到 VMX non-root 模式被称为 <strong>VM-entry</strong>；从 VMX non-root 切换到 VMX root 模式被称为 <strong>VM-exit</strong>。</p>
+<hr>
+<p><strong>注意⚠️：VM-exit 和 VM-entry 不会改变 VMCS 的状态</strong>。</p>
+<hr>
+<div class="note danger"><p>VMCS 的三类属性状态：</p>
+<ol>
+<li>active — inactive，活动的—非活动的。</li>
+<li>current — not current，当前的—非当前的。在一个逻辑处理器上一个时刻只能有一个 VMCS 处于 current（current-VMCS）。</li>
+<li>launched — clear，已启动—干净。</li>
+</ol>
+</div>
+
+<div class="note default"><p><strong>启动 VMCS region 区域顺序</strong>：</p>
+<ol>
+<li>VMCS region 区域初始化之后要先试用 <code>VMCLEAR</code> 使该 VMCS 处于 inactive、not current、clear。</li>
+<li>使用 <code>VMPTRLD</code> 使 VMCS 变成 active、current。</li>
+<li>使用 <code>VMLAUNCH</code> 使 VMCS 变成 launched。</li>
+</ol>
+</div>
+
+<div class="note warning"><p>制约关系：</p>
+<ul>
+<li>使用 <code>VMLAUNCH</code> 指令前，必须先使用 <code>VMCLEAR</code> 使 VMCS region 处于 clear 状态（此时 <code>current-VMCS pointer == 0xFFFFFFFFFFFFFFFF</code>），然后使用 <code>VMPTRLD</code> 将 VMCS 变成 active、current，最后使用 <code>VMLAUNCH</code> 指令。</li>
+<li>使用 <code>VMRESUME</code> 进入 VM 前，该 VM 必须已经使用 <code>VMLAUNCH</code> 启动过了。</li>
+<li><code>VMREAD</code>，<code>VMWRITE</code>，<code>VMLAUNCH</code>，<code>VMRESUME</code> 及 <code>VMPTRST</code> 指令的操作<strong>都是实施在 current-VMCS 之上的</strong>。</li>
+</ul>
+</div>
+
+<div class="note success"><p><strong>注意</strong>：</p>
+<ol>
+<li>假设先使用 <code>VMPTRLD</code> 使得 VMCS-A 变成 active、current，current-VMCS point 是  VMCS-A 的。</li>
+<li>然后又使用 <code>VMPTRLD</code> 使得 VMCS-B 变成 active、current，current-VMCS point 是  VMCS-B 的。那么此时 VMCS-A 的状态是 active（活动状态不变）、<strong>not current</strong>。</li>
+<li>在软件中<strong>没有任何方法</strong>来读取某个 VMCS 处在哪一个状态，CPU 维护这些状态。</li>
+<li><code>VMCLEAR</code>、<code>VMPTRLD</code> 指令的操作数都是物理地址。</li>
+</ol>
+</div>
+
+
+
+<p>下图描述了 VMCS 的状态变化，在 Intel 手册中使用 “The VMCS” 表示 “Current VMCS”。</p>
+<p><img data-src="https://s2.loli.net/2023/04/11/bxKdOwB1L4AehvD.png" alt="7.png"></p>
+<h3 id="1-3-申请-VMCS-region"><a href="#1-3-申请-VMCS-region" class="headerlink" title="1.3 申请 VMCS region"></a>1.3 申请 VMCS region</h3><p>申请 VMCS region 和申请 VMXON region 类似。</p>
+<ol>
+<li><p>通过 IA32_VMX_BASIC[44:32] 得到 VMCS 所需空间大小（0x1000，4096 bytes）。</p>
+</li>
+<li><p>通过 IA32_VMX_BASIC[53:50] 得到 VMCS 所需内存类型，如 write-back。</p>
+</li>
+<li><p>调用 MmAllocateContiguousMemorySpecifyCache 函数申请连续指定大小和类型的物理内存。</p>
+</li>
+<li><p>判断返回地址是否在边界对齐 4KB（bit 11:0 为 0）。</p>
+</li>
+<li><p>将 IA32_VMX_BASIC[31:0] 的 VMCS revision identifier 写入 VMCS 前 4 字节的 [bit30:0]。</p>
+</li>
+<li><p>将 VMCS 的 bit 31 &#x3D; 0（不是 shadow VMCS）。</p>
+</li>
+<li><p>使用 <code>VMCLEAR</code> 使 VMCS region 处于 clear 状态。</p>
+</li>
+<li><p>使用 <code>VMPTRLD</code> 使 VMCS 变成 active、current。</p>
+</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;ntddk.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MSR_IA32_FEATURE_CONTROL 0x3A</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MSR_IA32_VMX_BASIC 0x480</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MSR_IA32_VMX_CR0_FIXED0 0x486</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MSR_IA32_VMX_CR0_FIXED1 0x487</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MSR_IA32_VMX_CR4_FIXED0 0x488</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MSR_IA32_VMX_CR4_FIXED1 0x489</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PAGE_SIZE 0x1000</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">CPUID</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ULONG EAX;</span><br><span class="line">    ULONG EBX;</span><br><span class="line">    ULONG ECX;</span><br><span class="line">    ULONG EDX;</span><br><span class="line">&#125; CPUID, * PCPUID;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> _<span class="title">IA32_FEATURE_CONTROL_MSR</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ULONG64 All;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        ULONG64 Lock : <span class="number">1</span>;                <span class="comment">// [0]</span></span><br><span class="line">        ULONG64 EnableSMX : <span class="number">1</span>;           <span class="comment">// [1]</span></span><br><span class="line">        ULONG64 EnableVmxon : <span class="number">1</span>;         <span class="comment">// [2]</span></span><br><span class="line">        ULONG64 Reserved1 : <span class="number">5</span>;           <span class="comment">// [3-7]</span></span><br><span class="line">        ULONG64 EnableLocalSENTER : <span class="number">7</span>;   <span class="comment">// [8-14]</span></span><br><span class="line">        ULONG64 EnableGlobalSENTER : <span class="number">1</span>;  <span class="comment">// [15]</span></span><br><span class="line">        ULONG64 Reserved2 : <span class="number">1</span>;           <span class="comment">// [16]</span></span><br><span class="line">        ULONG64 EnableSGXLanch : <span class="number">1</span>;      <span class="comment">// [17]</span></span><br><span class="line">        ULONG64 EnableSGXGlobal : <span class="number">1</span>;     <span class="comment">// [18]</span></span><br><span class="line">        ULONG64 Reserved3 : <span class="number">1</span>;           <span class="comment">// [19]</span></span><br><span class="line">        ULONG64 LMCEOn : <span class="number">1</span>;               <span class="comment">// [20]</span></span><br><span class="line">        ULONG64 Reserved4 : <span class="number">43</span>;          <span class="comment">// [21-63]</span></span><br><span class="line">    &#125; Fields;</span><br><span class="line">&#125; IA32_FEATURE_CONTROL_MSR, * PIA32_FEATURE_CONTROL_MSR;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">union</span> _<span class="title">IA32_VMX_BASIC_MSR</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	ULONG64 All;</span><br><span class="line">	<span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">	&#123;</span></span><br><span class="line">		ULONG64 RevisionIdentifier : <span class="number">31</span>;   <span class="comment">// [0-30]</span></span><br><span class="line">		ULONG64 Reserved1 : <span class="number">1</span>;             <span class="comment">// [31]</span></span><br><span class="line">		ULONG64 RegionSize : <span class="number">13</span>;           <span class="comment">// [32-44]</span></span><br><span class="line">		ULONG64 Reserved2 : <span class="number">3</span>;             <span class="comment">// [45-47]</span></span><br><span class="line">		ULONG64 SupportedIA64 : <span class="number">1</span>;         <span class="comment">// [48]</span></span><br><span class="line">		ULONG64 SupportedDualMoniter : <span class="number">1</span>;  <span class="comment">// [49]</span></span><br><span class="line">		ULONG64 MemoryType : <span class="number">4</span>;            <span class="comment">// [50-53]</span></span><br><span class="line">		ULONG64 VmExitReport : <span class="number">1</span>;          <span class="comment">// [54]</span></span><br><span class="line">		ULONG64 VmxCapabilityHint : <span class="number">1</span>;     <span class="comment">// [55]</span></span><br><span class="line">		ULONG64 VmxDeliverExceptionToVmm : <span class="number">1</span>;	<span class="comment">// [56]</span></span><br><span class="line">		ULONG64 Reserved3 : <span class="number">7</span>;             <span class="comment">// [57-63]</span></span><br><span class="line">	&#125; Fields;</span><br><span class="line">&#125; IA32_VMX_BASIC_MSR, * PIA32_VMX_BASIC_MSR;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">VIRTUAL_MACHINE_STATE</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	BOOLEAN IsOnVmxRootMode;										<span class="comment">// Detects whether the current logical core is on Executing on VMX Root Mode</span></span><br><span class="line">	BOOLEAN IncrementRip;											<span class="comment">// Checks whether it has to redo the previous instruction or not (it used mainly in Ept routines)</span></span><br><span class="line">	BOOLEAN HasLaunched;											<span class="comment">// Indicate whether the core is virtualized or not</span></span><br><span class="line">	ULONG64 VmxonRegionAllocVirtualAddress;				<span class="comment">// Used to free buffer in vmxoff</span></span><br><span class="line">	ULONG64 VmxonRegionAlignedPhysicalAddress;								<span class="comment">// VMXON region physical address</span></span><br><span class="line">	ULONG64 VmxonRegionAlignedVirtualAddress;							    <span class="comment">// VMXON region virtual address</span></span><br><span class="line">	ULONG64 VmvsRegionAllocVirtualAddress;				<span class="comment">// Used to free buffer in vmxoff</span></span><br><span class="line">	ULONG64 VmcsRegionAlignedPhysicalAddress;								<span class="comment">// VMCS region physical address</span></span><br><span class="line">	ULONG64 VmcsRegionAlignedVirtualAddress;								<span class="comment">// VMCS region virtual address</span></span><br><span class="line">	ULONG64 VmmStack;												<span class="comment">// Stack for VMM in VM-Exit State</span></span><br><span class="line">	ULONG64 MsrBitmapVirtualAddress;									<span class="comment">// Msr Bitmap Virtual Address</span></span><br><span class="line">	ULONG64 MsrBitmapPhysicalAddress;								<span class="comment">// Msr Bitmap Physical Address</span></span><br><span class="line">	<span class="comment">// VMX_VMXOFF_STATE VmxoffState;									// Shows the vmxoff state of the guest</span></span><br><span class="line">	<span class="comment">// PEPT_HOOKED_PAGE_DETAIL MtfEptHookRestorePoint;                 // It shows the detail of the hooked paged that should be restore in MTF vm-exit</span></span><br><span class="line">&#125; VIRTUAL_MACHINE_STATE, * PVIRTUAL_MACHINE_STATE;</span><br><span class="line"></span><br><span class="line">PVIRTUAL_MACHINE_STATE g_pGuestState = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">DriverUnload</span><span class="params">(PDRIVER_OBJECT pDriver)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	UNREFERENCED_PARAMETER(pDriver);</span><br><span class="line">	DbgPrint(<span class="string">&quot;Goodbye~\n&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// 1. Detect this CPU is Intel or not.</span></span><br><span class="line"><span class="comment">// 2. If CPU support VME: CPUID.01H:ECX.VMX[bit5] == 1, set CR4.VMXE(bit13) to 1. </span></span><br><span class="line"><span class="comment">// </span></span><br><span class="line"></span><br><span class="line"><span class="function">BOOLEAN <span class="title">DetectVMXSupportAndEnableCr4</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	CPUID Cpuid = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	ULONG64 Cr4 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// detect cpu is intel or not.</span></span><br><span class="line">	__cpuid(&amp;Cpuid, <span class="number">0x0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Intel: Genuntelinel</span></span><br><span class="line">	<span class="comment">// test CPUID.00H, RBX+RDX+RCX = Genuntelinel ?</span></span><br><span class="line">	<span class="keyword">if</span> (Cpuid.EBX == <span class="number">0x756E6547</span> &amp;&amp; Cpuid.ECX == <span class="number">0x6C65746E</span> &amp;&amp; Cpuid.EDX == <span class="number">0x49656E69</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		RtlSecureZeroMemory((PVOID)&amp;Cpuid, <span class="keyword">sizeof</span>(CPUID));</span><br><span class="line">		</span><br><span class="line">		__cpuid(&amp;Cpuid, <span class="number">0x1</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// test CPUID.01H:ECX.VMX[bit 5] = 1 ?</span></span><br><span class="line">		<span class="keyword">if</span> (_bittest(&amp;Cpuid.ECX, <span class="number">5</span>) == <span class="number">1</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			DbgPrint(<span class="string">&quot;[*] This CPU support VMX!\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">			<span class="comment">// Enable cr4 register, set cr4.VMXE(bit 13) = 1</span></span><br><span class="line">			Cr4 = __readcr4();</span><br><span class="line">			_bittestandset((PLONG)&amp;Cr4, <span class="number">13</span>);</span><br><span class="line">			__writecr4(Cr4);</span><br><span class="line">			<span class="keyword">return</span> TRUE;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span> DbgPrint(<span class="string">&quot;[*] This CPU Not support VMX!\n&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> DbgPrint(<span class="string">&quot;[*] This CPU Not Intel!\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> FALSE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// 1. Detect IA32_FEATURE_CONTROL(0x3A) lock(bit0), EnableSMX(bit1), EnableVmxon(bit2) and set.</span></span><br><span class="line"><span class="comment">// 2. If bit X is 1 in FIXED0, then set that bits of CR0 and CR4 to 1.</span></span><br><span class="line"><span class="comment">// 3. If bit X is 0 in FIXED1, then set that bits of CR0 and CR4 to 0.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function">BOOLEAN <span class="title">SetEntryVMXoperationCondition</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	IA32_FEATURE_CONTROL_MSR MsrControl = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	CPUID Cpuid = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	ULONG64 Cr0, Cr4 = <span class="number">0</span>;</span><br><span class="line">	BOOLEAN InSMXmode = FALSE;</span><br><span class="line">	ULONG64 Cr0Fixed0, Cr0Fixed1, Cr4Fixed0, Cr4Fixed1 = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// detect CPU in SMX mode or not.</span></span><br><span class="line">	__cpuid(&amp;Cpuid, <span class="number">0x1</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (_bittest((PLONG)&amp;Cpuid.ECX, <span class="number">6</span>) == <span class="number">1</span>) <span class="comment">// support SMX mode</span></span><br><span class="line">	&#123;</span><br><span class="line">		Cr4 = __readcr4();</span><br><span class="line">		<span class="keyword">if</span> (_bittest((PLONG)&amp;Cr4, <span class="number">14</span>) == <span class="number">1</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			InSMXmode = TRUE;</span><br><span class="line">			DbgPrint(<span class="string">&quot;[*] This CPU in SMX mode.\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			InSMXmode = FALSE;</span><br><span class="line">			DbgPrint(<span class="string">&quot;[*] This CPU NOT in SMX mode.\n&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// read MSR_IA32_FEATURE_CONTROL MSR register.</span></span><br><span class="line">	<span class="comment">// set Lock, EnableSMX, EnableVmxon.</span></span><br><span class="line">	MsrControl.All = __readmsr(MSR_IA32_FEATURE_CONTROL);</span><br><span class="line">	<span class="keyword">if</span> (MsrControl.Fields.Lock == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (InSMXmode)</span><br><span class="line">		&#123;</span><br><span class="line">			MsrControl.Fields.Lock = <span class="number">1</span>;</span><br><span class="line">			MsrControl.Fields.EnableSMX = <span class="number">1</span>;</span><br><span class="line">			__writemsr(MSR_IA32_FEATURE_CONTROL, MsrControl.All);</span><br><span class="line">			DbgPrint(<span class="string">&quot;[*] Set entry VMX operation condition inside SMX mode OK.&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			MsrControl.Fields.Lock = <span class="number">1</span>;</span><br><span class="line">			MsrControl.Fields.EnableVmxon = <span class="number">1</span>;</span><br><span class="line">			__writemsr(MSR_IA32_FEATURE_CONTROL, MsrControl.All);</span><br><span class="line">			DbgPrint(<span class="string">&quot;[*] Set entry VMX operation condition outside SMX mode OK.&quot;</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">else</span> <span class="keyword">if</span> (MsrControl.Fields.EnableVmxon == FALSE)	<span class="comment">// lock = 1, but EnableVmxon = 0</span></span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] VMX locked off in BIOS&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// set CR0, CR4 according to FIXED0 and FIXED1.</span></span><br><span class="line">	Cr0Fixed0 = __readmsr(MSR_IA32_VMX_CR0_FIXED0);</span><br><span class="line">	Cr0Fixed1 = __readmsr(MSR_IA32_VMX_CR0_FIXED1);</span><br><span class="line">	Cr4Fixed0 = __readmsr(MSR_IA32_VMX_CR4_FIXED0);</span><br><span class="line">	Cr4Fixed1 = __readmsr(MSR_IA32_VMX_CR4_FIXED1);</span><br><span class="line">	Cr0 = __readcr0();</span><br><span class="line">	Cr4 = __readcr4();</span><br><span class="line"></span><br><span class="line">	Cr0 |= Cr0Fixed0;</span><br><span class="line">	Cr0 &amp;= Cr0Fixed1;</span><br><span class="line">	Cr4 |= Cr4Fixed0;</span><br><span class="line">	Cr4 &amp;= Cr4Fixed1;</span><br><span class="line"></span><br><span class="line">	__writecr0(Cr0);</span><br><span class="line">	__writecr4(Cr4);</span><br><span class="line"></span><br><span class="line">	DbgPrint(<span class="string">&quot;[*] Now you can entry VMX operation.&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// 1. 通过 IA32_VMX_BASIC[44:32] 得到 VMXON region 所需空间大小。</span></span><br><span class="line"><span class="comment">// 2. 通过 IA32_VMX_BASIC[53:50] 得到 VMXON region 所需内存类型，如 write-back。</span></span><br><span class="line"><span class="comment">// 3. 调用 MmAllocateContiguousMemorySpecifyCache 函数申请连续指定大小和类型的物理内存。</span></span><br><span class="line"><span class="comment">// 4. 判断返回地址是否在边界对齐 4KB（bit 11:0 为 0）。</span></span><br><span class="line"><span class="comment">// 5. 将 IA32_VMX_BASIC[31:0] 的 VMCS revision identifier 写入 VMXON region 前 4 字节。</span></span><br><span class="line"><span class="comment">// 6. 将 VMXON region 的 bit 31 = 0。</span></span><br><span class="line"><span class="comment">// 5. Write VMXON region lowest 4 bytes from IA32_VMX_BASIC[31:0] that VMCS revision identifier.</span></span><br><span class="line"><span class="comment">// 6. Set VMXON region bit 31 to 0.</span></span><br><span class="line"><span class="comment">// 7. 使用 VMXON 进入 VMX root operation（使用 __vmx_on 函数）。</span></span><br><span class="line"><span class="comment">// 8. 判断 __vmx_on 函数的返回值是否是 TRUE。</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function">BOOLEAN <span class="title">VmxAllocateVmxonRegion</span><span class="params">(VIRTUAL_MACHINE_STATE* CurrentGuestState)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ULONG VmxRegionSize = <span class="number">0</span>;</span><br><span class="line">	UCHAR VmxRegionType = <span class="number">0</span>;</span><br><span class="line">	PVOID pVmxRegion_VA = <span class="literal">NULL</span>;</span><br><span class="line">	IA32_VMX_BASIC_MSR MsrVmxBasic = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	IA32_FEATURE_CONTROL_MSR MsrControl = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	PHYSICAL_ADDRESS pVmxRegion_Phy = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	PHYSICAL_ADDRESS Lowphys = &#123; <span class="number">0</span> &#125;, Highphys = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	ULONG64 uAlignVirtualAddress = <span class="number">0</span>;</span><br><span class="line">	ULONG64 uAlignPhysicalAddress = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="comment">// get the Vmx region size and type.</span></span><br><span class="line">	MsrVmxBasic.All = __readmsr(MSR_IA32_VMX_BASIC);</span><br><span class="line">	<span class="keyword">if</span> (MsrVmxBasic.All)</span><br><span class="line">	&#123;</span><br><span class="line">		VmxRegionSize = (MsrVmxBasic.All &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0x1FFF</span>;</span><br><span class="line">		VmxRegionType = (MsrVmxBasic.All &gt;&gt; <span class="number">50</span>) &amp; <span class="number">0xF</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (VmxRegionSize != PAGE_SIZE)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : The VMX region size is error getting from IA32_VMX_BASIC[44:32].&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// PVOID MmAllocateContiguousMemorySpecifyCache(</span></span><br><span class="line">		<span class="comment">// [in]           SIZE_T              NumberOfBytes,</span></span><br><span class="line">		<span class="comment">// [in]           PHYSICAL_ADDRESS    LowestAcceptableAddress,</span></span><br><span class="line">		<span class="comment">// [in]           PHYSICAL_ADDRESS    HighestAcceptableAddress,</span></span><br><span class="line">		<span class="comment">// [in, optional] PHYSICAL_ADDRESS    BoundaryAddressMultiple,</span></span><br><span class="line">		<span class="comment">// [in]           MEMORY_CACHING_TYPE CacheType</span></span><br><span class="line">		<span class="comment">// );</span></span><br><span class="line">		Lowphys.QuadPart = <span class="number">0</span>;</span><br><span class="line">		Highphys.QuadPart = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">switch</span> (VmxRegionType)</span><br><span class="line">		&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>:	<span class="comment">// uncache</span></span><br><span class="line">			pVmxRegion_VA = MmAllocateContiguousMemorySpecifyCache(VmxRegionSize * <span class="number">2</span>, Lowphys, Highphys, Lowphys, MmNonCached);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">6</span>:	<span class="comment">// write-back</span></span><br><span class="line">			pVmxRegion_VA = MmAllocateContiguousMemorySpecifyCache(VmxRegionSize * <span class="number">2</span>, Lowphys, Highphys, Lowphys, MmCached);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (pVmxRegion_VA == <span class="literal">NULL</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			DbgPrint(<span class="string">&quot;[*] Error : Couldn&#x27;t Allocate Buffer for VMXON Region.&quot;</span>);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		RtlSecureZeroMemory(pVmxRegion_VA, VmxRegionSize * <span class="number">2</span>);</span><br><span class="line">		pVmxRegion_Phy = MmGetPhysicalAddress(pVmxRegion_VA);</span><br><span class="line">		uAlignVirtualAddress = (ULONG64)pVmxRegion_VA;</span><br><span class="line">		uAlignPhysicalAddress = (ULONG64)pVmxRegion_Phy.QuadPart;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// align the physical address to 0x1000(bit 11:0 to 0)</span></span><br><span class="line">		<span class="comment">// the address align formula: if align to n bytes,(address + n-1) &amp; (~(n-1))</span></span><br><span class="line">		<span class="comment">// https://catecat.top/post/WinXP-Struct/</span></span><br><span class="line">		uAlignPhysicalAddress = ((ULONG64)uAlignPhysicalAddress + PAGE_SIZE - <span class="number">1</span>) &amp; (~(PAGE_SIZE - <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (((uAlignPhysicalAddress &amp; <span class="number">0xFFF</span>) != <span class="number">0</span>) &amp;&amp; ((ULONG64)uAlignPhysicalAddress - (ULONG64)pVmxRegion_Phy.QuadPart &lt;= PAGE_SIZE))</span><br><span class="line">		&#123;</span><br><span class="line">			uAlignPhysicalAddress++;</span><br><span class="line">			uAlignPhysicalAddress = ((ULONG64)uAlignPhysicalAddress + PAGE_SIZE - <span class="number">1</span>) &amp; (~(PAGE_SIZE - <span class="number">1</span>));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>((uAlignPhysicalAddress &amp; <span class="number">0xFFF</span>) != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            MmFreeContiguousMemory(pVmxRegion_VA);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	&#125; <span class="keyword">while</span> ((uAlignPhysicalAddress &amp; <span class="number">0xFFF</span>) != <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (uAlignVirtualAddress == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : MmGetVirtualForPhysical have a fault in VmxAllocateVmxonRegion function.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pVmxRegion_Phy.QuadPart = uAlignPhysicalAddress;</span><br><span class="line">	uAlignVirtualAddress = (ULONG64)MmGetVirtualForPhysical(pVmxRegion_Phy);</span><br><span class="line"></span><br><span class="line">	CurrentGuestState-&gt;VmvsRegionAllocVirtualAddress = (ULONG64)pVmxRegion_VA;</span><br><span class="line">	CurrentGuestState-&gt;VmxonRegionAlignedVirtualAddress = uAlignVirtualAddress;</span><br><span class="line">	CurrentGuestState-&gt;VmxonRegionAlignedPhysicalAddress = uAlignPhysicalAddress;</span><br><span class="line"></span><br><span class="line">	DbgPrint(<span class="string">&quot;[*] Virtual allocated buffer for VMXON at %llx\n&quot;</span>, (ULONG64)pVmxRegion_VA);</span><br><span class="line">	DbgPrint(<span class="string">&quot;[*] Virtual aligned allocated buffer for VMXON at %llx\n&quot;</span>, uAlignVirtualAddress);</span><br><span class="line">	DbgPrint(<span class="string">&quot;[*] Aligned physical buffer allocated for VMXON at %llx\n&quot;</span>, uAlignPhysicalAddress);</span><br><span class="line"></span><br><span class="line">	*(PULONG64)CurrentGuestState-&gt;VmxonRegionAlignedVirtualAddress = MsrVmxBasic.Fields.RevisionIdentifier;</span><br><span class="line">	_bittestandreset64((PULONG64)CurrentGuestState-&gt;VmxonRegionAlignedVirtualAddress, <span class="number">31</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="comment">// 1. 通过 IA32_VMX_BASIC[44:32] 得到 VMCS 所需空间大小（0x1000，4096 bytes）。</span></span><br><span class="line"><span class="comment">// 2. 通过 IA32_VMX_BASIC[53:50] 得到 VMCS 所需内存类型，如 write-back。</span></span><br><span class="line"><span class="comment">// 3. 调用 MmAllocateContiguousMemorySpecifyCache 函数申请连续指定大小和类型的物理内存。</span></span><br><span class="line"><span class="comment">// 4. 判断返回地址是否在边界对齐 4KB（bit 11:0 为 0）。</span></span><br><span class="line"><span class="comment">// 5. 将 IA32_VMX_BASIC[31:0] 的 VMCS revision identifier 写入 VMCS 前 4 字节的 [bit30:0]。</span></span><br><span class="line"><span class="comment">// 6. 将 VMCS 的 bit 31 = 0（不是 shadow VMCS）。</span></span><br><span class="line"><span class="comment">// 7. 使用 VMCLEAR 使 VMCS region 处于 clear 状态。</span></span><br><span class="line"><span class="comment">// 8. 使用 VMPTRLD 使 VMCS 变成 active、current。</span></span><br><span class="line"><span class="comment">// </span></span><br><span class="line"><span class="function">BOOLEAN <span class="title">VmxAllocateVmcsRegion</span><span class="params">(VIRTUAL_MACHINE_STATE* CurrentGuestState)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	IA32_VMX_BASIC_MSR MsrVmxBasic = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	ULONG VmcsRegionSize = <span class="number">0</span>;</span><br><span class="line">	UCHAR VmcsRegionType = <span class="number">0</span>;</span><br><span class="line">	PVOID pVmcsRegion_VA = <span class="literal">NULL</span>;</span><br><span class="line">	PHYSICAL_ADDRESS pVmcsRegion_Phy = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	PHYSICAL_ADDRESS Lowphys = &#123; <span class="number">0</span> &#125;, Highphys = &#123; <span class="number">0</span> &#125;;</span><br><span class="line">	ULONG64 uAlignVirtualAddress = <span class="number">0</span>;</span><br><span class="line">	ULONG64 uAlignPhysicalAddress = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// get the Vmcs region size and type.</span></span><br><span class="line">	MsrVmxBasic.All = __readmsr(MSR_IA32_VMX_BASIC);</span><br><span class="line">	<span class="keyword">if</span> (MsrVmxBasic.All)</span><br><span class="line">	&#123;</span><br><span class="line">		VmcsRegionSize = (MsrVmxBasic.All &gt;&gt; <span class="number">32</span>) &amp; <span class="number">0x1FFF</span>;</span><br><span class="line">		VmcsRegionType = (MsrVmxBasic.All &gt;&gt; <span class="number">50</span>) &amp; <span class="number">0xF</span>;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (VmcsRegionSize != PAGE_SIZE)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : The VMCS region size is error getting from IA32_VMX_BASIC[44:32].&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">do</span></span><br><span class="line">	&#123;</span><br><span class="line">		Lowphys.QuadPart = <span class="number">0</span>;</span><br><span class="line">		Highphys.QuadPart = <span class="number">-1</span>;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">switch</span> (VmcsRegionType)</span><br><span class="line">		&#123;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">0</span>:	<span class="comment">// uncache</span></span><br><span class="line">			pVmcsRegion_VA = MmAllocateContiguousMemorySpecifyCache(VmcsRegionSize * <span class="number">2</span>, Lowphys, Highphys, Lowphys, MmNonCached);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		<span class="keyword">case</span> <span class="number">6</span>:	<span class="comment">// write-back</span></span><br><span class="line">			pVmcsRegion_VA = MmAllocateContiguousMemorySpecifyCache(VmcsRegionSize * <span class="number">2</span>, Lowphys, Highphys, Lowphys, MmCached);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> (pVmcsRegion_VA == <span class="literal">NULL</span>)</span><br><span class="line">		&#123;</span><br><span class="line">			DbgPrint(<span class="string">&quot;[*] Error : Couldn&#x27;t Allocate Buffer for VMCS Region.&quot;</span>);</span><br><span class="line">			<span class="keyword">return</span> FALSE;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		RtlSecureZeroMemory(pVmcsRegion_VA, VmcsRegionSize * <span class="number">2</span>);</span><br><span class="line">		pVmcsRegion_Phy = MmGetPhysicalAddress(pVmcsRegion_VA);</span><br><span class="line">		uAlignVirtualAddress = (ULONG64)pVmcsRegion_VA;</span><br><span class="line">		uAlignPhysicalAddress = (ULONG64)pVmcsRegion_Phy.QuadPart;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// align the physical address to 0x1000(bit 11:0 to 0)</span></span><br><span class="line">		<span class="comment">// the address align formula: if align to n bytes,(address + n-1) &amp; (~(n-1))</span></span><br><span class="line">		<span class="comment">// https://catecat.top/post/WinXP-Struct/</span></span><br><span class="line">		uAlignPhysicalAddress = ((ULONG64)uAlignPhysicalAddress + PAGE_SIZE - <span class="number">1</span>) &amp; (~(PAGE_SIZE - <span class="number">1</span>));</span><br><span class="line"></span><br><span class="line">		<span class="keyword">while</span> (((uAlignPhysicalAddress &amp; <span class="number">0xFFF</span>) != <span class="number">0</span>) &amp;&amp; ((ULONG64)uAlignPhysicalAddress - (ULONG64)pVmcsRegion_Phy.QuadPart &lt;= PAGE_SIZE))</span><br><span class="line">		&#123;</span><br><span class="line">			uAlignPhysicalAddress++;</span><br><span class="line">			uAlignPhysicalAddress = ((ULONG64)uAlignPhysicalAddress + PAGE_SIZE - <span class="number">1</span>) &amp; (~(PAGE_SIZE - <span class="number">1</span>));</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span>((uAlignPhysicalAddress &amp; <span class="number">0xFFF</span>) != <span class="number">0</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            MmFreeContiguousMemory(pVmcsRegion_VA);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	&#125; <span class="keyword">while</span> ((uAlignPhysicalAddress &amp; <span class="number">0xFFF</span>) != <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (uAlignVirtualAddress == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : MmGetVirtualForPhysical have a fault in VmxAllocateVmcsRegion function.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	pVmcsRegion_Phy.QuadPart = uAlignPhysicalAddress;</span><br><span class="line">	uAlignVirtualAddress = (ULONG64)MmGetVirtualForPhysical(pVmcsRegion_Phy);</span><br><span class="line"></span><br><span class="line">	CurrentGuestState-&gt;VmvsRegionAllocVirtualAddress = (ULONG64)pVmcsRegion_VA;</span><br><span class="line">	CurrentGuestState-&gt;VmcsRegionAlignedVirtualAddress = uAlignVirtualAddress;</span><br><span class="line">	CurrentGuestState-&gt;VmcsRegionAlignedPhysicalAddress = uAlignPhysicalAddress;</span><br><span class="line"></span><br><span class="line">	DbgPrint(<span class="string">&quot;[*] Virtual allocated buffer for VMCS at %llx\n&quot;</span>, (ULONG64)pVmcsRegion_VA);</span><br><span class="line">	DbgPrint(<span class="string">&quot;[*] Virtual aligned allocated buffer for VMCS at %llx\n&quot;</span>, uAlignVirtualAddress);</span><br><span class="line">	DbgPrint(<span class="string">&quot;[*] Aligned physical buffer allocated for VMCS at %llx\n&quot;</span>, uAlignPhysicalAddress);</span><br><span class="line"></span><br><span class="line">	*(PULONG64)CurrentGuestState-&gt;VmcsRegionAlignedVirtualAddress = MsrVmxBasic.Fields.RevisionIdentifier;</span><br><span class="line">	_bittestandreset64((PULONG64)CurrentGuestState-&gt;VmcsRegionAlignedVirtualAddress, <span class="number">31</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// 1. Call DetectVMXSupportAndEnableCr4, SetEntryVMXoperationCondition functions.</span></span><br><span class="line"><span class="comment">// 2. Check MSR_IA32_FEATURE_CONTROL lock, EnableSMX, EnableVmxon bits.</span></span><br><span class="line"><span class="comment">// 3. Check FIXED0 and FIXED1 correspondingly bits in CR0, CR4.</span></span><br><span class="line"><span class="comment">// 4. Call VmxAllocateVmxonRegion function.</span></span><br><span class="line"><span class="comment">// 5. Call VmxAllocateVmcsRegion function.</span></span><br><span class="line"><span class="comment">// 6. Use VMXON instruction into VMX root operation（use the __vmx_on function）。</span></span><br><span class="line"><span class="comment">// 7. Check the return value is TRUE about __vmx_on function or not.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="function">BOOLEAN <span class="title">EnableVmxon</span><span class="params">(IN VIRTUAL_MACHINE_STATE* CurrentGuestState)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	ULONG64 Cr0, Cr4 = <span class="number">0</span>;</span><br><span class="line">	ULONG64 Cr0Fixed0 = <span class="number">0</span>, Cr0Fixed1 = <span class="number">0</span>, Cr4Fixed0 = <span class="number">0</span>, Cr4Fixed1 = <span class="number">0</span>;</span><br><span class="line">	IA32_FEATURE_CONTROL_MSR MsrFeatureControl = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (DetectVMXSupportAndEnableCr4() == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : DetectVMXSupportAndEnableCr4 have fault.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> (SetEntryVMXoperationCondition() == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : SetEntryVMXoperationCondition have fault.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	MsrFeatureControl.All = __readmsr(MSR_IA32_FEATURE_CONTROL);</span><br><span class="line">	<span class="keyword">if</span> (MsrFeatureControl.All != <span class="number">3</span> || MsrFeatureControl.All != <span class="number">5</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : The MSR_IA32_FEATURE_CONTROL MSR lock, EnableSMX, EnableVmxon bits have fault.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	Cr0Fixed0 = __readmsr(MSR_IA32_VMX_CR0_FIXED0);</span><br><span class="line">	Cr0Fixed1 = __readmsr(MSR_IA32_VMX_CR0_FIXED1);</span><br><span class="line">	Cr4Fixed0 = __readmsr(MSR_IA32_VMX_CR4_FIXED0);</span><br><span class="line">	Cr4Fixed1 = __readmsr(MSR_IA32_VMX_CR4_FIXED1);</span><br><span class="line">	Cr0 = __readcr0();</span><br><span class="line">	Cr4 = __readcr4();</span><br><span class="line">	<span class="keyword">if</span> (((Cr0Fixed0 &amp; Cr0) != Cr0Fixed0) || ((Cr4Fixed0 &amp; Cr4) != Cr4Fixed0) || ((Cr0Fixed1 | Cr0) != Cr0Fixed1) || ((Cr4Fixed1 | Cr4) != Cr4Fixed1))</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : FIXED0 and FIXED1 correspondingly bits in CR0, CR4.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (VmxAllocateVmxonRegion(g_pGuestState) == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : VmxAllocateVmxonRegion have fault.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (VmxAllocateVmcsRegion(g_pGuestState) == FALSE)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : VmxAllocateVmcsRegion have fault.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (__vmx_on((PULONG)g_pGuestState-&gt;VmxonRegionAlignedPhysicalAddress) != <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : VMXON launch failed.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function">NTSTATUS <span class="title">DriverEntry</span><span class="params">(PDRIVER_OBJECT pDriver, PUNICODE_STRING pRegPath)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	UNREFERENCED_PARAMETER(pRegPath);</span><br><span class="line">	pDriver-&gt;DriverUnload = DriverUnload;</span><br><span class="line"></span><br><span class="line">	NTSTATUS Status = STATUS_SUCCESS;</span><br><span class="line"></span><br><span class="line">	EnableVmxon(g_pGuestState);</span><br><span class="line"></span><br><span class="line">	DbgPrint(<span class="string">&quot;Hello Driver!\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> STATUS_SUCCESS;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="1-3-VMCS-结构"><a href="#1-3-VMCS-结构" class="headerlink" title="1.3 VMCS 结构"></a>1.3 VMCS 结构</h3><p><img data-src="https://s2.loli.net/2023/04/15/Fszai4l7tqYZxcd.png" alt="15.png"></p>
+<table>
+<thead>
+<tr>
+<th>偏移</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>Bits 30:0 使用 VMCS revision identifier 来填充。来自于 <code>IA32_VMX_BASIC[30:0]</code>。<br />Bit 31 指示当前 VMCS 是否是 shadow VMCS。0 表示普通的 VMCS，1 表示 shadow VMCS（只有在）VM-execution control fields 的 <code>VMCS shadowing == 1</code> 时该位才有效。</td>
+</tr>
+<tr>
+<td>4</td>
+<td>当进行 VM-exit 操作遇到一个错误时，会产生 <strong>VMX-abort</strong>，然后处理器会将一个<strong>非零的值</strong>填充到当前的 VMX-abort indicator。通常导致 VMX Abort 事件的原因包括保存客户虚拟机 MSR 奇存器失败、当前 VMCS 区域损坏、加载 Hypervisor 的 MSR 寄存器失败等。</td>
+</tr>
+<tr>
+<td>8</td>
+<td>VMCS 数据区包含 6 个区域，每个区域都有若干字段。用于 VMM root operation 和  VMM non-root operation 转换时提供&#x2F;保存信息。<br />1. Guest-state area：VM-exit 时，处理器的当前状态保存在该区域。VM-entry 时从该区域加载处理器的状态值。<br />2. Host-state area：VM-exit 时从该区域加载处理器的状态值。这个区域记录了所有有关 Hypervisor 的状态信息<br />3. VM-execution control fields：重点关注该区域。控制着处理器在 Guest 的行为，设置 VM-exit 的条件。<br />4. VM-exit control fields：该区域定义了在 VM-exit 事件发生后硬件立即要做的事情。<br />5. VM-entry control fields：该区域定义了在 VM-entry 事件发生后硬件立即要做的事情。<br />6. VM-exit information fields：记录引起 VM-exit 事件的原因及接收相关的明细信息。在许多处理器中，该区域都是只读的。如果 MSR <code>IA32_VMX_MISC[bit29] = 1</code> 则表示该区域可使用 <code>VMWRITE</code> 写。</td>
+</tr>
+</tbody></table>
+<div class="note danger"><p>注意：由于目前 VMCS 中部分区域需要是 write-back 内存类型，目前申请 VMCS 的内存类型都是 write-back，但是未来可能需要不同的内存类型（Intel 卷3 24.2）。</p>
+<p><img data-src="https://s2.loli.net/2023/04/15/vwjoD12tnNhxWrl.png" alt="17.png"></p>
+</div>
+
+
+
+<p>参考资料：</p>
+<ul>
+<li>处理器虚拟化技术（邓志）</li>
+<li>New Blue Pill 深入理解硬件虚拟机</li>
+<li>加密与解密第 4 版 Chapter 10</li>
+<li>Intel® 64 and IA-32 Architectures Software Developer’s Manual Volume 3 (3A, 3B, 3C &amp; 3D): System Programming Guide Chapter 23</li>
+</ul>
+<h2 id="2-Guest-state-area"><a href="#2-Guest-state-area" class="headerlink" title="2 Guest-state area"></a>2 Guest-state area</h2><h2 id="3-Host-state-area"><a href="#3-Host-state-area" class="headerlink" title="3 Host-state area"></a>3 Host-state area</h2><h2 id="4-VM-execution-control-fields"><a href="#4-VM-execution-control-fields" class="headerlink" title="4 VM-execution control fields"></a>4 VM-execution control fields</h2><h2 id="5-VM-exit-control-fields"><a href="#5-VM-exit-control-fields" class="headerlink" title="5 VM-exit control fields"></a>5 VM-exit control fields</h2><h2 id="6-VM-entry-control-fields"><a href="#6-VM-entry-control-fields" class="headerlink" title="6 VM-entry control fields"></a>6 VM-entry control fields</h2><h2 id="7-VM-exit-information-fields"><a href="#7-VM-exit-information-fields" class="headerlink" title="7 VM-exit information fields"></a>7 VM-exit information fields</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Windows10-x64-hypervisor-part-2/" title="Hypervisor（二）：VMCS region">https://directoree.github.io/post/Windows10-x64-hypervisor-part-2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag"><i class="fa fa-tag"></i> 虚拟化</a>
+              <a href="/tags/VT-x/" rel="tag"><i class="fa fa-tag"></i> VT-x</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Windows10-x64-hypervisor-part-1/" rel="prev" title="Hypervisor（一）：VMX 架构与 VMXON region">
+                  <i class="fa fa-chevron-left"></i> Hypervisor（一）：VMX 架构与 VMXON region
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/Windows10-x64-Hypervisor-part-3/" rel="next" title="Hypervisor（三）：Extended Page Table (EPT)">
+                  Hypervisor（三）：Extended Page Table (EPT) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">36:28</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Windows10-x64-hypervisor-part-2/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
