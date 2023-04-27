@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon1.ico">
+  <link rel="mask-icon" href="/images/favicon.ico" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😄">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hypervisor（三）：虚拟化已运行的系统">
+<meta property="og:url" content="https://directoree.github.io/post/Windows10-x64-hypervisor-3/index.html">
+<meta property="og:site_name" content="Catecat">
+<meta property="og:description" content="😄">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-26T11:09:23.000Z">
+<meta property="article:modified_time" content="2023-04-27T13:48:36.255Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="虚拟化">
+<meta property="article:tag" content="VT-x">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/Windows10-x64-hypervisor-3/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Hypervisor（三）：虚拟化已运行的系统 | Catecat</title>
+  
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Catecat</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9F%BA%E7%A1%80%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="nav-text">1 基础环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-VMX-%E7%8E%AF%E5%A2%83%E6%A3%80%E6%9F%A5%E4%B8%8E%E5%90%AF%E7%94%A8"><span class="nav-text">1.1 VMX 环境检查与启用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-VMXON-x2F-VMCS-region-%E7%94%B3%E8%AF%B7"><span class="nav-text">1.2 VMXON&#x2F;VMCS region 申请</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%A1%AB%E5%85%85-VMCS-region"><span class="nav-text">2 填充 VMCS region</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-VM-entry-control-fields"><span class="nav-text">2.1 VM-entry control fields</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-VM-exit-control-fields"><span class="nav-text">2.2 VM-exit control fields</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-VM-execution-control-fields"><span class="nav-text">2.3 VM-execution control fields</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-Host-state-area"><span class="nav-text">2.4 Host-state area</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-5-Guest-state-area"><span class="nav-text">2.5 Guest-state area</span></a></li></ol></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">151</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">68</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">86</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Windows10-x64-hypervisor-3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Catecat">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Hypervisor（三）：虚拟化已运行的系统
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-26 19:09:23" itemprop="dateCreated datePublished" datetime="2023-04-26T19:09:23+08:00">2023-04-26</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-04-27 21:48:36" itemprop="dateModified" datetime="2023-04-27T21:48:36+08:00">2023-04-27</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/VT-x/" itemprop="url" rel="index"><span itemprop="name">VT-x</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/Windows10-x64-hypervisor-3/" class="post-meta-item leancloud_visitors" data-flag-title="Hypervisor（三）：虚拟化已运行的系统" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/Windows10-x64-hypervisor-3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/Windows10-x64-hypervisor-3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.7k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😄</p>
+<span id="more"></span>
+
+<h2 id="1-基础环境准备"><a href="#1-基础环境准备" class="headerlink" title="1 基础环境准备"></a>1 基础环境准备</h2><h3 id="1-1-VMX-环境检查与启用"><a href="#1-1-VMX-环境检查与启用" class="headerlink" title="1.1 VMX 环境检查与启用"></a>1.1 VMX 环境检查与启用</h3><h3 id="1-2-VMXON-x2F-VMCS-region-申请"><a href="#1-2-VMXON-x2F-VMCS-region-申请" class="headerlink" title="1.2 VMXON&#x2F;VMCS region 申请"></a>1.2 VMXON&#x2F;VMCS region 申请</h3><h2 id="2-填充-VMCS-region"><a href="#2-填充-VMCS-region" class="headerlink" title="2 填充 VMCS region"></a>2 填充 VMCS region</h2><h3 id="2-1-VM-entry-control-fields"><a href="#2-1-VM-entry-control-fields" class="headerlink" title="2.1 VM-entry control fields"></a>2.1 VM-entry control fields</h3><hr>
+<p>该区域中的字段控制着 VM-entry 时处理器对 Guest state area 区域操作的行为。</p>
+<p>该区域主要包含以下几个字段：</p>
+<ol>
+<li>VM-entry Controls（32bits）用于控制寄存器的加载。</li>
+<li>VM-entry Controls for MSRs（32bits）用于控制要加载的 MSR。</li>
+<li>VM-entry Controls for Event Injection（用于事件注入）<ul>
+<li>VM-entry interruption-information field（32 bits）</li>
+<li>VM-entry exception error code（32 bits）</li>
+<li>VM-entry instruction length（32 bits）</li>
+</ul>
+</li>
+</ol>
+<hr>
+<p>我们暂时只需要关注 <em>VM-entry Controls</em>——<code>IA-32e mode guest</code>，表示进入 VM 时，处理器运行在 IA-32e 模式。因为我们当前已运行系统是 64-bit 系统，所以该位必须置 <code>1</code>。</p>
+<p>保留位由 MSR 寄存器控制。</p>
+<ul>
+<li>IA32_VMX_BASIC[55] &#x3D; 0，IA32_VMX_ENTRY_CTLS（0x484）</li>
+<li>IA32_VMX_BASIC[55] &#x3D; 1，IA32_VMX_TRUE_ENTRY_CTLS（0x490）</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">VmxSetupEntry</span><span class="params">(PIA32_VMX_BASIC_MSR pMsrVmxBasic)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	__vmx_vmwrite(VM_ENTRY_CONTROLS, VrAdjustControls(VM_ENTRY_IA32E_MODE,</span><br><span class="line">		pMsrVmxBasic-&gt;Fields.VmxCapabilityHint ? MSR_IA32_VMX_TRUE_ENTRY_CTLS : MSR_IA32_VMX_ENTRY_CTLS));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-2-VM-exit-control-fields"><a href="#2-2-VM-exit-control-fields" class="headerlink" title="2.2 VM-exit control fields"></a>2.2 VM-exit control fields</h3><hr>
+<p>该区域的字段用来控制发生 VM-exit 时的处理器行为，决定如何进行 VM-exit 操作。</p>
+<p>包含以下 3 个字段：</p>
+<ol>
+<li>VM-exit control 字段。</li>
+<li>VM-exit MSR-store count 与 VM-exit MsR-store address 字段。</li>
+<li>VM-exit MSR-load count 与 VM-exit MSR-load address 宇段。</li>
+</ol>
+<hr>
+<p>我们暂时只需要关注 <em>VM-exit control</em>——<code>Host address-space size</code>，表示 VM-exit 进入 VMM 时，处理器运行在 IA-32e 模式。因为我们宿主机系统是 64-bit 系统，所以该位必须置 <code>1</code>。</p>
+<p>保留位由 MSR 寄存器控制。</p>
+<ul>
+<li>IA32_VMX_BASIC[55] &#x3D; 0，MSR_IA32_VMX_EXIT_CTLS（0x483）</li>
+<li>IA32_VMX_BASIC[55] &#x3D; 1，MSR_IA32_VMX_TRUE_EXIT_CTLS （0x48F）</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">VOID <span class="title">VmxSetupExit</span><span class="params">(PIA32_VMX_BASIC_MSR pMsrVmxBasic)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	__vmx_vmwrite(VM_EXIT_CONTROLS, VrAdjustControls(VM_ENTRY_IA32E_MODE,</span><br><span class="line">		pMsrVmxBasic-&gt;Fields.VmxCapabilityHint ? MSR_IA32_VMX_TRUE_EXIT_CTLS : MSR_IA32_VMX_EXIT_CTLS));</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+<h3 id="2-3-VM-execution-control-fields"><a href="#2-3-VM-execution-control-fields" class="headerlink" title="2.3 VM-execution control fields"></a>2.3 VM-execution control fields</h3><hr>
+<p>将 VM-execution control fields 分为<strong>控制域</strong>和数据域，控制域决定着对应的数据域中是否有数值。</p>
+<ul>
+<li>控制域：<ul>
+<li><strong>Pin-Based</strong> VM-Execution Control（32 bits），设置异步事件来导致 VM-exit 的条件。</li>
+<li><strong>Processor-Based</strong> VM-Execution Control<ul>
+<li><strong>primary processor-based</strong> VM-execution controls（32 bits），设置同步事件来导致 VM-exit 的条件。</li>
+<li><strong>secondary processor-based</strong> VM-execution controls（32 bits），设置 <code>Enable</code> 的开关。</li>
+<li><strong>tertiary</strong> VM-execution controls（64 bits），设置 HLAT 分页信息。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>数据域：剩下的其余字段。</li>
+</ul>
+<hr>
+<p> 我们暂时只需要关注：</p>
+<table>
+<thead>
+<tr>
+<th><em><strong>Pin-Based</strong> VM-Execution Control</em> 中的保留位</th>
+<th><em><strong>Processor-Based</strong> VM-Execution Control</em></th>
+<th>数据域</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>IA32_VMX_BASIC[55] &#x3D; 0，IA32_VMX_PINBASED_CTLS（0x481）<br/><br/>IA32_VMX_BASIC[55] &#x3D; 1，IA32_VMX_TRUE_PINBASED_CTLS（0x48D）</td>
+<td><em><strong>primary processor-based</strong> VM-execution controls</em><br />1、保留位<br />IA32_VMX_BASIC[55] &#x3D; 0，IA32_VMX_PROCBASED_CTLS（0x482）<br/>IA32_VMX_BASIC[55] &#x3D; 1，IA32_VMX_TRUE_PROCBASED_CTLS（0x48E）<br/>2、Use MSR bitmaps（bit-28）<br/><a target="_blank" rel="noopener" href="https://rayanfam.com/topics/hypervisor-from-scratch-part-6/">Rayanfam</a> 提到在 x64 系统上，此字段在某种程度上是强制性的。所在还要在系统中申请一块内存给 MSR bitmaps，然后填将内存地址赋值给 <em><strong>primary processor-based</strong></em>——MSR-Bitmap Address 字段。</td>
+<td><strong>MSR-Bitmap Address</strong></td>
+</tr>
+<tr>
+<td></td>
+<td><strong>secondary processor-based</strong> VM-execution controls<br/>如果 <code>primary processor-based[bit 31] = 1</code>，才会有该字段，此时先先设置为 0。<br/>如果启用了该字段，就必须要启用当前字段的 <code>RDTSCP</code>、<code>INVPCID</code>、<code>XSAVE</code> 和 <code>XRSTOR</code>。如果在虚拟化核心之前没有启用它们，那么可能会导致错误。</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td><strong>tertiary</strong> VM-execution controls<br/>如果 <code>primary processor-based[bit 17] = 1</code>，才会有该字段，此时先先设置为 0。</td>
+<td></td>
+</tr>
+</tbody></table>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Allocate a buffer forr Msr Bitmap */</span></span><br><span class="line"><span class="function">BOOLEAN <span class="title">VmxAllocateMsrBitmap</span><span class="params">(VIRTUAL_MACHINE_STATE* CurrentGuestState)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	PHYSICAL_ADDRESS PhyMsrBitmap = &#123; <span class="number">0</span> &#125;;</span><br><span class="line"></span><br><span class="line">	CurrentGuestState-&gt;MsrBitmapVirtualAddress = (ULONG64)ExAllocatePoolWithTag(NonPagedPool, PAGE_SIZE, &#x27;MsrB&#x27;);</span><br><span class="line">	RtlSecureZeroMemory((PVOID)CurrentGuestState-&gt;MsrBitmapVirtualAddress, PAGE_SIZE);</span><br><span class="line">	</span><br><span class="line">	PhyMsrBitmap = MmGetPhysicalAddress((PVOID)CurrentGuestState-&gt;MsrBitmapVirtualAddress);</span><br><span class="line">	CurrentGuestState-&gt;MsrBitmapPhysicalAddress = (ULONG64)PhyMsrBitmap.QuadPart;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">VOID <span class="title">VmxSetupControls</span><span class="params">(PIA32_VMX_BASIC_MSR pMsrVmxBasic)</span></span></span><br><span class="line"><span class="function"></span>&#123;	</span><br><span class="line">	<span class="comment">// Pin-Based Reserved values</span></span><br><span class="line">	__vmx_vmwrite(PIN_BASED_VM_EXEC_CONTROL, VrAdjustControls(<span class="number">0</span>, </span><br><span class="line">		pMsrVmxBasic-&gt;Fields.VmxCapabilityHint ? MSR_IA32_VMX_TRUE_PINBASED_CTLS : MSR_IA32_VMX_PINBASED_CTLS));</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Processor-Based——primary processor-based</span></span><br><span class="line">	__vmx_vmwrite(CPU_BASED_VM_EXEC_CONTROL, VrAdjustControls(CPU_BASED_ACTIVATE_MSR_BITMAP,</span><br><span class="line">		pMsrVmxBasic-&gt;Fields.VmxCapabilityHint ? MSR_IA32_VMX_TRUE_PROCBASED_CTLS : MSR_IA32_VMX_PROCBASED_CTLS));</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Set MSR Bitmaps</span></span><br><span class="line">	__vmx_vmwrite(MSR_BITMAP, CurrentGuestState-&gt;MsrBitmapPhysicalAddress);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="2-4-Host-state-area"><a href="#2-4-Host-state-area" class="headerlink" title="2.4 Host-state area"></a>2.4 Host-state area</h3><p>需要填充所有的寄存器的值，因为是虚拟化当前已经运行的系统，所有寄存器的值和 <em>Guest-state area</em> 一样，直接设置为相同的值即可。</p>
+<ol>
+<li><p>设置控制寄存器 CR0，CR3，CR4。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置控制寄存器</span></span><br><span class="line">__vmx_vmwrite(HOST_CR0, __readcr0());</span><br><span class="line">__vmx_vmwrite(HOST_CR3, __readcr3());</span><br><span class="line">__vmx_vmwrite(HOST_CR4, __readcr4());</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>设置 RSP，RIP。</p>
+<ul>
+<li>HOST_RIP：应该是一个专门处理每一次 VM-exit 的函数。</li>
+<li>HOST_RSP：需要为每个虚拟处理器申请一块内存空间，专门给 VMM 处理 VM-exit 时使用，大小建议在 <code>0x1000*8</code> 左右。注意 <code>ExAllocatePoolWithTag</code> 申请返回的地址是<strong>低地址</strong>，但是堆栈是从高到低使用的，所有要加上堆栈的大小，以便将栈指针指向栈顶。</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">AsmVmxExitHandler PROC</span><br><span class="line">	;<span class="keyword">int</span> <span class="number">3</span></span><br><span class="line"></span><br><span class="line">	pushfq;</span><br><span class="line">	push r15;</span><br><span class="line">	push r14;</span><br><span class="line">	push r13;</span><br><span class="line">	push r12;</span><br><span class="line">	push r11;</span><br><span class="line">	push r10;</span><br><span class="line">	push r9;</span><br><span class="line">	push r8;</span><br><span class="line">	push rdi;</span><br><span class="line">	push rsi;</span><br><span class="line">	push rbp;</span><br><span class="line">	push rsp;</span><br><span class="line">	push rbx;</span><br><span class="line">	push rdx;</span><br><span class="line">	push rcx;</span><br><span class="line">	push rax;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">int</span> <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line">	pop rax;</span><br><span class="line">	pop rcx;</span><br><span class="line">	pop rdx;</span><br><span class="line">	pop rbx;</span><br><span class="line">	pop rsp;</span><br><span class="line">	pop rbp;</span><br><span class="line">	pop rsi;</span><br><span class="line">	pop rdi;</span><br><span class="line">	pop r8;</span><br><span class="line">	pop r9;</span><br><span class="line">	pop r10;</span><br><span class="line">	pop r11;</span><br><span class="line">	pop r12;</span><br><span class="line">	pop r13;</span><br><span class="line">	pop r14;</span><br><span class="line">	pop r15;</span><br><span class="line">	popfq;</span><br><span class="line"></span><br><span class="line">	sub rsp, <span class="number">0100</span>h      ; to avoid error in <span class="built_in">future</span> functions</span><br><span class="line"></span><br><span class="line">	vmresume</span><br><span class="line"></span><br><span class="line">	ret</span><br><span class="line">AsmVmxExitHandler ENDP</span><br><span class="line">    </span><br><span class="line"><span class="comment">/* Allocate a buffer for Host(VMM Stack) */</span></span><br><span class="line"><span class="function">BOOLEAN <span class="title">VmxAllocateVmmStack</span><span class="params">(VIRTUAL_MACHINE_STATE* CurrentGuestState)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	CurrentGuestState-&gt;VmmStack = (ULONG64)ExAllocatePoolWithTag(NonPagedPool, VMM_STACK_SIZE, &#x27;VmmS&#x27;);</span><br><span class="line">	<span class="keyword">if</span> (CurrentGuestState-&gt;VmmStack == <span class="number">0</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		DbgPrint(<span class="string">&quot;[*] Error : Can&#x27;t allocate buffer for VmmStack.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> FALSE;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	RtlSecureZeroMemory((PVOID)CurrentGuestState-&gt;VmmStack, VMM_STACK_SIZE);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>VMX 退出处理程序应该是一个汇编函数，因为调用编译函数需要一些处理和对一些寄存器修改（因为是虚拟化当前运行的系统，所以寄存器需要保存）。VM-exit 处理程序中的必要事情是保存寄存器的状态，<strong>以便我们后续继续 Guest OS 时使用</strong>（<code>vmresume</code>）。</p>
+</li>
+<li><p>设置 CS、SS、DS、ES、FS、GS、TR 等 7 个段寄存器的段选择子、段基地址。</p>
+<ul>
+<li><p>CS、SS、DS、ES 的段基址在 x64 中已经被平坦为 <code>0</code>。</p>
+</li>
+<li><p>FS、GS 段基址可以通过 <code>IA32_FS_BASE(0xC0000100)</code>、<code>IA32_GS_BASE(0xC0000102)</code> 获得。</p>
+</li>
+<li><p>关于 TR 段寄存器，也是 128 位。获取基址的过程：通过 TR 选择子在 GDT 表中找到对应的段描述符，发现该描述符的是 TSS。TSS、LDT 都是系统段描述符（128 bits），<a target="_blank" rel="noopener" href="https://catecat.top/post/x64-Kernel3/#3-TSS%EF%BC%88IA-32e%E6%A8%A1%E5%BC%8F%EF%BC%89">TSS 结构</a>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 段寄存器选择子</span></span><br><span class="line">__vmx_vmwrite(HOST_ES_SELECTOR, AsmGetEs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_CS_SELECTOR, AsmGetCs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_SS_SELECTOR, AsmGetSs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_DS_SELECTOR, AsmGetDs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_FS_SELECTOR, AsmGetFs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_GS_SELECTOR, AsmGetGs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_TR_SELECTOR, AsmGetTr() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">     </span><br><span class="line"><span class="comment">// TR 基址</span></span><br><span class="line">VrGetSegmentDescriptor(&amp;SegmentSelector, AsmGetTr(), (PUCHAR)AsmGetGdtBase());</span><br><span class="line">__vmx_vmwrite(HOST_TR_BASE, SegmentSelector.BASE);</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：因为现在是在 ring-0，所以需要将段选择子的 RPL 设置为 0，然后就是段描述符表选择 GDT 表（bit-2清零）。否则会出错蓝屏。</p>
+</li>
+</ul>
+</li>
+<li><p>设置 GDTR、IDTR 基址。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">;<span class="comment">// 从 GDTR 寄存器获取（IDTR 同理）</span></span><br><span class="line">;<span class="comment">// 低 2 字节为段描述符的大小 limit </span></span><br><span class="line">;<span class="comment">// 高 8 字节为 GDTR.Base</span></span><br><span class="line">AsmGetGdtBase PROC</span><br><span class="line">	LOCAL	gdtr[<span class="number">10</span>]:BYTE</span><br><span class="line">	sgdt	gdtr</span><br><span class="line">	mov	rax, QWORD PTR gdtr[<span class="number">2</span>]</span><br><span class="line">	ret</span><br><span class="line">AsmGetGdtBase ENDP</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>设置 32 位系统调用相关的寄存器（如果使用 SYSENTER，您应该配置以下 MSR。在 x64 Windows 中设置这些值并不重要，因为Windows 在 <strong>x64 版本的 Windows 中不支持 SYSENTER；而是使用 SYSCALL</strong>。）。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HOST_SYSENTER_CS、HOST_SYSENTER_EIP、HOST_SYSENTER_ESP</span></span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_CS, __readmsr(MSR_IA32_SYSENTER_CS));</span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_EIP, __readmsr(MSR_IA32_SYSENTER_EIP));</span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_ESP, __readmsr(MSR_IA32_SYSENTER_ESP));</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>参考内容：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://rayanfam.com/topics/hypervisor-from-scratch-part-5/">Hypervisor From Scratch – Part 5: Setting up VMCS &amp; Running Guest Code</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Pb411v78s/?spm_id_from=333.999.0.0&vd_source=96e0c33ed8fcae4e5a1665702381c51b">VT技术入门05_VMCS(1)</a></li>
+<li><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-271869.htm">VT虚拟化技术笔记（part 2）</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/smallzhong/myvt/blob/master/VT/vmx.c">一个玩具VT框架（施工中）</a></li>
+</ul>
+<h3 id="2-5-Guest-state-area"><a href="#2-5-Guest-state-area" class="headerlink" title="2.5 Guest-state area"></a>2.5 Guest-state area</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/Windows10-x64-hypervisor-3/" title="Hypervisor（三）：虚拟化已运行的系统">https://directoree.github.io/post/Windows10-x64-hypervisor-3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E8%99%9A%E6%8B%9F%E5%8C%96/" rel="tag"><i class="fa fa-tag"></i> 虚拟化</a>
+              <a href="/tags/VT-x/" rel="tag"><i class="fa fa-tag"></i> VT-x</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/Windows10-x64-hypervisor-2/" rel="prev" title="Hypervisor（二）：VMCS region">
+                  <i class="fa fa-chevron-left"></i> Hypervisor（二）：VMCS region
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/post/WinXP-Struct/" rel="next" title="自制内核数据结构/指令 快速查询">
+                  自制内核数据结构/指令 快速查询 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">2.4m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">36:17</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/Windows10-x64-hypervisor-3/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
