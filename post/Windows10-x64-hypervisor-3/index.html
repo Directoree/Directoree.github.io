@@ -30,7 +30,7 @@
 <meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-04-26T11:09:23.000Z">
-<meta property="article:modified_time" content="2023-04-27T13:48:36.255Z">
+<meta property="article:modified_time" content="2023-04-27T14:17:56.903Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="虚拟化">
 <meta property="article:tag" content="VT-x">
@@ -355,7 +355,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-04-27 21:48:36" itemprop="dateModified" datetime="2023-04-27T21:48:36+08:00">2023-04-27</time>
+        <time title="修改时间：2023-04-27 22:17:56" itemprop="dateModified" datetime="2023-04-27T22:17:56+08:00">2023-04-27</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -531,7 +531,7 @@
 </li>
 <li><p>FS、GS 段基址可以通过 <code>IA32_FS_BASE(0xC0000100)</code>、<code>IA32_GS_BASE(0xC0000102)</code> 获得。</p>
 </li>
-<li><p>关于 TR 段寄存器，也是 128 位。获取基址的过程：通过 TR 选择子在 GDT 表中找到对应的段描述符，发现该描述符的是 TSS。TSS、LDT 都是系统段描述符（128 bits），<a target="_blank" rel="noopener" href="https://catecat.top/post/x64-Kernel3/#3-TSS%EF%BC%88IA-32e%E6%A8%A1%E5%BC%8F%EF%BC%89">TSS 结构</a>。</p>
+<li><p>关于 TR 段寄存器，也是 128 位。获取基址的过程：通过 TR 选择子在 GDT 表中找到对应的段描述符，发现该描述符的是 TSS。TSS、LDT 都是系统描述符（128 bits），<a target="_blank" rel="noopener" href="https://catecat.top/post/x64-Kernel3/#3-TSS%EF%BC%88IA-32e%E6%A8%A1%E5%BC%8F%EF%BC%89">TSS 结构</a>。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 段寄存器选择子</span></span><br><span class="line">__vmx_vmwrite(HOST_ES_SELECTOR, AsmGetEs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_CS_SELECTOR, AsmGetCs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_SS_SELECTOR, AsmGetSs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_DS_SELECTOR, AsmGetDs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_FS_SELECTOR, AsmGetFs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_GS_SELECTOR, AsmGetGs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_TR_SELECTOR, AsmGetTr() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">     </span><br><span class="line"><span class="comment">// TR 基址</span></span><br><span class="line">VrGetSegmentDescriptor(&amp;SegmentSelector, AsmGetTr(), (PUCHAR)AsmGetGdtBase());</span><br><span class="line">__vmx_vmwrite(HOST_TR_BASE, SegmentSelector.BASE);</span><br></pre></td></tr></table></figure>
 
 <p><strong>注意</strong>：因为现在是在 ring-0，所以需要将段选择子的 RPL 设置为 0，然后就是段描述符表选择 GDT 表（bit-2清零）。否则会出错蓝屏。</p>
