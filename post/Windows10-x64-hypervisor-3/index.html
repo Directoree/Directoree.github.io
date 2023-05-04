@@ -30,7 +30,7 @@
 <meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-04-26T11:09:23.000Z">
-<meta property="article:modified_time" content="2023-04-27T14:17:56.903Z">
+<meta property="article:modified_time" content="2023-05-04T12:40:46.005Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="虚拟化">
 <meta property="article:tag" content="VT-x">
@@ -355,7 +355,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-04-27 22:17:56" itemprop="dateModified" datetime="2023-04-27T22:17:56+08:00">2023-04-27</time>
+        <time title="修改时间：2023-05-04 20:40:46" itemprop="dateModified" datetime="2023-05-04T20:40:46+08:00">2023-05-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -396,14 +396,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>6.7k</span>
+      <span>9.2k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>6 分钟</span>
+      <span>8 分钟</span>
     </span>
 </div>
 
@@ -491,17 +491,17 @@
 </thead>
 <tbody><tr>
 <td>IA32_VMX_BASIC[55] &#x3D; 0，IA32_VMX_PINBASED_CTLS（0x481）<br/><br/>IA32_VMX_BASIC[55] &#x3D; 1，IA32_VMX_TRUE_PINBASED_CTLS（0x48D）</td>
-<td><em><strong>primary processor-based</strong> VM-execution controls</em><br />1、保留位<br />IA32_VMX_BASIC[55] &#x3D; 0，IA32_VMX_PROCBASED_CTLS（0x482）<br/>IA32_VMX_BASIC[55] &#x3D; 1，IA32_VMX_TRUE_PROCBASED_CTLS（0x48E）<br/>2、Use MSR bitmaps（bit-28）<br/><a target="_blank" rel="noopener" href="https://rayanfam.com/topics/hypervisor-from-scratch-part-6/">Rayanfam</a> 提到在 x64 系统上，此字段在某种程度上是强制性的。所在还要在系统中申请一块内存给 MSR bitmaps，然后填将内存地址赋值给 <em><strong>primary processor-based</strong></em>——MSR-Bitmap Address 字段。</td>
+<td><em><strong>primary processor-based</strong> VM-execution controls</em><br />1、保留位<br />IA32_VMX_BASIC[55] &#x3D; 0，IA32_VMX_PROCBASED_CTLS（0x482）<br/>IA32_VMX_BASIC[55] &#x3D; 1，IA32_VMX_TRUE_PROCBASED_CTLS（0x48E）<br/>2、Use MSR bitmaps（bit-28）<br/><a target="_blank" rel="noopener" href="https://rayanfam.com/topics/hypervisor-from-scratch-part-6/">Rayanfam</a> 提到在 x64 系统上，此字段在某种程度上是强制性的。所以还要在系统中申请一块内存给 MSR bitmaps，然后将物理内存地址赋值给 <em><strong>primary processor-based</strong></em>——MSR-Bitmap Address 字段。</td>
 <td><strong>MSR-Bitmap Address</strong></td>
 </tr>
 <tr>
 <td></td>
-<td><strong>secondary processor-based</strong> VM-execution controls<br/>如果 <code>primary processor-based[bit 31] = 1</code>，才会有该字段，此时先先设置为 0。<br/>如果启用了该字段，就必须要启用当前字段的 <code>RDTSCP</code>、<code>INVPCID</code>、<code>XSAVE</code> 和 <code>XRSTOR</code>。如果在虚拟化核心之前没有启用它们，那么可能会导致错误。</td>
+<td><strong>secondary processor-based</strong> VM-execution controls<br/>如果 <code>primary processor-based[bit 31] = 1</code>，才会有该字段，此时先设置为 0。<br/>如果启用了该字段，就必须要启用当前字段的 <code>RDTSCP</code>、<code>INVPCID</code>、<code>XSAVE</code> 和 <code>XRSTOR</code>。如果在虚拟化核心之前没有启用它们，那么可能会导致错误。</td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td><strong>tertiary</strong> VM-execution controls<br/>如果 <code>primary processor-based[bit 17] = 1</code>，才会有该字段，此时先先设置为 0。</td>
+<td><strong>tertiary</strong> VM-execution controls<br/>如果 <code>primary processor-based[bit 17] = 1</code>，才会有该字段，此时先设置为 0。</td>
 <td></td>
 </tr>
 </tbody></table>
@@ -534,7 +534,7 @@
 <li><p>关于 TR 段寄存器，也是 128 位。获取基址的过程：通过 TR 选择子在 GDT 表中找到对应的段描述符，发现该描述符的是 TSS。TSS、LDT 都是系统描述符（128 bits），<a target="_blank" rel="noopener" href="https://catecat.top/post/x64-Kernel3/#3-TSS%EF%BC%88IA-32e%E6%A8%A1%E5%BC%8F%EF%BC%89">TSS 结构</a>。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 段寄存器选择子</span></span><br><span class="line">__vmx_vmwrite(HOST_ES_SELECTOR, AsmGetEs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_CS_SELECTOR, AsmGetCs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_SS_SELECTOR, AsmGetSs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_DS_SELECTOR, AsmGetDs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_FS_SELECTOR, AsmGetFs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_GS_SELECTOR, AsmGetGs() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">__vmx_vmwrite(HOST_TR_SELECTOR, AsmGetTr() &amp; <span class="number">0xFFF8</span>);</span><br><span class="line">     </span><br><span class="line"><span class="comment">// TR 基址</span></span><br><span class="line">VrGetSegmentDescriptor(&amp;SegmentSelector, AsmGetTr(), (PUCHAR)AsmGetGdtBase());</span><br><span class="line">__vmx_vmwrite(HOST_TR_BASE, SegmentSelector.BASE);</span><br></pre></td></tr></table></figure>
 
-<p><strong>注意</strong>：因为现在是在 ring-0，所以需要将段选择子的 RPL 设置为 0，然后就是段描述符表选择 GDT 表（bit-2清零）。否则会出错蓝屏。</p>
+<p><strong>注意</strong>：因为现在是在 ring-0，所以需要将段选择子的 RPL 设置为 0，然后就是段描述符表选择 GDT 表（bit-2清零）。否则会出错蓝屏。（Intel 卷3合集 26.2.3）</p>
 </li>
 </ul>
 </li>
@@ -544,7 +544,11 @@
 
 </li>
 <li><p>设置 32 位系统调用相关的寄存器（如果使用 SYSENTER，您应该配置以下 MSR。在 x64 Windows 中设置这些值并不重要，因为Windows 在 <strong>x64 版本的 Windows 中不支持 SYSENTER；而是使用 SYSCALL</strong>。）。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HOST_SYSENTER_CS、HOST_SYSENTER_EIP、HOST_SYSENTER_ESP</span></span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_CS, __readmsr(MSR_IA32_SYSENTER_CS));</span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_EIP, __readmsr(MSR_IA32_SYSENTER_EIP));</span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_ESP, __readmsr(MSR_IA32_SYSENTER_ESP));</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// HOST_SYSENTER_CS、HOST_SYSENTER_EIP、HOST_SYSENTER_ESP</span></span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_CS, __readmsr(MSR_IA32_SYSENTER_CS));</span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_EIP, __readmsr(MSR_IA32_SYSENTER_EIP));</span><br><span class="line">__vmx_vmwrite(HOST_SYSENTER_ESP, __readmsr(MSR_IA32_SYSENTER_ESP));</span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p>关于 CET 控制位，暂时先不开启相关功能，所以后面几个寄存器可以先不设置。</p>
+</li>
 </ol>
 <p>参考内容：</p>
 <ul>
@@ -553,7 +557,61 @@
 <li><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-271869.htm">VT虚拟化技术笔记（part 2）</a></li>
 <li><a target="_blank" rel="noopener" href="https://github.com/smallzhong/myvt/blob/master/VT/vmx.c">一个玩具VT框架（施工中）</a></li>
 </ul>
-<h3 id="2-5-Guest-state-area"><a href="#2-5-Guest-state-area" class="headerlink" title="2.5 Guest-state area"></a>2.5 Guest-state area</h3>
+<h3 id="2-5-Guest-state-area"><a href="#2-5-Guest-state-area" class="headerlink" title="2.5 Guest-state area"></a>2.5 Guest-state area</h3><p><em>Guest-state area</em> 包含寄存器类和非寄存器类字段。寄存器字段几乎全部都需要进行填充，具体如下。</p>
+<p>由于是将当前正在运行的系统进行虚拟化，所以 <em>Guest-state area</em> 寄存器状态完全是当前系统寄存器的状态。</p>
+<ol>
+<li><p>设置控制寄存器 CR0，CR3，CR4。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设置控制寄存器</span></span><br><span class="line">__vmx_vmwrite(GUEST_CR0, __readcr0());</span><br><span class="line">__vmx_vmwrite(GUEST_CR3, __readcr3());</span><br><span class="line">__vmx_vmwrite(GUEST_CR4, __readcr4());</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>DR7，RFLAGS</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 调试寄存器 DR7</span></span><br><span class="line">__vmx_vmwrite(GUEST_DR7, __readdr(<span class="number">7</span>));</span><br><span class="line"><span class="comment">// RFLAGS</span></span><br><span class="line">__vmx_vmwrite(GUEST_RFLAGS, __readeflags());</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>RSP，RIP</p>
+<ul>
+<li><p>GUEST_RIP：我们需要在将本机（正在运行的系统）进行虚拟化之后，即使用 <code>VMLAUNCH</code> 之后，使系统按照没有进行虚拟化之前的代码继续运行。如下代码，在函数 function_A 中调用函数 function_B，在函数 function_B 中开启虚拟化，<code>__vmx_vmlaunch</code> 执行后，CPU 开始执行 VMCS 中 <code>GUEST_RIP</code> 指向的地址，然后永远不会返回到 <code>__vmx_vmlaunch</code> 的下一句指令。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">function_A()</span><br><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  bRet = function_B();</span><br><span class="line">  ...</span><br><span class="line">  <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function_B()</span><br><span class="line">&#123;</span><br><span class="line">  ...</span><br><span class="line">  __vmx_vmlaunch();</span><br><span class="line">  ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>为了让虚拟化开启之后，CPU 继续从虚拟化之前的代码继续执行</strong>，则应该在 <code>GUEST_RIP</code> 指向的函数中想办法让其从函数 <strong>function_A 的返回地址</strong>开始执行。</p>
+<p>其中一种解决方法：使用汇编写 function_A 函数和 <code>GUEST_RIP</code> 指向的函数。</p>
+<p>function_A：保存当前系统的寄存器的值，最后将 RSP 赋值给 <code>GUEST_RSP</code>，然后调用 function_B。</p>
+<p><code>GUEST_RIP</code>：根据当前 <code>GUEST_RSP</code> 的值 <code>POP</code> 出当前寄存器的值，最后 <code>POP</code> 出返回地址，然后 <code>ret</code>。返回地址即为 function_A 函数堆栈中的返回地址。</p>
+<blockquote>
+<p>备注：如果不使用汇编函数写的话，Debug、Release 版本的 function_A 堆栈不太好处理，最后可能导致堆栈不平衡而蓝屏。</p>
+</blockquote>
+</li>
+<li><p>GUEST_RSP：如上述。</p>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li></li>
+</ol>
+<p>VM-exit 处理：</p>
+<ol>
+<li><p>Definitions of Secondary Processor-Based VM-Execution Controls</p>
+<p><strong>Enable RDTSCP</strong>。 If this control is 0 any execution of <code>RDTSCP</code> causes an invalid-opcode exception (<strong>#UD</strong>)。</p>
+<p>If the “enable RDTSCP” VM-execution control is 0, <code>RDPID</code> causes an invalid-opcode exception（**#UD**).</p>
+<p><strong>Enable INVPCID</strong>。 If this control is 0, any execution of <code>INVPCID</code> causes a (<strong>#UD</strong>)。</p>
+<p><strong>Enable XSAVES&#x2F;XRSTORS</strong>。 If this controlis 0, any execution of <code>XSAVES</code> or <code>XRSTORS</code> causes a (<strong>#UD</strong>)。</p>
+<p><strong>Enable user wait and pause</strong>。 If this control is 0, any execution of <code>TPAUSE</code>, <code>UMONITOR</code>, or <code>UMWAIT</code> causes a (<strong>#UD</strong>)。</p>
+<p><strong>Enable PCONFIG</strong>。 If this control is 0, any execution of <code>PCONFIG</code> causes a (<strong>#UD</strong>)。</p>
+</li>
+<li><p>25.3 CHANGES TO INSTRUCTION BEHAVIOR IN VMX NON-ROOT OPERATION</p>
+<p>An execution of <code>GETSEC</code> in VMX non-root operation causes a VM exit if <code>CR4.SMXE[Bit 14] = 1</code> regardless of the value of CPL or RAX. An execution of <code>GETSEC</code> causes an invalid-opcode exception (<strong>#UD</strong>) if <code>CRA.SMXElBit 141 = 0</code>.</p>
+<p>If the “enable user wait and pause” VM-execution control is 0, <code>TPAUSE</code> causes an invalid-opcode exception (<strong>#UD</strong>).This exception takes priority over any exception the instruction may incur.</p>
+<p>If the “enable user wait and pause” VM-execution control is 0, <code>UMONITOR</code> causes an invalid-opcode exception (<strong>#UD</strong>). This exception takes priority over any exception the instruction may incur.</p>
+<p>If the “enable user wait and pause” VM-execution controlis 0, <code>UMWAIT</code> causes an invalid-opcode exception<br><strong>#UD</strong>). This exception takes priority over any exception the instruction may incur.</p>
+</li>
+<li><p>The <code>VMFUNC</code> instruction causes an invalid-opcode exception (<strong>#UD</strong>) if the “enable VM functions” VM-execution controls is 0 or the value of EAX is greater than 63 (only VM functions 0-63 can be enable).</p>
+</li>
+</ol>
+
     </div>
 
     
@@ -680,7 +738,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">36:17</span>
+    <span title="站点阅读时长">36:19</span>
   </span>
 </div>
 <div class="busuanzi-count">
