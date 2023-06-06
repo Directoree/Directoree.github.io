@@ -30,8 +30,9 @@
 <meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/06/05/G4wfmgZCT3RIEkY.png">
+<meta property="og:image" content="https://s2.loli.net/2023/06/06/TNSOs4iQwofDgl9.png">
 <meta property="article:published_time" content="2023-06-05T11:20:18.000Z">
-<meta property="article:modified_time" content="2023-06-05T15:40:28.318Z">
+<meta property="article:modified_time" content="2023-06-06T14:05:29.589Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="虚拟化">
 <meta property="article:tag" content="内存虚拟化">
@@ -233,7 +234,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-EPT-%E4%BB%8B%E7%BB%8D"><span class="nav-text">1 EPT 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MTRRs"><span class="nav-text">MTRRs</span></a></li></ol></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-EPT-%E4%BB%8B%E7%BB%8D"><span class="nav-text">1 EPT 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#MTRRs"><span class="nav-text">MTRRs</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-EPTP-%E7%BB%93%E6%9E%84"><span class="nav-text">1.1 EPTP 结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-VPID-%E5%92%8C-PCID"><span class="nav-text">1.2 VPID 和 PCID</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -349,10 +350,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2023-06-05 19:20:18 / 修改时间：23:40:28" itemprop="dateCreated datePublished" datetime="2023-06-05T19:20:18+08:00">2023-06-05</time>
+      <time title="创建时间：2023-06-05 19:20:18" itemprop="dateCreated datePublished" datetime="2023-06-05T19:20:18+08:00">2023-06-05</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-06-06 22:05:29" itemprop="dateModified" datetime="2023-06-06T22:05:29+08:00">2023-06-06</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -392,14 +399,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>464</span>
+      <span>3.3k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -422,6 +429,27 @@
 <li>一个 VM 中每个 VMCS 拥有一个 EPT 页表时，地址转译效率高，不用考虑多核同步与互斥。</li>
 </ul>
 <p><img data-src="https://s2.loli.net/2023/06/05/G4wfmgZCT3RIEkY.png" alt="44.png"></p>
+<p>如上图，每一个 GPA 都要作为 EPT 分页结构的输入，将其转化为 HPA，最终读取物理地址中的值。在一个 GVA 转换为最终的 HPA 时，要经历 5 次 EPT 分页结构转译。</p>
+<ul>
+<li>EPT 分页结构需要开发者自己构建，然后将 EPT PLM4T 表基址填充到 <em>VM-execution control fields—EPTP Point</em> 处。</li>
+<li>EPTP Point 类似于 Guest 的 CR3，它是 EPT 分页结构 EPT PLM4T 表的基址，是一个 HPA 值。</li>
+<li>EPT 分页结构类似于 Guest 使用的分页结构，支持 48 位 GPA 转译的 4 级分页，也支持 57 位 GPA 转译的 5 级分页。本文以 4 级分页为例，页面大小支持 4KB、2MB、1GB。</li>
+</ul>
+<h3 id="1-1-EPTP-结构"><a href="#1-1-EPTP-结构" class="headerlink" title="1.1 EPTP 结构"></a>1.1 EPTP 结构</h3><p>EPTP 指针结构如下：</p>
+<p><img data-src="https://s2.loli.net/2023/06/06/TNSOs4iQwofDgl9.png" alt="45.png"></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 24.6.11</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">EPTP_POINT</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ULONG64 value;</span><br><span class="line">    <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        ULONG64 MemoryType : <span class="number">3</span>;        		<span class="comment">// 0-Uncacheable(UC), 6-Write-back(WB)</span></span><br><span class="line">        ULONG64 PageWalkLength : <span class="number">3</span>;		<span class="comment">// 页表级数-1，使用 4 级页表时该值为 3</span></span><br><span class="line">        ULONG64 EnableAccessAndDirtyFlags : <span class="number">1</span>;	<span class="comment">// 该值为 1 时，启用 EPT 各级分页结构中的 Access、Dirty 位</span></span><br><span class="line">        ULONG64 AR_enforcement_ssp : <span class="number">1</span>; 	<span class="comment">// Supervisor shadow-stack acess right</span></span><br><span class="line">        ULONG64 Reservd0 : <span class="number">4</span>;</span><br><span class="line">        ULONG64 PageFrameNumber : <span class="number">36</span>;</span><br><span class="line">        ULONG64 ept_pml4_pa_high : <span class="number">16</span>;</span><br><span class="line">    &#125; bits;</span><br><span class="line">&#125; EPTP_POINT，*PEPTP_POINT;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<div class="note success"><p>EPTP 中的 <code>EnableAccessAndDirtyFlags</code> 是否可以启用，依赖于处理器是否支持，MSR <code>IA32_VMX_EPT_VPID_CAP</code>(0x48C)，该 MSR 报告 VPIDs 和 EPT 相关信息。</p>
+</div>
+
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> _<span class="title">msr_vmx_ept_vpid_cap</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    ULONG64 value;</span><br><span class="line">    <span class="class"><span class="keyword">union</span></span></span><br><span class="line"><span class="class">    &#123;</span></span><br><span class="line">        <span class="comment">// RWX support</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        ULONG64 ept_xo_support : <span class="number">1</span>;</span><br><span class="line">        ULONG64 ept_wo_support : <span class="number">1</span>;</span><br><span class="line">        ULONG64 ept_wxo_support : <span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Guest address width support</span></span><br><span class="line">        <span class="comment">//</span></span><br><span class="line">        ULONG64 gaw_21 : <span class="number">1</span>;</span><br><span class="line">        ULONG64 gaw_30 : <span class="number">1</span>;</span><br><span class="line">        ULONG64 gaw_39 : <span class="number">1</span>;</span><br><span class="line">        ULONG64 gaw_48 : <span class="number">1</span>;</span><br><span class="line">        ULONG64 gaw_57 : <span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Memory type support</span></span><br><span class="line">        ULONG64 uc_memory_type : <span class="number">1</span>;</span><br><span class="line">        ULONG64 wc_memory_type : <span class="number">1</span>;</span><br><span class="line">        ULONG64 rsvd0 : <span class="number">2</span>;</span><br><span class="line">        ULONG64 wt_memory_type : <span class="number">1</span>;</span><br><span class="line">        ULONG64 wp_memory_type : <span class="number">1</span>;</span><br><span class="line">        ULONG64 wb_memory_type : <span class="number">1</span>;</span><br><span class="line">        ULONG64 rsvd1 : <span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// Page size support</span></span><br><span class="line">        ULONG64 pde_2mb_pages : <span class="number">1</span>;</span><br><span class="line">        ULONG64 pdpte_1gb_pages : <span class="number">1</span>;</span><br><span class="line">        ULONG64 pxe_512gb_page : <span class="number">1</span>;</span><br><span class="line">        ULONG64 pxe_1tb_page : <span class="number">1</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// INVEPT support</span></span><br><span class="line">        ULONG64 invept_supported : <span class="number">1</span>;</span><br><span class="line">        ULONG64 ept_accessed_dirty_flags : <span class="number">1</span>;</span><br><span class="line">        ULONG64 ept_violation_advanced_information : <span class="number">1</span>;</span><br><span class="line">        ULONG64 supervisor_shadow_stack_control : <span class="number">1</span>;</span><br><span class="line">        ULONG64 individual_address_invept : <span class="number">1</span>;</span><br><span class="line">        ULONG64 single_context_invept : <span class="number">1</span>;</span><br><span class="line">        ULONG64 all_context_invept : <span class="number">1</span>;</span><br><span class="line">        ULONG64 rsvd2 : <span class="number">5</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// INVVPID support</span></span><br><span class="line">        ULONG64 invvpid_supported : <span class="number">1</span>;</span><br><span class="line">        ULONG64 rsvd7 : <span class="number">7</span>;</span><br><span class="line">        ULONG64 individual_address_invvpid : <span class="number">1</span>;</span><br><span class="line">        ULONG64 single_context_invvpid : <span class="number">1</span>;</span><br><span class="line">        ULONG64 all_context_invvpid : <span class="number">1</span>;</span><br><span class="line">        ULONG64 single_context_global_invvpid : <span class="number">1</span>;</span><br><span class="line">        ULONG64 rsvd8 : <span class="number">20</span>;</span><br><span class="line">    &#125; bits;</span><br><span class="line">&#125; msr_vmx_ept_vpid_cap;</span><br></pre></td></tr></table></figure>
+
+<p>在构建 EPT 分页结构之前，当我们启用 <em>secondary controls</em> 的 “enable EPT”之前，需要调用以下函数检查是否具备开启 EPT 的条件。参考 <a target="_blank" rel="noopener" href="https://revers.engineering/mmu-virtualization-impl-p1/">MMU Virtualization via Intel EPT: Implementation – Part 1 </a>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOLEAN <span class="title">is_ept_available</span><span class="params">( <span class="keyword">void</span> )</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    msr_vmx_ept_vpid_cap cap_msr;</span><br><span class="line">    cap_msr.value = __readmsr(IA32_VMX_EPT_VPID_CAP_MSR_ADDRESS);</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span>( !cap_msr.bits.ept_xo_support             ||</span><br><span class="line">        !cap_msr.bits.gaw_48                     ||</span><br><span class="line">        !cap_msr.bits.wb_memory_type             ||</span><br><span class="line">        !cap_msr.bits.pde_2mb_pages              ||</span><br><span class="line">        !cap_msr.bits.pdpte_1gb_pages            ||</span><br><span class="line">        !cap_msr.bits.invept_supported           ||</span><br><span class="line">        !cap_msr.bits.single_context_invept      ||</span><br><span class="line">        !cap_msr.bits.all_context_invept         ||</span><br><span class="line">        !cap_msr.bits.invvpid_supported          ||</span><br><span class="line">        !cap_msr.bits.individual_address_invvpid ||</span><br><span class="line">        !cap_msr.bits.single_context_invvpid     ||</span><br><span class="line">        !cap_msr.bits.all_context_invvpid        ||</span><br><span class="line">        !cap_msr.bits.single_context_global_invvpid )</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> FALSE;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="1-2-VPID-和-PCID"><a href="#1-2-VPID-和-PCID" class="headerlink" title="1.2 VPID 和 PCID"></a>1.2 <strong>VPID 和 PCID</strong></h3><p>我们知道，TLB 中保存虚拟地址和物理地址的映射关系。引入 VPID 之前，每一次 VMX operation transport （VM-exit、VM-entry）都会刷新 TLB，严重影响性能。</p>
 
     </div>
 
@@ -549,7 +577,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">36:29</span>
+    <span title="站点阅读时长">36:32</span>
   </span>
 </div>
 <div class="busuanzi-count">
