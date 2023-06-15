@@ -24,19 +24,23 @@
 
   <meta name="description" content="😄">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hypervisor（五）：内存、Cache 类型与管理">
+<meta property="og:title" content="Hypervisor（五）：物理内存、Cache 类型与管理">
 <meta property="og:url" content="https://directoree.github.io/post/Windows10-x64-hypervisor-5/index.html">
 <meta property="og:site_name" content="Catecat">
 <meta property="og:description" content="😄">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/06/15/iMJ798FykgjWV1a.png">
+<meta property="og:image" content="https://s2.loli.net/2023/06/15/Lz39w7NIik5HRnb.png">
 <meta property="og:image" content="https://s2.loli.net/2023/06/14/JWH5ScDnPOL2yG7.png">
+<meta property="og:image" content="https://s2.loli.net/2023/06/15/3ctkKV8R7PE2w9n.png">
+<meta property="og:image" content="https://s2.loli.net/2023/06/15/delBsJ6rNoMQvIS.png">
 <meta property="article:published_time" content="2023-06-14T13:32:50.000Z">
-<meta property="article:modified_time" content="2023-06-14T15:23:16.460Z">
+<meta property="article:modified_time" content="2023-06-15T13:31:16.404Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="虚拟化">
 <meta property="article:tag" content="内存虚拟化">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://s2.loli.net/2023/06/14/JWH5ScDnPOL2yG7.png">
+<meta name="twitter:image" content="https://s2.loli.net/2023/06/15/iMJ798FykgjWV1a.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/Windows10-x64-hypervisor-5/">
@@ -52,7 +56,7 @@
   };
 </script>
 
-  <title>Hypervisor（五）：内存、Cache 类型与管理 | Catecat</title>
+  <title>Hypervisor（五）：物理内存、Cache 类型与管理 | Catecat</title>
   
 
 
@@ -221,7 +225,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -233,6 +237,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Cache"><span class="nav-text">1 Cache</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-0-%E5%A4%84%E7%90%86%E5%99%A8%E7%BC%93%E5%AD%98%E7%BB%93%E6%9E%84"><span class="nav-text">1.0 处理器缓存结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Cache-%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.1 Cache 类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E7%BC%93%E5%AD%98%E6%8E%A7%E5%88%B6"><span class="nav-text">1.2 缓存控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E7%BC%93%E5%AD%98%E7%B1%BB%E5%9E%8B%E4%BC%98%E5%85%88%E7%BA%A7"><span class="nav-text">1.3 缓存类型优先级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E4%BD%BF-TLB-%E5%A4%B1%E6%95%88"><span class="nav-text">1.4 使 TLB 失效</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-Store-Buffer"><span class="nav-text">1.5 Store Buffer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MTRR"><span class="nav-text">2 MTRR</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -338,7 +343,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hypervisor（五）：内存、Cache 类型与管理
+          Hypervisor（五）：物理内存、Cache 类型与管理
         </h1>
 
         <div class="post-meta-container">
@@ -348,10 +353,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2023-06-14 21:32:50 / 修改时间：23:23:16" itemprop="dateCreated datePublished" datetime="2023-06-14T21:32:50+08:00">2023-06-14</time>
+      <time title="创建时间：2023-06-14 21:32:50" itemprop="dateCreated datePublished" datetime="2023-06-14T21:32:50+08:00">2023-06-14</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2023-06-15 21:31:16" itemprop="dateModified" datetime="2023-06-15T21:31:16+08:00">2023-06-15</time>
+      </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-folder"></i>
@@ -363,7 +374,7 @@
     </span>
 
   
-    <span id="/post/Windows10-x64-hypervisor-5/" class="post-meta-item leancloud_visitors" data-flag-title="Hypervisor（五）：内存、Cache 类型与管理" title="阅读次数">
+    <span id="/post/Windows10-x64-hypervisor-5/" class="post-meta-item leancloud_visitors" data-flag-title="Hypervisor（五）：物理内存、Cache 类型与管理" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -391,7 +402,7 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>3.1k</span>
+      <span>2.8k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
@@ -412,28 +423,154 @@
         <p>😄</p>
 <span id="more"></span>
 
-<p><strong>Chapter 11 Memory Cache Control</strong></p>
-<p>The processor allows any area of system memory to be cached in the L1, L2, and L3 caches. In individual pages or regions of system memory, it allows the type of caching (also called memory type) to be specified (see Section 11.5) . Memory types currently defined for the Intel 64 and IA-32 architectures are (see Table 11-2)：</p>
+<h2 id="1-Cache"><a href="#1-Cache" class="headerlink" title="1 Cache"></a>1 Cache</h2><h3 id="1-0-处理器缓存结构"><a href="#1-0-处理器缓存结构" class="headerlink" title="1.0 处理器缓存结构"></a>1.0 处理器缓存结构</h3><p>Intel 64 and IA-32 架构支持 Cache、TLBs、Store buffer（临时存储指令和数据）。</p>
+<p><img data-src="https://s2.loli.net/2023/06/15/iMJ798FykgjWV1a.png" alt="65.png"></p>
+<p><img data-src="https://s2.loli.net/2023/06/15/Lz39w7NIik5HRnb.png" alt="66.png"></p>
+<h3 id="1-1-Cache-类型"><a href="#1-1-Cache-类型" class="headerlink" title="1.1 Cache 类型"></a>1.1 Cache 类型</h3><p>处理器允许将系统内存的<strong>任何区域</strong>缓存在 L1、L2 和 L3 缓存中。 在系统内存的单个页面或一片区域中，它允许指定缓存类型（也称为内存类型）。 目前为Intel 64和IA-32架构定义的内存类型有（见表11-2）：</p>
 <p><img data-src="https://s2.loli.net/2023/06/14/JWH5ScDnPOL2yG7.png" alt="62.png"></p>
-<p>cache line fill（缓存行填充）：When the processor recognizes that an operand being read from memory is cacheable, the processor reads an entire cache line into the appropriate cache (L1, L2, L3, or all). This operation is called a cache line fill. </p>
-<p>cache hit（缓存命中）：If the memory location containing that operand is still cached the next time the processor attempts to access the operand, the processor can read the operand from the cache instead of going back to memory. This operation is called a cache hit.如果下次处理器尝试访问该操作数时，包含该操作数的内存位置仍被缓存，则处理器可以从缓存中读取该操作数，而不是返回内存。 此操作称为缓存命中。</p>
-<p>write hit（写入命中）：When the processor attempts to write an operand to a cacheable area of memory, it first checks if a cache line for that memory location exists in the cache. If a valid cache line does exist, the processor (depending on the write policy currently in force) can write the operand into the cache instead of writing it out to system memory. This operation is called a write hit.当处理器尝试将操作数写入内存的可缓存区域时，它首先检查缓存中是否存在该内存位置的缓存行。 如果确实存在有效的缓存行，则处理器（取决于当前有效的写入策略）可以将操作数写入缓存，而不是将其写出到系统内存。 此操作称为写入命中。 If a write misses the cache (that is, a valid cache line is not present for area Of memory being written to)， the processor performs a cache line fill, write allocation. Then it writes the operand into the cache line and (depending on the write policy currently in force) can also write it out to memory. If the operand is to be written out to memory, it is written first into the store buffer, and then written from the store buffer to memory when the system bus is available. (Note that for the Pentium processor, write misses do not result in a cache line fil; they always result in a write to memory. For this processor, only read misses result in cache line fills.)如果写入未命中缓存（即，对于正在写入的内存区域，不存在有效的缓存行），处理器执行缓存行填充、写入分配。 然后它将操作数写入缓存行并且（取决于当前有效的写入策略）也可以将其写出到内存中。 如果要将操作数写出到内存，则首先将其写入存储缓冲区，然后在系统总线可用时从存储缓冲区写入内存。 （请注意，对于奔腾处理器，写入未命中不会导致缓存行填充；它们总是导致写入内存。对于此处理器，只有读取未命中会导致缓存行填充。）</p>
-<p>处理器允许将系统内存的任何区域缓存在 L1、L2 和 L3 缓存中。 在系统内存的各个页面或区域中，它允许指定缓存类型（也称为内存类型）（参见第 11.5 节）。 目前为Intel 64和IA-32架构定义的内存类型有（见表11-2）：</p>
-<ul>
-<li><p>Strong Uncacheable (UC)：<strong>不缓存系统内存</strong>。所有读取和写入都出现在系统总线上，并按程序顺序执行，无需重新排序。 不会进行推测性内存访问、页表遍历或推测性分支目标的预取。 这种类型的缓存控制对于内存映射 I&#x2F;O 设备很有用。 当与普通 RAM 一起使用时，它会大大降低处理器性能。</p>
-</li>
-<li><p>Write Combining (WC)：系统内存位置未缓存（与不可缓存的内存一样）并且处理器的总线一致性协议不强制执行一致性。 允许推测性读取。 写入可能会延迟并在写入组合缓冲区（WC 缓冲区，WC buffer）中组合以减少内存访问。 如果 WC 缓冲区被部分填满，写入可能会延迟到下一次序列化事件发生时； 例如 SFENCE 或 MFENCE 指令、CPUID 或其他序列化指令、对未缓存内存的读取或写入、中断发生或 LOCK 指令（包括带有 XACQUIRE 或 XRELEASE 前缀的指令）的执行。 此外，执行 XEND 指令（以结束事务区域）会在逐出在事务区域内执行的任何写入之前逐出在相应执行 XBEGIN 指令（以开始事务区域）之前缓冲的任何写入。</p>
-<p><strong>写入组合缓冲区，write combining buffer</strong>（WC buffer）：该缓冲区与内部 L1、L2 和 L3 缓存以及存储缓冲区（Store buffer）分开。写入数据时，虽然数据不会缓存到告诉缓存上，但是数据会被写入到 WC buffer，等 WC buffer 写满之后才会将 WC buffer 的数据写入到内存中。</p>
-</li>
-<li><p>Write-through (WT) ：<strong>对系统内存的写入和读取都被缓存</strong>。 读取来自缓存命中的缓存行； 读取未命中导致缓存填充。 允许推测性读取。 <strong>所有写入都写入缓存行</strong>（如果可能）<strong>并写入系统内存</strong>。 写入内存时，永远不会填充无效的缓存行，而有效的缓存行要么被填充要么无效。 允许写入组合。 这种类型的缓存控制适用于帧缓冲区，或者当系统总线上有访问系统内存但不执行内存访问窥探的设备时。 <strong>它强制处理器中的缓存和系统内存之间的一致性</strong>。</p>
-</li>
-<li><p>Write-back (WB)：对系统内存的写入和读取都被缓存。 <strong>写入数据时会写入缓存行但不会立即写到系统内存</strong>，<strong>修改后的高速缓存行稍后写入系统内存</strong>。 例如在已满的缓存中分配新的缓存行时会将缓存内容写入内存。 这种类型的缓存控制提供了最好的性能，但它要求所有在系统总线上访问系统内存的设备都能够监听内存访问，以确保系统内存和缓存的一致性。</p>
-</li>
-<li><p>Write protected (WP)：读数据时与缓存有关，写数据时不会缓存。</p>
-</li>
-</ul>
-<p>11.3.2</p>
+<p>缓存（Cache）类型：</p>
+<table>
+<thead>
+<tr>
+<th>内存类型</th>
+<th>简写</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Strong Uncacheable，不缓存系统内存</td>
+<td>UC</td>
+<td>内存读写<strong>都不缓存</strong>到 Cache 中。</td>
+</tr>
+<tr>
+<td>Uncacheable</td>
+<td>UC-</td>
+<td>特性与 UC 相似，不同的是，这种类型的 Memory，可以通过修改 MTRR 来把它改变成 WC。</td>
+</tr>
+<tr>
+<td>Write Combining，写组合</td>
+<td>WC</td>
+<td>特性与UC 相似，不同的是，写入可能会延迟数据会写入组合缓冲区（<strong>write combining buffer，</strong> WC buffer）中以减少内存访问。<br /> <strong>写入组合缓冲区（Write Combining Buffer，</strong>WC buffer）：该缓冲区与内部 L1、L2 和 L3 缓存以及存储缓冲区（Store buffer）区别开（不同）。写入数据时，虽然数据不会缓存到高速缓存上，但是数据会被写入到 WC buffer，等 WC buffer 写满之后才会将 WC buffer 的数据写入到内存中。</td>
+</tr>
+<tr>
+<td>Write-through ，直写</td>
+<td>WT</td>
+<td><strong>对系统内存的写入和读取都会被缓存</strong>。如数据写入到内存时，必须同步缓存至 Cache。它强制处理器中的缓存和系统内存之间的一致性。</td>
+</tr>
+<tr>
+<td>Write-back，回写</td>
+<td>WB</td>
+<td><strong>对系统内存的写入和读取都被缓存</strong>。只是数据写入时会先写到高速缓存，并不会修改内存。等 Cache 写满后，才会将 Cache 的内容写入到内存中，然后新的内容写入到 Cache 中。</td>
+</tr>
+<tr>
+<td>Write protected，写保护</td>
+<td>WP</td>
+<td>读的时候，数据会被缓存。写的时候，数据不会被缓存。</td>
+</tr>
+</tbody></table>
+<p>基本概念：</p>
+<table>
+<thead>
+<tr>
+<th>专业术语</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>cache line fill（缓存行填充）</td>
+<td>当处理器识别出从内存读取的操作数是可缓存的时，处理器会将整个缓存行读入相应的缓存（L1、L2、L3 或全部）。 This operation is called a cache line fill.</td>
+</tr>
+<tr>
+<td>cache hit（缓存命中）</td>
+<td>如果下次处理器尝试访问上述的操作数时，包含该操作数的内存位置已经被缓存，则处理器可以从缓存中读取该操作数，而不是从内存读取。 This operation is called a cache hit.</td>
+</tr>
+<tr>
+<td>write hit（写入命中）</td>
+<td>当处理器尝试将操作数写入可缓存的内存时，它首先检查缓存中是否存在该内存位置的缓存行。 如果确实存在有效的缓存行，则处理器（取决于当前有效的写入策略）可以将操作数写入缓存，而不是将其写出到系统内存。 This operation is called a write hit.</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-缓存控制"><a href="#1-2-缓存控制" class="headerlink" title="1.2 缓存控制"></a>1.2 缓存控制</h3><p>内存的缓存由以下两方面控制：</p>
+<ol>
+<li>控制寄存器和分页条目中的位。</li>
+<li>一些控制指令预取、数据写入时缓存的<strong>指令</strong>。</li>
+</ol>
+<p>第一方面，控制寄存器和分页条目中的位。</p>
+<p><img data-src="https://s2.loli.net/2023/06/15/3ctkKV8R7PE2w9n.png" alt="63.png"></p>
+<p>第二方面，控制缓存的指令。</p>
+<table>
+<thead>
+<tr>
+<th>指令</th>
+<th>权限级别</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>INVD</td>
+<td>特权指令</td>
+<td>使 L1、L2 和 L3 缓存的内容失效。应谨慎使用 INVD 指令，如果内存类型为 WB，则使用该指令后高速缓存中的数据不会再写入到内存中，会造成数据丢失造成错误。</td>
+</tr>
+<tr>
+<td>WBINVD</td>
+<td>特权指令</td>
+<td>WBINVD 指令首先写回所有内部缓存中任何修改的行（写到内存），然后使 L1、L2 和 L3 缓存的内容失效。它确保无论有效的写入策略（即直写或回写）如何，都能保持与主内存的缓存一致性。</td>
+</tr>
+<tr>
+<td>prefetch</td>
+<td>非特权指令</td>
+<td>允许处理器将内存中的指令预取到高速缓存中。</td>
+</tr>
+<tr>
+<td>CLFLUSH、CLFLUSHOPT</td>
+<td>非特权指令</td>
+<td>根据内存刷新其对应的高速缓存，使缓存失效。</td>
+</tr>
+<tr>
+<td>非临时移动指令（MOVNTI、MOVNTQ、MOVNTDQ、MOVNTPS 和 MOVNTPD）</td>
+<td>非特权指令</td>
+<td>允许将数据从处理器的寄存器直接移动到系统内存中，而无需同时写入 L1、L2 和&#x2F;或 L3 缓存。</td>
+</tr>
+</tbody></table>
+<h3 id="1-3-缓存类型优先级"><a href="#1-3-缓存类型优先级" class="headerlink" title="1.3 缓存类型优先级"></a>1.3 缓存类型优先级</h3><ol>
+<li>当 page-level（页面级） 和 MTRR 对应的缓存控制不一致时，则<strong>有“阻止”功能的缓存控制优先</strong>。如 page-level 控制是 Uncacheable，MTRR 对应区域控制是 Cacheable，最终该区域内存类型为 Uncacheable。</li>
+<li>当某个内存区域和页面缓存类型冲突时，有优先级：<strong>WC &gt; WT &gt; WB</strong>。<strong>Uncacheable &gt; Cacheable</strong>（最小缓存权限原则）。</li>
+</ol>
+<blockquote>
+<p>page-level 页面级的缓存，指的是分页条目上的缓存控制位（PAT、PCD、PWT）。</p>
+</blockquote>
+<p><img data-src="https://s2.loli.net/2023/06/15/delBsJ6rNoMQvIS.png" alt="64.png"></p>
+<div class="note warning"><p>阻止内存缓存：</p>
+<p>如果要将所有内存类型设置为 Uncacheable，仅通过设置 CR0.CD &#x3D; 1 是不够的，因为不同的处理器对物理内存的缓存控制策略不同。若要在所有物理内存上强制使用 UC 内存类型和严格内存排序，只需将所有物理内存的 MTRR 编程为 UC 内存类型或禁用所有 MTRR 即可。</p>
+</div>
 
+<p>参考内容：</p>
+<ul>
+<li><strong>Chapter 11 Memory Cache Control</strong></li>
+</ul>
+<h3 id="1-4-使-TLB-失效"><a href="#1-4-使-TLB-失效" class="headerlink" title="1.4 使 TLB 失效"></a>1.4 使 TLB 失效</h3><p>以下操作会<strong>使所有 TLB 条目失效</strong>，无论 G 标志的设置如何（此外，大多数细节可参考 4.10.4 “Invalidation of TLBs and Paging-Structure Caches.”）：</p>
+<ol>
+<li>激活或取消激活 <code>FLUSH# pin</code> 引脚。</li>
+<li>写入 MTRR（使用 WRMSR 指令）（仅限 Pentium 4 Intel Xeon 和更高版本的处理器）。</li>
+<li>写入控制寄存器 CR0 以修改 PG 或 PE 标志。</li>
+<li>写入控制寄存器 CR4 以修改 PSE、PGE 或 PAE 标志（仅限 Pentium 4 Intel Xeon 和更高版本的处理器）。</li>
+<li>写入控制寄存器 CR4 以将 PCIE 标志从 1 更改为 0。</li>
+</ol>
+<p>刷新某内存所在页面的 TLB 指令：<code>INVLPG</code>。</p>
+<h3 id="1-5-Store-Buffer"><a href="#1-5-Store-Buffer" class="headerlink" title="1.5 Store Buffer"></a>1.5 Store Buffer</h3><p><strong>处理器会将每一次写入到内存的数据临时缓存至 Store buffer</strong>。存储缓冲区通过允许处理器继续执行指令而不必等到对存储器和&#x2F;或高速缓存的写入完成来提高处理器性能。 它还允许延迟写入以更有效地使用内存访问总线周期。</p>
+<p>处理器确保写入操作始终按顺序执行。 它还确保在以下情况下始终将存储缓冲区的内容写到内存中：</p>
+<ol>
+<li>当产生异常或中断时。</li>
+<li>执行序列化指令时（仅限 P6 和更新的处理器系列）。</li>
+<li>执行 I&#x2F;O 指令时。</li>
+<li>执行 LOCK 操作时。</li>
+<li>执行 BINIT 操作时（仅限 P6 和更新的处理器系列）。</li>
+<li>当使用 <code>SFENCE</code> 指令对存储进行排序时（仅限 Pentium Ⅲ 和更新的处理器系列）。</li>
+<li>使用 <code>MFENCE</code> 指令对存储进行排序时（仅限 Pentium 4 和更新的处理器系列）。</li>
+</ol>
+<blockquote>
+<p>The discussion of write ordering in Section 9.2, “Memory Ordering,” gives a detailed description of the operation of the store buffer.</p>
+</blockquote>
+<h2 id="2-MTRR"><a href="#2-MTRR" class="headerlink" title="2 MTRR"></a>2 MTRR</h2>
     </div>
 
     
@@ -468,7 +605,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/Windows10-x64-hypervisor-5/" title="Hypervisor（五）：内存、Cache 类型与管理">https://directoree.github.io/post/Windows10-x64-hypervisor-5/</a>
+      <a href="https://directoree.github.io/post/Windows10-x64-hypervisor-5/" title="Hypervisor（五）：物理内存、Cache 类型与管理">https://directoree.github.io/post/Windows10-x64-hypervisor-5/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -560,7 +697,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">36:49</span>
+    <span title="站点阅读时长">36:48</span>
   </span>
 </div>
 <div class="busuanzi-count">
