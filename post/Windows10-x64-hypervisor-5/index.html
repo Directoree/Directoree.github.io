@@ -49,7 +49,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/06/18/CY3MXJhTbAVKZvl.png">
 <meta property="og:image" content="https://s2.loli.net/2023/06/20/sRYiZyIL9fBE4xq.png">
 <meta property="article:published_time" content="2023-06-14T13:32:50.000Z">
-<meta property="article:modified_time" content="2023-06-20T14:01:47.011Z">
+<meta property="article:modified_time" content="2023-06-20T14:06:05.709Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="虚拟化">
 <meta property="article:tag" content="内存虚拟化">
@@ -375,7 +375,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-06-20 22:01:47" itemprop="dateModified" datetime="2023-06-20T22:01:47+08:00">2023-06-20</time>
+        <time title="修改时间：2023-06-20 22:06:05" itemprop="dateModified" datetime="2023-06-20T22:06:05+08:00">2023-06-20</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -781,23 +781,19 @@
 <tr>
 <th>Cache 归属域</th>
 <th>描述</th>
-<th></th>
 </tr>
 </thead>
 <tbody><tr>
 <td>PCID</td>
 <td>进程上下文ID，是和进程 CR3 关联的，每个进程 CR3 低 12 位即为 PCID 值（12 bits）。有了 PCID 之后，不同进程切换时 TLB 无需刷新。使用 PCID 的 2 个条件如下：<br />只能在 IA-32e 模式下使用（<code>IA32_EFER_LMA = 1</code>）。 <br />当 <code>CPUID.01H:ECX[17] = 1</code> 时，软件才可以置 <code>CR4.PCIDE = 1</code>，开启 PCID 功能。<br /><br />注意：处理器用 PCID 来维护与<strong>线性地址转换</strong>相关的 cache 信息，即 linear mapping 及 combined mapping。</td>
-<td></td>
 </tr>
 <tr>
 <td>EP4TA</td>
 <td><code>EPT4A = EPTP[N:12]</code>，N &#x3D; MAXPHYADDR。在 EPT 机制中，一个 EP4TA 值也被作为 ID 标识符，用来标识由 EPT paging structure 所映射的 guest-physical address space。<br /><br />注意：处理器用 EP4TA 来维护与 <strong>guest-physical address</strong> 转换相关的 cache 信息，包括 guest-physical mapping 与 combined mapping 所产生的 cache 信息。</td>
-<td></td>
 </tr>
 <tr>
 <td>VPID</td>
 <td>虚拟处理器 ID，VPID 用来为每个虚拟处理器提供一个 ID 值。每个 VMCS 拥有一个非 0 值的 VPID（16 bits）。<br />常用的用法：<code>VMM.VPID = 000h</code>、每个虚拟处理器使用的 VMCS 对应不同的非零 VPID 值。<br /><br />处理器用 VPID 来维护与<strong>线性地址转换</strong>相关的 cache 信息：<br />（1）没有 EPT 机制时（或者在 host 里）：处理器在 VPID 域中结合 PCID 为 linear mapping 建立相应的 cache 信息。<br />（2）启用 EPT 机制时，处理器在 VPID 与 EP4TA 联合的域中结合 PCID 为 combined mapping 建立相应的 cache 信息。</td>
-<td></td>
 </tr>
 </tbody></table>
 <p>举例说明他们的层级关系：</p>
