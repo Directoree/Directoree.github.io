@@ -29,12 +29,15 @@
 <meta property="og:site_name" content="˗ˋˏ♡ˎˊ˗">
 <meta property="og:description" content="😊">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/5qiABNLP6K3ybGf.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/13/VAEKBuT6D9wonQM.png">
 <meta property="article:published_time" content="2023-07-10T12:54:19.000Z">
-<meta property="article:modified_time" content="2023-07-12T16:22:25.661Z">
+<meta property="article:modified_time" content="2023-07-13T16:23:56.681Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="x86-64">
 <meta property="article:tag" content="Linux 逆向">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2023/07/13/5qiABNLP6K3ybGf.png">
 
 
 <link rel="canonical" href="https://directoree.github.io/post/Linux-File-Systems/">
@@ -231,7 +234,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-text">1 目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%86%E5%8C%BA%EF%BC%88Partitions%EF%BC%89"><span class="nav-text">2 分区（Partitions）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%86%E5%8C%BA%E5%B8%83%E5%B1%80%E5%92%8C%E7%B1%BB%E5%9E%8B"><span class="nav-text">2.1 分区布局和类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8C%82%E8%BD%BD%E7%82%B9%EF%BC%88Mount-points%EF%BC%89"><span class="nav-text">2.2 挂载点（Mount points）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86"><span class="nav-text">3  文件系统管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Orientation-in-the-file-system"><span class="nav-text">4 Orientation in the file system</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-PATH-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">4.1 PATH 环境变量</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88File-system%EF%BC%89"><span class="nav-text">1 文件系统（File system）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 文件系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.2 文件系统的类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%86%E5%8C%BA%EF%BC%88Partitions%EF%BC%89"><span class="nav-text">2 分区（Partitions）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%86%E5%8C%BA%E5%B8%83%E5%B1%80%E5%92%8C%E7%B1%BB%E5%9E%8B"><span class="nav-text">2.1 分区布局和类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8C%82%E8%BD%BD%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2 挂载的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%96%87%E4%BB%B6%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9-inode"><span class="nav-text">2.3 文件索引节点 inode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-text">3 目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-PATH-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">4 PATH 环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">4.1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%B4%E6%97%B6%E4%BF%AE%E6%94%B9"><span class="nav-text">4.2 环境变量临时修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%B0%B8%E4%B9%85%E4%BF%AE%E6%94%B9"><span class="nav-text">4.3 环境变量永久修改</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -361,7 +364,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-07-13 00:22:25" itemprop="dateModified" datetime="2023-07-13T00:22:25+08:00">2023-07-13</time>
+        <time title="修改时间：2023-07-14 00:23:56" itemprop="dateModified" datetime="2023-07-14T00:23:56+08:00">2023-07-14</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -402,14 +405,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>13k</span>
+      <span>18k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>12 分钟</span>
+      <span>16 分钟</span>
     </span>
 </div>
 
@@ -426,7 +429,308 @@
 <div class="note danger"><p>A simple description of the UNIX system, also applicable to Linux, is this: “<strong>On a UNIX system, everything is a file; if something is not a file, it is a process.</strong>“ Linux 下一切皆文件。</p>
 </div>
 
-<h2 id="1-目录结构"><a href="#1-目录结构" class="headerlink" title="1 目录结构"></a>1 目录结构</h2><p> <a target="_blank" rel="noopener" href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf">Filesystem Hierarchy Standard (FHS)</a> 定义了类 Unix 操作系统中的目录结构和目录内容（标准），它还定义了许多文件类型和目录的名称、位置和权限。 它由 Linux 基金会维护，最新版为 3.0。Linux 使用这种标准来组织目录结构（之前学习过 <a target="_blank" rel="noopener" href="https://catecat.gitee.io/post/System-V-AMD64-ABI/">System V AMD64 ABI</a> 介绍了调用约定、对象文件格式、可执行文件格式、动态链接语义等规范标准）。</p>
+
+
+<h2 id="1-文件系统（File-system）"><a href="#1-文件系统（File-system）" class="headerlink" title="1 文件系统（File system）"></a>1 文件系统（File system）</h2><p><code>file system</code> 或 <code>filesystem</code> (文件系统，通常简称为 <code>fs</code>)，控制着数据的存储和检索方式。</p>
+<div class="note info"><p>如果没有文件系统，放置在存储介质中的数据将是一大批数据，无法判断一段数据从哪里开始，或者在哪里停止。通过将数据分成几块并给每块一个名称，数据很容易被隔离和识别。它的名字来源于基于纸张的数据管理系统的命名方式，每组数据被称为<mark class="label success">文件</mark>。用于管理数据组及其名称的结构和逻辑规则称为<mark class="label danger">文件系统</mark>。</p>
+</div>
+
+<div class="note success"><p>文件系统是根据它们的<mark class="label warning">用途</mark>来进行定义的。有许多不同种类的文件系统。每一种都有不同的结构和逻辑、速度、灵活性、安全性、大小等属性。有为<strong>操作系统</strong>、<strong>网络</strong>、数据库和其他专用文件系统定义了的文件系统。在操作系统中，文件系统可以定义为硬盘、闪存、RAM 或光盘。</p>
+</div>
+
+<p>本文讨论 Linux 系统上基于硬盘的文件系统。</p>
+<h3 id="1-1-文件系统架构"><a href="#1-1-文件系统架构" class="headerlink" title="1.1 文件系统架构"></a>1.1 文件系统架构</h3><p>文件系统主要由3层组成。从上到下：</p>
+<ol>
+<li>逻辑文件系统（Logical file system）：在 API 的帮助下与用户应用程序交互，以提供打开、读取、关闭等操作，并将请求传递给下面的层。</li>
+<li>虚拟文件系统（Virtual file system）：允许物理文件系统的多个实例同时运行。</li>
+<li>物理文件系统（Physical file system）：处理磁盘的物理方面，同时管理和存储正在读取和写入的物理内存块。</li>
+</ol>
+<p><img data-src="https://s2.loli.net/2023/07/13/5qiABNLP6K3ybGf.png" alt="18.png"></p>
+<p>文件系统应该具备以下特征：</p>
+<ul>
+<li>空间管理（Space Management:）：数据在存储设备上的存储方式。与其中应用的内存块和碎片化管理。</li>
+<li>文件名（Filename）：文件系统可能对文件名有某些限制，例如名称长度、特殊字符的使用和区分大小写。</li>
+<li>目录（Directory）：目录&#x2F;文件夹可以线性或分层方式存储文件，同时维护该目录或子目录中包含的所有文件的索引表。</li>
+<li>元数据（Metadata）：对于存储的每个文件，文件系统存储有关该文件存在的各种信息，例如其数据长度、访问权限、设备类型、修改的日期时间和其他属性。这称为元数据。</li>
+<li>实用工具（Utilities）：文件系统提供用于初始化、删除、重命名、移动、复制、备份、恢复和控制文件和文件夹访问的功能。</li>
+<li>设计（Design）：由于其实现，文件系统对它们可以存储的数据量有限制。</li>
+</ul>
+<p>几个关键术语：</p>
+<ol>
+<li>Journaling：Journaling file systems 保存一个称为 <code>journal</code> 的日志，该日志跟踪对文件所做的更改，但尚未永久提交到磁盘，以便在系统故障时，可以恢复丢失的更改。</li>
+<li>版本控制（Versioning）：版本控制系统（Versioning file systems）存储以前保存的文件版本，即文件的副本基于以前对磁盘的提交以分钟或每小时的方式存储以创建备份。</li>
+<li>索引节点（inode）：索引节点是基于一些元数据（文件大小、权限、所有权以及文件和目录的位置）的任何文件或目录的实现。</li>
+</ol>
+<h3 id="1-2-文件系统的类型"><a href="#1-2-文件系统的类型" class="headerlink" title="1.2 文件系统的类型"></a>1.2 文件系统的类型</h3><p>文件系统是操作系统用于在存储设备上存储、组织和管理文件和目录的方法。一些常见的文件系统类型包括：</p>
+<ol>
+<li><strong>ext</strong> (Extended File System)：扩展文件系统，它于 1992 年实现，是第一个专门为 Linux 设计的文件系统。它是 ext 系列文件系统的第一个成员。</li>
+<li><strong>ext2</strong>：第二个扩展是在1993年开发的。它是一种非日志文件系统，最好与闪存驱动器和 SSD 一起使用。解决了访问时间戳分离、索引节点修改和数据修改的问题。由于未记录（journal），因此在启动时加载速度很慢。</li>
+<li><strong>Xiafs</strong>：同样是在 1993 年开发的，这个文件系统的功能和功能不如 ext2，并且在任何地方都不再使用。</li>
+<li><strong>ext3</strong>：1999年开发的第三个ext是一个日志文件系统。它是可靠的，与 ext2 不同，如果文件系统在不干净关闭后处于不一致状态，它可以防止系统启动时出现长时间延迟。使它比 ext2 更好且不同的其他因素是在线文件系统增长和大型目录的 HTree 索引。</li>
+<li><strong>JFS</strong> (Journaled File System)：日志文件系统，最初的JFS最初由IBM于1990年创建，1999年被开源为Linux实现。JFS 在不同类型的负载下表现良好，但由于 2006 年发布的 ext4 提供了更好的性能，因此不再常用。</li>
+<li><strong>ReiserFS</strong>：它是2001年开发的日志文件系统。尽管存在早期的问题，但它将尾部包装作为一种减少内部碎片的方案。它使用 B+ 树，在目录查找和更新中提供的时间少于线性。在 6.4 版之前，它是 SUSE Linux 中的默认文件系统，直到 2006 年切换到 ext3 的 10.2 版。</li>
+<li><strong>XFS：XFS</strong> 是一个 64 位日志文件系统，于 2001 年移植到 Linux。它现在充当许多 Linux 发行版的默认文件系统。它提供了快照、在线碎片整理、稀疏文件、可变块大小和出色容量等功能。它还擅长并行 I&#x2F;O 操作。</li>
+<li><strong>SquashFS</strong>：此文件系统开发于 2002 年，是只读的，仅用于需要低开销的嵌入式系统。</li>
+<li><strong>Reiser4</strong>：它是 ReiserFS 的增量模型。它是在2004年开发的。但是，它在许多 Linux 发行版上并未被广泛调整或支持。</li>
+<li><strong>ext4</strong>：2006年开发的第四个ext是一个日志文件系统。它与 ext3 和 ext2 向后兼容，并提供其他一些功能，其中一些是持久预分配、无限数量的子目录、元数据校验和和大文件大小。ext4 是许多 Linux 发行版的默认文件系统，并且还与 Windows 和 Macintosh 兼容。</li>
+<li><strong>btrfs</strong> (Better&#x2F;Butter&#x2F;B-tree FS)：它是在2007年开发的。它提供了许多功能，例如快照，驱动器池，数据清理，自我修复和在线碎片整理。它是 Fedora 工作站的默认文件系统。</li>
+<li><strong>bcachefs</strong>：这是一个写入时复制文件系统，于 2015 年首次发布，目标是性能优于 btrfs 和 ext4。其功能包括完整的文件系统加密、本机压缩、快照和 64 位校验求和。</li>
+<li><strong>其他</strong>：Linux还支持NTFS和exFAT等操作系统的文件系统，但这些不支持标准的Unix权限设置。它们主要用于与其他操作系统的互操作性。<ul>
+<li><strong>FAT</strong> (File Allocation Table)：文件分配表，旧版本的 Windows 和其他操作系统使用的较旧文件系统。</li>
+<li><strong>NTFS</strong> (New Technology File System)：新技术文件系统，Windows使用的现代文件系统。它支持文件和文件夹权限、压缩和加密等功能。</li>
+<li><strong>HFS</strong> (Hierarchical File System)：分层文件系统，macOS 使用的文件系统。</li>
+<li><strong>APFS</strong> (Apple File System)：苹果为其Mac和iOS设备推出的新文件系统。</li>
+</ul>
+</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Parameters</th>
+<th>ext</th>
+<th>ext2</th>
+<th>Xiafs</th>
+<th>ext3</th>
+<th>JFS</th>
+<th>ReiserFS</th>
+<th>XFS</th>
+<th>Reiser4</th>
+<th>ext4</th>
+<th>btrfs</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Max. filename length(bytes)</td>
+<td>255</td>
+<td>255</td>
+<td>248</td>
+<td>255</td>
+<td>255</td>
+<td>255 characters</td>
+<td>255</td>
+<td>3976</td>
+<td>255</td>
+<td>255</td>
+</tr>
+<tr>
+<td>Allowable characters in directory entries(Any byte)</td>
+<td>except NUL</td>
+<td>except NUL, &#x2F;</td>
+<td>except NUL</td>
+<td>except NUL or &#x2F;</td>
+<td>Any Unicode except NUL</td>
+<td>except NUL or &#x2F;</td>
+<td>except NUL</td>
+<td>except NUL, &#x2F;</td>
+<td>except NUL, &#x2F;</td>
+<td>except NUL, &#x2F;</td>
+</tr>
+<tr>
+<td>Max. pathname length</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+<td>Undefined</td>
+</tr>
+<tr>
+<td>Max. file size</td>
+<td>2 GB</td>
+<td>16GB – 2TB</td>
+<td>64MB</td>
+<td>16GB – 2TB</td>
+<td>4PB</td>
+<td>8TB</td>
+<td>8EB</td>
+<td>8TB (on x86)</td>
+<td>16GB – 16TB</td>
+<td>16EB</td>
+</tr>
+<tr>
+<td>Max. volume size</td>
+<td>2 GB</td>
+<td>2TB – 32TB</td>
+<td>2GB</td>
+<td>2TB – 32TB</td>
+<td>32PB</td>
+<td>16TB</td>
+<td>8EB</td>
+<td>–</td>
+<td>1EB</td>
+<td>16EB</td>
+</tr>
+<tr>
+<td>Max. no. of files</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>–</td>
+<td>2^32</td>
+<td>2^64</td>
+</tr>
+<tr>
+<td>Metadata only journaling</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Compression</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Block sub-allocation</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Online grow</td>
+<td>No</td>
+<td>No</td>
+<td>–</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Encryption</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+<td>Yes(experimental)</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Checksum</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+<td>Partial</td>
+<td>No</td>
+<td>Partial</td>
+<td>Yes</td>
+</tr>
+</tbody></table>
+<p>CentOS 7.9 文件名称字符长度、文件路径长度在 <code>/usr/include/linux/limits.h</code>，可以看到文件名最大长度 <code>NAME_MAX</code>、文件路径最大长度 <code>PATH_MAX</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//  /usr/include/linux/limits.h</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> _LINUX_LIMITS_H</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _LINUX_LIMITS_H</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NR_OPEN	        1024</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NGROUPS_MAX    65536	<span class="comment">/* supplemental group IDs are available */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ARG_MAX       131072	<span class="comment">/* # bytes of args + environ for exec() */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> LINK_MAX         127	<span class="comment">/* # links a file may have */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_CANON        255	<span class="comment">/* size of the canonical input queue */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_INPUT        255	<span class="comment">/* size of the type-ahead buffer */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NAME_MAX         255	<span class="comment">/* # chars in a file name */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PATH_MAX        4096	<span class="comment">/* # chars in a path name including nul */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> PIPE_BUF        4096	<span class="comment">/* # bytes in atomic write to a pipe */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> XATTR_NAME_MAX   255	<span class="comment">/* # chars in an extended attribute name */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> XATTR_SIZE_MAX 65536	<span class="comment">/* size of an extended attribute value (64k) */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> XATTR_LIST_MAX 65536	<span class="comment">/* size of extended attribute namelist (64k) */</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> RTSIG_MAX	  32</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/linux-file-system/?ref=lbp">Linux File System</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/file-systems-in-operating-system/?ref=lbp">File Systems in Operating System</a></li>
+<li><a target="_blank" rel="noopener" href="https://eng.libretexts.org/Bookshelves/Computer_Science/Operating_Systems/Linux_-_The_Penguin_Marches_On_(McClanahan)/04%3A_Managing_Linux_Storage/4.02_Linux_File_Systems">04-A.2: Linux File Systems</a></li>
+<li><a target="_blank" rel="noopener" href="https://tldp.org/LDP/intro-linux/intro-linux.pdf">Introduction to Linux A Hands on Guide</a></li>
+</ul>
+<h2 id="2-分区（Partitions）"><a href="#2-分区（Partitions）" class="headerlink" title="2 分区（Partitions）"></a>2 分区（Partitions）</h2><p>这一原则可以追溯到 Linux 没有日志文件系统、电源故障可能导致灾难的时代。 分区的使用仍然是出于安全性和稳健性的原因，因此系统某一部分的破坏并不意味着整个计算机都处于危险之中。 这是目前分区最重要的原因。</p>
+<blockquote>
+<p>一个简单的示例：用户创建一个脚本、程序或 Web 应用程序来开始填充磁盘。 如果磁盘仅包含一个大分区，则当磁盘已满时整个系统将停止运行。 如果用户将数据存储在单独的分区上，则只有该（数据）分区会受到影响，而系统分区和可能的其他数据分区将继续运行。</p>
+</blockquote>
+<p>请注意，日志文件系统（Journaled file system）只能在断电和存储设备突然断开连接的情况下提供数据安全性。 这不能保护您的数据免受文件系统中的坏块和逻辑错误的影响。 在这些情况下，您应该使用 RAID（廉价磁盘冗余阵列）解决方案。</p>
+<h3 id="2-1-分区布局和类型"><a href="#2-1-分区布局和类型" class="headerlink" title="2.1 分区布局和类型"></a>2.1 分区布局和类型</h3><p>一个硬盘可以划分多个分区，也可以通过软件将一个分区分布在多个硬盘上。在安装过程中，可以使用特定于发行版的工具（通常是直接的图形界面）或 <code>fdisk</code>（用于创建分区并设置其属性的基于文本的工具）来定义自己的分区布局。</p>
+<p>Linux系统上有两种主要分区：</p>
+<ol>
+<li>数据分区（<em>data partition</em>）：正常的 Linux 系统数据，包括根分区，包含系统启动和运行的所有数据。</li>
+<li>交换分区（<em>swap partition</em>）：扩展计算机的物理内存，额外的硬盘内存。</li>
+</ol>
+<p>大多数 Linux 系统在安装时使用 fdisk 来设置分区类型。 标准 Linux 分区的 Swap分区号为 82，数据分区号为 83，可以是日志分区（<code>ext3</code>）或普通分区（<code>ext2</code>，在旧系统上）。 如果您忘记了这些值，fdisk 实用程序有内置帮助。除了这两种之外，Linux 还支持各种其他文件系统类型，例如相对较新的 Reiser 文件系统、JFS、NFS、FATxx 以及其他（专有）操作系统上本机可用的许多其他文件系统。标准根分区（用单个正斜杠&#x2F;表示）包含系统配置文件、最基本的命令和服务器程序、系统库、一些临时空间和管理用户的主目录。 </p>
+<blockquote>
+<p>在 Linux 上，您几乎永远不会看到诸如“内存不足，请先关闭一些应用程序并重试”之类的恼人消息，因为有额外的内存。 到目前为止，Swap 或虚拟内存过程早已被 UNIX 世界之外的操作系统所采用。</p>
+</blockquote>
+<p>硬盘的其余部分通常分为数据分区，尽管所有非系统关键数据可能都驻留在一个分区上，例如当您执行标准工作站安装时。 当非关键数据被分离在不同的分区上时，通常会遵循一定的模式：</p>
+<ul>
+<li>用户程序分区（<code>/usr</code>）</li>
+<li>包含用户个人数据的分区（<code>/home</code>）</li>
+<li>用于存储临时数据（如打印队列和邮件队列）的分区（<code>/var</code>）</li>
+<li>第三方和额外软件的分区（<code>/opt</code>）</li>
+</ul>
+<p>在服务器上，系统数据往往与用户数据分开。 提供服务的程序与该服务处理的数据保存在不同的位置。 将在此类系统上创建不同的分区：</p>
+<ul>
+<li>包含启动机器所需的所有数据的分区（<code>/boot</code>）</li>
+<li>包含配置数据和服务器程序的分区（<code>/etc</code>）</li>
+<li>包含服务器数据的一个或多个分区，例如数据库表、用户邮件、ftp 存档等（<code>/srv</code>）</li>
+<li>包含用户程序和应用程序的分区（<code>/opt</code>）</li>
+<li>一个或多个用于用户特定文件（主目录）的分区（<code>/home</code>）</li>
+<li>一个或多个交换分区（虚拟内存）</li>
+</ul>
+<h3 id="2-2-挂载的概念"><a href="#2-2-挂载的概念" class="headerlink" title="2.2 挂载的概念"></a>2.2 挂载的概念</h3><p>所有的分区都需要通过挂载点（mount point）附加到（attach）系统当中，挂载点定义了一个特定数据集（a particular data set ）在文件系统中的位置（实际上挂载点就是我们在系统上看到的被挂载的目录）。 通常，所有分区都通过根分区连接。 在根分区（用斜杠 &#x2F; 表示）上创建目录， 根目录下的子空目录将是附加分区的地方。 </p>
+<p>示例：给定一个包含以下目录的分区：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">videos/         cd-images/      pictures/</span><br></pre></td></tr></table></figure>
+
+<p>管理员可以使用 <code>mount</code> 命令将此分区附加到文件系统中名为 <code>/opt/media</code> 的目录中。 为此，<strong>系统管理员</strong>必须确保系统上存在目录 <code>/opt/media</code>。 <strong>最好是一个空目录</strong>。 使用 <code>mount</code> 命令挂载完成后，当查看以前的空目录 <code>/opt/media</code> 的内容时，它将包含已安装介质（硬盘或硬盘分区、CD、DVD、闪存卡、USB 或其他存储设备）上的文件和目录 <code>videos/</code>、 <code>cd-images/</code>、 <code>pictures/</code>。</p>
+<p>在系统启动期间，所有分区都会被挂载，按照文件 <code>/etc/fstab</code> 中描述挂载。 某些分区默认情况下不会安装（mount），例如，如果它们没有持续连接到系统，例如数码相机使用的存储。 如果配置良好，一旦系统发现设备已连接，设备就会被安装，或者它可以是用户可安装的，即您不需要成为系统管理员即可将设备连接到系统或从系统中分离。 </p>
+<p>在正在运行的系统上，可以使用 <code>df -h</code> 命令（代表磁盘已满或磁盘空闲）显示有关分区及其安装点的信息。 在 Linux中，<code>df</code> 是 GNU 软件，并且支持 <code>-h</code> 等人类可读选项，大大提高了可读性。 </p>
+<p><code>df</code> 命令仅显示有关<strong>活动非交换分区</strong>（active non-swap）的信息。 这些可以包括来自其他网络系统的分区，如下例所示，其中 <code>/home</code> 目录是从网络上的文件服务器安装的，这是企业环境中经常遇到的情况。可以看到，<strong>挂载点</strong>就是被挂载的目录。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># df -h</span></span><br><span class="line">文件系统                 容量  已用  可用 已用% 挂载点</span><br><span class="line">devtmpfs                 <span class="number">477</span>M     <span class="number">0</span>  <span class="number">477</span>M    <span class="number">0</span>% /dev</span><br><span class="line">tmpfs                    <span class="number">494</span>M     <span class="number">0</span>  <span class="number">494</span>M    <span class="number">0</span>% /dev/shm</span><br><span class="line">tmpfs                    <span class="number">494</span>M   <span class="number">27</span>M  <span class="number">467</span>M    <span class="number">6</span>% /run</span><br><span class="line">tmpfs                    <span class="number">494</span>M     <span class="number">0</span>  <span class="number">494</span>M    <span class="number">0</span>% /sys/fs/cgroup</span><br><span class="line">/dev/mapper/centos-root   <span class="number">37</span>G  <span class="number">5.3</span>G   <span class="number">32</span>G   <span class="number">15</span>% /</span><br><span class="line">/dev/sda1               <span class="number">1014</span>M  <span class="number">187</span>M  <span class="number">828</span>M   <span class="number">19</span>% /boot</span><br><span class="line">Home                     <span class="number">234</span>G  <span class="number">159</span>G   <span class="number">75</span>G   <span class="number">68</span>% /media/psf/Home</span><br><span class="line">ʕ •ᴥ•ʔ                   <span class="number">466</span>G  <span class="number">401</span>G   <span class="number">66</span>G   <span class="number">87</span>% /media/psf/ʕ •ᴥ•ʔ</span><br><span class="line">iCloud                   <span class="number">234</span>G  <span class="number">159</span>G   <span class="number">75</span>G   <span class="number">68</span>% /media/psf/iCloud</span><br><span class="line">tmpfs                     <span class="number">99</span>M   <span class="number">60</span>K   <span class="number">99</span>M    <span class="number">1</span>% /run/user/<span class="number">0</span></span><br><span class="line">fs1:/home                <span class="number">8.9</span>G  <span class="number">3.7</span>G  <span class="number">4.7</span>G   <span class="number">44</span>% /.automount/fs1/root/home</span><br></pre></td></tr></table></figure>
+
+<p>查看当前目录位于哪个分区？使用 <code>.</code> 参数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># df -h .</span></span><br><span class="line">文件系统                 容量  已用  可用 已用% 挂载点</span><br><span class="line">/dev/mapper/centos-root   <span class="number">37</span>G  <span class="number">5.3</span>G   <span class="number">32</span>G   <span class="number">15</span>% /</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-3-文件索引节点-inode"><a href="#2-3-文件索引节点-inode" class="headerlink" title="2.3 文件索引节点 inode"></a>2.3 文件索引节点 inode</h3><p>每个分区都有自己的文件系统。 将所有这些文件系统想象在一起，我们可以形成整个系统的树形结构的想法，但它并不那么简单。 在文件系统中，<strong>文件由索引节点表示</strong>（<code>inode</code>），索引节点是一种序列号，其中包含有关构成文件的实际数据的信息：该文件属于谁，以及它位于硬盘上的位置。</p>
+<p>每个分区都有自己的一组 <code>inode</code>； 在具有多个分区的系统中，可以存在具有相同索引节点号的文件。</p>
+<p>通常是在初始系统安装过程中或向现有系统添加额外磁盘时，<strong>每个分区会创建固定数量的索引节点</strong>。 此数字是分区上所有文件的最大文件数量（包括目录、特殊文件、链接等类型文件）。 我们通常指望每 <strong>2 到 8 KB</strong> 的存储空间有 1 个 <code>inode</code>。</p>
+<p><strong>创建新文件时，它会获得一个空闲的索引节点。 该 inode 中有以下信息：</strong></p>
+<ul>
+<li>文件的所有者和组所有者</li>
+<li>文件类型（常规、目录…）</li>
+<li>文件的权限</li>
+<li>创建、上次读取和更改的日期和时间</li>
+<li>索引节点被更改的日期和时间</li>
+<li>指向此文件的链接数量</li>
+<li>文件大小</li>
+<li>文件数据实际地址</li>
+</ul>
+<p>索引节点中<strong>唯一不包含的信息是文件名和目录</strong>。 这些信息（文件名、所属目录）存储在特殊目录中。 <strong>通过比较文件名和索引节点号（inode numbers），系统可以构建用户理解的树形结构</strong>。 用户可以使用 <code>ls -i</code> 选项显示 <code>inode</code> 编号。 索引节点（<code>inode</code>）在磁盘上有自己独立的空间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># ls -i /home/program/</span></span><br><span class="line"><span class="number">102692516</span> staticlib  <span class="number">102634271</span> testdiretory      <span class="number">23510</span> test.i      <span class="number">23514</span> test.s</span><br><span class="line">    <span class="number">23516</span> test.c         <span class="number">23518</span> test.exe          <span class="number">23517</span> test.o</span><br></pre></td></tr></table></figure>
+
+<p>关于 <code>inode</code> 结构的定义和管理，后续开发篇文章再具体分析。</p>
+<h2 id="3-目录结构"><a href="#3-目录结构" class="headerlink" title="3 目录结构"></a>3 目录结构</h2><p> <a target="_blank" rel="noopener" href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf">Filesystem Hierarchy Standard (FHS)</a> 定义了类 Unix 操作系统中的目录结构和目录内容（标准），它还定义了许多文件类型和目录的名称、位置和权限。 它由 Linux 基金会维护，最新版为 3.0。Linux 使用这种标准来组织目录结构（之前学习过 <a target="_blank" rel="noopener" href="https://catecat.gitee.io/post/System-V-AMD64-ABI/">System V AMD64 ABI</a> 介绍了调用约定、对象文件格式、可执行文件格式、动态链接语义等规范标准）。</p>
 <p>Linux 目录结构和 Windows 一样是树形结构，但是有所不同，Windows 下使用 <code>C</code>、<code>D</code> 等盘符表示根目录；Linux 下只有一个根目录 <code>/</code>。</p>
 <p>先登录到 CentOS 7.9 系统：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">&gt; ssh root@<span class="number">10.211</span><span class="number">.55</span><span class="number">.28</span>                       </span><br><span class="line">root@<span class="number">10.211</span><span class="number">.55</span><span class="number">.28&#x27;</span>s password: </span><br><span class="line">Last login: Sat Jul  <span class="number">8</span> <span class="number">22</span>:<span class="number">17</span>:<span class="number">25</span> <span class="number">2023</span> from <span class="number">10.211</span><span class="number">.55</span><span class="number">.2</span></span><br><span class="line"></span><br><span class="line">[root@centos7 ~]<span class="meta"># whoami</span></span><br><span class="line">root</span><br><span class="line">  </span><br><span class="line">[root@centos7 ~]<span class="meta"># hostnamectl</span></span><br><span class="line">   Static hostname: localhost.localdomain</span><br><span class="line">Transient hostname: centos7<span class="number">.9</span></span><br><span class="line">         Icon name: computer-vm</span><br><span class="line">           Chassis: vm</span><br><span class="line">        Machine ID: <span class="number">32</span>ced81c668fc14fba8ae988c2f1b506</span><br><span class="line">           Boot ID: a37fab19ea7e4cce876f0110861e3d9b</span><br><span class="line">    Virtualization: kvm</span><br><span class="line">  Operating System: CentOS Linux <span class="number">7</span> (Core)</span><br><span class="line">       CPE OS Name: cpe:/o:centos:centos:<span class="number">7</span></span><br><span class="line">            Kernel: Linux <span class="number">3.10</span><span class="number">.0</span><span class="number">-1160.71</span><span class="number">.1</span>.el7.x86_64</span><br><span class="line">      Architecture: x86<span class="number">-64</span></span><br><span class="line">        </span><br><span class="line">[root@centos7 ~]<span class="meta"># pwd</span></span><br><span class="line">/root</span><br></pre></td></tr></table></figure>
@@ -480,7 +784,7 @@
 </tr>
 <tr>
 <td>&#x2F;usr</td>
-<td>1、unix shared resources（共享资源）的缩写，该目录是<strong>只读的，</strong>允许多台计算机共享。<strong>这个文件夹下面的文件是只读的，因为都是和系统相关的文件</strong>。<br />2、从 centOS 7 开始，将根目录下 <code>/bin</code>、<code>/sbin</code>、<code>/lib</code>、<code>/lib64</code> 链接到 <code>/usr</code> 下对应的目录。<br />•  <code>/usr/games</code>：存放游戏。<br />• <code>/usr/include</code>：存放标准 C语言的头文件。<br />• <code>/usr/src</code>：存放内核源码、头文件、文档。<br />• <code>/usr/local</code>：存放手动安装的软件。系统管理员在安装软件时会使用这个子目录，在系统更新过程中应安全地覆盖这个子目录。<br />• <code>/usr/share</code>：存放一些共享的数据，比如音乐文件，图片。<br />• <code>/usr/libexec</code>：系统内部应用调用的二进制文件，并不是直接给用户或 shell 脚本使用的。其他程序调用的小型帮助程序。<br />• <code>/usr/etc</code>：不允许使用，<code>/usr</code> 中的程序应该将配置文件放在 <code>/etc</code> 下。<br />• <code>/usr/bin</code>：见 <code>/bin</code>。<br />• <code>/usr/sbin</code>：见 <code>/sbin</code>。<br />• <code>/usr/lib</code>：见 <code>/lib</code>。<br />• <code>/usr/lib64</code>：见 <code>/lib64</code>。</td>
+<td>1、unix shared resources（共享资源）的缩写，该目录是<strong>只读的，</strong>允许多台计算机共享。<strong>这个文件夹下面的文件是只读的，因为都是和系统相关的文件</strong>。<br />2、从 centOS 7 开始，将根目录下 <code>/bin</code>、<code>/sbin</code>、<code>/lib</code>、<code>/lib64</code> 链接到 <code>/usr</code> 下对应的目录。<br />•  <code>/usr/games</code>：存放游戏。<br />• <code>/usr/include</code>：存放标准 C语言的头文件。<br />• <code>/usr/src</code>：存放内核源码、头文件、文档。<br />• <code>/usr/local</code>：存放手动安装的软件。系统管理员在安装软件时会使用这个子目录，在系统更新过程中应安全地覆盖这个子目录。<br />• <code>/usr/share</code>：存放一些共享的数据，比如音乐文件，图片。<br />• <code>/usr/libexec</code>：系统内部应用调用的二进制文件，并不是直接给用户或 shell 脚本使用的。其他程序调用的小型帮助程序。<br />• <code>/usr/etc</code>：不允许使用，<code>/usr</code> 中的程序应该将配置文件放在 <code>/etc</code> 下。<br />• <code>/usr/bin</code>：见 <code>/bin</code>。<br />• <code>/usr/sbin</code>：见 <code>/sbin</code>。<br />• <code>/usr/lib</code>：见 <code>/lib</code>。<br />• <code>/usr/lib64</code>：见 <code>/lib64</code>。<br /><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/zh-cn/red_hat_enterprise_linux/7/html/storage_administration_guide/part-overvw">CentOS 7 引入了新的文件系统结构。目录 <code>/bin</code>、<code>/sbin</code>、<code>/lib</code> 和 <code>/lib64</code>现在嵌套在 <code>/usr</code> 下。</a></td>
 </tr>
 <tr>
 <td>&#x2F;var</td>
@@ -540,88 +844,15 @@
 <ul>
 <li>《<a target="_blank" rel="noopener" href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf">Filesystem Hierarchy Standard 3.0</a>》</li>
 <li>《<a target="_blank" rel="noopener" href="https://people.ubuntu.com/~happyaron/docs/FHS.zh_CN.pdf">Filesystem Hierarchy Standard 中文版</a>》</li>
-<li><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/part-file-systems">Storage Administration Guide—RED HAT ENTERPRISE LINUX 7—File Systems</a></li>
 <li>《<a target="_blank" rel="noopener" href="https://tldp.org/LDP/intro-linux/intro-linux.pdf">Introduction to Linux A Hands on Guide—Chapter 3. About files and the file system</a>》</li>
+<li><a target="_blank" rel="noopener" href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/storage_administration_guide/part-file-systems">Storage Administration Guide—RED HAT ENTERPRISE LINUX 7—File Systems</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/linux-file-hierarchy-structure/">Linux File Hierarchy Structure</a></li>
 <li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/linux-directory-structure/">Linux Directory Structure</a></li>
 <li><a target="_blank" rel="noopener" href="https://eng.libretexts.org/Bookshelves/Computer_Science/Operating_Systems/Linux_-_The_Penguin_Marches_On_(McClanahan)/04%3A_Managing_Linux_Storage/5.12%3A_Linux_Directory_Structure/5.12.01%3A_Linux_Directory_Structure_-_Hierarchy">Filesystem Hierarchy Standard</a></li>
 <li>《<a target="_blank" rel="noopener" href="https://kolegite.com/EE_library/books_and_lectures/Linux/The_Linux_Programming_Interface.pdf">The Linux Programming Interface Chapter14 File System</a>》</li>
 <li>《Practical System Programming with C - Pragmatic Example Applications in Linux and Unix-Based Operating Systems Chapter 4 Files and Directories》</li>
 </ul>
-<h2 id="2-分区（Partitions）"><a href="#2-分区（Partitions）" class="headerlink" title="2 分区（Partitions）"></a>2 分区（Partitions）</h2><p>这一原则可以追溯到 Linux 没有日志文件系统、电源故障可能导致灾难的时代。 分区的使用仍然是出于安全性和稳健性的原因，因此系统某一部分的破坏并不意味着整个计算机都处于危险之中。 这是目前分区最重要的原因。</p>
-<blockquote>
-<p>一个简单的示例：用户创建一个脚本、程序或 Web 应用程序来开始填充磁盘。 如果磁盘仅包含一个大分区，则当磁盘已满时整个系统将停止运行。 如果用户将数据存储在单独的分区上，则只有该（数据）分区会受到影响，而系统分区和可能的其他数据分区将继续运行。</p>
-</blockquote>
-<p>请注意，日志文件系统（Journaled file system）只能在断电和存储设备突然断开连接的情况下提供数据安全性。 这不能保护您的数据免受文件系统中的坏块和逻辑错误的影响。 在这些情况下，您应该使用 RAID（廉价磁盘冗余阵列）解决方案。</p>
-<h3 id="2-1-分区布局和类型"><a href="#2-1-分区布局和类型" class="headerlink" title="2.1 分区布局和类型"></a>2.1 分区布局和类型</h3><p>硬盘的分区由系统管理员决定。 在较大的系统上，他或她甚至可以使用适当的软件将一个分区分布在多个硬盘上。 大多数发行版都允许针对工作站（普通用户）和一般服务器目的进行优化的标准设置，但也接受自定义分区。 在安装过程中，您可以使用特定于发行版的工具（通常是直接的图形界面）或  <code>fdisk</code>（用于创建分区并设置其属性的基于文本的工具）来定义自己的分区布局。</p>
-<p>Linux系统上有两种主要分区：</p>
-<ol>
-<li>数据分区（<em>data partition</em>）：正常的 Linux 系统数据，包括根分区，包含系统启动和运行的所有数据； </li>
-<li>交换分区（<em>swap partition</em>）：扩展计算机的物理内存，额外的硬盘内存。</li>
-</ol>
-<p>大多数系统包含一个根分区、一个或多个数据分区以及一个或多个交换分区。 混合环境中的系统可能包含用于其他系统数据的分区，例如用于 MS Windows 数据的 FAT 或 VFAT 文件系统的分区。</p>
-<p>大多数 Linux 系统在安装时使用 <code>fdisk</code> 来设置分区类型。然而，在某些情况下，您可能没有那么幸运。 在这种情况下，您将需要手动选择分区类型，甚至手动执行实际分区。 标准 Linux 分区的交换分区号为 82，数据分区号为 83，可以是日志分区（<code>ext3</code>）或普通分区（<code>ext2</code>，在旧系统上）。 如果您忘记了这些值，<code>fdisk</code> 实用程序有内置帮助。</p>
-<p>除了这两种之外，Linux 还支持各种其他文件系统类型，例如相对较新的 Reiser 文件系统、JFS、NFS、FATxx 以及其他（专有）操作系统上本机可用的许多其他文件系统。</p>
-<p>标准根分区（用单个正斜杠&#x2F;表示）大约为 100-500 MB，包含系统配置文件、最基本的命令和服务器程序、系统库、一些临时空间和管理用户的主目录。 标准安装需要大约 250 MB 的根分区空间。</p>
-<p>交换空间（Swap space）只能由系统本身访问，并且在正常操作期间是隐藏的。 与普通 UNIX 系统一样，Swap 系统可确保您无论发生什么情况都可以继续工作。 在 Linux 上，您几乎永远不会看到诸如“内存不足，请先关闭一些应用程序并重试”之类的恼人消息，因为有额外的内存。 到目前为止，Swap 或虚拟内存过程早已被 UNIX 世界之外的操作系统所采用。（使用硬盘上的内存自然比使用计算机的真实内存芯片慢，但是拥有这一点额外的内存是一种很大的安慰。）</p>
-<p>Linux 通常依靠硬盘上的交换空间形式拥有两倍的物理内存。 安装系统时，您必须知道将如何执行此操作。 具有 512 MB RAM 的系统上的示例：</p>
-<ul>
-<li>第一种可能性：一个 1 GB 的交换分区。</li>
-<li>第二种可能性：两个 512 MB 的交换分区。</li>
-<li>第三种可能性：使用两个硬盘：每个磁盘上有 1 个 512 MB 的分区（当预计有大量 I&#x2F;O 时，选该选项）。</li>
-</ul>
-<p>在许多发行版中，<strong>内核也位于单独的分区上，因为它是系统中最重要的文件</strong>。 如果是这种情况，您会发现您还有一个 <code>/boot</code> 分区，用于<strong>保存内核和随附的数据文件</strong>。</p>
-<p>硬盘的其余部分通常分为数据分区，尽管所有非系统关键数据可能都驻留在一个分区上，例如当您执行标准工作站安装时。 当非关键数据被分离在不同的分区上时，通常会遵循一定的模式：</p>
-<ul>
-<li>用户程序分区（<code>/usr</code>）</li>
-<li>包含用户个人数据的分区（<code>/home</code>）</li>
-<li>用于存储临时数据（如打印队列和邮件队列）的分区（<code>/var</code>）</li>
-<li>第三方和额外软件的分区（<code>/opt</code>）</li>
-</ul>
-<p>在服务器上，系统数据往往与用户数据分开。 提供服务的程序与该服务处理的数据保存在不同的位置。 将在此类系统上创建不同的分区：</p>
-<ul>
-<li>包含启动机器所需的所有数据的分区（<code>/boot</code>）</li>
-<li>包含配置数据和服务器程序的分区（<code>/etc</code>）</li>
-<li>包含服务器数据的一个或多个分区，例如数据库表、用户邮件、ftp 存档等（<code>/srv</code>）</li>
-<li>包含用户程序和应用程序的分区（<code>/opt</code>）</li>
-<li>一个或多个用于用户特定文件（主目录）的分区（<code>/home</code>）</li>
-<li>一个或多个交换分区（虚拟内存）</li>
-</ul>
-<h3 id="2-2-挂载点（Mount-points）"><a href="#2-2-挂载点（Mount-points）" class="headerlink" title="2.2 挂载点（Mount points）"></a>2.2 挂载点（Mount points）</h3><p>所有的分区都需要通过挂载点（mount point）附加到（attach）系统当中，挂载点定义了一个特定数据集（a particular data set ）在文件系统中的位置。 通常，所有分区都通过根分区连接。 在根分区（用斜杠 <code>/</code> 表示）上创建目录， 根目录下的子空目录将是附加分区的地方。 示例：给定一个包含以下目录的分区：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">videos/         cd-images/      pictures/</span><br></pre></td></tr></table></figure>
-
-<p>我们希望将此分区附加到文件系统中名为 <code>/opt/media</code> 的目录中。 为此，<strong>系统管理员</strong>必须确保系统上存在目录 <code>/opt/media</code>。 <strong>最好是一个空目录</strong>。 本章稍后将解释如何完成此操作。 然后，使用 <code>mount</code> 命令，管理员可以将分区附加到系统。 当您查看以前的空目录 <code>/opt/media</code> 的内容时，它将包含已安装介质（硬盘或硬盘分区、CD、DVD、闪存卡、USB 或其他存储设备）上的文件和目录 <code>videos/ </code>、<code> cd-images/</code>、<code> pictures/</code>。</p>
-<p>在系统启动期间，所有分区都会被挂载，按照文件 <code>/etc/fstab</code> 中描述挂载。 某些分区默认情况下不会安装（mount），例如，如果它们没有持续连接到系统，例如数码相机使用的存储。 如果配置良好，一旦系统发现设备已连接，设备就会被安装，或者它可以是用户可安装的，即您不需要成为系统管理员即可将设备连接到系统或从系统中分离。 </p>
-<p>在正在运行的系统上，可以使用 <code>df -h</code> 命令（代表磁盘已满或磁盘空闲）显示有关分区及其安装点的信息。 在 Linux中，<code>df</code> 是 GNU 版本，并且支持 <code>-h</code> 等人类可读选项，大大提高了可读性。 请注意，商业 UNIX 机器通常有自己的 <code>df</code> 版本和许多其他命令。 尽管通用工具的 GNU 版本通常具有更多更好的功能，但它们的行为通常是相同的。</p>
-<p><code>df</code> 命令仅显示有关<strong>活动非交换分区</strong>（active non-swap）的信息。 这些可以包括来自其他网络系统的分区，如下例所示，其中 <code>/mou</code> 目录是从网络上的文件服务器安装的，这是企业环境中经常遇到的情况。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># df -h</span></span><br><span class="line">文件系统                 容量  已用  可用 已用% 挂载点</span><br><span class="line">devtmpfs                 <span class="number">477</span>M     <span class="number">0</span>  <span class="number">477</span>M    <span class="number">0</span>% /dev</span><br><span class="line">tmpfs                    <span class="number">494</span>M     <span class="number">0</span>  <span class="number">494</span>M    <span class="number">0</span>% /dev/shm</span><br><span class="line">tmpfs                    <span class="number">494</span>M   <span class="number">27</span>M  <span class="number">467</span>M    <span class="number">6</span>% /run</span><br><span class="line">tmpfs                    <span class="number">494</span>M     <span class="number">0</span>  <span class="number">494</span>M    <span class="number">0</span>% /sys/fs/cgroup</span><br><span class="line">/dev/mapper/centos-root   <span class="number">37</span>G  <span class="number">5.3</span>G   <span class="number">32</span>G   <span class="number">15</span>% /</span><br><span class="line">/dev/sda1               <span class="number">1014</span>M  <span class="number">187</span>M  <span class="number">828</span>M   <span class="number">19</span>% /boot</span><br><span class="line">Home                     <span class="number">234</span>G  <span class="number">159</span>G   <span class="number">75</span>G   <span class="number">68</span>% /media/psf/Home</span><br><span class="line">ʕ •ᴥ•ʔ                   <span class="number">466</span>G  <span class="number">401</span>G   <span class="number">66</span>G   <span class="number">87</span>% /media/psf/ʕ •ᴥ•ʔ</span><br><span class="line">iCloud                   <span class="number">234</span>G  <span class="number">159</span>G   <span class="number">75</span>G   <span class="number">68</span>% /media/psf/iCloud</span><br><span class="line">tmpfs                     <span class="number">99</span>M   <span class="number">60</span>K   <span class="number">99</span>M    <span class="number">1</span>% /run/user/<span class="number">0</span></span><br><span class="line">fs1:/home                <span class="number">8.9</span>G  <span class="number">3.7</span>G  <span class="number">4.7</span>G   <span class="number">44</span>% /.automount/fs1/root/home</span><br></pre></td></tr></table></figure>
-
-<p>查看当前目录位于哪个分区？使用 <code>.</code> 参数：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># df -h .</span></span><br><span class="line">文件系统                 容量  已用  可用 已用% 挂载点</span><br><span class="line">/dev/mapper/centos-root   <span class="number">37</span>G  <span class="number">5.3</span>G   <span class="number">32</span>G   <span class="number">15</span>% /</span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="3-文件系统管理"><a href="#3-文件系统管理" class="headerlink" title="3  文件系统管理"></a>3  文件系统管理</h2><p>每个分区都有自己的文件系统。 将所有这些文件系统想象在一起，我们可以形成整个系统的树形结构的想法，但它并不那么简单。 在文件系统中，<strong>文件由索引节点表示</strong>（<code>inode</code>），索引节点是一种序列号，其中包含有关构成文件的实际数据的信息：该文件属于谁，以及它位于硬盘上的位置。</p>
-<p>每个分区都有自己的一组 <code>inode</code>； 在具有多个分区的系统中，可以存在具有相同索引节点号的文件。</p>
-<p>每个索引节点描述了硬盘上的一个数据结构，存储着文件的属性，包括文件数据的物理位置。 通常是在初始系统安装过程中或向现有系统添加额外磁盘时，<strong>每个分区会创建固定数量的索引节点</strong>。 此数字是分区上所有文件的最大文件数量（包括目录、特殊文件、链接等类型文件）。 我们通常指望每 <strong>2 到 8 KB</strong> 的存储空间有 1 个 <code>inode</code>。</p>
-<p><strong>创建新文件时，它会获得一个空闲的索引节点。 该 inode 中有以下信息：</strong></p>
-<ul>
-<li>文件的所有者和组所有者</li>
-<li>文件类型（常规、目录…）</li>
-<li>文件的权限</li>
-<li>创建、上次读取和更改的日期和时间</li>
-<li>索引节点被更改的日期和时间</li>
-<li>指向此文件的链接数量</li>
-<li>文件大小</li>
-<li>文件数据实际地址</li>
-</ul>
-<p>索引节点中<strong>唯一不包含的信息是文件名和目录</strong>。 这些信息（文件名、所属目录）存储在特殊目录中。 <strong>通过比较文件名和索引节点号（inode numbers），系统可以构建用户理解的树形结构</strong>。 用户可以使用 <code>ls -i</code> 选项显示 <code>inode</code> 编号。 索引节点（<code>inode</code>）在磁盘上有自己独立的空间。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># ls -i /home/program/</span></span><br><span class="line"><span class="number">102692516</span> staticlib  <span class="number">102634271</span> testdiretory      <span class="number">23510</span> test.i      <span class="number">23514</span> test.s</span><br><span class="line">    <span class="number">23516</span> test.c         <span class="number">23518</span> test.exe          <span class="number">23517</span> test.o</span><br></pre></td></tr></table></figure>
-
-
-
-<p>关于 <code>inode</code> 结构的定义和管理，后续开发篇文章再具体分析。</p>
-<h2 id="4-Orientation-in-the-file-system"><a href="#4-Orientation-in-the-file-system" class="headerlink" title="4 Orientation in the file system"></a>4 Orientation in the file system</h2><h3 id="4-1-PATH-环境变量"><a href="#4-1-PATH-环境变量" class="headerlink" title="4.1 PATH 环境变量"></a>4.1 PATH 环境变量</h3><p>当您希望系统执行命令时，您几乎不需要提供该命令的完整路径。 例如，我们知道 <code>ls</code> 命令在 <code>/bin</code> 目录中（用<code>which -a ls</code> 查看），但我们不必输入命令 <code>/bin/ls</code> 让计算机列出当前目录的内容。</p>
+<h2 id="4-PATH-环境变量"><a href="#4-PATH-环境变量" class="headerlink" title="4 PATH 环境变量"></a>4 PATH 环境变量</h2><h3 id="4-1-介绍"><a href="#4-1-介绍" class="headerlink" title="4.1 介绍"></a>4.1 介绍</h3><p>当您希望系统执行命令时，您几乎不需要提供该命令的完整路径。 例如，我们知道 <code>ls</code> 命令在 <code>/bin</code> 目录中（用<code>which -a ls</code> 查看），但我们不必输入命令 <code>/bin/ls</code> 让计算机列出当前目录的内容。</p>
 <p><code>PATH</code> <strong>环境变量</strong>负责处理这个问题。 该变量列出了系统中可以找到可执行文件的目录，从而节省了用户大量键入和记忆命令位置的时间。 因此，<code>PATH</code> 里自然包含许多含有 <code>/bin</code> 的目录。<code>echo</code> 命令用于显示变量 <code>PATH</code> 的内容（<code>$</code>）：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># echo $PATH</span></span><br><span class="line">/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin</span><br></pre></td></tr></table></figure>
 
@@ -640,7 +871,26 @@
 <div class="note primary"><p>注意：修改环境变量只是临时的更改。请注意，在 shell 中使用 <code>export</code> 命令时，<strong>更改是临时的</strong>，<strong>并且仅对此会话有效（直到您注销）</strong>。 打开新会话，即使当前会话仍在运行，也不会在新会话中产生新路径。 我们将在第 7.2 节中看到如何通过将这些行添加到 shell 配置文件来永久地对环境进行此类更改。</p>
 </div>
 
+<h3 id="4-2-环境变量临时修改"><a href="#4-2-环境变量临时修改" class="headerlink" title="4.2 环境变量临时修改"></a>4.2 环境变量临时修改</h3><p>系统中有个很多环境变量，可以使用 <code>printenv</code>、<code>env</code> 命令查看系统当前配置的所有环境变量（<code>echo</code> 命令可以查看指定名称的环境变量）。<strong>环境变量由 shell 进行管理</strong>，供系统中所有进程共享。环境变量名按照惯例都使用大写。</p>
+<p>使用 <code>export</code> 可以在<strong>当前会话窗口临时</strong>指定名称环境变量最后添加新的环境变量，<strong>其他会话窗口不会使用该环境变量新值</strong>，或<strong>当前会话注销后该环境变量就失效</strong>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> 变量名=$变量名:新值</span><br></pre></td></tr></table></figure>
 
+<p>查看当前环境变量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># printenv</span></span><br><span class="line">XDG_SESSION_ID=<span class="number">245</span></span><br><span class="line">HOSTNAME=centos7<span class="number">.9</span></span><br><span class="line">TERM=xterm<span class="number">-256</span>color</span><br><span class="line">SHELL=/bin/bash</span><br><span class="line">OLDPWD=/root</span><br><span class="line">SSH_TTY=/dev/pts/<span class="number">2</span></span><br><span class="line">USER=root</span><br><span class="line">PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin</span><br><span class="line">PWD=/</span><br><span class="line">LANG=zh_CN.UTF<span class="number">-8</span></span><br><span class="line">HOME=/root</span><br><span class="line">LOGNAME=root</span><br><span class="line">XDG_DATA_DIRS=/root/.local/share/flatpak/exports/share:/var/lib/flatpak/exports/share:/usr/local/share:/usr/share</span><br><span class="line">_=/usr/bin/printenv</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>TERM</code>：正在使用的终端类型。在文本模式下，这将是 linux 终端仿真，在图形模式下，您可能会使用 xterm。</li>
+<li><code>SHELL</code>：shell 终端类型。</li>
+<li><code>PATH</code>：可执行程序的环境变量路径</li>
+<li><code>HOME</code>：当前用户的家目录。</li>
+<li><code>PWD</code>：指示当前目录。</li>
+<li><code>HOSTNAME</code> ：主机名。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2023/07/13/VAEKBuT6D9wonQM.png" alt="17.png"></p>
+<h3 id="4-3-环境变量永久修改"><a href="#4-3-环境变量永久修改" class="headerlink" title="4.3 环境变量永久修改"></a>4.3 环境变量永久修改</h3><p>修改系统配置文件，可以达到永久修改环境变量的作用。系统配置文件一般以 <code>.xxxrc</code> 后缀名存在，如 <code>/root/.bashrc</code>。</p>
+<p>如果是使用 <code>bash</code> shell 的话，<strong>当前用户</strong>对应的配置在 <code>~/.profile</code>、<code>~/.bash_profile</code>、<code>~/.bash_login</code>、<code>~/.bash_logout</code> 中。<strong>全局</strong>的环境变量在 <code>/etc/profile</code> 文件中设置。</p>
+<p>如上述的 <code>$PATH</code> 路径就可以在 <code>~/.bash_profile</code> 中添加。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># cat ~/.bash_profile</span></span><br><span class="line"># .bash_profile</span><br><span class="line"></span><br><span class="line"># Get the aliases <span class="keyword">and</span> functions</span><br><span class="line"><span class="keyword">if</span> [ -f ~/.bashrc ]; then</span><br><span class="line">	. ~/.bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># User specific environment <span class="keyword">and</span> startup programs</span><br><span class="line"></span><br><span class="line">PATH=$PATH:$HOME/bin	<span class="comment">// 在后面添加 :/xxx/bin</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> PATH</span><br></pre></td></tr></table></figure>
 
 
 
@@ -778,7 +1028,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:10</span>
+    <span title="站点阅读时长">17:14</span>
   </span>
 </div>
 <div class="busuanzi-count">
