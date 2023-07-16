@@ -24,15 +24,16 @@
 
   <meta name="description" content="😊">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux 文件系统">
-<meta property="og:url" content="https://directoree.github.io/post/Linux-File-Systems/index.html">
+<meta property="og:title" content="Linux 文件系统基础">
+<meta property="og:url" content="https://directoree.github.io/post/linux-file-systems_basics/index.html">
 <meta property="og:site_name" content="˗ˋˏ♡ˎˊ˗">
 <meta property="og:description" content="😊">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/07/13/5qiABNLP6K3ybGf.png">
 <meta property="og:image" content="https://s2.loli.net/2023/07/13/VAEKBuT6D9wonQM.png">
+<meta property="og:image" content="https://s2.loli.net/2023/07/15/4MoC8Qcyk3rYGwl.png">
 <meta property="article:published_time" content="2023-07-10T12:54:19.000Z">
-<meta property="article:modified_time" content="2023-07-13T16:23:56.681Z">
+<meta property="article:modified_time" content="2023-07-14T16:31:49.500Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="x86-64">
 <meta property="article:tag" content="Linux 逆向">
@@ -40,7 +41,7 @@
 <meta name="twitter:image" content="https://s2.loli.net/2023/07/13/5qiABNLP6K3ybGf.png">
 
 
-<link rel="canonical" href="https://directoree.github.io/post/Linux-File-Systems/">
+<link rel="canonical" href="https://directoree.github.io/post/linux-file-systems_basics/">
 
 
 <script data-pjax class="page-configurations">
@@ -53,7 +54,7 @@
   };
 </script>
 
-  <title>Linux 文件系统 | ˗ˋˏ♡ˎˊ˗</title>
+  <title>Linux 文件系统基础 | ˗ˋˏ♡ˎˊ˗</title>
   
 
 
@@ -234,7 +235,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88File-system%EF%BC%89"><span class="nav-text">1 文件系统（File system）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 文件系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.2 文件系统的类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%86%E5%8C%BA%EF%BC%88Partitions%EF%BC%89"><span class="nav-text">2 分区（Partitions）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%86%E5%8C%BA%E5%B8%83%E5%B1%80%E5%92%8C%E7%B1%BB%E5%9E%8B"><span class="nav-text">2.1 分区布局和类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8C%82%E8%BD%BD%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2 挂载的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%96%87%E4%BB%B6%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9-inode"><span class="nav-text">2.3 文件索引节点 inode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-text">3 目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-PATH-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">4 PATH 环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">4.1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%B4%E6%97%B6%E4%BF%AE%E6%94%B9"><span class="nav-text">4.2 环境变量临时修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%B0%B8%E4%B9%85%E4%BF%AE%E6%94%B9"><span class="nav-text">4.3 环境变量永久修改</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88File-system%EF%BC%89"><span class="nav-text">1 文件系统（File system）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 文件系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.2 文件系统的类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%86%E5%8C%BA%EF%BC%88Partitions%EF%BC%89"><span class="nav-text">2 分区（Partitions）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%86%E5%8C%BA%E5%B8%83%E5%B1%80%E5%92%8C%E7%B1%BB%E5%9E%8B"><span class="nav-text">2.1 分区布局和类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8C%82%E8%BD%BD%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2 挂载的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%96%87%E4%BB%B6%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9-inode"><span class="nav-text">2.3 文件索引节点 inode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-text">3 目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-PATH-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">4 PATH 环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">4.1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%B4%E6%97%B6%E4%BF%AE%E6%94%B9"><span class="nav-text">4.2 环境变量临时修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%B0%B8%E4%B9%85%E4%BF%AE%E6%94%B9"><span class="nav-text">4.3 环境变量永久修改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%B8%B8%E7%94%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">5 常用的配置文件</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -250,7 +251,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">111</span>
+          <span class="site-state-item-count">112</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -333,7 +334,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/Linux-File-Systems/">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/linux-file-systems_basics/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.png">
@@ -346,7 +347,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Linux 文件系统
+          Linux 文件系统基础
         </h1>
 
         <div class="post-meta-container">
@@ -364,7 +365,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-07-14 00:23:56" itemprop="dateModified" datetime="2023-07-14T00:23:56+08:00">2023-07-14</time>
+        <time title="修改时间：2023-07-15 00:31:49" itemprop="dateModified" datetime="2023-07-15T00:31:49+08:00">2023-07-15</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -377,7 +378,7 @@
     </span>
 
   
-    <span id="/post/Linux-File-Systems/" class="post-meta-item leancloud_visitors" data-flag-title="Linux 文件系统" title="阅读次数">
+    <span id="/post/linux-file-systems_basics/" class="post-meta-item leancloud_visitors" data-flag-title="Linux 文件系统基础" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -392,8 +393,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/post/Linux-File-Systems/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/post/Linux-File-Systems/" itemprop="commentCount"></span>
+    <a title="valine" href="/post/linux-file-systems_basics/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/linux-file-systems_basics/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -730,6 +731,7 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># ls -i /home/program/</span></span><br><span class="line"><span class="number">102692516</span> staticlib  <span class="number">102634271</span> testdiretory      <span class="number">23510</span> test.i      <span class="number">23514</span> test.s</span><br><span class="line">    <span class="number">23516</span> test.c         <span class="number">23518</span> test.exe          <span class="number">23517</span> test.o</span><br></pre></td></tr></table></figure>
 
 <p>关于 <code>inode</code> 结构的定义和管理，后续开发篇文章再具体分析。</p>
+<p>更多内容可阅读《鸟哥 Linux 私房菜第四版》。</p>
 <h2 id="3-目录结构"><a href="#3-目录结构" class="headerlink" title="3 目录结构"></a>3 目录结构</h2><p> <a target="_blank" rel="noopener" href="https://refspecs.linuxfoundation.org/FHS_3.0/fhs-3.0.pdf">Filesystem Hierarchy Standard (FHS)</a> 定义了类 Unix 操作系统中的目录结构和目录内容（标准），它还定义了许多文件类型和目录的名称、位置和权限。 它由 Linux 基金会维护，最新版为 3.0。Linux 使用这种标准来组织目录结构（之前学习过 <a target="_blank" rel="noopener" href="https://catecat.gitee.io/post/System-V-AMD64-ABI/">System V AMD64 ABI</a> 介绍了调用约定、对象文件格式、可执行文件格式、动态链接语义等规范标准）。</p>
 <p>Linux 目录结构和 Windows 一样是树形结构，但是有所不同，Windows 下使用 <code>C</code>、<code>D</code> 等盘符表示根目录；Linux 下只有一个根目录 <code>/</code>。</p>
 <p>先登录到 CentOS 7.9 系统：</p>
@@ -896,14 +898,7 @@
 
 
 
-
-
-
-
-
-
-
-
+<h2 id="5-常用的配置文件"><a href="#5-常用的配置文件" class="headerlink" title="5 常用的配置文件"></a>5 常用的配置文件</h2><p><img data-src="https://s2.loli.net/2023/07/15/4MoC8Qcyk3rYGwl.png" alt="20.png"></p>
 
     </div>
 
@@ -939,7 +934,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/Linux-File-Systems/" title="Linux 文件系统">https://directoree.github.io/post/Linux-File-Systems/</a>
+      <a href="https://directoree.github.io/post/linux-file-systems_basics/" title="Linux 文件系统基础">https://directoree.github.io/post/linux-file-systems_basics/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -961,6 +956,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/post/linux-file-permissions-users-groups/" rel="next" title="Linux 文件权限、用户与组">
+                  Linux 文件权限、用户与组 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -1028,7 +1026,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:14</span>
+    <span title="站点阅读时长">17:18</span>
   </span>
 </div>
 <div class="busuanzi-count">
@@ -1244,7 +1242,7 @@ NexT.utils.loadComments('#valine-comments', () => {
   NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
     new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
       el: '#valine-comments',
-      path: "/post/Linux-File-Systems/",
+      path: "/post/linux-file-systems_basics/",
       serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
     }));
   }, window.Valine);
