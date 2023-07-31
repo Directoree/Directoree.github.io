@@ -24,7 +24,7 @@
 
   <meta name="description" content="😊">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Linux 文件系统基础">
+<meta property="og:title" content="Linux 文件系统知识">
 <meta property="og:url" content="https://directoree.github.io/post/linux-file-systems_basics/index.html">
 <meta property="og:site_name" content="˗ˋˏ♡ˎˊ˗">
 <meta property="og:description" content="😊">
@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/07/13/VAEKBuT6D9wonQM.png">
 <meta property="og:image" content="https://s2.loli.net/2023/07/15/4MoC8Qcyk3rYGwl.png">
 <meta property="article:published_time" content="2023-07-10T12:54:19.000Z">
-<meta property="article:modified_time" content="2023-07-14T16:31:49.500Z">
+<meta property="article:modified_time" content="2023-07-28T14:30:56.064Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="x86-64">
 <meta property="article:tag" content="Linux 逆向">
@@ -54,7 +54,7 @@
   };
 </script>
 
-  <title>Linux 文件系统基础 | ˗ˋˏ♡ˎˊ˗</title>
+  <title>Linux 文件系统知识 | ˗ˋˏ♡ˎˊ˗</title>
   
 
 
@@ -235,7 +235,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88File-system%EF%BC%89"><span class="nav-text">1 文件系统（File system）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 文件系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.2 文件系统的类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%86%E5%8C%BA%EF%BC%88Partitions%EF%BC%89"><span class="nav-text">2 分区（Partitions）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%86%E5%8C%BA%E5%B8%83%E5%B1%80%E5%92%8C%E7%B1%BB%E5%9E%8B"><span class="nav-text">2.1 分区布局和类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8C%82%E8%BD%BD%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2 挂载的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%96%87%E4%BB%B6%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9-inode"><span class="nav-text">2.3 文件索引节点 inode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-text">3 目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-PATH-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">4 PATH 环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">4.1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%B4%E6%97%B6%E4%BF%AE%E6%94%B9"><span class="nav-text">4.2 环境变量临时修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%B0%B8%E4%B9%85%E4%BF%AE%E6%94%B9"><span class="nav-text">4.3 环境变量永久修改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%B8%B8%E7%94%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">5 常用的配置文件</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%EF%BC%88File-system%EF%BC%89"><span class="nav-text">1 文件系统（File system）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84"><span class="nav-text">1.1 文件系统架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.2 文件系统的类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%88%86%E5%8C%BA%EF%BC%88Partitions%EF%BC%89"><span class="nav-text">2 分区（Partitions）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%88%86%E5%8C%BA%E5%B8%83%E5%B1%80%E5%92%8C%E7%B1%BB%E5%9E%8B"><span class="nav-text">2.1 分区布局和类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%8C%82%E8%BD%BD%E7%9A%84%E6%A6%82%E5%BF%B5"><span class="nav-text">2.2 挂载的概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E6%96%87%E4%BB%B6%E7%B4%A2%E5%BC%95%E8%8A%82%E7%82%B9-inode"><span class="nav-text">2.3 文件索引节点 inode</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="nav-text">3 目录结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%96%87%E4%BB%B6%E9%93%BE%E6%8E%A5"><span class="nav-text">4 文件链接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%A1%AC%E9%93%BE%E6%8E%A5"><span class="nav-text">4.1 硬链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E8%BD%AF%E9%93%BE%E6%8E%A5"><span class="nav-text">4.2 软链接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-PATH-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-text">5 PATH 环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E4%BB%8B%E7%BB%8D"><span class="nav-text">5.1 介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E4%B8%B4%E6%97%B6%E4%BF%AE%E6%94%B9"><span class="nav-text">5.2 环境变量临时修改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E6%B0%B8%E4%B9%85%E4%BF%AE%E6%94%B9"><span class="nav-text">5.3 环境变量永久修改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%B8%B8%E7%94%A8%E7%9A%84%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">6 常用的配置文件</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -347,7 +347,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Linux 文件系统基础
+          Linux 文件系统知识
         </h1>
 
         <div class="post-meta-container">
@@ -365,7 +365,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-07-15 00:31:49" itemprop="dateModified" datetime="2023-07-15T00:31:49+08:00">2023-07-15</time>
+        <time title="修改时间：2023-07-28 22:30:56" itemprop="dateModified" datetime="2023-07-28T22:30:56+08:00">2023-07-28</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -378,7 +378,7 @@
     </span>
 
   
-    <span id="/post/linux-file-systems_basics/" class="post-meta-item leancloud_visitors" data-flag-title="Linux 文件系统基础" title="阅读次数">
+    <span id="/post/linux-file-systems_basics/" class="post-meta-item leancloud_visitors" data-flag-title="Linux 文件系统知识" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -406,14 +406,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>18k</span>
+      <span>21k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>16 分钟</span>
+      <span>19 分钟</span>
     </span>
 </div>
 
@@ -854,7 +854,62 @@
 <li>《<a target="_blank" rel="noopener" href="https://kolegite.com/EE_library/books_and_lectures/Linux/The_Linux_Programming_Interface.pdf">The Linux Programming Interface Chapter14 File System</a>》</li>
 <li>《Practical System Programming with C - Pragmatic Example Applications in Linux and Unix-Based Operating Systems Chapter 4 Files and Directories》</li>
 </ul>
-<h2 id="4-PATH-环境变量"><a href="#4-PATH-环境变量" class="headerlink" title="4 PATH 环境变量"></a>4 PATH 环境变量</h2><h3 id="4-1-介绍"><a href="#4-1-介绍" class="headerlink" title="4.1 介绍"></a>4.1 介绍</h3><p>当您希望系统执行命令时，您几乎不需要提供该命令的完整路径。 例如，我们知道 <code>ls</code> 命令在 <code>/bin</code> 目录中（用<code>which -a ls</code> 查看），但我们不必输入命令 <code>/bin/ls</code> 让计算机列出当前目录的内容。</p>
+<h2 id="4-文件链接"><a href="#4-文件链接" class="headerlink" title="4 文件链接"></a>4 文件链接</h2><p>链接文件类似于 Windows 下面的快捷方式，Linux 上可以看成是文件&#x2F;目录的别名，使用 <code>ls -l</code> 查看时文件类型为 <code>l</code>。链接文件可以指向任何一个文件&#x2F;目录，存在的或不存在的文件，或者指向其他文件系统的文件都可以。使用链接文件的好处就是节约磁盘空间、方便文件同步管理（链接文件共享一份磁盘上的文件）。</p>
+<p>给一个文件&#x2F;目录创建链接，可以使用 <code>ln</code> 命令。符号链接文件要遵守文件系统目录&#x2F;文件的命名规范（使用上当做目录&#x2F;文件使用即可）。链接有两种类型：<strong>软链接</strong>、<strong>硬链接</strong>。</p>
+<table>
+<thead>
+<tr>
+<th>链接类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>硬链接</td>
+<td>Hard link。硬链接文件和源文件<strong>共同使用一个文件 i-node</strong>，相当于一个文件有不同的名字，但是磁盘上仅有一份文件数据。<br />实际上，<mark class="label danger">每个常规的文件/目录就是硬链接文件</mark>。<br />使用 <code>ls -l</code> 列出文件属性的第二列即表示文件硬链接的个数（也可以说是别名的个数）,<code>1</code> 即表示当前文件，没有其他硬链接。删除硬链接或者源文件时，硬链接数会减一 <code>-1</code>，只有当硬链接数为 <code>0</code> 时，才会删除文件的 i-node 和数据块（也就是删除文件）。<strong>硬链接和源文件是平等的，包括权限、大小等，但是磁盘仅仅是一份文件</strong>。<br /><br />原生的 Linux 文件系统支持给目录创建硬链接，但事实不建议这么做，可能会造成混乱。<br />1、因为同一文件系统 i-node 的唯一性，所以硬链接只能链接同一文件系统的文件。<br />2、不能为目录创建硬链接，否则可能会出现混乱或链接环路（A-&gt;B, B-&gt;A）。<br />3、增、改、查链接文件的内容即为操作源文件内容。</td>
+</tr>
+<tr>
+<td>软链接</td>
+<td>Soft link 或 symbolic link。磁盘上一个很小的文件，类似于指针，指向源文件。软链接文件和源文件使用不同的 i-node，所以可以为另外一个文件系统的文件创建软链接。<br />1、文件名以路径形式命令，指向目标文件&#x2F;目录。<br />2、可以跨文件系统，硬链接不可以。<br />3、可以给目录创建软链接。<br />4、增、改、查链接文件的内容即为操作源文件内容。<br />5、源文件删除后，软链接文件虽然存在，但是指向的目标文件已经失效。<br />6、使用 <code>ls -l</code> 可以看到软链接文件后面有 <code>-&gt;</code>，指向链接的源文件。硬链接文件没有 <code>-&gt;</code>。</td>
+</tr>
+</tbody></table>
+<p>命令格式：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"> ln [参数][源文件或目录][链接文件或目录]</span><br><span class="line"> </span><br><span class="line"> 重要参数说明：</span><br><span class="line">    ：无参数，表示创建硬链接</span><br><span class="line">-s  ：创建软链接</span><br><span class="line">-b  ：删除、创建硬链接时，备份原先的链接文件（原链接文件名后加 `~` 符号）</span><br><span class="line">-f  ：强制创建链接文件，不管原来是否已经存在该链接文件</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="4-1-硬链接"><a href="#4-1-硬链接" class="headerlink" title="4.1 硬链接"></a>4.1 硬链接</h3><ol>
+<li><p>创建硬链接，并查看文件属性。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建文件，并写入内容</span></span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ touch source.txt; echo <span class="string">&quot;Hello, this is test text.&quot;</span> &gt;&gt; source.txt</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建硬链接</span></span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ ln source.txt target.txt</span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ ll -ih</span><br><span class="line"> <span class="number">67381300</span> -rw-rw-r--. <span class="number">2</span> alvin alvin <span class="number">26</span> Jul <span class="number">28</span> <span class="number">21</span>:<span class="number">56</span> source.txt</span><br><span class="line"> <span class="number">67381300</span> -rw-rw-r--. <span class="number">2</span> alvin alvin <span class="number">26</span> Jul <span class="number">28</span> <span class="number">21</span>:<span class="number">56</span> target.txt</span><br></pre></td></tr></table></figure>
+
+<p>可以看到第三列的硬链接数量为 <code>2</code>，并且硬链接文件 <code>target.txt</code> 上看不出来是一个链接，和正常文件看起来一样，这是因为<strong>每个常规的文件&#x2F;目录就是硬链接文件</strong>。</p>
+<p>硬链接文件和源文件的 i-node 相同，都是 <code>67381300</code>。</p>
+</li>
+<li><p>删除源文件 <code>source.txt</code>，观察变化。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[alvin@centos<span class="number">-7</span> ~]$ rm source.txt </span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ ll -ih</span><br><span class="line"><span class="number">67381300</span> -rw-rw-r--. <span class="number">1</span> alvin alvin <span class="number">26</span> Jul <span class="number">28</span> <span class="number">21</span>:<span class="number">56</span> target.txt</span><br><span class="line">  </span><br><span class="line"><span class="comment">// 可以看到硬链接文件还在</span></span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ cat target.txt </span><br><span class="line">Hello, <span class="keyword">this</span> is test text.</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="4-2-软链接"><a href="#4-2-软链接" class="headerlink" title="4.2 软链接"></a>4.2 软链接</h3><ol>
+<li><p>创建软链接，并查看文件属性。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 硬链接文件实际上就是一个源文件</span></span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ ln target.txt source.txt</span><br><span class="line">  </span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ ll -ih</span><br><span class="line">total <span class="number">8.0</span>K</span><br><span class="line"> <span class="number">67381300</span> -rw-rw-r--. <span class="number">2</span> alvin alvin <span class="number">26</span> Jul <span class="number">28</span> <span class="number">21</span>:<span class="number">56</span> source.txt</span><br><span class="line"> <span class="number">67383526</span> lrwxrwxrwx. <span class="number">1</span> alvin alvin <span class="number">10</span> Jul <span class="number">28</span> <span class="number">22</span>:<span class="number">06</span> target_soft.txt -&gt; source.txt</span><br><span class="line"> <span class="number">67381300</span> -rw-rw-r--. <span class="number">2</span> alvin alvin <span class="number">26</span> Jul <span class="number">28</span> <span class="number">21</span>:<span class="number">56</span> target.txt</span><br></pre></td></tr></table></figure>
+
+<p>可以看到源文件和软链接文件拥有不同的 i-node，还可以看到软链接文件和源文件是两个独立的文件，大小不一样。而硬链接文件和源文件是同一个文件，属性、大小肯定是一样的。</p>
+<p>软链接文件是一个文件，拥有自己的 i-node。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[alvin@centos<span class="number">-7</span> ~]$ echo <span class="string">&quot;Something was added.&quot;</span> &gt;&gt; target_soft.txt </span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ cat target_soft.txt </span><br><span class="line">Hello, <span class="keyword">this</span> is test text.</span><br><span class="line">Something was added.</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p>删除源文件。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[alvin@centos<span class="number">-7</span> ~]$ rm -f source.txt </span><br><span class="line"></span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ ll -ih</span><br><span class="line">total <span class="number">4.0</span>K</span><br><span class="line"> <span class="number">67383526</span> lrwxrwxrwx. <span class="number">1</span> alvin alvin <span class="number">10</span> Jul <span class="number">28</span> <span class="number">22</span>:<span class="number">06</span> target_soft.txt -&gt; source.txt</span><br><span class="line"> <span class="number">67381300</span> -rw-rw-r--. <span class="number">1</span> alvin alvin <span class="number">47</span> Jul <span class="number">28</span> <span class="number">22</span>:<span class="number">16</span> target.txt</span><br><span class="line">   </span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ cat target_soft.txt </span><br><span class="line">cat: target_soft.txt: No such file <span class="keyword">or</span> directory</span><br></pre></td></tr></table></figure>
+
+<p>可以看到此时的软链接已经链接不到源文件了。但是软链接文件还在，试着往软链接文件写入内容看看。</p>
+</li>
+<li><p>删除源文件后，向软链接文件写入内容，观察变化。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[alvin@centos<span class="number">-7</span> ~]$ echo <span class="string">&quot;The source file has been deleted, this is added to the soft link file.&quot;</span> &gt; target_soft.txt </span><br><span class="line"> </span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ ll -ih</span><br><span class="line">total <span class="number">8.0</span>K</span><br><span class="line"> <span class="number">67146876</span> -rw-rw-r--. <span class="number">1</span> alvin alvin <span class="number">71</span> Jul <span class="number">28</span> <span class="number">22</span>:<span class="number">24</span> source.txt</span><br><span class="line"> <span class="number">67383526</span> lrwxrwxrwx. <span class="number">1</span> alvin alvin <span class="number">10</span> Jul <span class="number">28</span> <span class="number">22</span>:<span class="number">06</span> target_soft.txt -&gt; source.txt</span><br><span class="line"> <span class="number">67381300</span> -rw-rw-r--. <span class="number">1</span> alvin alvin <span class="number">47</span> Jul <span class="number">28</span> <span class="number">22</span>:<span class="number">16</span> target.txt</span><br></pre></td></tr></table></figure>
+
+<p>可以看到系统通过软链接指向为文件名称，创建了新文件 <code>source.txt</code>。注意观察 <code>source.txt</code> 和 <code>target.txt</code> 文件的 i-node 是不相同的、大小也不相同，所以这里是新建了文件。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">[alvin@centos<span class="number">-7</span> ~]$ cat source.txt </span><br><span class="line">The source file has been deleted, <span class="keyword">this</span> is added to the soft link file.</span><br><span class="line"></span><br><span class="line"><span class="comment">// 可以看到两个文件是不相同的</span></span><br><span class="line">[alvin@centos<span class="number">-7</span> ~]$ cat target.txt </span><br><span class="line">Hello, <span class="keyword">this</span> is test text.</span><br><span class="line">Something was added.</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>那不可以删除文件时连链接在该文件上的软&#x2F;硬链接也删除？？留个坑，以后填。</p>
+<h2 id="5-PATH-环境变量"><a href="#5-PATH-环境变量" class="headerlink" title="5 PATH 环境变量"></a>5 PATH 环境变量</h2><h3 id="5-1-介绍"><a href="#5-1-介绍" class="headerlink" title="5.1 介绍"></a>5.1 介绍</h3><p>当您希望系统执行命令时，您几乎不需要提供该命令的完整路径。 例如，我们知道 <code>ls</code> 命令在 <code>/bin</code> 目录中（用<code>which -a ls</code> 查看），但我们不必输入命令 <code>/bin/ls</code> 让计算机列出当前目录的内容。</p>
 <p><code>PATH</code> <strong>环境变量</strong>负责处理这个问题。 该变量列出了系统中可以找到可执行文件的目录，从而节省了用户大量键入和记忆命令位置的时间。 因此，<code>PATH</code> 里自然包含许多含有 <code>/bin</code> 的目录。<code>echo</code> 命令用于显示变量 <code>PATH</code> 的内容（<code>$</code>）：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># echo $PATH</span></span><br><span class="line">/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/root/bin</span><br></pre></td></tr></table></figure>
 
@@ -873,7 +928,7 @@
 <div class="note primary"><p>注意：修改环境变量只是临时的更改。请注意，在 shell 中使用 <code>export</code> 命令时，<strong>更改是临时的</strong>，<strong>并且仅对此会话有效（直到您注销）</strong>。 打开新会话，即使当前会话仍在运行，也不会在新会话中产生新路径。 我们将在第 7.2 节中看到如何通过将这些行添加到 shell 配置文件来永久地对环境进行此类更改。</p>
 </div>
 
-<h3 id="4-2-环境变量临时修改"><a href="#4-2-环境变量临时修改" class="headerlink" title="4.2 环境变量临时修改"></a>4.2 环境变量临时修改</h3><p>系统中有个很多环境变量，可以使用 <code>printenv</code>、<code>env</code> 命令查看系统当前配置的所有环境变量（<code>echo</code> 命令可以查看指定名称的环境变量）。<strong>环境变量由 shell 进行管理</strong>，供系统中所有进程共享。环境变量名按照惯例都使用大写。</p>
+<h3 id="5-2-环境变量临时修改"><a href="#5-2-环境变量临时修改" class="headerlink" title="5.2 环境变量临时修改"></a>5.2 环境变量临时修改</h3><p>系统中有个很多环境变量，可以使用 <code>printenv</code>、<code>env</code> 命令查看系统当前配置的所有环境变量（<code>echo</code> 命令可以查看指定名称的环境变量）。<strong>环境变量由 shell 进行管理</strong>，供系统中所有进程共享。环境变量名按照惯例都使用大写。</p>
 <p>使用 <code>export</code> 可以在<strong>当前会话窗口临时</strong>指定名称环境变量最后添加新的环境变量，<strong>其他会话窗口不会使用该环境变量新值</strong>，或<strong>当前会话注销后该环境变量就失效</strong>。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> 变量名=$变量名:新值</span><br></pre></td></tr></table></figure>
 
@@ -889,7 +944,7 @@
 <li><code>HOSTNAME</code> ：主机名。</li>
 </ul>
 <p><img data-src="https://s2.loli.net/2023/07/13/VAEKBuT6D9wonQM.png" alt="17.png"></p>
-<h3 id="4-3-环境变量永久修改"><a href="#4-3-环境变量永久修改" class="headerlink" title="4.3 环境变量永久修改"></a>4.3 环境变量永久修改</h3><p>修改系统配置文件，可以达到永久修改环境变量的作用。系统配置文件一般以 <code>.xxxrc</code> 后缀名存在，如 <code>/root/.bashrc</code>。</p>
+<h3 id="5-3-环境变量永久修改"><a href="#5-3-环境变量永久修改" class="headerlink" title="5.3 环境变量永久修改"></a>5.3 环境变量永久修改</h3><p>修改系统配置文件，可以达到永久修改环境变量的作用。系统配置文件一般以 <code>.xxxrc</code> 后缀名存在，如 <code>/root/.bashrc</code>。</p>
 <p>如果是使用 <code>bash</code> shell 的话，<strong>当前用户</strong>对应的配置在 <code>~/.profile</code>、<code>~/.bash_profile</code>、<code>~/.bash_login</code>、<code>~/.bash_logout</code> 中。<strong>全局</strong>的环境变量在 <code>/etc/profile</code> 文件中设置。</p>
 <p>如上述的 <code>$PATH</code> 路径就可以在 <code>~/.bash_profile</code> 中添加。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@centos7 /]<span class="meta"># cat ~/.bash_profile</span></span><br><span class="line"># .bash_profile</span><br><span class="line"></span><br><span class="line"># Get the aliases <span class="keyword">and</span> functions</span><br><span class="line"><span class="keyword">if</span> [ -f ~/.bashrc ]; then</span><br><span class="line">	. ~/.bashrc</span><br><span class="line">fi</span><br><span class="line"></span><br><span class="line"># User specific environment <span class="keyword">and</span> startup programs</span><br><span class="line"></span><br><span class="line">PATH=$PATH:$HOME/bin	<span class="comment">// 在后面添加 :/xxx/bin</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> PATH</span><br></pre></td></tr></table></figure>
@@ -898,7 +953,7 @@
 
 
 
-<h2 id="5-常用的配置文件"><a href="#5-常用的配置文件" class="headerlink" title="5 常用的配置文件"></a>5 常用的配置文件</h2><p><img data-src="https://s2.loli.net/2023/07/15/4MoC8Qcyk3rYGwl.png" alt="20.png"></p>
+<h2 id="6-常用的配置文件"><a href="#6-常用的配置文件" class="headerlink" title="6 常用的配置文件"></a>6 常用的配置文件</h2><p><img data-src="https://s2.loli.net/2023/07/15/4MoC8Qcyk3rYGwl.png" alt="20.png"></p>
 
     </div>
 
@@ -934,7 +989,7 @@
   </li>
   <li class="post-copyright-link">
       <strong>本文链接：</strong>
-      <a href="https://directoree.github.io/post/linux-file-systems_basics/" title="Linux 文件系统基础">https://directoree.github.io/post/linux-file-systems_basics/</a>
+      <a href="https://directoree.github.io/post/linux-file-systems_basics/" title="Linux 文件系统知识">https://directoree.github.io/post/linux-file-systems_basics/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -1026,7 +1081,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">17:47</span>
+    <span title="站点阅读时长">17:55</span>
   </span>
 </div>
 <div class="busuanzi-count">
