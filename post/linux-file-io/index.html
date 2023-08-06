@@ -30,11 +30,12 @@
 <meta property="og:description" content="😊">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s2.loli.net/2023/08/02/aFLuBdERjTce13f.png">
+<meta property="og:image" content="https://s2.loli.net/2023/08/06/IKVHfqcSLMrjFBu.png">
 <meta property="article:published_time" content="2023-08-02T12:41:45.000Z">
-<meta property="article:modified_time" content="2023-08-03T15:18:04.704Z">
+<meta property="article:modified_time" content="2023-08-06T17:00:35.223Z">
 <meta property="article:author" content="Catecat">
-<meta property="article:tag" content="Linux 文件管理">
 <meta property="article:tag" content="Linux 逆向">
+<meta property="article:tag" content="Linux 文件管理">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://s2.loli.net/2023/08/02/aFLuBdERjTce13f.png">
 
@@ -363,7 +364,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-08-03 23:18:04" itemprop="dateModified" datetime="2023-08-03T23:18:04+08:00">2023-08-03</time>
+        <time title="修改时间：2023-08-07 01:00:35" itemprop="dateModified" datetime="2023-08-07T01:00:35+08:00">2023-08-07</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -404,14 +405,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>8.1k</span>
+      <span>11k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>7 分钟</span>
+      <span>10 分钟</span>
     </span>
 </div>
 
@@ -592,7 +593,51 @@
 
 
 
-<h3 id="1-5-缓冲区刷新"><a href="#1-5-缓冲区刷新" class="headerlink" title="1.5 缓冲区刷新"></a>1.5 缓冲区刷新</h3><h2 id="2-fopen"><a href="#2-fopen" class="headerlink" title="2 fopen"></a>2 fopen</h2>
+<h3 id="1-5-缓冲区刷新"><a href="#1-5-缓冲区刷新" class="headerlink" title="1.5 缓冲区刷新"></a>1.5 缓冲区刷新</h3><p>在章节 1.3 中已经提过以下行为会导致缓冲区的刷新：</p>
+<ul>
+<li><strong>全缓冲</strong>：当缓冲区写满、调用 <code>fflush</code> 函数、 调用 <code>fclose</code> 函数。</li>
+<li><strong>行缓冲</strong>：当缓冲区写满、调用 <code>fflush</code> 函数、 调用 <code>fclose</code> 函数、当遇到换行符 <code>\n</code>。</li>
+</ul>
+<p>以上行为，会导致对应类型的缓冲区进行刷新，所谓的刷新，即表示强制将用户缓冲区（stdio 标准缓冲区）中的数据，通过调用 <code>write</code> 函数传送给内核缓冲区。</p>
+<p>关于 <code>fflush</code> 函数：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*   /usr/include/stdio.h   */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fflush</span><span class="params">(FILE* stream)</span></span>;    <span class="comment">// 成功则返回 0，否则返回 EOF，并设置 errno</span></span><br></pre></td></tr></table></figure>
+
+<p>当参数 <code>stream != NULL</code> 时，刷新指定流用户缓冲区，当 <code>stream == NULL</code>，刷新<strong>所有流使用的 stdio 缓冲区</strong>。</p>
+<p>举例说明：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdbool.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">open_file</span><span class="params">(<span class="keyword">char</span>* filename, FILE** fpp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	FILE* fp_temp = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span>((fp_temp = fopen(filename, <span class="string">&quot;a+&quot;</span>)) == <span class="literal">NULL</span>)</span><br><span class="line">        &#123;</span><br><span class="line">                perror(<span class="string">&quot;[*] Fault&quot;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">	*fpp = fp_temp;</span><br><span class="line">	<span class="keyword">return</span> fp_temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">set_no_buffer</span><span class="params">(<span class="keyword">char</span>* buffer, <span class="keyword">const</span> <span class="keyword">char</span>* msg1)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> file_load[] = <span class="string">&quot;/home/alvin/program/no_buf.txt&quot;</span>;</span><br><span class="line">	FILE* fp = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Open the file</span></span><br><span class="line">	<span class="keyword">if</span>(!open_file(file_load, &amp;fp))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;[*] Failed open the file.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	setvbuf(fp, <span class="literal">NULL</span>, _IONBF, <span class="number">0</span>);</span><br><span class="line">	fwrite(msg1, <span class="number">7</span>, <span class="number">1</span>, fp);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;-----------------------\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;test NO buffer, buffer = %s\n&quot;</span>, buffer);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;-----------------------\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Please open the `no_buf.txt` to check TEXT.\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Please enter to continue.\n&quot;</span>);</span><br><span class="line">	getchar();</span><br><span class="line">	fclose(fp);	</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span>  <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">set_line_buffer</span><span class="params">(<span class="keyword">char</span>* buffer, <span class="keyword">const</span> <span class="keyword">char</span>* msg2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span> file_load[] = <span class="string">&quot;/home/alvin/program/line_buf.txt&quot;</span>;</span><br><span class="line">	FILE* fp = <span class="literal">NULL</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Open the file</span></span><br><span class="line">	<span class="keyword">if</span>(!open_file(file_load, &amp;fp))</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;[*] Failed open the file.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// printf(&quot;sizeof buffer = %llx, buffer = %llx, fp = %llx, msg2 = %s\n&quot;, sizeof(buffer), buffer, fp, msg2);</span></span><br><span class="line">	</span><br><span class="line">	setvbuf(fp, buffer, _IOLBF, <span class="keyword">sizeof</span>(buffer));</span><br><span class="line">	fwrite(msg2, <span class="keyword">sizeof</span>(msg2), <span class="number">1</span>, fp);</span><br><span class="line">	<span class="comment">// perror(&quot;[*****]&quot;);</span></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;-----------------------\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;test LINE buffer, buffer = %s\n&quot;</span>, buffer);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;-----------------------\n&quot;</span>);</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Please open the `line_buf.txt` to check TEXT.\n&quot;</span>);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;Please enter to continue.\n&quot;</span>);</span><br><span class="line">	getchar();</span><br><span class="line">	fclose(fp);	</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span>  <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[], <span class="keyword">char</span>* envp[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">char</span>* fbuffer = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">char</span> msg1[] = <span class="string">&quot;Hello world&quot;</span>;</span><br><span class="line">	<span class="keyword">char</span> msg2[] = <span class="string">&quot;Hello\nworld&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// malloc the buffer</span></span><br><span class="line">	<span class="keyword">if</span>((fbuffer = (<span class="keyword">char</span>*)<span class="built_in">malloc</span>(BUFSIZ)) == <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="built_in">printf</span>(<span class="string">&quot;[*] Failed malloc the buffer.\n&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="built_in">memset</span>(fbuffer, <span class="number">0</span>, BUFSIZ);</span><br><span class="line">	</span><br><span class="line">	<span class="comment">// test no buffer</span></span><br><span class="line">	set_no_buffer(fbuffer, msg1);</span><br><span class="line"></span><br><span class="line">	set_line_buffer(fbuffer, msg2);</span><br><span class="line"></span><br><span class="line">	<span class="built_in">free</span>(fbuffer);</span><br><span class="line">	fbuffer = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+<h2 id="2-fopen"><a href="#2-fopen" class="headerlink" title="2 fopen"></a>2 fopen</h2><p>打开的文件称为<strong>流</strong>，在对文件进行操作之前，需要将它和流联系在一起。对文件的操作实际上是对流的操作。打开文件得到流是通过 <code>fopen</code> 函数来完成的：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">FILE* <span class="title">fopen</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* filename, <span class="keyword">const</span> <span class="keyword">char</span>* mode)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>返回值：执行成功返回文件流指针，执行失败返回 <code>NULL</code>，并有相关的 <code>errno</code> 也会进行设置。</p>
+<ul>
+<li>参数一为要打开文件的路径，可以使相对路径或绝对路径。</li>
+<li>参数二为打开文件的模式，如下图。</li>
+</ul>
+<p><img data-src="https://s2.loli.net/2023/08/06/IKVHfqcSLMrjFBu.png" alt="31.png"></p>
+<p>注意：Windows 下打开二进制文件需要指定 <code>b</code>，但是在类 Unix 系统下不区分普通文件和二进制文件，所以在 Linux 下 <code>b</code>实际上无意义。</p>
+<p>关闭流使用 <code>fclose</code> 函数，关闭指定的流之前，会将缓冲区的数据刷新到内核缓冲区，随之写到文件中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*   /usr/include/stdio.h   */</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fclose</span><span class="params">(FILE* stream)</span></span>;	<span class="comment">// 成功则返回 0，否则返回 EOF</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fcloseall</span><span class="params">(<span class="keyword">void</span>)</span></span>;		<span class="comment">// 关闭所有的流，包括标准输入输出流，始终返回 0</span></span><br><span class="line">				<span class="comment">// 流被关闭前，都会将缓冲区内容进行刷新</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     </div>
 
     
@@ -636,8 +681,8 @@
 </div>
 
           <div class="post-tags">
-              <a href="/tags/Linux-%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> Linux 文件管理</a>
               <a href="/tags/Linux-%E9%80%86%E5%90%91/" rel="tag"><i class="fa fa-tag"></i> Linux 逆向</a>
+              <a href="/tags/Linux-%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" rel="tag"><i class="fa fa-tag"></i> Linux 文件管理</a>
           </div>
 
         
@@ -716,7 +761,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">18:03</span>
+    <span title="站点阅读时长">18:08</span>
   </span>
 </div>
 <div class="busuanzi-count">
