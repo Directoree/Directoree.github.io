@@ -36,8 +36,10 @@
 <meta property="og:image" content="https://s2.loli.net/2023/08/31/gYyEGk82Va9bFAO.png">
 <meta property="og:image" content="https://s2.loli.net/2023/08/31/kgUZ2Qos83CE1rn.png">
 <meta property="og:image" content="https://s2.loli.net/2023/08/31/CJ8NZcWUYGwO3zX.png">
+<meta property="og:image" content="https://s2.loli.net/2023/08/30/ATJZrqtf81B5VwU.png">
+<meta property="og:image" content="https://s2.loli.net/2023/08/31/5ieqPrXl96WQH2p.png">
 <meta property="article:published_time" content="2023-08-30T13:42:38.000Z">
-<meta property="article:modified_time" content="2023-08-30T16:31:38.382Z">
+<meta property="article:modified_time" content="2023-08-31T14:27:23.128Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux ELF 文件格式">
 <meta property="article:tag" content="ELF">
@@ -239,7 +241,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1 目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1.1 目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="nav-text">1.2 ELF 文件格式概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ELF-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.3 ELF 中的数据类型</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1 目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1.1 目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="nav-text">1.2 ELF 文件格式概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ELF-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.3 ELF 中的数据类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90"><span class="nav-text">2 ELF 文件格式解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-File-Header"><span class="nav-text">2.1 File Header</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#e-ident"><span class="nav-text">e_ident</span></a></li></ol></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -369,7 +371,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-08-31 00:31:38" itemprop="dateModified" datetime="2023-08-31T00:31:38+08:00">2023-08-31</time>
+        <time title="修改时间：2023-08-31 22:27:23" itemprop="dateModified" datetime="2023-08-31T22:27:23+08:00">2023-08-31</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -410,14 +412,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>1.6k</span>
+      <span>3.1k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1 分钟</span>
+      <span>3 分钟</span>
     </span>
 </div>
 
@@ -472,9 +474,73 @@
 <li><a target="_blank" rel="noopener" href="https://github.com/corkami/pics/blob/master/binary/ELF101.png">pics&#x2F;binary &#x2F;ELF101.png</a></li>
 <li><a target="_blank" rel="noopener" href="https://gist.github.com/x0nu11byt3/bcb35c3de461e5fb66173071a2379779">ELF Format Cheatsheet</a></li>
 </ul>
-<h3 id="1-3-ELF-中的数据类型"><a href="#1-3-ELF-中的数据类型" class="headerlink" title="1.3 ELF 中的数据类型"></a>1.3 ELF 中的数据类型</h3><p>ELF 文件格式定义在 <code>/usr/include/elf.h</code> 中，文件中分别为 ELF32、ELF64 的文件定义了很多数据类型（如 <code>ELF64_Addr</code>），这些数据类型使用的 <code>uint32_t</code> 等数据类型定义在 <code>/usr/include/stdint.h</code> 中。</p>
+<h3 id="1-3-ELF-中的数据类型"><a href="#1-3-ELF-中的数据类型" class="headerlink" title="1.3 ELF 中的数据类型"></a>1.3 ELF 中的数据类型</h3><p>ELF 文件格式定义在 <code>/usr/include/elf.h</code> 中，文件中分别为 ELF32、ELF64 的文件定义了很多数据类型（如 <code>ELF64_Addr</code>），这些数据类型是使用的 <code>uint32_t</code> 等数据类型进行定义的（<code>uint32_t</code> 等类型在 <code>/usr/include/stdint.h</code> 中进行定义）。</p>
 <p><img data-src="https://s2.loli.net/2023/08/31/kgUZ2Qos83CE1rn.png" alt="2.png"></p>
 <p><img data-src="https://s2.loli.net/2023/08/31/CJ8NZcWUYGwO3zX.png" alt="3.png"></p>
+<h2 id="2-ELF-文件格式解析"><a href="#2-ELF-文件格式解析" class="headerlink" title="2 ELF 文件格式解析"></a>2 ELF 文件格式解析</h2><p><img data-src="https://s2.loli.net/2023/08/30/ATJZrqtf81B5VwU.png" alt="1.png"></p>
+<h3 id="2-1-File-Header"><a href="#2-1-File-Header" class="headerlink" title="2.1 File Header"></a>2.1 File Header</h3><p>File Header 文件头必须位于 ELF 文件的开头，含有整个文件的一些基本信息。ELF32 对应的文件头为 <code>Elf32_Ehdr</code> 结构，ELF64 对应的文件头为 <code>Elf64_Ehdr</code> 结构。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">char</span> e_ident[EI_NIDENT];     <span class="comment">/* Magic number and other info */</span></span><br><span class="line">  Elf64_Half    e_type;                 <span class="comment">/* Object file type */</span></span><br><span class="line">  Elf64_Half    e_machine;              <span class="comment">/* Architecture */</span></span><br><span class="line">  Elf64_Word    e_version;              <span class="comment">/* Object file version */</span></span><br><span class="line">  Elf64_Addr    e_entry;                <span class="comment">/* Entry point virtual address */</span></span><br><span class="line">  Elf64_Off     e_phoff;                <span class="comment">/* Program header table file offset */</span></span><br><span class="line">  Elf64_Off     e_shoff;                <span class="comment">/* Section header table file offset */</span></span><br><span class="line">  Elf64_Word    e_flags;                <span class="comment">/* Processor-specific flags */</span></span><br><span class="line">  Elf64_Half    e_ehsize;               <span class="comment">/* ELF header size in bytes */</span></span><br><span class="line">  Elf64_Half    e_phentsize;            <span class="comment">/* Program header table entry size */</span></span><br><span class="line">  Elf64_Half    e_phnum;                <span class="comment">/* Program header table entry count */</span></span><br><span class="line">  Elf64_Half    e_shentsize;            <span class="comment">/* Section header table entry size */</span></span><br><span class="line">  Elf64_Half    e_shnum;                <span class="comment">/* Section header table entry count */</span></span><br><span class="line">  Elf64_Half    e_shstrndx;             <span class="comment">/* Section header string table index */</span></span><br><span class="line">&#125; Elf64_Ehdr;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="e-ident"><a href="#e-ident" class="headerlink" title="e_ident"></a>e_ident</h4><p><code>e_ident</code> 是一个 16 字节的数组，它将文件标识为 ELF 目标文件，并提供有关目标文件结构的数据表示的信息。 该数组最后剩余字节保留供将来使用，并且应设置为 <code>0</code>。 数组的每个字节都使用 <code>EI_</code> 开头名称作为索引：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*  /usr/include/elf  */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_MAG0         0               <span class="comment">/* File identification byte 0 index */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_MAG1         1               <span class="comment">/* File identification byte 1 index */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_MAG2         2               <span class="comment">/* File identification byte 2 index */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_MAG3         3               <span class="comment">/* File identification byte 3 index */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_CLASS        4               <span class="comment">/* File class byte index */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_DATA         5               <span class="comment">/* Data encoding byte index */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_VERSION      6               <span class="comment">/* File version byte index */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_OSABI        7               <span class="comment">/* OS ABI identification */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_ABIVERSION   8               <span class="comment">/* ABI version */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_PAD          9               <span class="comment">/* Byte index of padding bytes */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>    EI_NIDENT      (16)             <span class="comment">/* 数组大小 */</span></span></span><br></pre></td></tr></table></figure>
+
+<p>解释：</p>
+<table>
+<thead>
+<tr>
+<th>索引名称</th>
+<th>值</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>EI_MAG0～EI_MAG3</code></td>
+<td>文件的最前面 4 字节 <code>eident[EI_MAGO]～eident[EI_MAG3]</code> 的内容被称为“魔数（Magic）”，用于标识这是一个 ELF 文件。这四个字节存放的内容是固定的：<br /><img data-src="https://s2.loli.net/2023/08/31/5ieqPrXl96WQH2p.png" alt="7.png"></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
 
     </div>
 
@@ -599,7 +665,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">18:17</span>
+    <span title="站点阅读时长">18:19</span>
   </span>
 </div>
 <div class="busuanzi-count">
