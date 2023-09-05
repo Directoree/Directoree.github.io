@@ -42,8 +42,9 @@
 <meta property="og:image" content="https://s2.loli.net/2023/09/02/f7MPjwyDrgT3ocS.png">
 <meta property="og:image" content="https://s2.loli.net/2023/09/02/gCmdyZnO4IHBUSq.png">
 <meta property="og:image" content="https://s2.loli.net/2023/09/03/krmW8GlVaQq3bRT.png">
+<meta property="og:image" content="https://s2.loli.net/2023/09/05/Pyu3fjHKElwO9h6.png">
 <meta property="article:published_time" content="2023-08-30T13:42:38.000Z">
-<meta property="article:modified_time" content="2023-09-04T16:18:34.000Z">
+<meta property="article:modified_time" content="2023-09-05T14:43:03.464Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux ELF 文件格式">
 <meta property="article:tag" content="ELF">
@@ -245,7 +246,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1 目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1.1 目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="nav-text">1.2 ELF 文件格式概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ELF-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.3 ELF 中的数据类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90"><span class="nav-text">2 ELF 文件格式解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-File-Header"><span class="nav-text">2.1 File Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-e-ident-%E6%95%B0%E7%BB%84"><span class="nav-text">2.2 e_ident 数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%85%B6%E4%BD%99%E5%AD%97%E6%AE%B5"><span class="nav-text">2.3 其余字段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Sections"><span class="nav-text">3 Sections</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%8A%82%E7%B4%A2%E5%BC%95%E5%8F%B7%EF%BC%88Section-indices%EF%BC%89"><span class="nav-text">3.1 节索引号（Section indices）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%8A%82%E8%A1%A8%E6%9D%A1%E7%9B%AE%EF%BC%88Entries%EF%BC%89"><span class="nav-text">3.2 节表条目（Entries）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%B3%BB%E7%BB%9F%E4%BD%BF%E7%94%A8%E7%9A%84%E8%8A%82"><span class="nav-text">3.3 系统使用的节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E8%8A%82%E5%90%8D%E8%A1%A8%EF%BC%88%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A1%A8%EF%BC%89"><span class="nav-text">3.4 节名表（字符串表）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E7%AC%A6%E5%8F%B7%E8%A1%A8"><span class="nav-text">3.5 符号表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8"><span class="nav-text">3.6 重定位表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Segments"><span class="nav-text">4 Segments</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1 目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1.1 目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="nav-text">1.2 ELF 文件格式概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ELF-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.3 ELF 中的数据类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90"><span class="nav-text">2 ELF 文件格式解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-File-Header"><span class="nav-text">2.1 File Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-e-ident-%E6%95%B0%E7%BB%84"><span class="nav-text">2.2 e_ident 数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%85%B6%E4%BD%99%E5%AD%97%E6%AE%B5"><span class="nav-text">2.3 其余字段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Sections"><span class="nav-text">3 Sections</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%8A%82%E7%B4%A2%E5%BC%95%E5%8F%B7%EF%BC%88Section-indices%EF%BC%89"><span class="nav-text">3.1 节索引号（Section indices）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%8A%82%E8%A1%A8%E6%9D%A1%E7%9B%AE%EF%BC%88Entries%EF%BC%89"><span class="nav-text">3.2 节表条目（Entries）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%B3%BB%E7%BB%9F%E4%BD%BF%E7%94%A8%E7%9A%84%E8%8A%82"><span class="nav-text">3.3 系统使用的节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A1%A8"><span class="nav-text">3.4 字符串表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E7%AC%A6%E5%8F%B7%E8%A1%A8"><span class="nav-text">3.5 符号表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8"><span class="nav-text">3.6 重定位表</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Segments"><span class="nav-text">4 Segments</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -375,7 +376,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-09-05 00:18:34" itemprop="dateModified" datetime="2023-09-05T00:18:34+08:00">2023-09-05</time>
+        <time title="修改时间：2023-09-05 22:43:03" itemprop="dateModified" datetime="2023-09-05T22:43:03+08:00">2023-09-05</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -657,18 +658,18 @@
 </thead>
 <tbody><tr>
 <td>SHT_DYNAMIC</td>
-<td><code>x</code>，表示本节所使用到的字符串在节表中的索引值。<br />类似于 <code>shstrtab </code> 节使用到的字符串在节表的索引值为 <code>e_shstrndx</code>。</td>
+<td>表示该节所使用的字符串表在节表中的下标（索引）。<br />类似于 <code>shstrtab </code> 节使用到的字符串在节表的索引值为 <code>e_shstrndx</code>。</td>
 <td>0</td>
 </tr>
 <tr>
 <td>SHT_HASH</td>
-<td><code>y</code>，表示本节所使用到的字符串在节表中的索引值。</td>
+<td>表示该节所使用的字符串表在节表中的下标（索引）。</td>
 <td>0</td>
 </tr>
 <tr>
 <td>SHT_RELA，SHT_RE</td>
 <td>相应符号表在节头表中的索引值</td>
-<td>本重定位节所应用到目标节在节头表中的索引值</td>
+<td>本重定位节所所作用的节在节头表中的索引值</td>
 </tr>
 <tr>
 <td>SHT_SYMTAB，SHT_DYNSYM</td>
@@ -831,7 +832,17 @@
 <li>.symtab还保存了本地符号，用于调试和链接。</li>
 <li>目标文件通过一个符号在表中的索引值来使用该符号。索引值从0开始计数，但值为0的表项不具有实际的意义，它表示未定义的符号STN_UNDEF。每个符号都有一个符号值（symbol value），对于变量和函数，该值就是符号的地址。</li>
 </ul>
-<h3 id="3-4-节名表（字符串表）"><a href="#3-4-节名表（字符串表）" class="headerlink" title="3.4 节名表（字符串表）"></a>3.4 节名表（字符串表）</h3><h3 id="3-5-符号表"><a href="#3-5-符号表" class="headerlink" title="3.5 符号表"></a>3.5 符号表</h3><h3 id="3-6-重定位表"><a href="#3-6-重定位表" class="headerlink" title="3.6 重定位表"></a>3.6 重定位表</h3><h2 id="4-Segments"><a href="#4-Segments" class="headerlink" title="4 Segments"></a>4 Segments</h2>
+<h3 id="3-4-字符串表"><a href="#3-4-字符串表" class="headerlink" title="3.4 字符串表"></a>3.4 字符串表</h3><p>ELF 文件中的字符串表是包含有若干个 <code>null</code> 字符的序列，即字符串表。在 ELF 文件中，这些字符串通常上<strong>节的名字</strong>或<strong>符号的名字</strong>。在目标文件的其他位置，当需要使用到某个字符串时，只需要提供该字符串在字符串表中的起始位置（索引）即可。</p>
+<p><strong>字符串表的特征</strong>：字符串表的第一个字节永远是空（<code>\0</code> 即 <code>null</code>），由于每一个字符串都是以 <code>null</code> 结尾，所以字符串表的最后一字节也是 <code>null</code>。在节的类型（<code>sh_type</code>）中，有 <code>SHT_STRTAB</code> 标志的节都是字符串表，都具有这一特征。</p>
+<p>如下图，即为一个长度为 22 字节的字符串表：</p>
+<p><img data-src="https://s2.loli.net/2023/09/05/Pyu3fjHKElwO9h6.png" alt="12.png"></p>
+<div class="note danger"></div>
+
+
+
+
+
+<h3 id="3-5-符号表"><a href="#3-5-符号表" class="headerlink" title="3.5 符号表"></a>3.5 符号表</h3><h3 id="3-6-重定位表"><a href="#3-6-重定位表" class="headerlink" title="3.6 重定位表"></a>3.6 重定位表</h3><h2 id="4-Segments"><a href="#4-Segments" class="headerlink" title="4 Segments"></a>4 Segments</h2>
     </div>
 
     
