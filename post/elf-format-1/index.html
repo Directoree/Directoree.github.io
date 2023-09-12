@@ -44,7 +44,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/09/03/krmW8GlVaQq3bRT.png">
 <meta property="og:image" content="https://s2.loli.net/2023/09/05/Pyu3fjHKElwO9h6.png">
 <meta property="article:published_time" content="2023-08-30T13:42:38.000Z">
-<meta property="article:modified_time" content="2023-09-05T14:43:03.464Z">
+<meta property="article:modified_time" content="2023-09-12T13:24:07.832Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux ELF 文件格式">
 <meta property="article:tag" content="ELF">
@@ -376,7 +376,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-09-05 22:43:03" itemprop="dateModified" datetime="2023-09-05T22:43:03+08:00">2023-09-05</time>
+        <time title="修改时间：2023-09-12 21:24:07" itemprop="dateModified" datetime="2023-09-12T21:24:07+08:00">2023-09-12</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -417,14 +417,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>15k</span>
+      <span>19k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>14 分钟</span>
+      <span>17 分钟</span>
     </span>
 </div>
 
@@ -836,13 +836,72 @@
 <p><strong>字符串表的特征</strong>：字符串表的第一个字节永远是空（<code>\0</code> 即 <code>null</code>），由于每一个字符串都是以 <code>null</code> 结尾，所以字符串表的最后一字节也是 <code>null</code>。在节的类型（<code>sh_type</code>）中，有 <code>SHT_STRTAB</code> 标志的节都是字符串表，都具有这一特征。</p>
 <p>如下图，即为一个长度为 22 字节的字符串表：</p>
 <p><img data-src="https://s2.loli.net/2023/09/05/Pyu3fjHKElwO9h6.png" alt="12.png"></p>
-<div class="note danger"></div>
+<p>索引 <code>1</code> 表示的字符串为 <code>helloworld</code>，索引 <code>12</code> 表示的字符串为 <code>Myvariable</code>。</p>
+<div class="note danger"><p>字符串表所在的节带有 <code>SHT_STRTAB</code> 类型标志，常用的两个字符串表所在的节：<code>.shstrtab</code>、<code>.strtab</code>。</p>
+<ul>
+<li><code>.shstrtab</code>，为 <code>STRTAB</code> 类型。保存所有节表的名称，如 <code>.text</code>、<code>.data</code> 等。文件头的 <code>e_shstrtab</code> 成员是一个索引值，指出 <code>.shstrtab</code> 节在节头表数组的索引下标。每个节表条目中 <code>sh_name</code> 成员都是一个索引，使用该索引到该节指定的位置即可找到对应的字符串名称。</li>
+<li><code>.strtab</code>，为 <code>STRTAB</code> 类型。保存符号字符串，其字符串表中的内容会被 <code>.symtab</code> 中每个条目的 <code>st_name</code> 成员进行索引，使用该索引到该节指定的位置即可找到对应的字符串名称。</li>
+<li><code>.dynstr </code>，为 <code>STRTAB</code> 类型。保存动态链接符号字符串。其字符串表中的内容会被 <code>.dynsym </code> 中每个条目的 <code>st_name</code> 成员进行索引。</li>
+</ul>
+</div>
 
 
 
 
 
-<h3 id="3-5-符号表"><a href="#3-5-符号表" class="headerlink" title="3.5 符号表"></a>3.5 符号表</h3><h3 id="3-6-重定位表"><a href="#3-6-重定位表" class="headerlink" title="3.6 重定位表"></a>3.6 重定位表</h3><h2 id="4-Segments"><a href="#4-Segments" class="headerlink" title="4 Segments"></a>4 Segments</h2>
+<h3 id="3-5-符号表"><a href="#3-5-符号表" class="headerlink" title="3.5 符号表"></a>3.5 符号表</h3><div class="note info"><p>在 ELF文件中一般有两节 <code>.symtab</code>、<code>.dynsym</code> 保存符号表，节的类型为 <code>SHT_SYMTAB</code>。我们将函数、变量等统称为符号（Symbol），函数名、变量名统称为符号名（Symbol name）。<strong>符号</strong>的引入是便于动态链接、静态链接，比如 A 文件使用到 B 文件中定义的一个函数，A 文件正是通过自身的符号表找到对应的引用函数。</p>
+<p>每一个目标文件都会有符号表，表里面记录了该目标文件所使用到的所有符号，可以通过符号表中的 <code>符号值</code> 定位到符号保存的地址。</p>
+<p>符号的分类：本地全局符号（在本文件中定义的全局符号）、外部符号（在其他文件中定义的符号，在本文件中引用）、节名&#x2F;段名、局部符号、行号（源代码的代码行和指令对应的关系）。</p>
+</div>
+
+<p>类型为 <code>SHT_SYMTAB</code> 的节表示符号表，ELF64 符号表的结构如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  Elf64_Word	st_name;		<span class="comment">/* Symbol name (string tbl index) */</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">char</span>	st_info;		<span class="comment">/* Symbol type and binding */</span></span><br><span class="line">  <span class="keyword">unsigned</span> <span class="keyword">char</span> st_other;		<span class="comment">/* Symbol visibility */</span></span><br><span class="line">  Elf64_Section	st_shndx;		<span class="comment">/* Section index */</span></span><br><span class="line">  Elf64_Addr	st_value;		<span class="comment">/* Symbol value */</span></span><br><span class="line">  Elf64_Xword	st_size;		<span class="comment">/* Symbol size */</span></span><br><span class="line">&#125; Elf64_Sym;</span><br></pre></td></tr></table></figure>
+
+<p>符号表也是一个数组，每一个元素都是 <code>Elf64_Sym</code> 结构，其中数组下标 <code>0</code> 的元素为 <code>0</code>。每一个 <code>Elf64_Sym</code> 结构对应一个符号。</p>
+<ul>
+<li><p><code>st_name</code>：指明当前符号在字符串表中的索引。对于 <code>.symtab（SHT_SYMTAB）</code> 的节，其对应的字符串表在 <code>Elf64_Shdr.sh_link</code> 为索引的节中。</p>
+</li>
+<li><p><code>st_shndx</code>：索引值。如果该结构对应的符号是在本文件中定义的，<code>st_shndx</code> 表示该符号所在的节在节头表中的索引。如果该结构对应的符号不是在本文件中定义的，<code>st_shndx</code> 表示一个特殊索引值：</p>
+<ul>
+<li><code>SHN_ABS（0xfff1）</code>：表示该值是一个绝对的值，不会因为重定位前后发生改变。</li>
+<li><code>SHN_COMMON(0xfff2)</code>：一般表示未初始化的全局变量符号。该符号一般位于 <code>.bss</code> 节中。</li>
+<li><code>SHN_UNDEF(0)</code>：符号未定义。表示该符号在本文件中进行引用，但是在其他文件中进行定义的。</li>
+</ul>
+</li>
+<li><p><code>st_value</code>：一个数值或地址，具体如下：</p>
+<ul>
+<li>在重定位文件中，如果 <code>st_shndx</code> 索引指向的节类型为 <code>SHN_COMMON(0xfff2)</code>，该值为索引指向的这个节的对齐值。如果 <code>st_shndx</code> 索引指向的节类型不为 <code>SHN_COMMON(0xfff2)</code>，该值表示对应的符号在以 <code>st_shndx</code> 为索引的节中的偏移量。</li>
+<li>在可执行文件或共享库文件中，<code>st_value</code> 即表示该符号的虚拟地址。</li>
+</ul>
+</li>
+<li><p><code>st_size</code>：符号所占空间大小（字节单位）。 比如 <code>double</code> 类型的变量占用 <code>8</code> 字节，地址也是占用 <code>8</code> 字节，<code>char</code> 字符串等。<code>0</code> 表示大小为止或 <code>0</code>。</p>
+</li>
+<li><p><code>st_info</code>：符号绑定（以 <code>STB_</code> 开头）和符号类型（以 <code>STT_</code> 开头）。低 4 位表示符号类型，高 4 位表示绑定信息。</p>
+</li>
+</ul>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* How to extract and insert information held in the st_info field.  */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF32_ST_BIND(val)		(((unsigned char) (val)) &gt;&gt; 4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF32_ST_TYPE(val)		((val) &amp; 0xf)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF32_ST_INFO(bind, type)	(((bind) &lt;&lt; 4) + ((type) &amp; 0xf))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Both Elf32_Sym and Elf64_Sym use the same one-byte st_info field.  */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_ST_BIND(val)		ELF32_ST_BIND (val)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_ST_TYPE(val)		ELF32_ST_TYPE (val)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_ST_INFO(bind, type)	ELF32_ST_INFO ((bind), (type))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Legal values for ST_BIND subfield of st_info (symbol binding).  */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_LOCAL	0		<span class="comment">/* Local symbol */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_GLOBAL	1		<span class="comment">/* Global symbol */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_WEAK	2		<span class="comment">/* Weak symbol */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	STB_NUM		3		<span class="comment">/* Number of defined types.  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_LOOS	10		<span class="comment">/* Start of OS-specific */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_GNU_UNIQUE	10		<span class="comment">/* Unique symbol.  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_HIOS	12		<span class="comment">/* End of OS-specific */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_LOPROC	13		<span class="comment">/* Start of processor-specific */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STB_HIPROC	15		<span class="comment">/* End of processor-specific */</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* Legal values for ST_TYPE subfield of st_info (symbol type).  */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_NOTYPE	0		<span class="comment">/* Symbol type is unspecified */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_OBJECT	1		<span class="comment">/* Symbol is a data object */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_FUNC	2		<span class="comment">/* Symbol is a code object */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_SECTION	3		<span class="comment">/* Symbol associated with a section */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_FILE	4		<span class="comment">/* Symbol&#x27;s name is file name */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_COMMON	5		<span class="comment">/* Symbol is a common data object */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_TLS		6		<span class="comment">/* Symbol is thread-local data object*/</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span>	STT_NUM		7		<span class="comment">/* Number of defined types.  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_LOOS	10		<span class="comment">/* Start of OS-specific */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_GNU_IFUNC	10		<span class="comment">/* Symbol is indirect code object */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_HIOS	12		<span class="comment">/* End of OS-specific */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_LOPROC	13		<span class="comment">/* Start of processor-specific */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STT_HIPROC	15		<span class="comment">/* End of processor-specific */</span></span></span><br></pre></td></tr></table></figure>
+
+
+
+<div class="note danger"><p>符号表是一个 <code>Elf64_Sym</code> 结构的数组，name应该如何计算该数组元素的个数呢？</p>
+<ol>
+<li>找到 <code>.symtab</code> 符号表所在的节。</li>
+<li>该节 <code>Elf64_Shdr.sh_entsize</code> 表示每个元素的大小，<code>Elf64_Shdr.sh_size</code> 表示该节的总大小。则$(Elf64\_Shdr.sh\_size) &#x2F; (Elf64\_Shdr.sh\_entsize)$ 为元素的个数。</li>
+</ol>
+</div>
+
+<div class="note success"><p>符号表 <code>.symtab</code> 和 <code>.dynsym</code> 的区别：</p>
+<ul>
+<li><code>.symtab</code>：保存有本文件所有的符号。</li>
+<li><code>.dynsym</code>：保存的是外部符号。是 <code>.symtab</code> 的子集。</li>
+</ul>
+</div>
+
+
+
+
+
+<h3 id="3-6-重定位表"><a href="#3-6-重定位表" class="headerlink" title="3.6 重定位表"></a>3.6 重定位表</h3><h2 id="4-Segments"><a href="#4-Segments" class="headerlink" title="4 Segments"></a>4 Segments</h2>
     </div>
 
     
@@ -966,7 +1025,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">18:30</span>
+    <span title="站点阅读时长">18:33</span>
   </span>
 </div>
 <div class="busuanzi-count">
