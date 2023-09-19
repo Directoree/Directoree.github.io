@@ -45,7 +45,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/09/05/Pyu3fjHKElwO9h6.png">
 <meta property="og:image" content="https://s2.loli.net/2023/09/16/tCvVsicgBjuD81m.jpg">
 <meta property="article:published_time" content="2023-08-30T13:42:38.000Z">
-<meta property="article:modified_time" content="2023-09-17T12:29:18.853Z">
+<meta property="article:modified_time" content="2023-09-19T15:28:03.624Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux ELF 文件格式">
 <meta property="article:tag" content="ELF">
@@ -247,7 +247,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1 目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1.1 目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="nav-text">1.2 ELF 文件格式概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ELF-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.3 ELF 中的数据类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90"><span class="nav-text">2 ELF 文件格式解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-File-Header"><span class="nav-text">2.1 File Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-e-ident-%E6%95%B0%E7%BB%84"><span class="nav-text">2.2 e_ident 数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%85%B6%E4%BD%99%E5%AD%97%E6%AE%B5"><span class="nav-text">2.3 其余字段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Sections"><span class="nav-text">3 Sections</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%8A%82%E7%B4%A2%E5%BC%95%E5%8F%B7%EF%BC%88Section-indices%EF%BC%89"><span class="nav-text">3.1 节索引号（Section indices）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%8A%82%E8%A1%A8%E6%9D%A1%E7%9B%AE%EF%BC%88Entries%EF%BC%89"><span class="nav-text">3.2 节表条目（Entries）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%B3%BB%E7%BB%9F%E4%BD%BF%E7%94%A8%E7%9A%84%E8%8A%82"><span class="nav-text">3.3 系统使用的节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A1%A8"><span class="nav-text">3.4 字符串表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E7%AC%A6%E5%8F%B7%E8%A1%A8"><span class="nav-text">3.5 符号表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8"><span class="nav-text">3.6 重定位表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-%E8%A7%A3%E6%9E%90%E4%BB%A3%E7%A0%81"><span class="nav-text">3.7 解析代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Segments"><span class="nav-text">4 Segments</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1 目标文件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%9B%AE%E6%A0%87%E6%96%87%E4%BB%B6"><span class="nav-text">1.1 目标文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="nav-text">1.2 ELF 文件格式概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-ELF-%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B"><span class="nav-text">1.3 ELF 中的数据类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-ELF-%E6%96%87%E4%BB%B6%E6%A0%BC%E5%BC%8F%E8%A7%A3%E6%9E%90"><span class="nav-text">2 ELF 文件格式解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-File-Header"><span class="nav-text">2.1 File Header</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-e-ident-%E6%95%B0%E7%BB%84"><span class="nav-text">2.2 e_ident 数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%85%B6%E4%BD%99%E5%AD%97%E6%AE%B5"><span class="nav-text">2.3 其余字段</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Sections"><span class="nav-text">3 Sections</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%8A%82%E7%B4%A2%E5%BC%95%E5%8F%B7%EF%BC%88Section-indices%EF%BC%89"><span class="nav-text">3.1 节索引号（Section indices）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%8A%82%E5%A4%B4%E8%A1%A8%EF%BC%88%E6%95%B0%E7%BB%84%EF%BC%89"><span class="nav-text">3.2 节头表（数组）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E7%B3%BB%E7%BB%9F%E4%BD%BF%E7%94%A8%E7%9A%84%E8%8A%82"><span class="nav-text">3.3 系统使用的节</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%AD%97%E7%AC%A6%E4%B8%B2%E8%A1%A8"><span class="nav-text">3.4 字符串表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E7%AC%A6%E5%8F%B7%E8%A1%A8%EF%BC%88%E6%95%B0%E7%BB%84%EF%BC%89"><span class="nav-text">3.5 符号表（数组）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-6-%E9%87%8D%E5%AE%9A%E4%BD%8D%E8%A1%A8%EF%BC%88%E6%95%B0%E7%BB%84%EF%BC%89"><span class="nav-text">3.6 重定位表（数组）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-7-%E8%A7%A3%E6%9E%90%E4%BB%A3%E7%A0%81"><span class="nav-text">3.7 解析代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Segments"><span class="nav-text">4 Segments</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%A8%8B%E5%BA%8F%E5%A4%B4%E8%A1%A8%EF%BC%88%E6%95%B0%E7%BB%84%EF%BC%89"><span class="nav-text">4.1 程序头表（数组）</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -377,7 +377,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-09-17 20:29:18" itemprop="dateModified" datetime="2023-09-17T20:29:18+08:00">2023-09-17</time>
+        <time title="修改时间：2023-09-19 23:28:03" itemprop="dateModified" datetime="2023-09-19T23:28:03+08:00">2023-09-19</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -425,7 +425,7 @@
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>33 分钟</span>
+      <span>34 分钟</span>
     </span>
 </div>
 
@@ -588,7 +588,7 @@
 
 
 
-<h3 id="3-2-节表条目（Entries）"><a href="#3-2-节表条目（Entries）" class="headerlink" title="3.2 节表条目（Entries）"></a>3.2 节表条目（Entries）</h3><p>节表中的每一项都是一个条目（节表数组的项数由 <code>Elf64_Ehdr.e_shnum</code> 指定），每个条目的结构如下：</p>
+<h3 id="3-2-节头表（数组）"><a href="#3-2-节头表（数组）" class="headerlink" title="3.2 节头表（数组）"></a>3.2 节头表（数组）</h3><p>节表中的每一项都是一个条目（节表数组的项数由 <code>Elf64_Ehdr.e_shnum</code> 指定），每个条目的结构如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  Elf64_Word	sh_name;		<span class="comment">/* Section name (string tbl index) */</span></span><br><span class="line">  Elf64_Word	sh_type;		<span class="comment">/* Section type */</span></span><br><span class="line">  Elf64_Xword	sh_flags;		<span class="comment">/* Section flags */</span></span><br><span class="line">  Elf64_Addr	sh_addr;		<span class="comment">/* Section virtual addr at execution */</span></span><br><span class="line">  Elf64_Off	sh_offset;		<span class="comment">/* Section file offset */</span></span><br><span class="line">  Elf64_Xword	sh_size;		<span class="comment">/* Section size in bytes */</span></span><br><span class="line">  Elf64_Word	sh_link;		<span class="comment">/* Link to another section */</span></span><br><span class="line">  Elf64_Word	sh_info;		<span class="comment">/* Additional section information */</span></span><br><span class="line">  Elf64_Xword	sh_addralign;		<span class="comment">/* Section alignment */</span></span><br><span class="line">  Elf64_Xword	sh_entsize;		<span class="comment">/* Entry size if section holds table */</span></span><br><span class="line">&#125; Elf64_Shdr;</span><br></pre></td></tr></table></figure>
 
 <table>
@@ -851,7 +851,8 @@
 
 
 
-<h3 id="3-5-符号表"><a href="#3-5-符号表" class="headerlink" title="3.5 符号表"></a>3.5 符号表</h3><div class="note info"><p>在 ELF文件中一般有两节 <code>.symtab</code>、<code>.dynsym</code> 保存符号表，节的类型为 <code>SHT_SYMTAB</code>。我们将函数、变量等统称为符号（Symbol），函数名、变量名统称为符号名（Symbol name）。<strong>符号</strong>的引入是便于动态链接、静态链接，比如 A 文件使用到 B 文件中定义的一个函数，A 文件正是通过自身的符号表找到对应的引用函数。</p>
+<h3 id="3-5-符号表（数组）"><a href="#3-5-符号表（数组）" class="headerlink" title="3.5 符号表（数组）"></a>3.5 符号表（数组）</h3><div class="note info"><p>对于可执行文件除了编译器引入的一些符号外，主要就是用户自定义的全局变量，函数等。而对于可重定位文件仅仅包含用户自定义的一些符号。</p>
+<p>在 ELF文件中一般有两节 <code>.symtab</code>、<code>.dynsym</code> 保存符号表，节的类型为 <code>SHT_SYMTAB</code>。我们将函数、变量等统称为符号（Symbol），函数名、变量名统称为符号名（Symbol name）。<strong>符号</strong>的引入是便于动态链接、静态链接，比如 A 文件使用到 B 文件中定义的一个函数，A 文件正是通过自身的符号表找到对应的引用函数。</p>
 <p>每一个目标文件都会有符号表，表里面记录了该目标文件所使用到的所有符号，可以通过符号表中的 <code>符号值</code> 定位到符号保存的地址。</p>
 <p>符号的分类：本地全局符号（在本文件中定义的全局符号）、外部符号（在其他文件中定义的符号，在本文件中引用）、节名&#x2F;段名、局部符号、行号（源代码的代码行和指令对应的关系）。</p>
 </div>
@@ -903,7 +904,7 @@
 
 
 
-<h3 id="3-6-重定位表"><a href="#3-6-重定位表" class="headerlink" title="3.6 重定位表"></a>3.6 重定位表</h3><p>重定位文件存在静态链接、动态链接，都涉及到重定位。</p>
+<h3 id="3-6-重定位表（数组）"><a href="#3-6-重定位表（数组）" class="headerlink" title="3.6 重定位表（数组）"></a>3.6 重定位表（数组）</h3><p>重定位文件存在静态链接、动态链接，都涉及到重定位。</p>
 <p>静态链接时重定位由链接器来完成，装载时重定位是在模块被装载时，操作系统来完成。</p>
 <blockquote>
 <p>当某个可执行文件由多个目标文件编译链接时，目标文件中的部分数据需要进行<strong>静态重定位</strong>，比如：</p>
@@ -913,6 +914,11 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">080480</span>de：e8 <span class="number">05</span> <span class="number">00</span> <span class="number">00</span> <span class="number">00</span>    call <span class="number">080480e8</span></span><br></pre></td></tr></table></figure>
 </blockquote>
 <p><strong>静态链接的工作由链接器来完成</strong>，实际上我们并不关心具体的实现静态重定位逻辑，在构造利用代码时也基本用不到。而动态链接工作是在目标文件被加载时，会对目标文件数据段或代码段中引用的绝对地址等进行重定位，我们关注的是<strong>动态重定位</strong>。</p>
+<div class="note info"><p>重定位是将符号引用与符号定义进行链接的过程。因此链接是处理可重定位文件，把它们的各种符号引用和符号定义转换为可执行文件中的合适信息（一般是虚拟内存地址）的过程。</p>
+<p>链接又分为静态链接和动态链接，前者是程序开发阶段程序员用 <code>ld</code>（<code>gcc</code> 实际上在后台调用了 <code>ld</code>）静态链接器手动链接的过程，实际上我们并不关心具体的实现静态重定位逻辑，在构造利用代码时也基本用不到。而动态链接则是程序运行期间系统调用动态链接器（<code>ld-linux.so</code>）自动链接的过程，动态链接工作是在目标文件被加载时，会对目标文件数据段或代码段中引用的绝对地址等进行重定位，我们关注的是<strong>动态重定位</strong>。我们关注的是<strong>动态重定位</strong>。</p>
+<p>——<a target="_blank" rel="noopener" href="https://github.com/tinyclub/open-c-book/blob/master/zh/chapters/02-chapter2.markdown">Gcc 编译的背后-链接</a>。</p>
+</div>
+
 <p>目标文件中，有专门的节来保存文件重定位时需要被修正的地方，这样的节叫做重定位表（节类型为 <code>SHT_REL</code> 或 <code>SHT_RELA</code>）。</p>
 <p>重定位表是一个数组，数组的每个元素为 <code>Elf64_Rel</code> 或 <code>Elf64_Rela</code> 结构，一个元素对应一个需要被修正的数据。重定位表分两种类型，包含使用<strong>显示加数</strong>（<code>r_addend</code>）的 <code>Elf64_Rela</code> 结构，和使用<strong>隐式加数</strong>的 <code>Elf64_Rel</code> 结构（x86 仅使用 <code>Elf32_Rel</code> 重定位项，64 位的可执行文件一般只使用 <code>Elf64_Rela</code> 结构）。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Relocation table entry without addend (in section of type SHT_REL).  */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  Elf64_Addr	r_offset;		<span class="comment">/* Address */</span></span><br><span class="line">  Elf64_Xword	r_info;			<span class="comment">/* Relocation type and symbol index */</span></span><br><span class="line">&#125; Elf64_Rel;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* Relocation table entry with addend (in section of type SHT_RELA).  */</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  Elf64_Addr	r_offset;		<span class="comment">/* Address */</span></span><br><span class="line">  Elf64_Xword	r_info;			<span class="comment">/* Relocation type and symbol index */</span></span><br><span class="line">  Elf64_Sxword	r_addend;		<span class="comment">/* Addend */</span></span><br><span class="line">&#125; Elf64_Rela;</span><br></pre></td></tr></table></figure>
@@ -958,7 +964,9 @@
 
 
 
-<h2 id="4-Segments"><a href="#4-Segments" class="headerlink" title="4 Segments"></a>4 Segments</h2>
+<h2 id="4-Segments"><a href="#4-Segments" class="headerlink" title="4 Segments"></a>4 Segments</h2><h3 id="4-1-程序头表（数组）"><a href="#4-1-程序头表（数组）" class="headerlink" title="4.1 程序头表（数组）"></a>4.1 程序头表（数组）</h3><p>而节区主要存放各种特定类型的信息，比如程序的正文区（代码）、数据区（初始化和未初始化的数据）、调试信息、以及用于动态链接的一些节区，比如解释器（<code>.interp</code>）节区将指定程序动态装载 <code>/</code> 链接器 <code>ld-linux.so</code> 的位置，而过程链接表（<code>plt</code>）、全局偏移表（<code>got</code>）、重定位表则用于辅助动态链接过程。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/tinyclub/open-c-book/blob/master/zh/chapters/02-chapter4.markdown">https://github.com/tinyclub/open-c-book/blob/master/zh/chapters/02-chapter4.markdown</a></p>
+
     </div>
 
     
@@ -1082,7 +1090,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">18:49</span>
+    <span title="站点阅读时长">18:50</span>
   </span>
 </div>
 <div class="busuanzi-count">
