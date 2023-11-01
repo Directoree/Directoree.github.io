@@ -44,9 +44,11 @@
 <meta property="og:image" content="https://s2.loli.net/2023/09/03/krmW8GlVaQq3bRT.png">
 <meta property="og:image" content="https://s2.loli.net/2023/09/05/Pyu3fjHKElwO9h6.png">
 <meta property="og:image" content="https://s2.loli.net/2023/09/21/QIBc1hS2rtWR7w6.png">
+<meta property="og:image" content="https://s2.loli.net/2023/11/01/9BI6nAyJQL2GPlT.jpg">
+<meta property="og:image" content="https://s2.loli.net/2023/11/01/MkWUNFYCgtlTpca.jpg">
 <meta property="og:image" content="https://s2.loli.net/2023/09/16/tCvVsicgBjuD81m.jpg">
 <meta property="article:published_time" content="2023-08-30T13:42:38.000Z">
-<meta property="article:modified_time" content="2023-10-31T16:35:40.684Z">
+<meta property="article:modified_time" content="2023-11-01T14:47:14.849Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux ELF 文件格式">
 <meta property="article:tag" content="ELF">
@@ -378,7 +380,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-11-01 00:35:40" itemprop="dateModified" datetime="2023-11-01T00:35:40+08:00">2023-11-01</time>
+        <time title="修改时间：2023-11-01 22:47:14" itemprop="dateModified" datetime="2023-11-01T22:47:14+08:00">2023-11-01</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -426,7 +428,7 @@
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1:04</span>
+      <span>1:05</span>
     </span>
 </div>
 
@@ -1501,17 +1503,30 @@
 <li><p>公共表项分析。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0000000000400400</span> &lt;.plt&gt;:</span><br><span class="line">  <span class="number">400400</span>:	ff <span class="number">35</span> <span class="number">02</span> <span class="number">0</span>c <span class="number">20</span> <span class="number">00</span>    	push   QWORD PTR [rip+<span class="number">0x200c02</span>]        <span class="comment">// 601008 &lt;_GLOBAL_OFFSET_TABLE_+0x8&gt;</span></span><br><span class="line">  <span class="number">400406</span>:	ff <span class="number">25</span> <span class="number">04</span> <span class="number">0</span>c <span class="number">20</span> <span class="number">00</span>    	jmp    QWORD PTR [rip+<span class="number">0x200c04</span>]        <span class="comment">// 601010 &lt;_GLOBAL_OFFSET_TABLE_+0x10&gt;</span></span><br><span class="line">  <span class="number">40040</span>c:	<span class="number">0f</span> <span class="number">1f</span> <span class="number">40</span> <span class="number">00</span>          	nop    DWORD PTR [rax+<span class="number">0x0</span>]</span><br></pre></td></tr></table></figure>
 
-<p>这里入栈的地址为 <code>.got.pltp[1]</code>，然后间接跳转 <code>.got.pltp[2]</code>。</p>
+<p>这里入栈的地址为 <code>.got.plt[1]</code>，然后间接跳转 <code>.got.plt[2]</code>。</p>
 <ul>
-<li><code>.got.pltp[0]</code>：本 ELF 动态段（<code>.dynamic </code>段）的装载地址 。</li>
-<li><code>.got.pltp[1]</code>：本 ELF 的 [link_map&#96;](<a target="_blank" rel="noopener" href="https://blog.csdn.net/Retrovich/article/details/82907842">https://blog.csdn.net/Retrovich/article/details/82907842</a>) 数据结构描述符地址。</li>
-<li><code>.got.pltp[2]</code>：<code>_dl_runtime_resolve</code> 函数的地址。</li>
+<li><code>.got.plt[0]</code>：本 ELF 动态段（<code>.dynamic</code>）的装载地址 。</li>
+<li><code>.got.plt[1]</code>：本 ELF 的 <a target="_blank" rel="noopener" href="https://blog.csdn.net/Retrovich/article/details/82907842">link_map</a> 数据结构描述符地址。</li>
+<li><code>.got.plt[2]</code>：<code>_dl_runtime_resolve</code> 函数的地址。</li>
 </ul>
 <p>参考《<a target="_blank" rel="noopener" href="https://www.yuque.com/hxfqg9/bin/ug9gx5#xfDPU">PLT&amp;GOT</a>》。</p>
 </li>
-<li><p>1</p>
+<li><p>分析地址 <code>0x601010</code>，即 <code>.got.plt[2]</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos<span class="number">-7</span> program]<span class="meta"># objdump -s -j .got.plt -M intel 1022_printf.exe </span></span><br><span class="line"></span><br><span class="line">Contents of section .got.plt:</span><br><span class="line"> <span class="number">601000</span> <span class="number">280e6000</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">00000000</span>  (.`.............</span><br><span class="line"> <span class="number">601010</span> <span class="number">00000000</span> <span class="number">00000000</span> <span class="number">16044000</span> <span class="number">00000000</span>  ..........@.....</span><br><span class="line"> <span class="number">601020</span> <span class="number">26044000</span> <span class="number">00000000</span> <span class="number">36044000</span> <span class="number">00000000</span>  &amp;.@....<span class="number">.6</span>.@.....</span><br></pre></td></tr></table></figure>
+
+<p>可以看到，<code>0x601008(.got.plt[1])</code> 和 <code>0x601010(.got.plt[2])</code> 目前都是 <code>0</code>。经过动态分析，<code>.got.plt[1]  = link_map</code>、<code>.got.plt[2]  = _dl_runtime_resolve</code>，即跳转到 <code>_dl_runtime_resolve</code> 函数。</p>
+</li>
+<li><p>后面将进行动态分析 <code>_dl_runtime_resolve</code> 函数。</p>
 </li>
 </ol>
+<p>总结：</p>
+<ul>
+<li>每个 PLT 入口项对应一个 GOT 项，执行函数实际上就是跳转到相应 GOT 项存储的地址 ，该 GOT 项初始值为 PLTn项中的 push 指令地址(即 jmp 的下一条指令，所以第 1 次跳转没有任何作用)，待符号解析完成后存放符号的真正地址。</li>
+</ul>
+<p>第一次调用外部函数：</p>
+<p><img data-src="https://s2.loli.net/2023/11/01/9BI6nAyJQL2GPlT.jpg" alt="16.jpeg"></p>
+<p>之后再次调用：</p>
+<p><img data-src="https://s2.loli.net/2023/11/01/MkWUNFYCgtlTpca.jpg" alt="17.jpeg"></p>
 <p>参考<a target="_blank" rel="noopener" href="https://csstormq.github.io/blog/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%AF%87%E4%B9%8B%E9%93%BE%E6%8E%A5%EF%BC%8814%EF%BC%89%EF%BC%9A.plt%E3%80%81.plt.got%E3%80%81.got%20%E5%92%8C%20.got.plt%20section%20%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB">计算机系统篇之链接（14）：.plt、.plt.got、.got 和 .got.plt sections 之间的区别</a>，可以得出如下结论：</p>
 <table>
 <thead>
@@ -1703,7 +1718,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19:23</span>
+    <span title="站点阅读时长">19:24</span>
   </span>
 </div>
 <div class="busuanzi-count">
