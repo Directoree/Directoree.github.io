@@ -50,7 +50,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/11/02/WZkMEafDm6Iqcpo.png">
 <meta property="og:image" content="https://s2.loli.net/2023/09/16/tCvVsicgBjuD81m.jpg">
 <meta property="article:published_time" content="2023-08-30T13:42:38.000Z">
-<meta property="article:modified_time" content="2023-11-02T16:21:29.219Z">
+<meta property="article:modified_time" content="2023-11-04T13:05:50.541Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux ELF 文件格式">
 <meta property="article:tag" content="ELF">
@@ -382,7 +382,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-11-03 00:21:29" itemprop="dateModified" datetime="2023-11-03T00:21:29+08:00">2023-11-03</time>
+        <time title="修改时间：2023-11-04 21:05:50" itemprop="dateModified" datetime="2023-11-04T21:05:50+08:00">2023-11-04</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -423,14 +423,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>77k</span>
+      <span>80k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>1:10</span>
+      <span>1:12</span>
     </span>
 </div>
 
@@ -960,15 +960,140 @@
 <p>关于 <code>r_info</code>：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* How to extract and insert information held in the r_info field.  */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF32_R_SYM(val)		((val) &gt;&gt; 8)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF32_R_TYPE(val)		((val) &amp; 0xff)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF32_R_INFO(sym, type)		(((sym) &lt;&lt; 8) + ((type) &amp; 0xff))</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_R_SYM(i)			((i) &gt;&gt; 32)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_R_TYPE(i)			((i) &amp; 0xffffffff)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELF64_R_INFO(sym,type)		((((Elf64_Xword) (sym)) &lt;&lt; 32) + (type))</span></span><br></pre></td></tr></table></figure>
 
-
+<p>重定位的类型 <code>ELF64_R_TYPE(r_info)    </code> 如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* AMD x86-64 relocations.  /usr/include/elf.h line 2850 */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_NONE           0       <span class="comment">/* No reloc */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_64             1       <span class="comment">/* Direct 64 bit  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PC32           2       <span class="comment">/* PC relative 32 bit signed */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOT32          3       <span class="comment">/* 32 bit GOT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PLT32          4       <span class="comment">/* 32 bit PLT address */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_COPY           5       <span class="comment">/* Copy symbol at runtime */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GLOB_DAT       6       <span class="comment">/* Create GOT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_JUMP_SLOT      7       <span class="comment">/* Create PLT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_RELATIVE       8       <span class="comment">/* Adjust by program base */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPCREL       9       <span class="comment">/* 32 bit signed PC relative offset to GOT */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_32             10      <span class="comment">/* Direct 32 bit zero extended */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_32S            11      <span class="comment">/* Direct 32 bit sign extended */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_16             12      <span class="comment">/* Direct 16 bit zero extended */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PC16           13      <span class="comment">/* 16 bit sign extended pc relative */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_8              14      <span class="comment">/* Direct 8 bit sign extended  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PC8            15      <span class="comment">/* 8 bit sign extended pc relative */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_DTPMOD64       16      <span class="comment">/* ID of module containing symbol */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_DTPOFF64       17      <span class="comment">/* Offset in module&#x27;s TLS block */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_TPOFF64        18      <span class="comment">/* Offset in initial TLS block */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_TLSGD          19      <span class="comment">/* 32 bit signed PC relative offset to two GOT entries for GD symbol */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_TLSLD          20      <span class="comment">/* 32 bit signed PC relative offset to two GOT entries for LD symbol */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_DTPOFF32       21      <span class="comment">/* Offset in TLS block */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTTPOFF       22      <span class="comment">/* 32 bit signed PC relative offset to GOT entry for IE symbol */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_TPOFF32        23      <span class="comment">/* Offset in initial TLS block */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PC64           24      <span class="comment">/* PC relative 64 bit */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTOFF64       25      <span class="comment">/* 64 bit offset to GOT */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPC32        26      <span class="comment">/* 32 bit signed pc relative offset to GOT */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOT64          27      <span class="comment">/* 64-bit GOT entry offset */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPCREL64     28      <span class="comment">/* 64-bit PC relative offset to GOT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPC64        29      <span class="comment">/* 64-bit PC relative offset to GOT */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPLT64       30      <span class="comment">/* like GOT64, says PLT entry needed */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_PLTOFF64       31      <span class="comment">/* 64-bit GOT relative offset to PLT entry */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_SIZE32         32      <span class="comment">/* Size of symbol plus 32-bit addend */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_SIZE64         33      <span class="comment">/* Size of symbol plus 64-bit addend */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_GOTPC32_TLSDESC 34     <span class="comment">/* GOT offset for TLS descriptor.  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_TLSDESC_CALL   35      <span class="comment">/* Marker for call through TLS descriptor.  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_TLSDESC        36      <span class="comment">/* TLS descriptor.  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_IRELATIVE      37      <span class="comment">/* Adjust indirectly by program base */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_RELATIVE64     38      <span class="comment">/* 64-bit adjust by program base */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> R_X86_64_NUM            39</span></span><br></pre></td></tr></table></figure>
 
 <div class="note danger"><p>重定位节会引用其他两个节：符号表（由 <code>sh_link</code> 进行索引）和要修改的节（由 <code>sh_info</code> 进行索引）。</p>
 </div>
 
 
 
-
-
+<p><strong>重定位计算</strong>：以下表示法用于说明重定位计算。</p>
+<ul>
+<li><strong>A</strong>—用于计算可重定位字段的值的加数。</li>
+<li><strong>B</strong>—执行过程中将共享目标文件装入内存的基本地址。通常，生成的共享目标文件的基本虚拟地址为 0。但是，共享目标文件的执行地址不相同。请参见<a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E38902_01/html/E38861/chapter6-83432.html#scrolltoc">程序头</a>。</li>
+<li><strong>G</strong>—执行过程中，重定位项的符号地址所在的全局偏移表中的偏移。请参见<a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E38902_01/html/E38861/chapter6-74186.html#scrolltoc">全局偏移表（特定于处理器）</a>。</li>
+</ul>
+<p><strong>GOT</strong>—全局偏移表的地址。请参见<a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E38902_01/html/E38861/chapter6-74186.html#scrolltoc">全局偏移表（特定于处理器）</a>。</p>
+<ul>
+<li><strong>L</strong>—符号的过程链接表项的节偏移或地址。请参见<a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E38902_01/html/E38861/chapter6-1235.html#scrolltoc">过程链接表（特定于处理器）</a>。</li>
+<li><strong>P</strong>—使用 r_offset 计算出的重定位的存储单元的节偏移或地址。</li>
+<li><strong>S</strong>—索引位于重定位项中的符号的值。</li>
+<li><strong>Z</strong>—索引位于重定位项中的符号的大小。</li>
+</ul>
+<p><strong><a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E38902_01/html/E38861/chapter6-54839.html#chapter7-2">x64: ELF 重定位类型与计算方式</a></strong>:</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>值</th>
+<th>字段</th>
+<th>计算</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>R_AMD64_NONE</code></td>
+<td><code>0</code></td>
+<td>无</td>
+<td>无</td>
+</tr>
+<tr>
+<td><code>R_AMD64_64</code></td>
+<td><code>1</code></td>
+<td><code>word64</code></td>
+<td><code>S + A</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_PC32</code></td>
+<td><code>2</code></td>
+<td><code>word32</code></td>
+<td><code>S + A - P</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_GOT32</code></td>
+<td><code>3</code></td>
+<td><code>word32</code></td>
+<td><code>G + A</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_PLT32</code></td>
+<td><code>4</code></td>
+<td><code>word32</code></td>
+<td><code>L + A - P</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_COPY</code></td>
+<td><code>5</code></td>
+<td>无</td>
+<td>请参阅此表后面的说明。</td>
+</tr>
+<tr>
+<td><code>R_AMD64_GLOB_DAT</code></td>
+<td><code>6</code></td>
+<td><code>word64</code></td>
+<td><code>S</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_JUMP_SLOT</code></td>
+<td><code>7</code></td>
+<td><code>word64</code></td>
+<td><code>S</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_RELATIVE</code></td>
+<td><code>8</code></td>
+<td><code>word64</code></td>
+<td><code>B + A</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_GOTPCREL</code></td>
+<td><code>9</code></td>
+<td><code>word32</code></td>
+<td><code>G + GOT + A - P</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_32</code></td>
+<td><code>10</code></td>
+<td><code>word32</code></td>
+<td><code>S + A</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_32S</code></td>
+<td><code>11</code></td>
+<td><code>word32</code></td>
+<td><code>S + A</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_16</code></td>
+<td><code>12</code></td>
+<td><code>word16</code></td>
+<td><code>S + A</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_PC16</code></td>
+<td><code>13</code></td>
+<td><code>word16</code></td>
+<td><code>S + A - P</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_8</code></td>
+<td><code>14</code></td>
+<td><code>word8</code></td>
+<td><code>S + A</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_PC8</code></td>
+<td><code>15</code></td>
+<td><code>word8</code></td>
+<td><code>S + A - P</code></td>
+</tr>
+<tr>
+<td><code>R_AMD64_PC64</code></td>
+<td><code>24</code></td>
+<td><code>word64</code></td>
+<td><code>S + A - P</code></td>
+</tr>
+</tbody></table>
 <h2 id="4-Segments"><a href="#4-Segments" class="headerlink" title="4 Segments"></a>4 Segments</h2><h3 id="4-1-程序头表（数组）"><a href="#4-1-程序头表（数组）" class="headerlink" title="4.1 程序头表（数组）"></a>4.1 程序头表（数组）</h3><p>可执行文件和动态链接库文件的程序头表是一个数组（类似于节头表），每个元素对应于一个段（Segment），<strong>每个段对应一个或多个节</strong>，程序头只针对可执行文件和动态链接库（shared object file）有意义，其他类型的目标文件可忽略。</p>
 <p>文件头 <code>Elf64_Ehdr.e_phoff</code> 指出程序头表数组起始的文件偏移位置， <code>Elf64_Ehdr.e_phnum</code> 指出程序头表数组元素的个数。</p>
 <p>程序头表数组类型如下：</p>
@@ -1302,12 +1427,12 @@
 <td>如果此元素出现的话，在重定位过程中如果需要修改的是只读段的话，连接 编辑器可以做相应的修改；而如果此元素不出现的话，在重定位过程中，即使需 要，也不能修改只读段。</td>
 </tr>
 <tr>
-<td>DT_JMPREL</td>
+<td><strong>DT_JMPREL</strong></td>
 <td>23</td>
 <td>d_ptr</td>
 <td>可选</td>
 <td>可选</td>
-<td>此类型元素如果存在的话，其 <code>d_ptr</code> 成员包含与函数链接表（PLT）关联的重定位项地址。把多个重定位项分开可以让动态链接器在初始化的时候忽略它们（以便延迟加载），当然前提条件是“后期绑定”是激活的。如果此元素存在的话，<code>DT_PLTRELSZ</code> 和 <code>DT_PLTREL</code> 也应该出现。</td>
+<td>此类型元素如果存在的话，其 <code>d_ptr</code> 成员包含与函数链接表（PLT）关联的重定位项地址。把多个重定位项分开可以让动态链接器在初始化的时候忽略它们（以便延迟加载），当然前提条件是“后期绑定”是激活的。如果此元素存在的话，<code>DT_PLTRELSZ</code> 和 <code>DT_PLTREL</code> 也应该出现。<br /><br /> 实际上就是指示着有<mark class="label danger">导入表</mark>，实际上就是 <code>.rela.plt</code> 节的地址（<code>Elf64_Rela</code> 类型）。<br /><code>.rela.plt = (Elf64_Rela*)d_ptr</code>。</td>
 </tr>
 <tr>
 <td>DT_BIND_NOW</td>
@@ -1579,23 +1704,23 @@
 <p>可以看到，<code>.got.plt[1] == link_map == 0x7FDB&#39;6BFD3150</code>、<code>.got.plt[2] == _dl_runtime_resolve == 0x7FDB&#39;6BDC6A30</code>。</p>
 </li>
 <li><p>动态分析 <code>_dl_runtime_resolve</code> 函数。</p>
-<p>在虚拟机中使用 <code>ldd --version</code> 查看使用的 <code>glibc</code> 版本（对应于 <code>/lib64/libc-2.17.so</code>），和 IDA 反汇编结果一样都是 <code>2.17</code> 稳定版。但是反汇编出来的代码和 <code>version &gt;= 2.23</code> 的代码一致。（<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43833642/article/details/104681190">glibc 源码下载链接</a>）</p>
+<p>在虚拟机中使用 <code>ldd --version</code> 查看使用的 <code>glibc</code> 版本（对应于 <code>/lib64/libc-2.17.so</code>），和 IDA 反汇编结果一样都是 <code>2.17</code> 稳定版。但是反汇编出来的代码和 <code>version &gt;= 2.27</code> 的代码一致。（<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_43833642/article/details/104681190">glibc 源码下载链接</a>）</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[root@centos<span class="number">-7</span> program]<span class="meta"># ldd --version</span></span><br><span class="line">ldd (GNU libc) <span class="number">2.17</span></span><br><span class="line">Copyright (C) <span class="number">2012</span> Free Software Foundation, Inc.</span><br><span class="line">This is <span class="built_in">free</span> software; see the source <span class="keyword">for</span> copying conditions.  There is NO</span><br><span class="line">warranty; <span class="keyword">not</span> even <span class="keyword">for</span> MERCHANTABILITY <span class="keyword">or</span> FITNESS FOR A PARTICULAR PURPOSE.</span><br><span class="line">由 Roland McGrath 和 Ulrich Drepper 编写。</span><br></pre></td></tr></table></figure>
 
-<p><code>glibc &gt;= 2.23</code> 时，<code>_dl_runtime_resolve</code> 函数的源代码在 <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.38/source/sysdeps/x86_64/dl-trampoline.h#L69">glibc&#x2F;sysdeps&#x2F;x86_64&#x2F;dl-trampoline.h</a> 中进行定义，在 <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.38.9000/source/sysdeps/x86_64/dl-trampoline.S#L114">glibc&#x2F;sysdeps&#x2F;x86_64&#x2F;dl-trampoline.S</a> 中，如果使用了 <code>USE_XSAVEC</code> 则会使用 <code>_dl_runtime_resolve_xsavec</code> 函数，如下：</p>
+<p><code>glibc &gt;= 2.27</code> 时，<code>_dl_runtime_resolve</code> 函数的源代码在 <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.38/source/sysdeps/x86_64/dl-trampoline.h#L69">glibc&#x2F;sysdeps&#x2F;x86_64&#x2F;dl-trampoline.h</a> 中进行定义，在 <a target="_blank" rel="noopener" href="https://elixir.bootlin.com/glibc/glibc-2.38.9000/source/sysdeps/x86_64/dl-trampoline.S#L114">glibc&#x2F;sysdeps&#x2F;x86_64&#x2F;dl-trampoline.S</a> 中，如果使用了 <code>USE_XSAVEC</code> 则会使用 <code>_dl_runtime_resolve_xsavec</code> 函数，如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> USE_XSAVEC</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> STATE_SAVE_ALIGNMENT	64</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _dl_runtime_resolve	_dl_runtime_resolve_xsavec	<span class="comment">// 使用 _dl_runtime_resolve_xsavec 函数</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&quot;dl-trampoline.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> _dl_runtime_resolve</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> USE_XSAVEC</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">undef</span> STATE_SAVE_ALIGNMENT</span></span><br></pre></td></tr></table></figure>
 
-<p>所以我们以 <code>glibc &gt;= 2.23</code> 代码进行分析。源代码是基于 AT&amp;T 风格的汇编代码，可读性较差，我习惯 Intel 风格 反汇编，所以直接使用了 IDA 反汇编出来的代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 _dl_runtime_resolve_xsavec proc near</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 var_18= qword ptr <span class="number">-18</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 var_8= qword ptr <span class="number">-8</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_0= qword ptr  <span class="number">8</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_8= qword ptr  <span class="number">10</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_10= qword ptr  <span class="number">18</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_18= qword ptr  <span class="number">20</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_20= qword ptr  <span class="number">28</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_30= byte ptr  <span class="number">38</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_240= qword ptr  <span class="number">248</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_248= qword ptr  <span class="number">250</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_250= qword ptr  <span class="number">258</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_258= qword ptr  <span class="number">260</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_260= qword ptr  <span class="number">268</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_268= qword ptr  <span class="number">270</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 push    rbx                             <span class="comment">// DATA XREF: .got.plt:off_601010↑o</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A31 mov     rbx, rsp</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A34 <span class="keyword">and</span>     rsp, <span class="number">0F</span>FFFFFFFFFFFFFC0h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A38 sub     rsp, cs:qword_7FDB6BFD1CB0</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A3F mov     [rsp+<span class="number">8</span>+var_8], rax</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A43 mov     [rsp+<span class="number">8</span>], rcx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A48 mov     [rsp+<span class="number">8</span>+arg_0], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A4D mov     [rsp+<span class="number">8</span>+arg_8], rsi</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A52 mov     [rsp+<span class="number">8</span>+arg_10], rdi</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A57 mov     [rsp+<span class="number">8</span>+arg_18], r8</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A5C mov     [rsp+<span class="number">8</span>+arg_20], r9</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A61 mov     eax, <span class="number">0</span>EEh</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A66 <span class="keyword">xor</span>     edx, edx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A68 mov     [rsp+<span class="number">8</span>+arg_240], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A70 mov     [rsp+<span class="number">8</span>+arg_248], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A78 mov     [rsp+<span class="number">8</span>+arg_250], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A80 mov     [rsp+<span class="number">8</span>+arg_258], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A88 mov     [rsp+<span class="number">8</span>+arg_260], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A90 mov     [rsp+<span class="number">8</span>+arg_268], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A98 xsavec  [rsp+<span class="number">8</span>+arg_30]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A9D mov     rsi, [rbx+<span class="number">10</span>h]		<span class="comment">// 参数二，.got.plt[1] == link_map</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AA1 mov     rdi, [rbx+<span class="number">8</span>]		<span class="comment">// 参数一，push 的索引值</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AA5 call    near ptr _dl_fixup	<span class="comment">//  调用 _dl_fixup 函数</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AAA mov     r11, rax</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AAD mov     eax, <span class="number">0</span>EEh</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AB2 <span class="keyword">xor</span>     edx, edx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AB4 xrstor  [rsp+<span class="number">8</span>+arg_30]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AB9 mov     r9, [rsp+<span class="number">8</span>+arg_20]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ABE mov     r8, [rsp+<span class="number">8</span>+arg_18]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AC3 mov     rdi, [rsp+<span class="number">8</span>+arg_10]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AC8 mov     rsi, [rsp+<span class="number">8</span>+arg_8]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ACD mov     rdx, [rsp+<span class="number">8</span>+arg_0]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AD2 mov     rcx, [rsp+<span class="number">8</span>]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AD7 mov     rax, [rsp+<span class="number">8</span>+var_8]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ADB mov     rsp, rbx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ADE mov     rbx, [rsp+<span class="number">18</span>h+var_18]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AE2 add     rsp, <span class="number">18</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AE6 bnd jmp r11</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AE6 _dl_runtime_resolve_xsavec endp</span><br></pre></td></tr></table></figure>
+<p>所以我们以 <code>glibc &gt;= 2.27</code> 代码进行分析。源代码是基于 AT&amp;T 风格的汇编代码，可读性较差，我习惯 Intel 风格 反汇编，所以直接使用了 IDA 反汇编出来的代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 _dl_runtime_resolve_xsavec proc near</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 var_18= qword ptr <span class="number">-18</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 var_8= qword ptr <span class="number">-8</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_0= qword ptr  <span class="number">8</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_8= qword ptr  <span class="number">10</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_10= qword ptr  <span class="number">18</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_18= qword ptr  <span class="number">20</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_20= qword ptr  <span class="number">28</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_30= byte ptr  <span class="number">38</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_240= qword ptr  <span class="number">248</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_248= qword ptr  <span class="number">250</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_250= qword ptr  <span class="number">258</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_258= qword ptr  <span class="number">260</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_260= qword ptr  <span class="number">268</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 arg_268= qword ptr  <span class="number">270</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A30 push    rbx                             <span class="comment">// DATA XREF: .got.plt:off_601010↑o</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A31 mov     rbx, rsp</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A34 <span class="keyword">and</span>     rsp, <span class="number">0F</span>FFFFFFFFFFFFFC0h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A38 sub     rsp, cs:qword_7FDB6BFD1CB0</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A3F mov     [rsp+<span class="number">8</span>+var_8], rax</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A43 mov     [rsp+<span class="number">8</span>], rcx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A48 mov     [rsp+<span class="number">8</span>+arg_0], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A4D mov     [rsp+<span class="number">8</span>+arg_8], rsi</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A52 mov     [rsp+<span class="number">8</span>+arg_10], rdi</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A57 mov     [rsp+<span class="number">8</span>+arg_18], r8</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A5C mov     [rsp+<span class="number">8</span>+arg_20], r9</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A61 mov     eax, <span class="number">0</span>EEh</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A66 <span class="keyword">xor</span>     edx, edx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A68 mov     [rsp+<span class="number">8</span>+arg_240], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A70 mov     [rsp+<span class="number">8</span>+arg_248], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A78 mov     [rsp+<span class="number">8</span>+arg_250], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A80 mov     [rsp+<span class="number">8</span>+arg_258], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A88 mov     [rsp+<span class="number">8</span>+arg_260], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A90 mov     [rsp+<span class="number">8</span>+arg_268], rdx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A98 xsavec  [rsp+<span class="number">8</span>+arg_30]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6A9D mov     rsi, [rbx+<span class="number">10</span>h]		<span class="comment">// 参数二，push 的索引值</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AA1 mov     rdi, [rbx+<span class="number">8</span>]		<span class="comment">// 参数一，.got.plt[1] == link_map</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AA5 call    near ptr _dl_fixup		<span class="comment">//  调用 _dl_fixup 函数</span></span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AAA mov     r11, rax</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AAD mov     eax, <span class="number">0</span>EEh</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AB2 <span class="keyword">xor</span>     edx, edx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AB4 xrstor  [rsp+<span class="number">8</span>+arg_30]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AB9 mov     r9, [rsp+<span class="number">8</span>+arg_20]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ABE mov     r8, [rsp+<span class="number">8</span>+arg_18]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AC3 mov     rdi, [rsp+<span class="number">8</span>+arg_10]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AC8 mov     rsi, [rsp+<span class="number">8</span>+arg_8]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ACD mov     rdx, [rsp+<span class="number">8</span>+arg_0]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AD2 mov     rcx, [rsp+<span class="number">8</span>]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AD7 mov     rax, [rsp+<span class="number">8</span>+var_8]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ADB mov     rsp, rbx</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6ADE mov     rbx, [rsp+<span class="number">18</span>h+var_18]</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AE2 add     rsp, <span class="number">18</span>h</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AE6 bnd jmp r11</span><br><span class="line">ld_2<span class="number">.17</span>.so:<span class="number">00007F</span>DB6BDC6AE6 _dl_runtime_resolve_xsavec endp</span><br></pre></td></tr></table></figure>
 
 <p>可以看到：</p>
-<p>1、主要调用 <code>_dl_fixup</code> 函数，带有两个参数，即参数一为 <code>push</code> 的索引值，参数二为 <code>.got.plt[1] == link_map</code>。</p>
-<p>2、堆栈恢复后，继续执行 <code>bnd jmp r11</code>。</p>
+<p>1、主要调用 <code>_dl_fixup</code> 函数，带有两个参数，即参数一为 <code>.got.plt[1] == link_map</code>，参数二为  <code>push</code> 的索引值。</p>
+<p>2、堆栈恢复后，继续执行 <code>bnd jmp r11</code>，<code>r11</code> 中的目标地址是函数 <code>_dl_fixup</code> 的返回值。</p>
 </li>
-<li><p>22</p>
+<li><p>关于函数 <code>_dl_fixup</code> 分析，参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/ichunqiu/p/9542224.html">Linux pwn入门教程(10)——针对函数重定位流程的几种攻击</a>。</p>
 </li>
 </ol>
-<p>参考<a target="_blank" rel="noopener" href="https://csstormq.github.io/blog/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%AF%87%E4%B9%8B%E9%93%BE%E6%8E%A5%EF%BC%8814%EF%BC%89%EF%BC%9A.plt%E3%80%81.plt.got%E3%80%81.got%20%E5%92%8C%20.got.plt%20section%20%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB">计算机系统篇之链接（14）：.plt、.plt.got、.got 和 .got.plt sections 之间的区别</a>，可以得出如下结论：</p>
+<p>参考<a target="_blank" rel="noopener" href="https://csstormq.github.io/blog/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%B3%BB%E7%BB%9F%E7%AF%87%E4%B9%8B%E9%93%BE%E6%8E%A5%EF%BC%8814%EF%BC%89%EF%BC%9A.plt%E3%80%81.plt.got%E3%80%81.got%20%E5%92%8C%20.got.plt%20section%20%E4%B9%8B%E9%97%B4%E7%9A%84%E5%8C%BA%E5%88%AB">计算机系统篇之链接（14）：.plt、.plt.got、.got 和 .got.plt sections 之间的区别</a>：</p>
 <table>
 <thead>
 <tr>
@@ -1786,7 +1911,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">19:29</span>
+    <span title="站点阅读时长">19:31</span>
   </span>
 </div>
 <div class="busuanzi-count">
