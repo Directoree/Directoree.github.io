@@ -41,7 +41,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/12/14/7W3nXVMt9fhOxkY.png">
 <meta property="og:image" content="https://s2.loli.net/2023/12/14/VOHrc26eNlMoFAk.png">
 <meta property="article:published_time" content="2023-12-12T14:28:07.000Z">
-<meta property="article:modified_time" content="2023-12-24T13:50:00.317Z">
+<meta property="article:modified_time" content="2023-12-25T12:55:30.214Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux 内核">
 <meta property="article:tag" content="Linux 内核开发">
@@ -243,7 +243,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%AE%9A%E4%B9%89"><span class="nav-text">1 驱动程序定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%88%86%E7%B1%BB"><span class="nav-text">1.1 驱动程序分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%88%86%E7%B1%BB"><span class="nav-text">1.2 驱动的加载分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-text">2 内核源码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%AF%B4%E6%98%8E%E6%96%87%E4%BB%B6"><span class="nav-text">2.1 说明文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2.2 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BB%A3%E7%A0%81%E6%96%87%E4%BB%B6"><span class="nav-text">2.3 代码文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%86%85%E6%A0%B8%E7%89%B9%E7%82%B9"><span class="nav-text">3 内核特点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Linux-%E5%86%85%E6%A0%B8%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-text">3.1 Linux 内核子系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%86%85%E6%A0%B8-2-6-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%8F%98%E5%8C%96"><span class="nav-text">3.2 内核 2.6 之后的变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="nav-text">4 内核开发编程基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC"><span class="nav-text">4.1 编码风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-GNU-C-%E6%89%A9%E5%B1%95"><span class="nav-text">4.2 GNU C 扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-likely-%E4%B8%8E-unlikely"><span class="nav-text">4.3 likely 与 unlikely</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-do-while-0-%E8%AF%AD%E5%8F%A5"><span class="nav-text">4.4 do{ }while(0) 语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5%E5%B8%B8%E8%A7%81%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-text">4.5常见关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">4.6 常见数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-text">4.7 错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-%E6%B6%88%E6%81%AF%E6%97%A5%E5%BF%97"><span class="nav-text">4.8 消息日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%86%85%E8%81%94-inline"><span class="nav-text">5 内联 inline</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0"><span class="nav-text">5.1 内联函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-static-inline-%E4%B8%8E-extern-inline"><span class="nav-text">5.2 static inline 与 extern inline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E5%86%85%E8%81%94%E4%B8%80%E5%AE%9A%E4%BC%9A%E5%B1%95%E5%BC%80%E5%90%97%EF%BC%9F"><span class="nav-text">5.3 内联一定会展开吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-inline-%E5%87%BD%E6%95%B0%E4%B8%8E%E5%AE%8F%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB"><span class="nav-text">5.4 inline 函数与宏函数区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6 内联汇编</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%9F%BA%E6%9C%AC%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6.1 基本内联汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E6%89%A9%E5%B1%95%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6.2 扩展内联汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E4%BF%AE%E6%94%B9%E5%88%97%E8%A1%A8"><span class="nav-text">6.3 修改列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E8%BE%93%E5%87%BA%E6%93%8D%E4%BD%9C%E6%95%B0"><span class="nav-text">6.4 输出操作数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E8%BE%93%E5%85%A5%E6%93%8D%E4%BD%9C%E6%95%B0"><span class="nav-text">6.5 输入操作数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91"><span class="nav-text">7 模块开发</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%AE%9A%E4%B9%89"><span class="nav-text">1 驱动程序定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%88%86%E7%B1%BB"><span class="nav-text">1.1 驱动程序分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%88%86%E7%B1%BB"><span class="nav-text">1.2 驱动的加载分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-text">2 内核源码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%AF%B4%E6%98%8E%E6%96%87%E4%BB%B6"><span class="nav-text">2.1 说明文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2.2 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BB%A3%E7%A0%81%E6%96%87%E4%BB%B6"><span class="nav-text">2.3 代码文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%86%85%E6%A0%B8%E7%89%B9%E7%82%B9"><span class="nav-text">3 内核特点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Linux-%E5%86%85%E6%A0%B8%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-text">3.1 Linux 内核子系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%86%85%E6%A0%B8-2-6-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%8F%98%E5%8C%96"><span class="nav-text">3.2 内核 2.6 之后的变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="nav-text">4 内核开发编程基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC"><span class="nav-text">4.1 编码风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-GNU-C-%E6%89%A9%E5%B1%95"><span class="nav-text">4.2 GNU C 扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-likely-%E4%B8%8E-unlikely"><span class="nav-text">4.3 likely 与 unlikely</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-do-while-0-%E8%AF%AD%E5%8F%A5"><span class="nav-text">4.4 do{ }while(0) 语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5%E5%B8%B8%E8%A7%81%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-text">4.5常见关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">4.6 常见数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-text">4.7 错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-%E6%B6%88%E6%81%AF%E6%97%A5%E5%BF%97"><span class="nav-text">4.8 消息日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%86%85%E8%81%94-inline"><span class="nav-text">5 内联 inline</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0"><span class="nav-text">5.1 内联函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-static-inline-%E4%B8%8E-extern-inline"><span class="nav-text">5.2 static inline 与 extern inline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E5%86%85%E8%81%94%E4%B8%80%E5%AE%9A%E4%BC%9A%E5%B1%95%E5%BC%80%E5%90%97%EF%BC%9F"><span class="nav-text">5.3 内联一定会展开吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-inline-%E5%87%BD%E6%95%B0%E4%B8%8E%E5%AE%8F%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB"><span class="nav-text">5.4 inline 函数与宏函数区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6 内联汇编</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%9F%BA%E6%9C%AC%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6.1 基本内联汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E6%89%A9%E5%B1%95%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6.2 扩展内联汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E4%BF%AE%E6%94%B9%E5%88%97%E8%A1%A8"><span class="nav-text">6.3 修改列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%93%8D%E4%BD%9C%E6%95%B0"><span class="nav-text">6.4 输入输出操作数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E6%B1%87%E7%BC%96%E6%A8%A1%E6%9D%BF%E4%B8%AD%E7%9A%84%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">6.5 汇编模板中的占位符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91"><span class="nav-text">7 模块开发</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -373,7 +373,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-12-24 21:50:00" itemprop="dateModified" datetime="2023-12-24T21:50:00+08:00">2023-12-24</time>
+        <time title="修改时间：2023-12-25 20:55:30" itemprop="dateModified" datetime="2023-12-25T20:55:30+08:00">2023-12-25</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -414,14 +414,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>30k</span>
+      <span>36k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>27 分钟</span>
+      <span>33 分钟</span>
     </span>
 </div>
 
@@ -1466,15 +1466,16 @@
 <li><p>关于 <code>&quot; &quot;</code>：</p>
 <ul>
 <li><p>可将所有汇编代码写到一对 <code>&quot; &quot;</code> 中，指令之间<strong>必须</strong>使用 <code>;</code> 或 <code>\n</code> 或 <code>\n\t</code> 表示结束，最后一句汇编指令可写可不写 <code>;</code>。代码跨行<strong>必须</strong>要使用反斜杠 <code>\</code>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">__asm__ __volatile__ (<span class="string">&quot;        \</span></span><br><span class="line"><span class="string">    pushfq;                    \</span></span><br><span class="line"><span class="string">    mov QWORD PTR [rcx], rax;  \</span></span><br><span class="line"><span class="string">    popfq;                     \</span></span><br><span class="line"><span class="string">&quot;</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__asm__ __volatile__ (<span class="string">&quot;                 \</span></span><br><span class="line"><span class="string">        .intel_syntax noprefix;         \</span></span><br><span class="line"><span class="string">        pushfq;                         \</span></span><br><span class="line"><span class="string">        mov QWORD PTR [rcx], rax;       \</span></span><br><span class="line"><span class="string">        popfq;                          \</span></span><br><span class="line"><span class="string">&quot;</span>);</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>可将每个汇编指令都使用 <code>&quot; &quot;</code> 括起来，每个指令<strong>必须</strong>以 <code>;</code> 或 <code>\n</code> 或 <code>\n\t</code> 表示结束。代码代码跨行可不使用 <code>\</code>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">__asm__ __volatile__ (</span><br><span class="line">    <span class="string">&quot;pushfq;&quot;</span></span><br><span class="line">    <span class="string">&quot;mov QWORD PTR [rcx], rax;&quot;</span></span><br><span class="line">    <span class="string">&quot;popfq;&quot;</span></span><br><span class="line">);</span><br><span class="line">    </span><br><span class="line"><span class="comment">/* 或写成以下形式 */</span></span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;pushfq&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;mov QWORD PTR [rcx], rax&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;popfq&quot;</span>);</span><br></pre></td></tr></table></figure></li>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">__asm__ __volatile__ (</span><br><span class="line">        <span class="string">&quot;.intel_syntax noprefix;&quot;</span></span><br><span class="line">        <span class="string">&quot;pushfq;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov QWORD PTR [rcx], rax;&quot;</span></span><br><span class="line">        <span class="string">&quot;popfq;&quot;</span></span><br><span class="line">);</span><br><span class="line">    </span><br><span class="line"><span class="comment">/* 或写成以下形式 */</span></span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;.intel_syntax noprefix&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;pushfq&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;mov QWORD PTR [rcx], rax&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;popfq&quot;</span>);</span><br></pre></td></tr></table></figure></li>
 </ul>
 </li>
 <li><p>关于语句分隔：指令之间<strong>必须</strong>使用 <code>;</code> 或 <code>\n</code> 或 <code>\n\t</code>（增加可读性），进行分隔。</p>
 </li>
 </ul>
+<p>以上使用 Intel 语法汇编，第一句汇编指令必须指定为 <code>.intel_syntax noprefix</code>，同时在 GCC 编译代码时要指定 <code>-masm=intel</code> 参数。（GCC 默认使用 AT&amp;T 语法，要使用 Intel 语法就需要特别指定）</p>
 <h3 id="6-2-扩展内联汇编"><a href="#6-2-扩展内联汇编" class="headerlink" title="6.2 扩展内联汇编"></a>6.2 扩展内联汇编</h3><p>扩展内联汇编常嵌入到 C 代码中，除了可以使用函数中 C 代码定义的局部变量外，还能降低程序错误率（编译器会对某些未修正的代码或内存进行处理，但编码者不应对此充满信任）。</p>
 <p>语法如下：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">asm</span> [qualifiers] ( assembler <span class="keyword">template</span> </span><br><span class="line">                    [: output operands]                  <span class="comment">/* 可选的，输出操作数 */</span></span><br><span class="line">                    [: input operands ]                  <span class="comment">/* 可选的，输入操作数 */</span></span><br><span class="line">                    [: <span class="built_in">list</span> of clobber/modify]           <span class="comment">/* 可选的，修改列表（寄存器/内存） */</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
@@ -1499,7 +1500,7 @@
 </tr>
 <tr>
 <td>assembler template</td>
-<td>汇编模板，也就是写指令的地方。在基本内联汇编的基础上，扩展汇编的代码中允许存在操作数占位符，如 %0，%1等，以便对函数中 C 定义的局部变量进行使用。<br />占位符分为<strong>序号占位符</strong>和<strong>名称占位符</strong>两种。后面学习了输入输出操作数之后再讲解。</td>
+<td>汇编模板，也就是写指令的地方。在基本内联汇编的基础上，扩展汇编的代码中允许存在操作数占位符，如 %0，%1等，以便对函数中 C 定义的局部变量进行使用。<br />值得注意的一点这是，在基本内联汇编中，寄存器表示方法和直接写汇编没什么区别，都是以 <code>%</code> 开头，后面跟着寄存器名称，比如 <code>%eax</code>；但是在扩展内联汇编中，单个 <code>%</code> 有了新的用途，用来表示占位符，所以在扩展内联汇编中的寄存器名称前要用<strong>两个 <code>%</code></strong> 做前缀。<br /><mark class="label primary">占位符</mark>分为<strong>序号占位符</strong>和<strong>名称占位符</strong>两种。具体<mark class="label success">参见章节 6.5</mark>。</td>
 </tr>
 </tbody></table>
 <h3 id="6-3-修改列表"><a href="#6-3-修改列表" class="headerlink" title="6.3 修改列表"></a>6.3 修改列表</h3><p>扩展汇编的最后一个冒号 <code>:</code> 后面表示的是修改列表。汇编代码执行后会修改一些内存或寄存器的值，通过此项通知编译器，可能造成寄存器或内存数据的破坏，这样 GCC 就知道哪些寄存器或内存需要提前保存起来。</p>
@@ -1518,21 +1519,326 @@
 
 
 
-<h3 id="6-4-输出操作数"><a href="#6-4-输出操作数" class="headerlink" title="6.4 输出操作数"></a>6.4 输出操作数</h3><p>在汇编代码片段中，将数据输出到 C 定义的局部变量中（类似于 Windows 中的 <code>OUT</code>），以便给 C 代码使用。定义格式如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;[操作数修饰符] 约束条件&quot;</span>(C变量名)</span><br></pre></td></tr></table></figure>
+<h3 id="6-4-输入输出操作数"><a href="#6-4-输入输出操作数" class="headerlink" title="6.4 输入输出操作数"></a>6.4 输入输出操作数</h3><p>输出操作数：在汇编代码片段中，将数据输出到 C 定义的局部变量中（类似于 Windows 中的 <code>OUT</code>），以便给 C 代码使用。</p>
+<p>输入操作数：可以将函数中 C 代码定义的局部变量或函数的参数，输入给汇编使用。定义格式与输出操作数一样。</p>
+<p>定义格式如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[变量别名]<span class="string">&quot;[操作数修饰符] 约束条件&quot;</span>(C变量名)</span><br></pre></td></tr></table></figure>
 
 <p>双引号和括号都不能忽略，如果是有多个输出操作数，使用 <code>,</code> 分割：<code>&quot;=r&quot;(a), &quot;=o&quot;(b)</code>。</p>
-<h3 id="6-5-输入操作数"><a href="#6-5-输入操作数" class="headerlink" title="6.5 输入操作数"></a>6.5 输入操作数</h3><p>可以将函数中 C 代码定义的局部变量或函数的参数，输入给汇编使用。定义格式与输出操作数一样。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;[操作数修饰符] 约束条件&quot;</span>(C变量名)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>操作数修饰符（modifier）：可选的，只能用于输出，提供输出变量的<strong>行为</strong>信息（如只读&#x2F;读写、是否可以在指令中交换次序等）。</li>
+<li>约束条件（constraint）：提供输入&#x2F;输出操作数<strong>位置</strong>的信息（如分配到寄存器还是内存中）。</li>
+<li>变量别名（asmSymboicName）：可选的，我们可以给 <code>C变量名</code> 起一个只能在该 asm 中使用的别名，并通过 <code>%[asmSymbolicName]</code> 访问它。比如：<code>[value] &quot;=m&quot; (i)</code>，可以在 asm 块中通过 <code>%[value]</code> 访问它。</li>
+</ul>
+<div class="note warning"><p><strong>一、操作数修饰符（modifier）</strong></p>
+<p>操作数修饰符（modifier）只能用于输出变量上。</p>
+<ul>
+<li><code>=</code>：操作数是只写的。这意味着操作对象中原先的值可以被丢弃，并且写入新数据。</li>
+<li><code>+</code>：操作数是可读写的。即可以在 asm 中合法的读取操作对象，并且 C 变量在进入 asm 块时就已经加载到对应的位置中。</li>
+<li><code>%</code>：表示该操作对象可以交换次序。该操作数可以和下一个输入操作数互换。</li>
+<li><code>&amp;</code>：表示此输出操作数要独占所约束（分配）的寄存器，任何输入操作数中所分配的寄存器不能与此相同。注意，当表达式中有多个修饰符时，<code>&amp;</code> 要与约束名挨着，不能分隔。</li>
+</ul>
+<p>其他注意事项：</p>
+<ul>
+<li>GCC不保证在进入 asm 块时，输出变量已被加载到约束条件（constraint）指定的位置中。如果需要 GCC 在进入 asm 块时将变量加载到约束条件（constraint）指定的位置中，则操作数修饰符（modifier）应该使用 <code>+</code>。</li>
+<li>约束条件（constraint）是指定变量在 asm 块中的位置，而不是在函数中的位置。如变量的约束条件（constraint）为 <code>r</code> 说明它在进入&#x2F;退出 asm 块时被分配到通用寄存器中，但在进入 asm 块前它的位置是不确定的。如果要控制 asm 块外变量被分配的位置，可以使用 GNU C 的寄存器变量拓展。</li>
+</ul>
+</div>
+
+<div class="note success"><p><strong>二、约束条件（constraint）</strong></p>
+<p>约束条件：描述了操作数是否使用了寄存器，用的是哪种寄存器；是否引用了内存，用的是哪种地址；是否是立即数，是哪种类型的立即数等等。它所起的作用就是把 C 代码中的操作数（变量、立即数）映射为汇编中所使用的操作数，实际就是描述 C 中的操作数如何变成汇编操作数。分为以下几种：</p>
+<ul>
+<li>寄存器约束</li>
+<li>内存约束</li>
+<li>立即数约束</li>
+<li>数字约束</li>
+</ul>
+</div>
+
+<table>
+<thead>
+<tr>
+<th>约束类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>寄存器约束</td>
+<td>在使用汇编代码片段时（不包含 C 代码），将操作数存储在寄存器中。<br />常见的寄存器约束有：<br />r：表示 rax&#x2F;rbx&#x2F;rcx&#x2F;rdx&#x2F;rsi&#x2F;rdi 这 6 个通用寄存器中任意一个<br />a：表示 a 系列寄存器 rax&#x2F;eax&#x2F;ax&#x2F;al<br />b：表示 b 系列寄存器 rbx&#x2F;ebx&#x2F;bx&#x2F;bl<br />c：表示 c 系列寄存器 rcx&#x2F;ecx&#x2F;cx&#x2F;cl<br />d：表示 d 系列寄存器 rdx&#x2F;edx&#x2F;dx&#x2F;dl<br />D：表示寄存器 rdi&#x2F;edi&#x2F;di<br />S：表示寄存器 rsi&#x2F;esi&#x2F;si<br />q：表示 rax&#x2F;rbx&#x2F;rcx&#x2F;rdx 这 4 个通用寄存器中任意一个<br />g：表示可以存放到任意地点（寄存器和内存）。相当于除了同 q 一样外，还可以让 gcc 安排在内存中<br />A：a 和 d 寄存器，用于返回结果保存在a 和 d 寄存器的指令。<br />f：表示浮点寄存器<br />t：表示第 1 个浮点寄存器<br />u：表示第 2 个浮点寄存器<br />p：表示内存地址，给 “load address” 和 “push address” 指令使用<br /><br />注意：我们在写 AT&amp;T 汇编代码时，想使用 <code>movb, movd, movq</code> 等操作指定字节大小的操作数时，代码编译会发生错误，还需要<mark class="label danger">对占位符进一步精确使用，</mark><mark class="label info">具体见章节 6.5 占位符部分</mark>。</td>
+</tr>
+<tr>
+<td>内存约束</td>
+<td>表示在汇编代码中直接操作 C 变量的内存地址（操作的是<strong>变量地址</strong>），不需要寄存器做中转，直接进行内存读写，也就是汇编代码的操作数是 C 变量的指针。主要有以下几种：<br /> <code>m</code>：表示内存操作数，可以是计算机支持的任何类型的地址。<br /><code>o</code>：也是内存操作数，但访问它是通过偏移量的形式访问，即包含 <code>offset_address</code> 的格式。如 <code>asm (&quot;movq 16+%1, %0&quot; : &quot;=r&quot;(element) : &quot;o&quot;(arr));</code> 将变量 1 地址偏移 16 的数值写入到变量 0。<br /><code>V</code> : 一个不允许偏移的内存操作数。换言之，任何适合 <code>m</code> 约束而不适合 <code>o</code> 约束的操作数。</td>
+</tr>
+<tr>
+<td>立即数约束</td>
+<td>常数。立即数不是变量，只能作为右值，<strong>只用于输入操作数</strong>，此约束要求 gcc 在传值的时候不通过寄存器或内存，直接作为立即数传给汇编代码<br />i：表示操作数为整数立即数<br />F：表示操作数为浮点数立即数<br />I（大写的i）：表示操作数为0~31之间的立即数<br />J：表示操作数为0~63之间的立即数<br />N：表示操作数为0~255之间的立即数<br />O：表示操作数为0~32之间的立即数<br />X：表示操作数为任何类型立即数</td>
+</tr>
+<tr>
+<td>数字约束</td>
+<td><code>0~9</code>：此约束<strong>只用于输入操作数</strong>，表示该输入 操作数与输出操作数中第 <code>n</code> 个操作数用相同的寄存器或内存。<br />如 <code>asm (&quot;incl %0&quot; :&quot;=a&quot;(var):&quot;0&quot;(var));</code>。这里的 <code>0</code> 用于指定与第 0 个输出变量相同的约束。</td>
+</tr>
+<tr>
+<td>x86 特有的约束</td>
+<td>r：寄存器操作数约束，查看上面给定的表格<br/>q：寄存器 a、b、c 或者 d<br/>I：范围从 0 到 31 的常量（对于 32 位移位）<br/>J：范围从 0 到 63 的常量（对于 64 位移位）<br/>K：0xff<br/>L：0xffff<br />M：0、1、2 或 3 （lea 指令的移位）<br />N：范围从 0 到 255 的常量（对于 out 指令）<br />f：浮点寄存器<br />t：第一个（栈顶）浮点寄存器<br />u：第二个浮点寄存器<br />A：指定 “a” 或 “d” 寄存器。这主要用于想要返回 64 位整形数，使用 “d” 寄存器保存最高有效位和 “a” 寄存器保存最低有效位。</td>
+</tr>
+</tbody></table>
+<h3 id="6-5-汇编模板中的占位符"><a href="#6-5-汇编模板中的占位符" class="headerlink" title="6.5 汇编模板中的占位符"></a>6.5 汇编模板中的占位符</h3><p>章节 6.2 和 6.4 中提到过，汇编模板（assembler template）中使用 2 种占位符：序号占位符、名称占位符。</p>
+<ol>
+<li><p><strong>序号占位符</strong>：<code>%0~%9</code>，按照操作数在输出操作数列表 --&gt; 到输入操作数列表从左到右出现的次序，从 0 开始编号，一直到 9，引用它的格式是 <code>%0~%9</code>，也就是说最多支持 10 个序号占位符。</p>
+<p>如下，输出操作数列表出现的第一个操作数为 <code>b</code> 变量，汇编代码中的 <code>%0</code> 即表示引用该变量。</p>
+<p>同理，出现的第二个操作数是 <code>a</code> 变量，汇编代码中的 <code>%1</code> 即表示引用该变量。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span> </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">10</span>, b;</span><br><span class="line">    <span class="keyword">asm</span> (<span class="string">&quot;movl %1, %%eax;&quot;</span> </span><br><span class="line">          <span class="string">&quot;movl %%eax, %0;&quot;</span></span><br><span class="line">          :<span class="string">&quot;=r&quot;</span>(b)        <span class="comment">/* output */</span></span><br><span class="line">          :<span class="string">&quot;r&quot;</span>(a)         <span class="comment">/* input */</span></span><br><span class="line">          :<span class="string">&quot;%eax&quot;</span>         <span class="comment">/* clobbered register */</span></span><br><span class="line">         );</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Now, b is: %d\n&quot;</span>, b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+</li>
+<li><p><strong>名称占位符</strong>：输出操作数的格式为：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[变量别名]<span class="string">&quot;[操作数修饰符] 约束条件&quot;</span>(C变量名)</span><br></pre></td></tr></table></figure>
+
+<p>其中可选的变量别名（asmSymboicName）：我们可以给 <code>C变量名</code> 起一个只能在该 asm 中使用的别名，并通过 <code>%[asmSymbolicName]</code> 访问它。比如：<code>[value] &quot;=m&quot; (i)</code>，可以在 asm 块中通过 <code>%[value]</code> 访问它。</p>
+</li>
+</ol>
+<p>关于章节 6.4 中提到的，在汇编模板（assembler template）中写 AT&amp;T 汇编代码时，想使用 <code>movb, movd, movq</code> 等操作指定字节大小的操作数时，代码编译会发生错误，如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[], <span class="keyword">char</span>* env[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">long</span> a = <span class="number">6</span>, b = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        __asm__ __volatile__ (  \</span><br><span class="line">                <span class="string">&quot;movl %1, %0;&quot;</span>  \</span><br><span class="line">                :<span class="string">&quot;=q&quot;</span>(b)        \</span><br><span class="line">                :<span class="string">&quot;q&quot;</span>(a)         \</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[*] b = %d\n&quot;</span>, b);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>GCC 编译时会产生错误，提示 <code>mov</code> 指令的后缀没用对，正常情况下不应高提示错误。因为 <code>a, b</code> 变量是 64 bits，代码只取低 32 bits。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[alvin@centos<span class="number">-7</span> program]$ gcc -g -w -fPIC -o <span class="number">1225</span>_exp_asm.exe <span class="number">1225</span>_exp_asm.c </span><br><span class="line"><span class="number">1225</span>_exp_asm.c: Assembler messages:</span><br><span class="line"><span class="number">1225</span>_exp_asm.c:<span class="number">7</span>: Error: incorrect <span class="keyword">register</span> `%rax<span class="number">&#x27;</span> used with `l<span class="number">&#x27;</span> suffix</span><br></pre></td></tr></table></figure>
+
+<p>还需要对占位符进一步精确使用：所以应该使用更精确的占位符。如下表所示，取 <code>%rax</code> 的低 32 bits，应该是使用 <code>%kn</code> 占位符。</p>
+<p>The table below shows the list of supported modifiers and their effects.</p>
+<table>
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Description</th>
+<th>Operand</th>
+<th>‘att’语法</th>
+<th>‘intel’语法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>A</code></td>
+<td>Print an absolute memory reference.</td>
+<td><code>%A0</code></td>
+<td><code>*%rax</code></td>
+<td><code>rax</code></td>
+</tr>
+<tr>
+<td><code>b</code></td>
+<td>Print the QImode name of the register.</td>
+<td><code>%b0</code></td>
+<td><code>%al</code></td>
+<td><code>al</code></td>
+</tr>
+<tr>
+<td><code>B</code></td>
+<td>print the opcode suffix of b.</td>
+<td><code>%B0</code></td>
+<td><code>b</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>c</code></td>
+<td>Require a constant operand and print the constant expression with no punctuation.</td>
+<td><code>%c1</code></td>
+<td><code>2</code></td>
+<td><code>2</code></td>
+</tr>
+<tr>
+<td><code>d</code></td>
+<td>print duplicated register operand for AVX instruction.</td>
+<td><code>%d5</code></td>
+<td><code>%xmm0, %xmm0</code></td>
+<td><code>xmm0, xmm0</code></td>
+</tr>
+<tr>
+<td><code>E</code></td>
+<td>Print the address in Double Integer (DImode) mode (8 bytes) when the target is 64-bit. Otherwise mode is unspecified (VOIDmode).</td>
+<td><code>%E1</code></td>
+<td><code>%(rax)</code></td>
+<td><code>[rax]</code></td>
+</tr>
+<tr>
+<td><code>g</code></td>
+<td>Print the V16SFmode name of the register.</td>
+<td><code>%g0</code></td>
+<td><code>%zmm0</code></td>
+<td><code>zmm0</code></td>
+</tr>
+<tr>
+<td><code>h</code></td>
+<td>Print the QImode name for a “high” register.</td>
+<td><code>%h0</code></td>
+<td><code>%ah</code></td>
+<td><code>ah</code></td>
+</tr>
+<tr>
+<td><code>H</code></td>
+<td>Add 8 bytes to an offsettable memory reference. Useful when accessing the high 8 bytes of SSE values. For a memref in (%rax), it generates</td>
+<td><code>%H0</code></td>
+<td><code>8(%rax)</code></td>
+<td><code>8[rax]</code></td>
+</tr>
+<tr>
+<td><code>k</code></td>
+<td>Print the SImode name of the register.</td>
+<td><code>%k0</code></td>
+<td><code>%eax</code></td>
+<td><code>eax</code></td>
+</tr>
+<tr>
+<td><code>l</code></td>
+<td>Print the label name with no punctuation.</td>
+<td><code>%l3</code></td>
+<td><code>.L3</code></td>
+<td><code>.L3</code></td>
+</tr>
+<tr>
+<td><code>L</code></td>
+<td>print the opcode suffix of l.</td>
+<td><code>%L0</code></td>
+<td><code>l</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>N</code></td>
+<td>print maskz.</td>
+<td><code>%N7</code></td>
+<td><code>&#123;z&#125;</code></td>
+<td><code>&#123;z&#125;</code></td>
+</tr>
+<tr>
+<td><code>p</code></td>
+<td>Print raw symbol name (without syntax-specific prefixes).</td>
+<td><code>%p2</code></td>
+<td><code>42</code></td>
+<td><code>42</code></td>
+</tr>
+<tr>
+<td><code>P</code></td>
+<td>If used for a function, print the PLT suffix and generate PIC code. For example, emit <code>foo@PLT</code> instead of ’foo’ for the function foo(). If used for a constant, drop all syntax-specific prefixes and issue the bare constant. See <code>p</code> above.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><code>q</code></td>
+<td>Print the DImode name of the register.</td>
+<td><code>%q0</code></td>
+<td><code>%rax</code></td>
+<td><code>rax</code></td>
+</tr>
+<tr>
+<td><code>Q</code></td>
+<td>print the opcode suffix of q.</td>
+<td><code>%Q0</code></td>
+<td><code>q</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>R</code></td>
+<td>print embedded rounding and sae.</td>
+<td><code>%R4</code></td>
+<td><code>&#123;rn-sae&#125;,</code></td>
+<td><code>, &#123;rn-sae&#125;</code></td>
+</tr>
+<tr>
+<td><code>r</code></td>
+<td>print only sae.</td>
+<td><code>%r4</code></td>
+<td><code>&#123;sae&#125;,</code></td>
+<td><code>, &#123;sae&#125;</code></td>
+</tr>
+<tr>
+<td><code>s</code></td>
+<td>print a shift double count, followed by the assemblers argument delimiterprint the opcode suffix of s.</td>
+<td><code>%s1</code></td>
+<td><code>$2,</code></td>
+<td><code>2,</code></td>
+</tr>
+<tr>
+<td><code>S</code></td>
+<td>print the opcode suffix of s.</td>
+<td><code>%S0</code></td>
+<td><code>s</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>t</code></td>
+<td>print the V8SFmode name of the register.</td>
+<td><code>%t5</code></td>
+<td><code>%ymm0</code></td>
+<td><code>ymm0</code></td>
+</tr>
+<tr>
+<td><code>T</code></td>
+<td>print the opcode suffix of t.</td>
+<td><code>%T0</code></td>
+<td><code>t</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>V</code></td>
+<td>print naked full integer register name without %.</td>
+<td><code>%V0</code></td>
+<td><code>eax</code></td>
+<td><code>eax</code></td>
+</tr>
+<tr>
+<td><code>w</code></td>
+<td>Print the HImode name of the register.</td>
+<td><code>%w0</code></td>
+<td><code>%ax</code></td>
+<td><code>ax</code></td>
+</tr>
+<tr>
+<td><code>W</code></td>
+<td>print the opcode suffix of w.</td>
+<td><code>%W0</code></td>
+<td><code>w</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>x</code></td>
+<td>print the V4SFmode name of the register.</td>
+<td><code>%x5</code></td>
+<td><code>%xmm0</code></td>
+<td><code>xmm0</code></td>
+</tr>
+<tr>
+<td><code>y</code></td>
+<td>print “st(0)” instead of “st” as a register.</td>
+<td><code>%y6</code></td>
+<td><code>%st(0)</code></td>
+<td><code>st(0)</code></td>
+</tr>
+<tr>
+<td><code>z</code></td>
+<td>Print the opcode suffix for the size of the current integer operand (one of <code>b</code>&#x2F;<code>w</code>&#x2F;<code>l</code>&#x2F;<code>q</code>).</td>
+<td><code>%z0</code></td>
+<td><code>l</code></td>
+<td></td>
+</tr>
+<tr>
+<td><code>Z</code></td>
+<td>Like <code>z</code>, with special suffixes for x87 instructions.</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>如上的示例改成如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[], <span class="keyword">char</span>* env[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">long</span> a = <span class="number">6</span>, b = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        __asm__ __volatile__ (  \</span><br><span class="line">                <span class="string">&quot;movl %k1, %k0;&quot;</span>\       <span class="comment">/* 修改改行 */</span></span><br><span class="line">                :<span class="string">&quot;=q&quot;</span>(b)        \</span><br><span class="line">                :<span class="string">&quot;q&quot;</span>(a)         \</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[*] b = %d\n&quot;</span>, b);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 输出如下 */</span></span><br><span class="line">[alvin@centos<span class="number">-7</span> program]$ gcc -g -w -fPIC -o <span class="number">1225</span>_exp_asm.exe <span class="number">1225</span>_exp_asm.c </span><br><span class="line">[alvin@centos<span class="number">-7</span> program]$ ./<span class="number">1225</span>_exp_asm.exe </span><br><span class="line">[*] b = <span class="number">6</span></span><br></pre></td></tr></table></figure>
 
 
 
-
-
-
-
-
-
+<p>参考内容：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kongj/p/14031770.html">GCC 内联汇编</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/606376595">Linux Kernel 源码学习必备知识之：GCC 内联汇编（AT&amp;T格式）</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.linuxprobe.com/gcc-how-to.html">最牛X的GCC 内联汇编</a></li>
+<li><a target="_blank" rel="noopener" href="https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html">Extended Asm - Assembler Instructions with C Expression Operands</a></li>
+</ul>
 <h2 id="7-模块开发"><a href="#7-模块开发" class="headerlink" title="7 模块开发"></a>7 模块开发</h2><p>Linux设备驱动程序第三版 p41 头文件说明：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br></pre></td></tr></table></figure>
 
@@ -1664,7 +1970,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">20:02</span>
+    <span title="站点阅读时长">20:07</span>
   </span>
 </div>
 <div class="busuanzi-count">
