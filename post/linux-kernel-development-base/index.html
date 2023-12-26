@@ -40,8 +40,9 @@
 <meta property="og:image" content="https://s2.loli.net/2023/12/14/4wUWZiksbS7nxXL.png">
 <meta property="og:image" content="https://s2.loli.net/2023/12/14/7W3nXVMt9fhOxkY.png">
 <meta property="og:image" content="https://s2.loli.net/2023/12/14/VOHrc26eNlMoFAk.png">
+<meta property="og:image" content="https://s2.loli.net/2023/12/26/hKs8CFcPp2JRiHE.png">
 <meta property="article:published_time" content="2023-12-12T14:28:07.000Z">
-<meta property="article:modified_time" content="2023-12-25T12:55:30.214Z">
+<meta property="article:modified_time" content="2023-12-26T14:20:17.434Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Linux 内核">
 <meta property="article:tag" content="Linux 内核开发">
@@ -243,7 +244,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%AE%9A%E4%B9%89"><span class="nav-text">1 驱动程序定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%88%86%E7%B1%BB"><span class="nav-text">1.1 驱动程序分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%88%86%E7%B1%BB"><span class="nav-text">1.2 驱动的加载分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-text">2 内核源码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%AF%B4%E6%98%8E%E6%96%87%E4%BB%B6"><span class="nav-text">2.1 说明文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2.2 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BB%A3%E7%A0%81%E6%96%87%E4%BB%B6"><span class="nav-text">2.3 代码文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%86%85%E6%A0%B8%E7%89%B9%E7%82%B9"><span class="nav-text">3 内核特点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Linux-%E5%86%85%E6%A0%B8%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-text">3.1 Linux 内核子系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%86%85%E6%A0%B8-2-6-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%8F%98%E5%8C%96"><span class="nav-text">3.2 内核 2.6 之后的变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="nav-text">4 内核开发编程基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC"><span class="nav-text">4.1 编码风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-GNU-C-%E6%89%A9%E5%B1%95"><span class="nav-text">4.2 GNU C 扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-likely-%E4%B8%8E-unlikely"><span class="nav-text">4.3 likely 与 unlikely</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-do-while-0-%E8%AF%AD%E5%8F%A5"><span class="nav-text">4.4 do{ }while(0) 语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5%E5%B8%B8%E8%A7%81%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-text">4.5常见关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">4.6 常见数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-text">4.7 错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-8-%E6%B6%88%E6%81%AF%E6%97%A5%E5%BF%97"><span class="nav-text">4.8 消息日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%86%85%E8%81%94-inline"><span class="nav-text">5 内联 inline</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%86%85%E8%81%94%E5%87%BD%E6%95%B0"><span class="nav-text">5.1 内联函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-static-inline-%E4%B8%8E-extern-inline"><span class="nav-text">5.2 static inline 与 extern inline</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E5%86%85%E8%81%94%E4%B8%80%E5%AE%9A%E4%BC%9A%E5%B1%95%E5%BC%80%E5%90%97%EF%BC%9F"><span class="nav-text">5.3 内联一定会展开吗？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-inline-%E5%87%BD%E6%95%B0%E4%B8%8E%E5%AE%8F%E5%87%BD%E6%95%B0%E5%8C%BA%E5%88%AB"><span class="nav-text">5.4 inline 函数与宏函数区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6 内联汇编</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%9F%BA%E6%9C%AC%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6.1 基本内联汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E6%89%A9%E5%B1%95%E5%86%85%E8%81%94%E6%B1%87%E7%BC%96"><span class="nav-text">6.2 扩展内联汇编</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E4%BF%AE%E6%94%B9%E5%88%97%E8%A1%A8"><span class="nav-text">6.3 修改列表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E8%BE%93%E5%85%A5%E8%BE%93%E5%87%BA%E6%93%8D%E4%BD%9C%E6%95%B0"><span class="nav-text">6.4 输入输出操作数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-5-%E6%B1%87%E7%BC%96%E6%A8%A1%E6%9D%BF%E4%B8%AD%E7%9A%84%E5%8D%A0%E4%BD%8D%E7%AC%A6"><span class="nav-text">6.5 汇编模板中的占位符</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91"><span class="nav-text">7 模块开发</span></a></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%AE%9A%E4%B9%89"><span class="nav-text">1 驱动程序定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E9%A9%B1%E5%8A%A8%E7%A8%8B%E5%BA%8F%E5%88%86%E7%B1%BB"><span class="nav-text">1.1 驱动程序分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E9%A9%B1%E5%8A%A8%E7%9A%84%E5%8A%A0%E8%BD%BD%E5%88%86%E7%B1%BB"><span class="nav-text">1.2 驱动的加载分类</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%86%85%E6%A0%B8%E6%BA%90%E7%A0%81%E7%BB%93%E6%9E%84"><span class="nav-text">2 内核源码结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%AF%B4%E6%98%8E%E6%96%87%E4%BB%B6"><span class="nav-text">2.1 说明文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-text">2.2 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E4%BB%A3%E7%A0%81%E6%96%87%E4%BB%B6"><span class="nav-text">2.3 代码文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%86%85%E6%A0%B8%E7%89%B9%E7%82%B9"><span class="nav-text">3 内核特点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Linux-%E5%86%85%E6%A0%B8%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-text">3.1 Linux 内核子系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%86%85%E6%A0%B8-2-6-%E4%B9%8B%E5%90%8E%E7%9A%84%E5%8F%98%E5%8C%96"><span class="nav-text">3.2 内核 2.6 之后的变化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80"><span class="nav-text">4 内核开发编程基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E7%BC%96%E7%A0%81%E9%A3%8E%E6%A0%BC"><span class="nav-text">4.1 编码风格</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-GNU-C-%E6%89%A9%E5%B1%95"><span class="nav-text">4.2 GNU C 扩展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-likely-%E4%B8%8E-unlikely"><span class="nav-text">4.3 likely 与 unlikely</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-do-while-0-%E8%AF%AD%E5%8F%A5"><span class="nav-text">4.4 do{ }while(0) 语句</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-%E5%B8%B8%E8%A7%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">4.5 常见数据结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E5%B8%B8%E8%A7%81%E5%AE%8F"><span class="nav-text">4.6 常见宏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E5%B8%B8%E8%A7%81%E5%85%B3%E9%94%AE%E5%AD%97"><span class="nav-text">4.7 常见关键字</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-text">4.6 错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-7-%E6%B6%88%E6%81%AF%E6%97%A5%E5%BF%97"><span class="nav-text">4.7 消息日志</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E6%A8%A1%E5%9D%97%E5%BC%80%E5%8F%91"><span class="nav-text">7 模块开发</span></a></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -259,7 +260,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">116</span>
+          <span class="site-state-item-count">117</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -272,7 +273,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">70</span>
+        <span class="site-state-item-count">71</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -373,7 +374,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-12-25 20:55:30" itemprop="dateModified" datetime="2023-12-25T20:55:30+08:00">2023-12-25</time>
+        <time title="修改时间：2023-12-26 22:20:17" itemprop="dateModified" datetime="2023-12-26T22:20:17+08:00">2023-12-26</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -414,14 +415,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>36k</span>
+      <span>26k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>33 分钟</span>
+      <span>23 分钟</span>
     </span>
 </div>
 
@@ -953,7 +954,7 @@
 </span>
 
 <p><code>case x...y</code>：表示 <code>[x, y]</code> 区间的数都满足这个 <code>case</code> 条件。（每个 <code>case</code> 后无需使用 <code>&#123; &#125;</code>，遇到 <code>break</code> 会自动结束）。</p>
-<div class="note danger"><p><strong>请注意</strong>：如果 <code>case</code> 范围的一个端点是数值，则在省略号（<code>**...</code>**<strong>）</strong>两侧留空格以避免其中一个点被视为小数点。建议 <code>...</code> 两侧都加空格。</p>
+<div class="note danger"><p><strong>请注意</strong>：如果 <code>case</code> 范围的一个端点是数值，则在省略号（<code>...</code>）两侧留空格以避免其中一个点被视为小数点。建议 <code>...</code> 两侧都加空格。</p>
 </div>
 
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">switch</span>(c) &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="string">&#x27;a&#x27;</span> ... <span class="string">&#x27;z&#x27;</span>:</span><br><span class="line"><span class="keyword">case</span> <span class="string">&#x27;A&#x27;</span> ... <span class="string">&#x27;Z&#x27;</span>:</span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -965,7 +966,7 @@
 <p><strong>三、语句表达式</strong></p>
 </span>
 
-<p>GNU C 把包含在<strong>括号</strong>中的复合语句看成是一个表达式，称为语句表达式，它可以出现在任何允许表达式的地方。</p>
+<p>GNU C 把包含在<strong>括号</strong>中的复合语句看成是一个表达式，称为语句表达式，它可以出现在任何允许表达式的地方。语句表达式的作用：<mark class="label success">返回最后一个语句的值</mark>。</p>
 <blockquote>
 <p>正常的符合语句会放到一个大括号 <code>&#123; &#125;</code> 中，如常见的 <code>if, while</code> 后面的大括号就是复合语句。如果将一个大括号中的代码放到 <code>( )</code> 里面，就成了表达式（语句表达式）。</p>
 </blockquote>
@@ -1097,6 +1098,12 @@
 <td><code>noreturn</code></td>
 <td><code>F</code></td>
 <td>此属性告诉编译器该函数永远不会返回，这可用于抑制有关未到达代码路径的错误。 C 库函数 abort() 和 exit() 均使用此属性声明。</td>
+<td></td>
+</tr>
+<tr>
+<td><code>regparm(n)</code></td>
+<td><code>F</code></td>
+<td>指定函数被调用时，仅有 <code>n</code> 个参数通过寄存器传递，其余参数使用堆栈传递。</td>
 <td></td>
 </tr>
 <tr>
@@ -1255,263 +1262,115 @@
 
 
 
-<h3 id="4-5常见关键字"><a href="#4-5常见关键字" class="headerlink" title="4.5常见关键字"></a>4.5常见关键字</h3><p><code>__user</code> 关键字修饰的指针，指向的是用户空间的指针。</p>
+<h3 id="4-5-常见数据结构"><a href="#4-5-常见数据结构" class="headerlink" title="4.5 常见数据结构"></a>4.5 常见数据结构</h3><h3 id="4-6-常见宏"><a href="#4-6-常见宏" class="headerlink" title="4.6 常见宏"></a>4.6 常见宏</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>分类</th>
+<th>分类</th>
+<th>分类</th>
+<th>分类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="#container_of">container_of</a></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<span id="container_of">
+
+<p><strong>一、container_of 宏</strong></p>
+<p><code>container_of</code> 宏，用来返回指定结构体的基地址，作用同 Windows 内核中使用的 <a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/ntdef/nf-ntdef-containing_record">CONTAINING_RECORD</a> 宏，<a target="_blank" rel="noopener" href="https://learn.microsoft.com/zh-cn/windows/win32/api/ntdef/nf-ntdef-field_offset">FIELD_OFFSET</a>。</p>
+<p>定义在 <code>include/linux/kernel.h</code> 中：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> container_of(ptr, type, member) (&#123;			\</span></span><br><span class="line">	<span class="function"><span class="keyword">const</span> <span class="title">typeof</span><span class="params">(((type *)<span class="number">0</span>)-&gt;member)</span> * __mptr </span>= (ptr);	\</span><br><span class="line">	(type *)((<span class="keyword">char</span> *)__mptr - offsetof(type, member)); &#125;)</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>ptr</code>：是一个指针，指向 <code>member</code> 参数的指针。</li>
+<li><code>type</code>：目标结构体的类型。</li>
+<li><code>member</code>：目标结构体中的一个成员。</li>
+</ul>
+<p>要看懂这个宏，得先弄清楚 <code>(struct st*)0</code>、<code>offsetof()</code> 、<code>typeof</code> 的作用。</p>
+<ol>
+<li><p><code>typeof</code> ：是 GCC 的扩展，它可以取得变量的类型，或者表达式的类型（见章节 4.2）。</p>
+</li>
+<li><p><code>(struct st*)0</code> ：作用实际上就是用来计算偏移量（求成员 member 到该结构体起始指针的字节偏移长度），如下例子：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">st</span>&#123;</span></span><br><span class="line">    <span class="keyword">int</span> a;</span><br><span class="line">    <span class="keyword">int</span> b;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(struct st* s = (struct st*)<span class="built_in">malloc</span>(<span class="number">0x10</span>))</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">memcpy</span>((<span class="keyword">char</span>*)s, <span class="number">0x10</span>, <span class="number">0</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%p, %p, %p, %p\n&quot;</span>, s, &amp;(s-&gt;b), &amp;((struct st*)<span class="number">0</span>)-&gt;b, &amp;((struct st*)<span class="number">2</span>)-&gt;b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 输出如下 */</span></span><br><span class="line"><span class="number">0x221d010</span>, <span class="number">0x221d014</span>, <span class="number">0x4</span>, <span class="number">0x6</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p><code>&amp;(s-&gt;b)</code> 表示取结构体 <code>s</code> 中 <code>b</code> 成员的地址。可以看到 <code>b</code> 在结构体指针 <code>s</code> 中的偏移量是 <code>0x221d014 - 0x221d010 == 4</code>。</p>
+</li>
+<li><p><code>&amp;((struct st*)0)-&gt;b)</code>：将 <code>0</code> 强制转换为 <code>(struct st*)</code> 结构体类型的地址，起始地址为 <code>0</code>。现在完整的看 <code>&amp;((struct st*)0)-&gt;b)</code> 即为：以地址 <code>0</code> 为基址，取其成员 <code>b</code> 的地址。<code>b</code> 在结构体中的偏移为 <code>4</code>，所以取出来的地址即为 <code>4</code>。</p>
+</li>
+</ul>
+<p>  同理的 <code>&amp;((struct st*)2)-&gt;b)</code>，表示以地址 <code>2</code> 为起始地址，取其偏移 <code>4</code> 的地址，即为 <code>6</code>。 </p>
+<p>  说明：在代码中使用 <code>((struct st*)0)-&gt;b</code> 取的是地址 <code>0x4</code> 的值，运行时会发生错误，但是 <code>typeof(((struct st*)0)-&gt;b)</code> 表示取成员 <code>b</code> 的类型，可以进行运算（<a target="_blank" rel="noopener" href="https://radek.io/2012/11/10/magical-container_of-macro/">因为表达式本身永远不会被求值</a>），不会发生错误。</p>
+<p>  所以如下代码，表示定义一个和 <code>member</code> 成员类型一样的变量 <code>__mptr</code>，然后指向指针 <code>ptr</code> 指向的地方。这里也就是取得了程序中 <code>member</code> 成员的实际地址。</p>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">const</span> <span class="title">typeof</span><span class="params">(((type *)<span class="number">0</span>)-&gt;member)</span> * __mptr </span>= (ptr);</span><br></pre></td></tr></table></figure>
+
+</li>
+<li><p><code>offsetof()</code> 宏，定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Most 32 bit architectures use &quot;unsigned int&quot; size_t,</span></span><br><span class="line"><span class="comment"> * and all 64 bit architectures use &quot;unsigned long&quot; size_t.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> offsetof(TYPE, MEMBER) ((size_t) &amp;((TYPE *)0)-&gt;MEMBER)</span></span><br></pre></td></tr></table></figure>
+
+<p>作用：取得 <code>MEMBER</code> 成员到所在结构体起始地址的偏移长度。</p>
+</li>
+</ol>
+<p>最后，分析 <code>container_of</code> 宏 的最后一个语句：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(type *)((<span class="keyword">char</span> *)__mptr - offsetof(type, member));</span><br></pre></td></tr></table></figure>
+
+<p><strong>结论</strong>：使用 <code>member</code> 成员的实际地址，减去该成员在该结构体的偏移量，即为该结构体的起始地址。</p>
+<p><img data-src="https://s2.loli.net/2023/12/26/hKs8CFcPp2JRiHE.png" alt="12.png"></p>
+<p>参考资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/54932270">linux 内核宏container_of剖析</a></li>
+<li><a target="_blank" rel="noopener" href="https://radek.io/2012/11/10/magical-container_of-macro/">The Magical container_of() Macro</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/559989135">对宏函数container_of的深入理解</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010632165/article/details/107523477">Linux内核中container_of的原理及其使用详解</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/2371473">【Linux API 揭秘】container_of函数详解</a></li>
+</ul>
+</span>
+
+
+
+
+
+<h3 id="4-7-常见关键字"><a href="#4-7-常见关键字" class="headerlink" title="4.7 常见关键字"></a>4.7 常见关键字</h3><table>
+<thead>
+<tr>
+<th>分类</th>
+<th>分类</th>
+<th>分类</th>
+<th>分类</th>
+<th>分类</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="#__user">__user</a></td>
+<td><a href="#asmlinkage">asmlinkage</a></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<span id="__user">
+
+<p><strong>一、__user</strong></p>
+<p><code>__user</code> 关键字修饰的指针，指向的是用户空间的指针。</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// https://elixir.bootlin.com/linux/latest/source/tools/include/linux/types.h#L56</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> __user</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __user</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
 
+</span>
 
+<span id="asmlinkage">
 
+<p><strong>二、asmlinkage</strong></p>
+<p><code>asmlinkage</code>：指定函数被调用时，不使用寄存器传递参数，参数全部通过堆栈进行传递。</p>
+<p>定义在 <code>/arch/x86/asm/linkage.h</code>：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> asmlinkage CPP_ASMLINKAGE __attribute__((regparm(0)))</span></span><br></pre></td></tr></table></figure>
 
-
-<h3 id="4-6-常见数据结构"><a href="#4-6-常见数据结构" class="headerlink" title="4.6 常见数据结构"></a>4.6 常见数据结构</h3><h3 id="4-7-错误处理"><a href="#4-7-错误处理" class="headerlink" title="4.7 错误处理"></a>4.7 错误处理</h3><h3 id="4-8-消息日志"><a href="#4-8-消息日志" class="headerlink" title="4.8 消息日志"></a>4.8 消息日志</h3><h2 id="5-内联-inline"><a href="#5-内联-inline" class="headerlink" title="5 内联 inline"></a>5 内联 inline</h2><h3 id="5-1-内联函数"><a href="#5-1-内联函数" class="headerlink" title="5.1 内联函数"></a>5.1 内联函数</h3><p> <code>inline</code> 函数引入的原因：如果一些函数被频繁调用，不断地有函数栈帧的开辟和回收（即 prologue&#x2F;epilogue 处理），会有非常大的开销，导致性能下降。所以引入了 <code>inline</code>，将一段可能会被频繁使用的功能片段以函数的形式进行编码，然后以 <code>inline/__inline__</code> 关键字进行修饰（称为内联函数），在内联函数被调用的地方，<strong>该函数的代码会像宏函数一样被展开</strong>。如果程序中已经使用了 <code>inline</code> 关键字，建议使用 <code>__inline__</code>，<code>inline</code> 和 <code>__inline__</code> 是同义的，是由 gcc 定义的宏：<code>#define __inline__ inline</code> 。</p>
-<div class="note danger"><p><code>inline</code> 函数使用的特点：</p>
-<ul>
-<li><p>关键字 <code>inline</code> 必须与<mark class="label danger">函数定义</mark>放在一起才能使函数成为内联，仅仅将 <code>inline</code> 放在函数声明前面不起任何作用。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 函数 Foo 不能成为内联函数 */</span></span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span>; <span class="comment">// inline 仅与函数声明放在一起  </span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span>  </span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">  ...</span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"><span class="comment">/* 函数 Foo 是内联函数 */</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span>;  </span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span> <span class="comment">// inline 与函数定义体放在一起  </span></span></span><br><span class="line"><span class="function"></span>&#123;  </span><br><span class="line">  ...</span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
-</li>
-<li><p>如果调用一个函数的开销远小于内联函数，则不建议在函数前加 <code>inline</code>。</p>
-</li>
-</ul>
-</div>
-
-<div class="note success"><p>以下情况不宜使用内联：</p>
-<ol>
-<li>如果函数体内的代码比较长，使用内联将导致内存消耗代价较高。</li>
-<li>如果函数体内出现循环（<code>while, for</code> 等），那么执行函数体内代码的时间要比函数调用的开销大。</li>
-<li><code>inline</code> 只适合代码简单的函数数使用，不能包含复杂的结构控制语句例如 <code>goto, switch</code>，并且内联函数本身不能是直接递归自己。</li>
-<li>如果一个函数包含静态变量。</li>
-<li>如果一个函数是递归的。</li>
-<li>If a function return type is other than void, and the return statement doesn’t exist in a function body. 如果函数返回类型不是 <code>void</code>，并且 <code>return</code> 语句在函数主体中不存在。。</li>
-</ol>
-</div>
-
-<p><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/difference-between-inline-and-normal-function-in-cpp/?ref=ml_lbp">C++ 中内联函数和 inline 函数的区别</a>：</p>
-<table>
-<thead>
-<tr>
-<th align="center">S.No.</th>
-<th align="center">内联功能</th>
-<th align="center">正常功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">1.</td>
-<td align="center">当它被调用时，它会内联展开。</td>
-<td align="center">这是一个为程序提供模块化的功能。</td>
-</tr>
-<tr>
-<td align="center">2.</td>
-<td align="center">它通常用于增加程序的执行时间。</td>
-<td align="center">它通常用于提高代码的可重用性，并使其更易于维护。</td>
-</tr>
-<tr>
-<td align="center">3.</td>
-<td align="center">它基本上是一个函数，当函数很小并且经常被调用时使用。</td>
-<td align="center">它基本上是一组执行特定任务的语句。当功能大时使用。</td>
-</tr>
-<tr>
-<td align="center">4.</td>
-<td align="center">它在其声明中需要 <code>inline</code> 关键字。</td>
-<td align="center">它在声明中不需要任何关键字。</td>
-</tr>
-<tr>
-<td align="center">5.</td>
-<td align="center">与正常功能相比，它通常执行得更快。</td>
-<td align="center">对于小尺寸函数，它通常比内联函数执行速度慢。</td>
-</tr>
-<tr>
-<td align="center">6.</td>
-<td align="center">在此中，函数主体被复制到使用它的每个上下文中，这反过来又减少了在存储设备或硬盘中搜索主体的时间。</td>
-<td align="center">在这方面，函数的主体存储在存储设备中，当每次调用该特定函数时，CPU必须将主体从硬盘加载到RAM进行执行。</td>
-</tr>
-<tr>
-<td align="center">7.</td>
-<td align="center">编译器总是在编译时调用该函数的每个点放置该函数的代码副本。</td>
-<td align="center">它不提供这种类型的功能。</td>
-</tr>
-<tr>
-<td align="center">8.</td>
-<td align="center">它通常只包括 <code>2-3</code> 行代码。</td>
-<td align="center">当行代码数量非常大时，即正常函数根据需要包含大量代码。</td>
-</tr>
-<tr>
-<td align="center">9.</td>
-<td align="center">与正常功能相比，它更难理解和测试。</td>
-<td align="center">与内联功能相比，它更容易理解和测试。</td>
-</tr>
-<tr>
-<td align="center">10。</td>
-<td align="center">类中存在的函数是隐式内联的。</td>
-<td align="center">存在于类之外的函数被认为是正常函数。</td>
-</tr>
-<tr>
-<td align="center">11.</td>
-<td align="center">太多的内联函数会影响编译后的文件大小，因为它复制了相同的代码。</td>
-<td align="center">太多的正常功能不会影响编译后的文件大小。</td>
-</tr>
-</tbody></table>
-<p>参考：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/renlonggg/article/details/80081986">linux C–inline函数详解</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/inline-functions-cpp/">Inline Functions in C++</a></li>
-</ul>
-<h3 id="5-2-static-inline-与-extern-inline"><a href="#5-2-static-inline-与-extern-inline" class="headerlink" title="5.2 static inline 与 extern inline"></a>5.2 static inline 与 extern inline</h3><div class="note info"><p>为什么内联函数要在头文件，并且建议使用 <code>static</code>？</p>
-<ol>
-<li>内联函数放在头文件：可以让项目中使用这个内联函数的任何源文件，不必亲自再去定义一遍，直接包含这个头文件，即可像宏一样展开使用。如果是定义在 <code>.c</code> 源文件中，其他源文件引用时会当做 <code>extern</code> 函数调用而不展开；</li>
-<li>使用 <code>static</code> 的原因：使用 <code>inline</code> 定义的内联函数，编译器不一定会内联展开，那么当多个文件都包含这个内联函数的定义时，编译时就有可能报重定义错误。在头文件内联函数使用 <code>static</code> 修饰，可以将这个函数的作用域局限在各自本地文件内，避免了重定义错误。</li>
-</ol>
-</div>
-
-<div class="note primary"><p>Linux 内核中，内联函数常常使用 <code>static</code> 修饰，是有原因的：</p>
-<ul>
-<li><code>extern inline</code>：首先函数是 <code>extern</code> 的（和不加该关键字效果一样，编译器默认函数是 <code>extern</code>），也就是说该函数可能是从其他文件引入的，<mark class="label danger">如果本文件看不到定义，则只会做普通函数调用</mark>，如果能看到定义，则可以尝试 <code>inline</code> 展开。</li>
-<li><code>static inline</code>：这是一个 <code>static</code> 函数，也即函数是文件内链接的，<mark class="label danger">内联函数的定义应该放在头文件中</mark>，即使多处包含也不会出现重定义问题（多个文件使用），如果你将它放进 <code>.c</code> 源文件反而会出错，因为这时其他文件看不到定义，所以必须定义在头文件，然后在调用处将会做内敛展开。总结为：<ul>
-<li>为方便项目中多文件使用 <code>inline</code> 函数，应该将内联函数定义在头文件中；</li>
-<li>为让调用内联函数代码处，能对内联函数进行展开（而不是函数调用 <code>call</code>），应该使用 <code>static</code> 进行修饰。</li>
-</ul>
-</li>
-</ul>
-</div>
-
-<p>如果 <code>inline</code> 函数的定义放在 <code>.c</code> 文件中的话，如果是 <code>static inline</code> 修饰，其他 <code>.c</code> 文件不能引用该函数；如果不用 <code>static</code> 进行修饰（相当于 <code>extern</code>），则其他 <code>.c</code> 文件会当做 <code>call</code> 调用该函数（并不是函数展开）。所以最好就是将内联函数定义在头文件中，定义成 <code>static inline</code>。</p>
-<p>参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/lxlx1798/articles/9996521.html">C 内联函数：static inline 和 extern inline 的含义 </a>、<a target="_blank" rel="noopener" href="https://blog.csdn.net/houxiaoni01/article/details/104390338">C语言：inline，static inline</a>。</p>
-<h3 id="5-3-内联一定会展开吗？"><a href="#5-3-内联一定会展开吗？" class="headerlink" title="5.3 内联一定会展开吗？"></a>5.3 内联一定会展开吗？</h3><div class="note danger"><p><code>inline</code>仅是一个对编译器的建议，并不会强制内联，所以最后能否真正内联，取决于编译器，声明内联只是对编译器的一个建议而已。</p>
-</div>
-
-<p>说明：在 GCC 4.8.5 20150623 (Red Hat 4.8.5-44) 版本中进行测试，仅使用 <code>static inline</code> 修饰函数，不开启编译优化，不会将内联函数在被调用处进行展开；而如果使用 <code>__attribute__((always_inline))</code> 或 <code>__attribute__((gnu_inline))</code> 进行修饰（<strong>强制内联</strong>），则会在函数被调用处进行展开，即使不加 <code>static __inline__</code>。如果必须强制使用内联展开，则使用 <code>__attribute__()</code> 为主。</p>
-<div class="note success"><p>当一个函数使用 <code>inline</code> 关键字修饰，编译器在编译时一定会内联展开吗？未必。编译器也会根据实际情况，比如函数体大小、函数体内是否有循环结构、是否有指针、是否有递归、函数调用是否频繁来做决定。比如 GCC 编译器，一般是不会对内联函数展开的，只有当编译优化选项开到 -O2 以上，才会考虑是否内联展开。当我们使用 <code>noinline</code> 和 <code>always_inline</code> 对一个内联函数作了属性声明后，编译器的编译行为就变得确定了。使用 <code>noinline</code> 声明，就是告诉编译器，不要展开；使用 <code>always_inline</code> 属性声明，就是告诉编译器，要内联展开。</p>
-</div>
-
-<p>——《<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/640196020">noinline &amp; always_inline 内联函数探究</a>》、<a target="_blank" rel="noopener" href="https://blog.csdn.net/m0_37616597/article/details/104138980">inline只是建议内联，并不会强制内联</a>、<a target="_blank" rel="noopener" href="https://www.cnblogs.com/fortunely/p/13430735.html">gcc内联函数 inline和__attribute __（（always_inline））的区别</a>。</p>
-<h3 id="5-4-inline-函数与宏函数区别"><a href="#5-4-inline-函数与宏函数区别" class="headerlink" title="5.4 inline 函数与宏函数区别"></a>5.4 inline 函数与宏函数区别</h3><p>宏函数和内联函数有什么区别：</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>宏（#define）</th>
-<th>inline 函数</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>展开时机</td>
-<td>预编译阶段展开。</td>
-<td>编译阶段展开，并不总是保证内联展开，视编译器优化情况而定。</td>
-</tr>
-<tr>
-<td>参数传递</td>
-<td>简单的做文本替换，可能会产生副作用（二义性）。宏函数只是文本替换，并不是参数传递。</td>
-<td>进行参数传递。</td>
-</tr>
-<tr>
-<td>参数类型安全</td>
-<td>无参数类型检查；直接文本替换。如：<br /><code>#define add(a, b) a &gt; b ? a:b</code><br />并不会对参数的类型进行检查，如果传递字符串则发生错误结果。</td>
-<td>会对参数类型做安全检查或自动类型转换，参数和返回值的类型检查。因为内联并总是被展开，所以内联函数传参和常规函数无异。</td>
-</tr>
-<tr>
-<td>用法</td>
-<td>宏可用于定义常量、表达式、文字文本替换和定义函数等。</td>
-<td>内联函数可用于最小化程序的执行时间。</td>
-</tr>
-<tr>
-<td>调试</td>
-<td>由于直接文本替换，调试可能更难。</td>
-<td>更容易调试，因为它们的行为就像函数一样。</td>
-</tr>
-</tbody></table>
-<p>参考：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/46526454">宏（#define）和内联函数（inline）的理解以及区别</a></li>
-<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/jiechuhoudeshang/article/details/90299466">内联函数和宏定义函数的区别</a></li>
-<li><a target="_blank" rel="noopener" href="https://embetronicx.com/tutorials/p_language/c/macro_vs_inline/">Difference between Macro and Inline Function</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.prepbytes.com/blog/cpp-programming/difference-between-macro-and-inline-function/">Difference between Macro and Inline Function.</a></li>
-<li><a target="_blank" rel="noopener" href="https://icarus.cs.weber.edu/~dab/cs1410/textbook/6.Functions/inline.html">6.7. Macros and Inline Functions</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.geeksforgeeks.org/difference-between-inline-and-macro-in-c/">Difference between Inline and Macro in C++</a></li>
-<li><a target="_blank" rel="noopener" href="https://chunminchang.gitbooks.io/cplusplus-learning-note/content/Appendix/preprocessor_macros_vs_inline_functions.html">Preprocessor Macros V.S. Inline Functions</a></li>
-</ul>
-<h2 id="6-内联汇编"><a href="#6-内联汇编" class="headerlink" title="6 内联汇编"></a>6 内联汇编</h2><p>GCC 支持在 C 代码项目中使用汇编代码，称为内联汇编（inline assembly）。使用汇编写的代码可以是一个完成的函数，被其他地方调用；也可以在一个 C 代码的函数中内嵌使用汇编代码。</p>
-<p>在 Intel CPU 基础上，Linux 平台更喜欢使用 AT&amp;T 风格的汇编，Windows 平台更喜欢使用 Intel 风格的语法（我是从Windows 内核转过来，更习惯 Intel 语法的汇编）。</p>
-<div class="note danger"><p>内联汇编按格式分为两大类：<strong>基本内联汇编</strong>和<strong>扩展内联汇编</strong>。</p>
-<ul>
-<li>基本内联汇编：常用来编写一个完全由汇编代码写成的函数（也可以嵌入到 C 函数的代码中，但是不能使用局部变量）；可以使用程序中的全局变量，如 <code>mov QWORD PTR [var_global] rax</code>。</li>
-<li>扩展内联汇编：常嵌入在 C 函数里的汇编代码，可以使用 C 函数定义的局部变量，但要遵循复杂的语法。</li>
-</ul>
-</div>
-
-
-
-<h3 id="6-1-基本内联汇编"><a href="#6-1-基本内联汇编" class="headerlink" title="6.1 基本内联汇编"></a>6.1 基本内联汇编</h3><p>基本内联汇编的使用方法如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">asm</span> [asm_qualifiers] (<span class="string">&quot;assembly code&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>组成部分</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>asm</td>
-<td>用于声明内联汇编表达式，如果没有 <code>[asm_qualifiers]</code> 修饰部分的话，<code>asm (&quot; &quot;)</code> 之前有无空格是无所谓的。<br />假如代码中已经给 <code>asm</code> 关键字定义为宏或做他用，则可以使用 GCC 扩展关键字 <code>__asm__</code>，两者是同义的。 GCC 定义的宏：<code>#define __asm__ asm</code>。</td>
-</tr>
-<tr>
-<td>[asm_qualifiers]</td>
-<td>可选，基本内联汇编的限定符，有 2 种：<br /> - <code>volatile</code> ：代码编译时，编译器会对代码进行优化，达不到汇编效果，或者产生错误的结果。可以使用 <code>volatile</code> 告知编译器不要优化该片段，原样保留代码。可使用 GCC 定义的宏：<code>#define __volatile__ volatile</code>，可避免发生冲突。基本内联汇编代码块，默认都是 <code>volatile</code> 的。<br />- <code>inline</code>：建议编译器将该段汇编代码内联，但是不强制，编译器会自己决定。</td>
-</tr>
-<tr>
-<td>(“assembly code”);</td>
-<td>该部分是写汇编代码的部分，括号外要有 <code>;</code> 以表示结束。具体写法如下：</td>
-</tr>
-</tbody></table>
-<p><code>(&quot;assembly code&quot;);</code> 说明如下：</p>
-<ul>
-<li><p>关于 <code>&quot; &quot;</code>：</p>
-<ul>
-<li><p>可将所有汇编代码写到一对 <code>&quot; &quot;</code> 中，指令之间<strong>必须</strong>使用 <code>;</code> 或 <code>\n</code> 或 <code>\n\t</code> 表示结束，最后一句汇编指令可写可不写 <code>;</code>。代码跨行<strong>必须</strong>要使用反斜杠 <code>\</code>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__asm__ __volatile__ (<span class="string">&quot;                 \</span></span><br><span class="line"><span class="string">        .intel_syntax noprefix;         \</span></span><br><span class="line"><span class="string">        pushfq;                         \</span></span><br><span class="line"><span class="string">        mov QWORD PTR [rcx], rax;       \</span></span><br><span class="line"><span class="string">        popfq;                          \</span></span><br><span class="line"><span class="string">&quot;</span>);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>可将每个汇编指令都使用 <code>&quot; &quot;</code> 括起来，每个指令<strong>必须</strong>以 <code>;</code> 或 <code>\n</code> 或 <code>\n\t</code> 表示结束。代码代码跨行可不使用 <code>\</code>。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">__asm__ __volatile__ (</span><br><span class="line">        <span class="string">&quot;.intel_syntax noprefix;&quot;</span></span><br><span class="line">        <span class="string">&quot;pushfq;&quot;</span></span><br><span class="line">        <span class="string">&quot;mov QWORD PTR [rcx], rax;&quot;</span></span><br><span class="line">        <span class="string">&quot;popfq;&quot;</span></span><br><span class="line">);</span><br><span class="line">    </span><br><span class="line"><span class="comment">/* 或写成以下形式 */</span></span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;.intel_syntax noprefix&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;pushfq&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;mov QWORD PTR [rcx], rax&quot;</span>);</span><br><span class="line">__asm__ __volatile__ (<span class="string">&quot;popfq&quot;</span>);</span><br></pre></td></tr></table></figure></li>
-</ul>
-</li>
-<li><p>关于语句分隔：指令之间<strong>必须</strong>使用 <code>;</code> 或 <code>\n</code> 或 <code>\n\t</code>（增加可读性），进行分隔。</p>
-</li>
-</ul>
-<p>以上使用 Intel 语法汇编，第一句汇编指令必须指定为 <code>.intel_syntax noprefix</code>，同时在 GCC 编译代码时要指定 <code>-masm=intel</code> 参数。（GCC 默认使用 AT&amp;T 语法，要使用 Intel 语法就需要特别指定）</p>
-<h3 id="6-2-扩展内联汇编"><a href="#6-2-扩展内联汇编" class="headerlink" title="6.2 扩展内联汇编"></a>6.2 扩展内联汇编</h3><p>扩展内联汇编常嵌入到 C 代码中，除了可以使用函数中 C 代码定义的局部变量外，还能降低程序错误率（编译器会对某些未修正的代码或内存进行处理，但编码者不应对此充满信任）。</p>
-<p>语法如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">asm</span> [qualifiers] ( assembler <span class="keyword">template</span> </span><br><span class="line">                    [: output operands]                  <span class="comment">/* 可选的，输出操作数 */</span></span><br><span class="line">                    [: input operands ]                  <span class="comment">/* 可选的，输入操作数 */</span></span><br><span class="line">                    [: <span class="built_in">list</span> of clobber/modify]           <span class="comment">/* 可选的，修改列表（寄存器/内存） */</span></span><br><span class="line">);</span><br></pre></td></tr></table></figure>
-
-<p>和基本内联汇编相比，扩展内联汇编在圆括号中变成了 4 部分，多了输出操作数、输入操作数和修改列表（clobber&#x2F;modify，描述汇编代码中哪些寄存器、内存内修改）三项。其中的每一部分都可以省略，甚至包括 <code>assembler template</code>。省略的部分要保留冒号分隔符来占位，如果省略的是最靠后的一个或多个连续的部分，分隔符也不用保留，比如省略了 <code>clobber/modify</code>，不需要保留 <code>input</code> 后面的冒号。如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">__asm__ (<span class="string">&quot;		\</span></span><br><span class="line"><span class="string">    mov %%rax, %%rcx;	\</span></span><br><span class="line"><span class="string">    :			\</span></span><br><span class="line"><span class="string">    :			\</span></span><br><span class="line"><span class="string">&quot;</span>);</span><br></pre></td></tr></table></figure>
-
-<table>
-<thead>
-<tr>
-<th>组成部分</th>
-<th>说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>asm</td>
-<td>同基本内联汇编用法。</td>
-</tr>
-<tr>
-<td>[asm_qualifiers]</td>
-<td>扩展汇编有 3 种限定符：<br />- <code>volatile</code> ：同基本内联汇编用法。<br />- <code>inline</code> ：同基本内联汇编用法。<br />- <code>goto</code> ：此限定符通知编译器，汇编语句可能会执行一个跳转，跳转目的是 goto 标签里的一个。<a target="_blank" rel="noopener" href="https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#GotoLabels">Goto Labels</a></td>
-</tr>
-<tr>
-<td>assembler template</td>
-<td>汇编模板，也就是写指令的地方。在基本内联汇编的基础上，扩展汇编的代码中允许存在操作数占位符，如 %0，%1等，以便对函数中 C 定义的局部变量进行使用。<br />值得注意的一点这是，在基本内联汇编中，寄存器表示方法和直接写汇编没什么区别，都是以 <code>%</code> 开头，后面跟着寄存器名称，比如 <code>%eax</code>；但是在扩展内联汇编中，单个 <code>%</code> 有了新的用途，用来表示占位符，所以在扩展内联汇编中的寄存器名称前要用<strong>两个 <code>%</code></strong> 做前缀。<br /><mark class="label primary">占位符</mark>分为<strong>序号占位符</strong>和<strong>名称占位符</strong>两种。具体<mark class="label success">参见章节 6.5</mark>。</td>
-</tr>
-</tbody></table>
-<h3 id="6-3-修改列表"><a href="#6-3-修改列表" class="headerlink" title="6.3 修改列表"></a>6.3 修改列表</h3><p>扩展汇编的最后一个冒号 <code>:</code> 后面表示的是修改列表。汇编代码执行后会修改一些内存或寄存器的值，通过此项通知编译器，可能造成寄存器或内存数据的破坏，这样 GCC 就知道哪些寄存器或内存需要提前保存起来。</p>
-<p>每个被修改过的寄存器名称（不包括堆栈寄存器 <code>rbp, rsp</code>）或内存使用双引号括 <code>&quot; &quot;</code> 起来，多个的话使用 <code>,</code> 分割双引号。主要分为三种：</p>
-<ul>
-<li>通用寄存器：将寄存器名称写在双引号中，<code>&quot;%rcx&quot;, &quot;%rbx&quot;</code> 等；</li>
-<li>标志寄存器：使用 <code>&quot;cc&quot;</code>，表示标志寄存器 <code>rflags</code> 中的某些位被修改（在使用 <code>asm</code> 前后）；</li>
-<li>内存：使用 <code>&quot;memory&quot;</code>，表示在使用 <code>asm</code> 后内存有被修改。</li>
-</ul>
-<p>如：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">__asm__ (<span class="string">&quot;		\</span></span><br><span class="line"><span class="string">    mov %%rax, %%rcx;	\</span></span><br><span class="line"><span class="string">    :			\</span></span><br><span class="line"><span class="string">    :			\</span></span><br><span class="line"><span class="string">    : &quot;</span>cc<span class="string">&quot;, &quot;</span>%rcx<span class="string">&quot;	\</span></span><br><span class="line"><span class="string">&quot;</span>);</span><br></pre></td></tr></table></figure>
+<p>如 <code>__attribute__((regparm(2)))</code> 指定函数被调用时，仅使用 2 个寄存器传递参数，其余参数使用堆栈进行传递。</p>
+</span>
 
 
 
@@ -1519,327 +1378,7 @@
 
 
 
-<h3 id="6-4-输入输出操作数"><a href="#6-4-输入输出操作数" class="headerlink" title="6.4 输入输出操作数"></a>6.4 输入输出操作数</h3><p>输出操作数：在汇编代码片段中，将数据输出到 C 定义的局部变量中（类似于 Windows 中的 <code>OUT</code>），以便给 C 代码使用。</p>
-<p>输入操作数：可以将函数中 C 代码定义的局部变量或函数的参数，输入给汇编使用。定义格式与输出操作数一样。</p>
-<p>定义格式如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[变量别名]<span class="string">&quot;[操作数修饰符] 约束条件&quot;</span>(C变量名)</span><br></pre></td></tr></table></figure>
-
-<p>双引号和括号都不能忽略，如果是有多个输出操作数，使用 <code>,</code> 分割：<code>&quot;=r&quot;(a), &quot;=o&quot;(b)</code>。</p>
-<ul>
-<li>操作数修饰符（modifier）：可选的，只能用于输出，提供输出变量的<strong>行为</strong>信息（如只读&#x2F;读写、是否可以在指令中交换次序等）。</li>
-<li>约束条件（constraint）：提供输入&#x2F;输出操作数<strong>位置</strong>的信息（如分配到寄存器还是内存中）。</li>
-<li>变量别名（asmSymboicName）：可选的，我们可以给 <code>C变量名</code> 起一个只能在该 asm 中使用的别名，并通过 <code>%[asmSymbolicName]</code> 访问它。比如：<code>[value] &quot;=m&quot; (i)</code>，可以在 asm 块中通过 <code>%[value]</code> 访问它。</li>
-</ul>
-<div class="note warning"><p><strong>一、操作数修饰符（modifier）</strong></p>
-<p>操作数修饰符（modifier）只能用于输出变量上。</p>
-<ul>
-<li><code>=</code>：操作数是只写的。这意味着操作对象中原先的值可以被丢弃，并且写入新数据。</li>
-<li><code>+</code>：操作数是可读写的。即可以在 asm 中合法的读取操作对象，并且 C 变量在进入 asm 块时就已经加载到对应的位置中。</li>
-<li><code>%</code>：表示该操作对象可以交换次序。该操作数可以和下一个输入操作数互换。</li>
-<li><code>&amp;</code>：表示此输出操作数要独占所约束（分配）的寄存器，任何输入操作数中所分配的寄存器不能与此相同。注意，当表达式中有多个修饰符时，<code>&amp;</code> 要与约束名挨着，不能分隔。</li>
-</ul>
-<p>其他注意事项：</p>
-<ul>
-<li>GCC不保证在进入 asm 块时，输出变量已被加载到约束条件（constraint）指定的位置中。如果需要 GCC 在进入 asm 块时将变量加载到约束条件（constraint）指定的位置中，则操作数修饰符（modifier）应该使用 <code>+</code>。</li>
-<li>约束条件（constraint）是指定变量在 asm 块中的位置，而不是在函数中的位置。如变量的约束条件（constraint）为 <code>r</code> 说明它在进入&#x2F;退出 asm 块时被分配到通用寄存器中，但在进入 asm 块前它的位置是不确定的。如果要控制 asm 块外变量被分配的位置，可以使用 GNU C 的寄存器变量拓展。</li>
-</ul>
-</div>
-
-<div class="note success"><p><strong>二、约束条件（constraint）</strong></p>
-<p>约束条件：描述了操作数是否使用了寄存器，用的是哪种寄存器；是否引用了内存，用的是哪种地址；是否是立即数，是哪种类型的立即数等等。它所起的作用就是把 C 代码中的操作数（变量、立即数）映射为汇编中所使用的操作数，实际就是描述 C 中的操作数如何变成汇编操作数。分为以下几种：</p>
-<ul>
-<li>寄存器约束</li>
-<li>内存约束</li>
-<li>立即数约束</li>
-<li>数字约束</li>
-</ul>
-</div>
-
-<table>
-<thead>
-<tr>
-<th>约束类型</th>
-<th>描述</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>寄存器约束</td>
-<td>在使用汇编代码片段时（不包含 C 代码），将操作数存储在寄存器中。<br />常见的寄存器约束有：<br />r：表示 rax&#x2F;rbx&#x2F;rcx&#x2F;rdx&#x2F;rsi&#x2F;rdi 这 6 个通用寄存器中任意一个<br />a：表示 a 系列寄存器 rax&#x2F;eax&#x2F;ax&#x2F;al<br />b：表示 b 系列寄存器 rbx&#x2F;ebx&#x2F;bx&#x2F;bl<br />c：表示 c 系列寄存器 rcx&#x2F;ecx&#x2F;cx&#x2F;cl<br />d：表示 d 系列寄存器 rdx&#x2F;edx&#x2F;dx&#x2F;dl<br />D：表示寄存器 rdi&#x2F;edi&#x2F;di<br />S：表示寄存器 rsi&#x2F;esi&#x2F;si<br />q：表示 rax&#x2F;rbx&#x2F;rcx&#x2F;rdx 这 4 个通用寄存器中任意一个<br />g：表示可以存放到任意地点（寄存器和内存）。相当于除了同 q 一样外，还可以让 gcc 安排在内存中<br />A：a 和 d 寄存器，用于返回结果保存在a 和 d 寄存器的指令。<br />f：表示浮点寄存器<br />t：表示第 1 个浮点寄存器<br />u：表示第 2 个浮点寄存器<br />p：表示内存地址，给 “load address” 和 “push address” 指令使用<br /><br />注意：我们在写 AT&amp;T 汇编代码时，想使用 <code>movb, movd, movq</code> 等操作指定字节大小的操作数时，代码编译会发生错误，还需要<mark class="label danger">对占位符进一步精确使用，</mark><mark class="label info">具体见章节 6.5 占位符部分</mark>。</td>
-</tr>
-<tr>
-<td>内存约束</td>
-<td>表示在汇编代码中直接操作 C 变量的内存地址（操作的是<strong>变量地址</strong>），不需要寄存器做中转，直接进行内存读写，也就是汇编代码的操作数是 C 变量的指针。主要有以下几种：<br /> <code>m</code>：表示内存操作数，可以是计算机支持的任何类型的地址。<br /><code>o</code>：也是内存操作数，但访问它是通过偏移量的形式访问，即包含 <code>offset_address</code> 的格式。如 <code>asm (&quot;movq 16+%1, %0&quot; : &quot;=r&quot;(element) : &quot;o&quot;(arr));</code> 将变量 1 地址偏移 16 的数值写入到变量 0。<br /><code>V</code> : 一个不允许偏移的内存操作数。换言之，任何适合 <code>m</code> 约束而不适合 <code>o</code> 约束的操作数。</td>
-</tr>
-<tr>
-<td>立即数约束</td>
-<td>常数。立即数不是变量，只能作为右值，<strong>只用于输入操作数</strong>，此约束要求 gcc 在传值的时候不通过寄存器或内存，直接作为立即数传给汇编代码<br />i：表示操作数为整数立即数<br />F：表示操作数为浮点数立即数<br />I（大写的i）：表示操作数为0~31之间的立即数<br />J：表示操作数为0~63之间的立即数<br />N：表示操作数为0~255之间的立即数<br />O：表示操作数为0~32之间的立即数<br />X：表示操作数为任何类型立即数</td>
-</tr>
-<tr>
-<td>数字约束</td>
-<td><code>0~9</code>：此约束<strong>只用于输入操作数</strong>，表示该输入 操作数与输出操作数中第 <code>n</code> 个操作数用相同的寄存器或内存。<br />如 <code>asm (&quot;incl %0&quot; :&quot;=a&quot;(var):&quot;0&quot;(var));</code>。这里的 <code>0</code> 用于指定与第 0 个输出变量相同的约束。</td>
-</tr>
-<tr>
-<td>x86 特有的约束</td>
-<td>r：寄存器操作数约束，查看上面给定的表格<br/>q：寄存器 a、b、c 或者 d<br/>I：范围从 0 到 31 的常量（对于 32 位移位）<br/>J：范围从 0 到 63 的常量（对于 64 位移位）<br/>K：0xff<br/>L：0xffff<br />M：0、1、2 或 3 （lea 指令的移位）<br />N：范围从 0 到 255 的常量（对于 out 指令）<br />f：浮点寄存器<br />t：第一个（栈顶）浮点寄存器<br />u：第二个浮点寄存器<br />A：指定 “a” 或 “d” 寄存器。这主要用于想要返回 64 位整形数，使用 “d” 寄存器保存最高有效位和 “a” 寄存器保存最低有效位。</td>
-</tr>
-</tbody></table>
-<h3 id="6-5-汇编模板中的占位符"><a href="#6-5-汇编模板中的占位符" class="headerlink" title="6.5 汇编模板中的占位符"></a>6.5 汇编模板中的占位符</h3><p>章节 6.2 和 6.4 中提到过，汇编模板（assembler template）中使用 2 种占位符：序号占位符、名称占位符。</p>
-<ol>
-<li><p><strong>序号占位符</strong>：<code>%0~%9</code>，按照操作数在输出操作数列表 --&gt; 到输入操作数列表从左到右出现的次序，从 0 开始编号，一直到 9，引用它的格式是 <code>%0~%9</code>，也就是说最多支持 10 个序号占位符。</p>
-<p>如下，输出操作数列表出现的第一个操作数为 <code>b</code> 变量，汇编代码中的 <code>%0</code> 即表示引用该变量。</p>
-<p>同理，出现的第二个操作数是 <code>a</code> 变量，汇编代码中的 <code>%1</code> 即表示引用该变量。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span> </span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">10</span>, b;</span><br><span class="line">    <span class="keyword">asm</span> (<span class="string">&quot;movl %1, %%eax;&quot;</span> </span><br><span class="line">          <span class="string">&quot;movl %%eax, %0;&quot;</span></span><br><span class="line">          :<span class="string">&quot;=r&quot;</span>(b)        <span class="comment">/* output */</span></span><br><span class="line">          :<span class="string">&quot;r&quot;</span>(a)         <span class="comment">/* input */</span></span><br><span class="line">          :<span class="string">&quot;%eax&quot;</span>         <span class="comment">/* clobbered register */</span></span><br><span class="line">         );</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Now, b is: %d\n&quot;</span>, b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-</li>
-<li><p><strong>名称占位符</strong>：输出操作数的格式为：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[变量别名]<span class="string">&quot;[操作数修饰符] 约束条件&quot;</span>(C变量名)</span><br></pre></td></tr></table></figure>
-
-<p>其中可选的变量别名（asmSymboicName）：我们可以给 <code>C变量名</code> 起一个只能在该 asm 中使用的别名，并通过 <code>%[asmSymbolicName]</code> 访问它。比如：<code>[value] &quot;=m&quot; (i)</code>，可以在 asm 块中通过 <code>%[value]</code> 访问它。</p>
-</li>
-</ol>
-<p>关于章节 6.4 中提到的，在汇编模板（assembler template）中写 AT&amp;T 汇编代码时，想使用 <code>movb, movd, movq</code> 等操作指定字节大小的操作数时，代码编译会发生错误，如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[], <span class="keyword">char</span>* env[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">long</span> a = <span class="number">6</span>, b = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        __asm__ __volatile__ (  \</span><br><span class="line">                <span class="string">&quot;movl %1, %0;&quot;</span>  \</span><br><span class="line">                :<span class="string">&quot;=q&quot;</span>(b)        \</span><br><span class="line">                :<span class="string">&quot;q&quot;</span>(a)         \</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[*] b = %d\n&quot;</span>, b);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>GCC 编译时会产生错误，提示 <code>mov</code> 指令的后缀没用对，正常情况下不应高提示错误。因为 <code>a, b</code> 变量是 64 bits，代码只取低 32 bits。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[alvin@centos<span class="number">-7</span> program]$ gcc -g -w -fPIC -o <span class="number">1225</span>_exp_asm.exe <span class="number">1225</span>_exp_asm.c </span><br><span class="line"><span class="number">1225</span>_exp_asm.c: Assembler messages:</span><br><span class="line"><span class="number">1225</span>_exp_asm.c:<span class="number">7</span>: Error: incorrect <span class="keyword">register</span> `%rax<span class="number">&#x27;</span> used with `l<span class="number">&#x27;</span> suffix</span><br></pre></td></tr></table></figure>
-
-<p>还需要对占位符进一步精确使用：所以应该使用更精确的占位符。如下表所示，取 <code>%rax</code> 的低 32 bits，应该是使用 <code>%kn</code> 占位符。</p>
-<p>The table below shows the list of supported modifiers and their effects.</p>
-<table>
-<thead>
-<tr>
-<th>Modifier</th>
-<th>Description</th>
-<th>Operand</th>
-<th>‘att’语法</th>
-<th>‘intel’语法</th>
-</tr>
-</thead>
-<tbody><tr>
-<td><code>A</code></td>
-<td>Print an absolute memory reference.</td>
-<td><code>%A0</code></td>
-<td><code>*%rax</code></td>
-<td><code>rax</code></td>
-</tr>
-<tr>
-<td><code>b</code></td>
-<td>Print the QImode name of the register.</td>
-<td><code>%b0</code></td>
-<td><code>%al</code></td>
-<td><code>al</code></td>
-</tr>
-<tr>
-<td><code>B</code></td>
-<td>print the opcode suffix of b.</td>
-<td><code>%B0</code></td>
-<td><code>b</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>c</code></td>
-<td>Require a constant operand and print the constant expression with no punctuation.</td>
-<td><code>%c1</code></td>
-<td><code>2</code></td>
-<td><code>2</code></td>
-</tr>
-<tr>
-<td><code>d</code></td>
-<td>print duplicated register operand for AVX instruction.</td>
-<td><code>%d5</code></td>
-<td><code>%xmm0, %xmm0</code></td>
-<td><code>xmm0, xmm0</code></td>
-</tr>
-<tr>
-<td><code>E</code></td>
-<td>Print the address in Double Integer (DImode) mode (8 bytes) when the target is 64-bit. Otherwise mode is unspecified (VOIDmode).</td>
-<td><code>%E1</code></td>
-<td><code>%(rax)</code></td>
-<td><code>[rax]</code></td>
-</tr>
-<tr>
-<td><code>g</code></td>
-<td>Print the V16SFmode name of the register.</td>
-<td><code>%g0</code></td>
-<td><code>%zmm0</code></td>
-<td><code>zmm0</code></td>
-</tr>
-<tr>
-<td><code>h</code></td>
-<td>Print the QImode name for a “high” register.</td>
-<td><code>%h0</code></td>
-<td><code>%ah</code></td>
-<td><code>ah</code></td>
-</tr>
-<tr>
-<td><code>H</code></td>
-<td>Add 8 bytes to an offsettable memory reference. Useful when accessing the high 8 bytes of SSE values. For a memref in (%rax), it generates</td>
-<td><code>%H0</code></td>
-<td><code>8(%rax)</code></td>
-<td><code>8[rax]</code></td>
-</tr>
-<tr>
-<td><code>k</code></td>
-<td>Print the SImode name of the register.</td>
-<td><code>%k0</code></td>
-<td><code>%eax</code></td>
-<td><code>eax</code></td>
-</tr>
-<tr>
-<td><code>l</code></td>
-<td>Print the label name with no punctuation.</td>
-<td><code>%l3</code></td>
-<td><code>.L3</code></td>
-<td><code>.L3</code></td>
-</tr>
-<tr>
-<td><code>L</code></td>
-<td>print the opcode suffix of l.</td>
-<td><code>%L0</code></td>
-<td><code>l</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>N</code></td>
-<td>print maskz.</td>
-<td><code>%N7</code></td>
-<td><code>&#123;z&#125;</code></td>
-<td><code>&#123;z&#125;</code></td>
-</tr>
-<tr>
-<td><code>p</code></td>
-<td>Print raw symbol name (without syntax-specific prefixes).</td>
-<td><code>%p2</code></td>
-<td><code>42</code></td>
-<td><code>42</code></td>
-</tr>
-<tr>
-<td><code>P</code></td>
-<td>If used for a function, print the PLT suffix and generate PIC code. For example, emit <code>foo@PLT</code> instead of ’foo’ for the function foo(). If used for a constant, drop all syntax-specific prefixes and issue the bare constant. See <code>p</code> above.</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td><code>q</code></td>
-<td>Print the DImode name of the register.</td>
-<td><code>%q0</code></td>
-<td><code>%rax</code></td>
-<td><code>rax</code></td>
-</tr>
-<tr>
-<td><code>Q</code></td>
-<td>print the opcode suffix of q.</td>
-<td><code>%Q0</code></td>
-<td><code>q</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>R</code></td>
-<td>print embedded rounding and sae.</td>
-<td><code>%R4</code></td>
-<td><code>&#123;rn-sae&#125;,</code></td>
-<td><code>, &#123;rn-sae&#125;</code></td>
-</tr>
-<tr>
-<td><code>r</code></td>
-<td>print only sae.</td>
-<td><code>%r4</code></td>
-<td><code>&#123;sae&#125;,</code></td>
-<td><code>, &#123;sae&#125;</code></td>
-</tr>
-<tr>
-<td><code>s</code></td>
-<td>print a shift double count, followed by the assemblers argument delimiterprint the opcode suffix of s.</td>
-<td><code>%s1</code></td>
-<td><code>$2,</code></td>
-<td><code>2,</code></td>
-</tr>
-<tr>
-<td><code>S</code></td>
-<td>print the opcode suffix of s.</td>
-<td><code>%S0</code></td>
-<td><code>s</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>t</code></td>
-<td>print the V8SFmode name of the register.</td>
-<td><code>%t5</code></td>
-<td><code>%ymm0</code></td>
-<td><code>ymm0</code></td>
-</tr>
-<tr>
-<td><code>T</code></td>
-<td>print the opcode suffix of t.</td>
-<td><code>%T0</code></td>
-<td><code>t</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>V</code></td>
-<td>print naked full integer register name without %.</td>
-<td><code>%V0</code></td>
-<td><code>eax</code></td>
-<td><code>eax</code></td>
-</tr>
-<tr>
-<td><code>w</code></td>
-<td>Print the HImode name of the register.</td>
-<td><code>%w0</code></td>
-<td><code>%ax</code></td>
-<td><code>ax</code></td>
-</tr>
-<tr>
-<td><code>W</code></td>
-<td>print the opcode suffix of w.</td>
-<td><code>%W0</code></td>
-<td><code>w</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>x</code></td>
-<td>print the V4SFmode name of the register.</td>
-<td><code>%x5</code></td>
-<td><code>%xmm0</code></td>
-<td><code>xmm0</code></td>
-</tr>
-<tr>
-<td><code>y</code></td>
-<td>print “st(0)” instead of “st” as a register.</td>
-<td><code>%y6</code></td>
-<td><code>%st(0)</code></td>
-<td><code>st(0)</code></td>
-</tr>
-<tr>
-<td><code>z</code></td>
-<td>Print the opcode suffix for the size of the current integer operand (one of <code>b</code>&#x2F;<code>w</code>&#x2F;<code>l</code>&#x2F;<code>q</code>).</td>
-<td><code>%z0</code></td>
-<td><code>l</code></td>
-<td></td>
-</tr>
-<tr>
-<td><code>Z</code></td>
-<td>Like <code>z</code>, with special suffixes for x87 instructions.</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-</tbody></table>
-<p>如上的示例改成如下：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>* argv[], <span class="keyword">char</span>* env[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">        <span class="keyword">long</span> a = <span class="number">6</span>, b = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        __asm__ __volatile__ (  \</span><br><span class="line">                <span class="string">&quot;movl %k1, %k0;&quot;</span>\       <span class="comment">/* 修改改行 */</span></span><br><span class="line">                :<span class="string">&quot;=q&quot;</span>(b)        \</span><br><span class="line">                :<span class="string">&quot;q&quot;</span>(a)         \</span><br><span class="line">        );</span><br><span class="line"></span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;[*] b = %d\n&quot;</span>, b);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 输出如下 */</span></span><br><span class="line">[alvin@centos<span class="number">-7</span> program]$ gcc -g -w -fPIC -o <span class="number">1225</span>_exp_asm.exe <span class="number">1225</span>_exp_asm.c </span><br><span class="line">[alvin@centos<span class="number">-7</span> program]$ ./<span class="number">1225</span>_exp_asm.exe </span><br><span class="line">[*] b = <span class="number">6</span></span><br></pre></td></tr></table></figure>
-
-
-
-<p>参考内容：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/kongj/p/14031770.html">GCC 内联汇编</a></li>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/606376595">Linux Kernel 源码学习必备知识之：GCC 内联汇编（AT&amp;T格式）</a></li>
-<li><a target="_blank" rel="noopener" href="https://www.linuxprobe.com/gcc-how-to.html">最牛X的GCC 内联汇编</a></li>
-<li><a target="_blank" rel="noopener" href="https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html">Extended Asm - Assembler Instructions with C Expression Operands</a></li>
-</ul>
-<h2 id="7-模块开发"><a href="#7-模块开发" class="headerlink" title="7 模块开发"></a>7 模块开发</h2><p>Linux设备驱动程序第三版 p41 头文件说明：</p>
+<h3 id="4-6-错误处理"><a href="#4-6-错误处理" class="headerlink" title="4.6 错误处理"></a>4.6 错误处理</h3><h3 id="4-7-消息日志"><a href="#4-7-消息日志" class="headerlink" title="4.7 消息日志"></a>4.7 消息日志</h3><h2 id="7-模块开发"><a href="#7-模块开发" class="headerlink" title="7 模块开发"></a>7 模块开发</h2><p>Linux设备驱动程序第三版 p41 头文件说明：</p>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/init.h&gt;</span></span></span><br></pre></td></tr></table></figure>
 
 
@@ -1903,6 +1442,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/post/inline-functions-and-inline-assembly/" rel="next" title="Linux 内联函数与内联汇编">
+                  Linux 内联函数与内联汇编 <i class="fa fa-chevron-right"></i>
+                </a>
             </div>
           </div>
     </footer>
@@ -1970,7 +1512,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">20:07</span>
+    <span title="站点阅读时长">20:09</span>
   </span>
 </div>
 <div class="busuanzi-count">
