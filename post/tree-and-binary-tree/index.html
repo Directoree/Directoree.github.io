@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.2">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/favicon.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&display=swap&subset=latin,latin-ext">
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"directoree.github.io","root":"/","scheme":"Mist","version":"8.0.0","exturl":false,"sidebar":{"position":"left","width":300,"display":"post","padding":18,"offset":12},"copycode":true,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":true,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="😊">
+<meta property="og:type" content="article">
+<meta property="og:title" content="树与二叉树">
+<meta property="og:url" content="https://directoree.github.io/post/tree-and-binary-tree/index.html">
+<meta property="og:site_name" content="˗ˋˏ♡ˎˊ˗">
+<meta property="og:description" content="😊">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/mRf5bB8YaocXgu6.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/qO4NHDoQlXbeTWc.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/IuxrRzd715L6mBM.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/aBysX5vqFTZzkDM.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/Qeswu1cBdbMTzt5.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/PwxC7qc4vrNT2Oz.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/9XJnLTobZjrIUON.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/Xd1rYO6yGslwNbt.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/6ZPxcjlBT3CuHGY.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/ZaMeg92NOAKbn4J.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/02/NQFhRcVp7ue3sZD.png">
+<meta property="article:published_time" content="2024-01-02T11:42:26.000Z">
+<meta property="article:modified_time" content="2024-01-02T15:37:22.914Z">
+<meta property="article:author" content="Catecat">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="Linux 内核开发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s2.loli.net/2024/01/02/mRf5bB8YaocXgu6.png">
+
+
+<link rel="canonical" href="https://directoree.github.io/post/tree-and-binary-tree/">
+
+
+<script data-pjax class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>树与二叉树 | ˗ˋˏ♡ˎˊ˗</title>
+  
+
+
+  <script data-pjax>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?b832a9ae9a43377003fd975ca4e525ea";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+<style>.darkmode--activated{--body-bg-color:#222;--content-bg-color:#222;--card-bg-color:#555;--text-color:#ccc;--blockquote-color:#bbb;--link-color:#ccc;--link-hover-color:#eee;--brand-color:#ddd;--brand-hover-color:#ddd;--table-row-odd-bg-color:#282828;--table-row-hover-bg-color:#363636;--menu-item-bg-color:#555;--btn-default-bg:#222;--btn-default-color:#ccc;--btn-default-border-color:#555;--btn-default-hover-bg:#666;--btn-default-hover-color:#ccc;--btn-default-hover-border-color:#666;--highlight-background:#2d2f31;--highlight-foreground:#ccc;--highlight-gutter-background:#333;--highlight-gutter-foreground:#888}.darkmode--activated img{opacity:.75}.darkmode--activated img:hover{opacity:.9}.darkmode--activated code{color:#fff;background:#555}button.darkmode-toggle{z-index:9999}.darkmode-ignore,img{display:flex!important}.beian img{display:inline-block!important}</style><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">˗ˋˏ♡ˎˊ˗</h1>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">爱你所爱，行你所行，听从你心，无问西东。</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/newcategories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-更新日志">
+
+    <a href="/changelog" rel="section"><i class="fa fa-heartbeat fa-fw"></i>更新日志</a>
+
+  </li>
+        <li class="menu-item menu-item-空调房">
+
+    <a href="/tips" rel="section"><i class="fa fa-wifi fa-fw"></i>空调房</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <section class="post-toc-wrap sidebar-panel">
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-text">0 数据结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-text">1 基本概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E6%A0%91"><span class="nav-text">1.1 树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-text">1.2 二叉树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E5%AD%98%E5%82%A8"><span class="nav-text">1.3 二叉树的存储</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%81%8D%E5%8E%86%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-text">2 遍历二叉树</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E4%BA%8C%E5%8F%89%E6%A0%91%E7%9A%84%E7%BB%8F%E5%85%B8%E5%BA%94%E7%94%A8"><span class="nav-text">3 二叉树的经典应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%BA%BF%E7%B4%A2%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-text">3.1 线索二叉树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%93%88%E5%A4%AB%E6%9B%BC%E6%A0%91"><span class="nav-text">3.2 哈夫曼树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%93%88%E5%A4%AB%E6%9B%BC%E6%A0%91%E7%9A%84%E6%9E%84%E9%80%A0"><span class="nav-text">3.3 哈夫曼树的构造</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%93%88%E5%A4%AB%E6%9B%BC%E7%BC%96%E7%A0%81"><span class="nav-text">3.3 哈夫曼编码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%9F%A5%E6%89%BE"><span class="nav-text">4 查找</span></a></li></ol></div>
+      </section>
+      <!--/noindex-->
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Catecat"
+      src="/images/avatar.png">
+  <p class="site-author-name" itemprop="name">Catecat</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/newcategories/">
+          
+        <span class="site-state-item-count">51</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">72</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Directoree" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Directoree" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zhao_yilong@aliyun.com" title="E-Mail → mailto:zhao_yilong@aliyun.com" rel="noopener" target="_blank"><i class="fas fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="http://sighttp.qq.com/msgrd?v=1&uin=1003432683" title="QQ → http:&#x2F;&#x2F;sighttp.qq.com&#x2F;msgrd?v&#x3D;1&amp;uin&#x3D;1003432683" rel="noopener" target="_blank"><i class="fab fa-qq fa-fw"></i>QQ</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://catecat.gitee.io/" title="Cutecat → https:&#x2F;&#x2F;catecat.gitee.io" rel="noopener" target="_blank"><i class="fas fa-heartbeat fa-fw"></i>Cutecat</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://catecat.top/" title="Directoree → https:&#x2F;&#x2F;catecat.top" rel="noopener" target="_blank"><i class="fas fa-heart fa-fw"></i>Directoree</a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+  <div class="links-of-blogroll site-overview-item animated">
+    <div class="links-of-blogroll-title"><i class="fa fa-globe fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://treecatee.github.io/" title="https:&#x2F;&#x2F;treecatee.github.io" rel="noopener" target="_blank">Treecatee</a>
+        </li>
+    </ul>
+  </div>
+
+      </section>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://directoree.github.io/post/tree-and-binary-tree/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.png">
+      <meta itemprop="name" content="Catecat">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="˗ˋˏ♡ˎˊ˗">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          树与二叉树
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2024-01-02 19:42:26 / 修改时间：23:37:22" itemprop="dateCreated datePublished" datetime="2024-01-02T19:42:26+08:00">2024-01-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/post/tree-and-binary-tree/" class="post-meta-item leancloud_visitors" data-flag-title="树与二叉树" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/post/tree-and-binary-tree/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/post/tree-and-binary-tree/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+      </div>
+      <div class="post-meta">
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>😊</p>
+<span id="more"></span>
+
+
+
+<h2 id="0-数据结构"><a href="#0-数据结构" class="headerlink" title="0 数据结构"></a>0 数据结构</h2><p>数据三要素：逻辑结构、存储结构和数据的运算。</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/mRf5bB8YaocXgu6.png" alt="3.png"></p>
+<ol>
+<li><p>逻辑结构。通常有四类基本结构（如图1.3），它们的复杂程度依次递进。逻辑结构的层次如图 1.4。</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/qO4NHDoQlXbeTWc.png" alt="1.png"></p>
+<p><img data-src="https://s2.loli.net/2024/01/02/IuxrRzd715L6mBM.png" alt="2.png"></p>
+</li>
+<li><p>存储结构。数据对象在计算机中的存储表示称为数据的存储结构，也称为<strong>物理结构</strong>。</p>
+<p>包括：顺序存储、链式存储、索引存储、散列存储。</p>
+</li>
+<li><p>数据的运算。施加在数据上的运算包括运算的定义和实现。运算的定义是针对逻辑结构的，指出运算的功能；运算的实现是针对存储结构的，指出运算的具体操作步骤。</p>
+</li>
+</ol>
+<h2 id="1-基本概念"><a href="#1-基本概念" class="headerlink" title="1 基本概念"></a>1 基本概念</h2><p><img data-src="https://s2.loli.net/2024/01/02/aBysX5vqFTZzkDM.png" alt="4.png"></p>
+<h3 id="1-1-树"><a href="#1-1-树" class="headerlink" title="1.1 树"></a>1.1 树</h3><p>基本概念：</p>
+<ul>
+<li><strong>节点</strong>：树中的一个独立单元。</li>
+<li><strong>节点的度</strong>：节点拥有的子树的个数称为节点的度。</li>
+<li><strong>树的度</strong>：树中节点的最大度称为树的度。</li>
+<li><strong>叶子结点</strong>（终端节点）：度为 <code>0</code> 的节点。</li>
+<li><strong>双亲与孩子</strong>：具有直接相连关系，子树节点称为孩子，对应的上层的节点称为双亲。</li>
+<li><strong>祖先</strong>：从根节点到该节点路径所经过的节点，都是该节点的祖先节点。如 A、D、H 都是 M 的祖先节点。</li>
+<li><strong>子孙</strong>：以该节点为根的子树中所有节点，都是该节点的子孙。</li>
+<li><strong>兄弟</strong>：同一双亲的孩子互称为兄弟。</li>
+<li><strong>堂兄弟</strong>：双亲在同一层节点互称为堂兄弟。如 G 与 E、F、H、I、J 互为堂兄弟。</li>
+<li><strong>树的深度、高度、层次</strong>：<ul>
+<li><strong>层次</strong>：从根节点开始，孩子节点为第二层，以此类推。</li>
+<li><strong>树的深度</strong>：从根节点自顶向下 <code>↓</code>，逐层累加。树的最大层次即为树的深度。</li>
+<li><strong>树的高度</strong>：从叶节点自底向上 <code>↑</code>，逐层累加。最大高度等于树的深度，但是方向不同。</li>
+</ul>
+</li>
+<li><strong>有序树和无序树</strong>：<ul>
+<li><strong>有序树</strong>：节点的左右子树是有顺序的，不能互换。</li>
+<li><strong>无序树</strong>：节点的左右子树是无顺序的，可以交换。</li>
+</ul>
+</li>
+<li><strong>路径</strong>：树中两个节点之间的路径，由经过这两个节点的所有节点构成。如 A 到 M  的路径为：<code>A→D→H→M</code>。</li>
+<li><strong>路径长度</strong>：<ul>
+<li><strong>节点路径长度</strong>：节点的路径上经过的边的个数。如上 A 到 M  的路径长度为 <code>3</code>。</li>
+<li><strong>树的路径长度</strong>：树中所有节点到根节点路径长度之和。</li>
+</ul>
+</li>
+<li><strong>森林</strong>：<code>m(m&gt;=0)</code> 棵互不相交的树的集合。</li>
+</ul>
+<div class="note success"><p>树的性质：</p>
+<ol>
+<li>树中的$结点个数 &#x3D; 所有结点的度数之和加 1$。</li>
+<li>度为 <code>m</code> 的树中，第 <code>i</code> 层上至多有 $m^{i-1}$ 个结点（<code>i&gt;=1</code>）。</li>
+<li>高度为 <code>h</code> 的 <code>m</code> 叉树至多有$(m^h-1)\over(m-1)$个结点。推导公式：$S&#x3D;m^{h-1}+m^{h-2}+m^{h-3}+…+m+1&#x3D;$$(m^h-1)\over(m-1)$。</li>
+<li>具有 <code>n</code> 个结点的 <code>m</code> 叉树的最小高度为 $\lceil log_m[n(m-1)+1] \rceil$。</li>
+</ol>
+</div>
+
+
+
+
+
+<h3 id="1-2-二叉树"><a href="#1-2-二叉树" class="headerlink" title="1.2 二叉树"></a>1.2 二叉树</h3><div class="note danger"><p>二叉树与树一样具有递归性质，但是二叉树具有如下性质（与树的区别）：</p>
+<ol>
+<li>二叉树的每个节点最多只能有 2 个子节点，树的度 &lt;&#x3D; 2。</li>
+<li>二叉树是<strong>有序树</strong>，左右子树次序不能颠倒。</li>
+</ol>
+</div>
+
+<p>二叉树的 5 种基本形态如下图：</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/Qeswu1cBdbMTzt5.png" alt="5.png"></p>
+<div class="note info"><p>二叉树的性质：</p>
+<ol>
+<li>非空二叉树的第 <code>i</code> 层上最多有 $2^{i-1}$ 个节点（<code>i &gt;= </code>）。</li>
+<li>深度为 <code>h</code> 的二叉树最多有 $2^{h-1}$ 个节点（<code>h &gt;= 1</code>）。</li>
+<li>非空二叉树中，叶子结点个数 $ n_0 $，等于度为 <code>2</code> 的节点数 $ n_2 $ 加 <code>1</code>。即 $ n_0 &#x3D; n_2+1$。</li>
+<li>具有 <code>n(n&gt;0)</code> 个节点的完全二叉树的深度为 $\lfloor log_2n \rfloor + 1$ 或 $\lceil log_2(n+1) \rceil$。</li>
+</ol>
+</div>
+
+<p>特殊的二叉树：</p>
+<ol>
+<li><strong>满二叉树</strong>：深度为 <code>h</code> 且含有 $2^{h-1}$ 个节点的二叉树。完</li>
+<li><strong>完全二叉树</strong>：完全二叉树是由满二叉树而引出来的，<strong>完全二叉树从根结点到倒数第二层满足满二叉树，最后一层可以不完全填充，其叶子结点都靠左对齐</strong>（参考<a target="_blank" rel="noopener" href="https://www.cnblogs.com/idorax/p/6441043.html">完美二叉树, 完全二叉树和完满二叉树</a>）。以下 3 条 用来解释这句话：<ul>
+<li>完全二叉树的层数 <code>&lt;=</code> 对应的满二叉树层数 <code>- 2</code>；（叶子结点只可能在倒数第一层或倒数第二层出现）</li>
+<li>完全二叉树中缺失的节点只能在最下层，且必须是右子树上的节点（对任意一结点，如果其右子树的最大层次为L，则其左子树的最大层次为 <code>L</code> 或 <code>L+1</code>，子树必须向左对齐）。</li>
+<li>在完全二叉树中，若某个节点没有左子树，则一定没有有子树。</li>
+</ul>
+</li>
+<li><strong>二叉排序树</strong>：左子树上的所有节点均小于根节点的关键字。</li>
+<li><strong>平衡二叉树</strong>（AVL）：树上任一节点的左子树与右子树的深度之差不超过 <code>1</code>。</li>
+</ol>
+<h3 id="1-3-二叉树的存储"><a href="#1-3-二叉树的存储" class="headerlink" title="1.3 二叉树的存储"></a>1.3 二叉树的存储</h3><p>二叉树的节点的存储可使用顺序存储与链式存储两种方式：</p>
+<ul>
+<li><strong>顺序存储</strong>：使用一维数组，将树的节点自上而下，自左而右进行存储，不存在的节点使用 <code>0</code> 表示。缺点：对于除满二叉树、完全二叉树外的其他树，非常浪费空间。</li>
+<li><strong>链式存储</strong>：二叉树链表至少包含 3 个成员：数据域（<code>data</code>）、左指针（<code>lchild</code>）、右指针（<code>rchild</code>）。有时为了方便查找双亲，还会增加一个指向双亲的指针（<code>parent</code>）。</li>
+</ul>
+<h2 id="2-遍历二叉树"><a href="#2-遍历二叉树" class="headerlink" title="2 遍历二叉树"></a>2 遍历二叉树</h2><p>二叉树的遍历是按某条搜索路径访问数中的所有节点，使得每个节点被访问一次，而且仅被访问一次。遍历的实质是对二叉树进行线性化的过程，即遍历的结果是<strong>将非线性结构的树中节点排成一个线性序列</strong>。</p>
+<p>假如从 L、D、R 分别表示遍历左子树、根节点、遍历右子树，则可能有 LDR、LRD、DLR、DRL、RDL、RLD 共 6 种遍历二叉树的情况。若限定先左后右，则只有 3 种情况：<mark class="label danger">先（根）序遍历</mark><mark class="label success">中（根）序遍历</mark><mark class="label info">后（根）序遍历</mark>。</p>
+<p>基于二叉树的递归定义，遍历二叉树也可基于递归进行计算，如下是中序遍历的使用：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InOrderTraverse</span><span class="params">(BitTree T)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    InOrderTraverse(T-&gt;lchild);</span><br><span class="line">    Visit(T);</span><br><span class="line">    InOrderTraverse(T-&gt;rchild);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>说明</strong>：不管是哪种遍历算法，在递归遍历中，每个节点都仅被访问一次，所以时间复杂度为 <code>O(n)</code> 。递归堆栈的栈深恰好为树的深度，所以在最坏情况下，有 <code>n</code> 个节点的二叉树深度也为 <code>n</code> 的单支树，遍历算法的空间复杂度为 <code>O(n)</code>。</p>
+<p>对于使用堆栈，非递归的遍历方法，可参考：《数据结构（C语言版）5.5.1》、《王道考研2023版 5.3》。</p>
+<h2 id="3-二叉树的经典应用"><a href="#3-二叉树的经典应用" class="headerlink" title="3 二叉树的经典应用"></a>3 二叉树的经典应用</h2><h3 id="3-1-线索二叉树"><a href="#3-1-线索二叉树" class="headerlink" title="3.1 线索二叉树"></a>3.1 线索二叉树</h3><p>遍历二叉树是以一定的规则将二叉树中的结点排列成一个线性序列，从而得到几种遍历序列，使得该序列中的每个结点（第一个和最后一个结点除外）都有一个直接前驱和直接后继。</p>
+<p>二叉树以二叉链表作为存储结构时（不包含 <code>parent</code> 成员），只能找到结点的左、右孩子信息，而不能直接得到结点在任一序列中的前驱和后继信息，这种信息只有在遍历的动态过程中才能得到，为此引入<strong>线索二叉树</strong>来保存这些在动态过程中得到的<strong>有关前驱和后继的信息</strong>。</p>
+<p>这里使用到一个基本结论：在含 <code>n</code> 个结点的二叉树中，有 <code>n+1</code> 个空指针。这是因为每个叶结点有 <code>2</code> 个空指针，每个度为 <code>1</code> 的结点有 <code>1</code> 个空指针，空指针总数为 $2n_0+n_1$， 又因为 $ n_0 &#x3D; n_2+1$，所以空指针总数为 $ n_0 + n_1 + n_2+1&#x3D;n+1$。由此设想能否利用这些空指针来存放指向其前驱或后继的指针？这样就可以像遍历单链表那样方便地遍历二叉树。引入线索二叉树正是为了加快查找结点前驱和后继的速度。</p>
+<p><strong>规定</strong>：若无左子树，令 <code>lchild</code> 指向其前驱结点；若无右子树，令 <code>rchild</code> 指向其后继结点。如图 5.10 所示，还需增加两个标志域标识指针域是指向左（右）孩子还是指向前驱（后继)。</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/PwxC7qc4vrNT2Oz.png" alt="6.png"></p>
+<p><img data-src="https://s2.loli.net/2024/01/02/9XJnLTobZjrIUON.png" alt="7.png"></p>
+<p>以这种结点结构构成的二叉链表作为二叉树的存储结构，叫做<strong>线索链表</strong>，其中指向结点前驱和后继的指针，叫做<strong>线索</strong>。加上线索的二叉树称之为<strong>线索二叉树</strong>（Threaded Binary Tree）。对二叉树以某种次序遍历使其变为线索二叉树的过程叫做线索化。</p>
+<p>关于线索二叉树的构造、遍历方法详细参考《数据结构（C语言版）5.5.2 P128》、《王道考研2023版 5.3.2 P143》。</p>
+<h3 id="3-2-哈夫曼树"><a href="#3-2-哈夫曼树" class="headerlink" title="3.2 哈夫曼树"></a>3.2 哈夫曼树</h3><p>哈夫曼（Huffman）树又称最优二叉树，是一类带权路径长度最短的树，在实际中有广泛的用途。</p>
+<div class="note primary"><p>相关定义：</p>
+<ul>
+<li><strong>路径</strong>：树中两个节点之间的路径，由经过这两个节点的所有节点构成。如 A 到 M 的路径为：<code>A→D→H→M</code>。</li>
+<li><strong>路径长度</strong>：<ul>
+<li><strong>节点路径长度</strong>：节点的路径上经过的边的个数。如上 A 到 M 的路径长度为 <code>3</code>。</li>
+<li><strong>树的路径长度</strong>：树中所有节点到根节点路径长度之和。</li>
+</ul>
+</li>
+<li>节点和边的<strong>权</strong>：赋予某个实体的一个量，是对实体的某个或某些属性的数值化描述。在数据结构中，实体有<strong>结点</strong>（元素）和<strong>边</strong>（关系）两大类，所以对应有<strong>结点权</strong>和边权。</li>
+<li><strong>结点的带权路径长度</strong>：从该结点到树根之间的路径长度（经过的边数）与结点上权的乘积。</li>
+<li><strong>树的带权路径长度</strong>：树中所有叶子结点的带权路径长度之和，通常记作 $WPL&#x3D;\sum\limits_{k&#x3D;1}^{n}w_kl_k$。式中，$w_i$ 是第 <code>i</code> 个叶结点所带的权值，$l_i$ 是该叶结点到根结点的路径长度（经过的边数）。</li>
+<li><strong>哈夫曼树</strong>：在含有 <code>n</code> 个带权叶结点的二叉树中，每个叶子结点的权为 $w_i$，则其中带权路径长度 <code>WPL</code> 最小的二叉树称为哈夫曼树，也叫做<strong>最优二叉树</strong>。</li>
+</ul>
+</div>
+
+<p>例如，图 5.18 中的 3 棵二叉树都有 4 个叶子结点 a, b, c, d，分别带权 7, 5, 2, 4，它们的带权路径长度分别为：</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/Xd1rYO6yGslwNbt.png" alt="8.png"></p>
+<p>$WPL_a&#x3D;7×2+5×2+2×2+4×2&#x3D;36$.</p>
+<p>$WPL_b&#x3D;4×2+2×1+7×3+5×3&#x3D;46$.</p>
+<p>$WPL_c&#x3D;7×1+5×2+2×3+4×3&#x3D;35$.</p>
+<p>其中，c 树的 <code>WPL</code> 最小。可以验证，它恰为哈夫曼树。在哈夫曼树中，<mark class="label danger">权值越大的结点离根结点越近</mark>。</p>
+<h3 id="3-3-哈夫曼树的构造"><a href="#3-3-哈夫曼树的构造" class="headerlink" title="3.3 哈夫曼树的构造"></a>3.3 哈夫曼树的构造</h3><p>根据【哈夫曼树中，权值越大的结点离根结点越近】这个特点，哈夫曼最早给出了一个构造哈夫曼树的方法，称<strong>哈夫曼算法</strong>。</p>
+<p>给定 <code>n</code> 个权值分别为 $w_1, w_2, … ,w_n$ 的结点，构造哈夫曼树的过程：</p>
+<ol>
+<li>使用这 <code>n</code> 个结点，构造成 <code>n</code> 棵只有根结点的二叉树，这 <code>n</code> 棵二叉树构成一个森林 $F$。</li>
+<li>从 $F$ 中选取两棵根结点权值最小的树作为新结点的左、右子树，并且新的二叉树的根结点的权值为其左、右子树上根结点的权值之和。</li>
+<li>从 $F$ 中删除刚才选出的那两棵树，同时将新得到的树加入 $F$ 中。</li>
+<li>重复步骤 2 和 3，直至 $F$ 中只剩下一棵树为止。</li>
+</ol>
+<div class="note warning"><p>从上述构造过程中可以看出哈夫曼树具有如下特点：</p>
+<ul>
+<li>森林 $F$ 中的初始结点最终都成为叶结点。首先选择权小的，这样<strong>保证权大的离根较近</strong>；</li>
+<li>构造过程中共新建了 <code>n-1</code> 个结点（双分支结点），因此哈夫曼树的结点总数为 <code>2n-1</code>。</li>
+<li>每次构造都选择 2 棵树作为新结点的孩子，因此哈夫曼树中不存在度为 1 的结点。</li>
+</ul>
+</div>
+
+<p>例 1。权值 {7, 5, 2, 4} 的哈夫曼树的构造过程如图 5.19 所示。</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/6ZPxcjlBT3CuHGY.png" alt="9.png"></p>
+<p>例 2。已知 $w&#x3D;(5, 29, 7, 8, 14, 23, 3, 11)$，利用哈夫曼算法构造一棵哈夫曼树，计算树的带权路径长度。</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/ZaMeg92NOAKbn4J.png" alt="10.png"></p>
+<p>$WPL&#x3D;\sum\limits_{k&#x3D;1}^{n}w_kl_k&#x3D;23×2+11×3+5×4+3×4+29×2+14×3+7×4+8×4&#x3D;271$。</p>
+<p>例 3。有 n &#x3D; 8，权值为 $w&#x3D;{7, 19, 2, 6, 32, 3, 21, 10}$，构造哈夫曼树。</p>
+<p><img data-src="https://s2.loli.net/2024/01/02/NQFhRcVp7ue3sZD.png" alt="11.png"></p>
+<h3 id="3-3-哈夫曼编码"><a href="#3-3-哈夫曼编码" class="headerlink" title="3.3 哈夫曼编码"></a>3.3 哈夫曼编码</h3><h2 id="4-查找"><a href="#4-查找" class="headerlink" title="4 查找"></a>4 查找</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="reward-container">
+  <div>Buy me a coffee</div>
+  <button onclick="document.querySelector('.post-reward').classList.toggle('active');">
+    赞赏
+  </button>
+  <div class="post-reward">
+      <div>
+        <img src="/images/wechat.jpg" alt="Catecat 微信">
+        <span>微信</span>
+      </div>
+      <div>
+        <img src="/images/alipay.jpg" alt="Catecat 支付宝">
+        <span>支付宝</span>
+      </div>
+
+  </div>
+</div>
+
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Catecat
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="https://directoree.github.io/post/tree-and-binary-tree/" title="树与二叉树">https://directoree.github.io/post/tree-and-binary-tree/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" rel="tag"><i class="fa fa-tag"></i> 数据结构</a>
+              <a href="/tags/Linux-%E5%86%85%E6%A0%B8%E5%BC%80%E5%8F%91/" rel="tag"><i class="fa fa-tag"></i> Linux 内核开发</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/post/inline-functions-and-inline-assembly/" rel="prev" title="Linux 内联函数与内联汇编">
+                  <i class="fa fa-chevron-left"></i> Linux 内联函数与内联汇编
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 2018 – 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Catecat</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+      <span>站点总字数：</span>
+    <span title="站点总字数">1.3m</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span>站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">20:25</span>
+  </span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/mist/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/@next-theme/pjax@0.4.0/pjax.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/lozad@1.15.0/dist/lozad.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/schemes/muse.js"></script><script src="/js/next-boot.js"></script>
+  <script>
+var pjax = new Pjax({
+  selectors: [
+    'head title',
+    '.page-configurations',
+    '.main-inner',
+    '.post-toc-wrap',
+    '.languages',
+    '.pjax'
+  ],
+  analytics: false,
+  cacheBust: false,
+  scrollRestoration: false,
+  scrollTo: !CONFIG.bookmark.enable
+});
+
+document.addEventListener('pjax:success', () => {
+  pjax.executeScripts(document.querySelectorAll('script[data-pjax], .pjax script'));
+  NexT.boot.refresh();
+  // Define Motion Sequence & Bootstrap Motion.
+  if (CONFIG.motion.enable) {
+    NexT.motion.integrator
+      .init()
+      .add(NexT.motion.middleWares.subMenu)
+      .add(NexT.motion.middleWares.postList)
+      .bootstrap();
+  }
+  const hasTOC = document.querySelector('.post-toc');
+  document.querySelector('.sidebar-inner').classList.toggle('sidebar-nav-active', hasTOC);
+  document.querySelector(hasTOC ? '.sidebar-nav-toc' : '.sidebar-nav-overview').click();
+  NexT.utils.updateSidebarPosition();
+});
+</script>
+
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+<script data-pjax>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  const url = element.dataset.target;
+  const pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  const pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  const fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+<script data-pjax>
+if (document.querySelectorAll('.mermaid').length) {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/mermaid@8.7.0/dist/mermaid.min.js', () => {
+    mermaid.init({
+      theme    : 'forest',
+      logLevel : 3,
+      flowchart: { curve     : 'linear' },
+      gantt    : { axisFormat: '%m/%d/%Y' },
+      sequence : { actorMargin: 50 }
+    }, '.mermaid');
+  }, window.mermaid);
+}
+</script>
+
+
+
+
+
+  
+  <script data-pjax async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+
+
+    <div class="pjax">
+  
+
+  
+      <script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              const target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    const script = document.createElement('script');
+    script.src = '//cdn.jsdelivr.net/npm/mathjax@3.1.0/es5/tex-mml-chtml.js';
+    script.defer = true;
+    document.head.appendChild(script);
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.typesetClear();
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<script src="https://unpkg.com/darkmode-js@1.5.7/lib/darkmode-js.min.js"></script>
+
+<script>
+var options = {
+  bottom: '70px',
+  right: 'unset',
+  left: '16px',
+  time: '0.5s',
+  mixColor: 'transparent',
+  backgroundColor: 'transparent',
+  buttonColorDark: '#222',
+  buttonColorLight: '#222',
+  saveInCookies: false,
+  label: '',
+  autoMatchOsTheme: false
+}
+const darkmode = new Darkmode(options);
+window.darkmode = darkmode;
+darkmode.showWidget();
+if (window.darkmode && !window.darkmode.isActivated()) {
+  window.darkmode.toggle();
+  var toggleButtons = document.getElementsByClassName("darkmode-toggle");
+  if (toggleButtons && toggleButtons.length > 0) {
+    for (i = 0; i < toggleButtons.length; i++) {
+      toggleButtons[i].classList.add("darkmode-toggle--white");
+    }
+  }
+}
+</script>
+
+<script>
+NexT.utils.loadComments('#valine-comments', () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    new Valine(Object.assign({"enable":true,"appId":"7zujCcS8pYH88CJXfdBlLyS8-gzGzoHsz","appKey":"lWGr7OPoNHo4v1YmVV5yr3E9","serverURLs":"https://7zujccs8.lc-cn-n1-shared.com","placeholder":"快来勾搭我呀🐶","avatar":"mm","meta":["nick","mail","link"],"pageSize":10,"lang":null,"visitor":true,"comment_count":true,"bg":"/images/comment_bg.png","recordIP":false,"enableQQ":false,"requiredFields":["nick"]}, {
+      el: '#valine-comments',
+      path: "/post/tree-and-binary-tree/",
+      serverURLs: "https://7zujccs8.lc-cn-n1-shared.com"
+    }));
+  }, window.Valine);
+});
+</script>
+
+    </div>
+</body>
+</html>
