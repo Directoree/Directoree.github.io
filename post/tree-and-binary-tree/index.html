@@ -60,8 +60,11 @@
 <meta property="og:image" content="https://s2.loli.net/2024/01/09/XDlOCxNTzJLdMQE.png">
 <meta property="og:image" content="https://s2.loli.net/2024/01/09/9GsHwUnzYK57Mtj.png">
 <meta property="og:image" content="https://s2.loli.net/2024/01/10/Egvo1IA9wJjBPFL.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/10/kbINHKFo8qArZGE.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/10/NUpYAxjvQl5KmTC.png">
+<meta property="og:image" content="https://s2.loli.net/2024/01/10/co3jhxuaKHyzPWv.png">
 <meta property="article:published_time" content="2024-01-02T11:42:26.000Z">
-<meta property="article:modified_time" content="2024-01-09T16:15:13.502Z">
+<meta property="article:modified_time" content="2024-01-10T14:04:35.462Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="数据结构">
 <meta property="article:tag" content="Linux 内核开发">
@@ -393,7 +396,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2024-01-10 00:15:13" itemprop="dateModified" datetime="2024-01-10T00:15:13+08:00">2024-01-10</time>
+        <time title="修改时间：2024-01-10 22:04:35" itemprop="dateModified" datetime="2024-01-10T22:04:35+08:00">2024-01-10</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1004,7 +1007,8 @@
 <blockquote>
 <p>假设待删结点为 <code>y</code>，<code>x</code> 是用来替换 <code>y</code> 的结点（注意，当 <code>y</code> 是终端结点时，<code>×</code> 是黑色的 <code>NULL</code> 结点)。删除 <code>y</code> 后将导致先前包含 <code>y</code> 的任何路径上的黑结点数量减 1，因此 <code>y</code> 的任何祖先都不再满足性质 ⑤，简单的修正办法就是将替换 <code>y</code> 的结点 <code>×</code> 视为还有额外一重黑色，定义为双黑结点（<code>x</code> 节点）。也就是说，如果将任何包含结点 <code>×</code> 的路径上的黑结点数量加 1，在此假设下，性质 ⑤ 得到满足，但破坏了性质 ①。于是，删除操作的任务就转化为将双黑结点恢复为普道结点。。</p>
 </blockquote>
-<div class="note danger"><ul>
+<div class="note danger"><p>删除方法：先看被删节点的颜色，接着看该节点有几个子树，然后继续如下的方法处理：</p>
+<ul>
 <li>红色节点删除总结：<ul>
 <li>红色节点是叶节点，直接删除。</li>
 <li>红色节点有子树，使用左子树最大节点（或右子树最小节点）上移代替，此时转换为删除上移前的节点，继续处理。</li>
@@ -1041,6 +1045,7 @@
 <p><img data-src="https://s2.loli.net/2024/01/10/Egvo1IA9wJjBPFL.png" alt="32.png"></p>
 </li>
 <li><p><code>w</code> 的右孩子是红色的，左孩子是黑色（外部节点）。LR 型，交换 <code>w</code> 和右孩子的颜色，然后对以 <code>w</code> 为根节点的子树进行左旋，此时变成 LL 型，但是 <code>w</code> 节点更新为 <code>x</code> 的兄弟节点。接着按 LL 型再调整一次即可。</p>
+<p><img data-src="https://s2.loli.net/2024/01/10/kbINHKFo8qArZGE.png" alt="33.png"></p>
 </li>
 <li><p><code>w</code> 的左右孩子是红色的，按照 LL 型处理即可（比 LR 型简单）。</p>
 </li>
@@ -1049,15 +1054,19 @@
 <li><p><code>x</code> 的兄弟节点 <code>w</code> 是黑色的，且 <code>w</code> 是有两个黑色子节点（外节点）。</p>
 <p>将 <code>w</code> 着成红色，<code>x.p</code> 着成黑色。</p>
 <ul>
-<li>如果 <code>x.p</code> 原来的颜色为红色，结束。</li>
-<li>如果 <code>x.p</code> 原来的颜色为黑色，则需要将 <code>x.p</code> 更新为 <code>x</code> 节点，当成被删除的节点处理（相当于 <code>x</code> 上移），继续处理。</li>
+<li><p>如果 <code>x.p</code> 原来的颜色为红色，结束。</p>
+<p><img data-src="https://s2.loli.net/2024/01/10/NUpYAxjvQl5KmTC.png" alt="34.png"></p>
+</li>
+<li><p>如果 <code>x.p</code> 原来的颜色为黑色，则需要将 <code>x.p</code> 更新为 <code>x</code> 节点，当成被删除的节点处理（相当于 <code>x</code> 上移），继续处理。</p>
+<p><img data-src="https://s2.loli.net/2024/01/10/co3jhxuaKHyzPWv.png" alt="35.png"></p>
+</li>
 </ul>
 </li>
 <li><p><code>x</code> 的兄弟节点 <code>w</code> 是红色的。此时 <code>w</code> 的左右孩子和父节点必然是黑色。</p>
 <p>处理方法：交换 <code>w</code> 和 <code>x.p</code> 的颜色，然后对以 <code>x.p</code> 为根的子树做一次左旋，接着按 RR、RL、LL、LR 的方法处理。</p>
 </li>
 </ol>
-<h4 id="4-3-4-基数树"><a href="#4-3-4-基数树" class="headerlink" title="4.3.4 基数树"></a>4.3.4 基数树</h4><p>字典树</p>
+<h4 id="4-3-4-基数树"><a href="#4-3-4-基数树" class="headerlink" title="4.3.4 基数树"></a>4.3.4 基数树</h4><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_35423154/article/details/130119383">基数树（Radix Tree）</a>、<a target="_blank" rel="noopener" href="https://juejin.cn/post/6933244263241089037">基数树(Radix Tree)应用</a>、<a target="_blank" rel="noopener" href="https://blog.ihypo.net/16506944639091.html">图解基数树(RadixTree)</a>。</p>
 <h4 id="4-3-5-B-树、B-树"><a href="#4-3-5-B-树、B-树" class="headerlink" title="4.3.5 B- 树、B+ 树"></a>4.3.5 B- 树、B+ 树</h4><h3 id="4-4-散列表的查找"><a href="#4-4-散列表的查找" class="headerlink" title="4.4 散列表的查找"></a>4.4 散列表的查找</h3><h4 id="4-4-1-基本概念"><a href="#4-4-1-基本概念" class="headerlink" title="4.4.1 基本概念"></a>4.4.1 基本概念</h4><h4 id="4-4-2-处理冲突的方法"><a href="#4-4-2-处理冲突的方法" class="headerlink" title="4.4.2 处理冲突的方法"></a>4.4.2 处理冲突的方法</h4><h4 id="4-4-3-散列表的查找"><a href="#4-4-3-散列表的查找" class="headerlink" title="4.4.3 散列表的查找"></a>4.4.3 散列表的查找</h4>
     </div>
 
@@ -1182,7 +1191,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">30:48</span>
+    <span title="站点阅读时长">30:49</span>
   </span>
 </div>
 <div class="busuanzi-count">
