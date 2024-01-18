@@ -55,7 +55,7 @@
 <meta property="og:image" content="https://s2.loli.net/2023/04/22/QSXOcr4dJgWnLT8.png">
 <meta property="og:image" content="https://s2.loli.net/2023/04/22/er4vpafoyGRQMhP.png">
 <meta property="article:published_time" content="2023-04-18T14:38:57.000Z">
-<meta property="article:modified_time" content="2023-06-29T16:23:39.148Z">
+<meta property="article:modified_time" content="2024-01-18T14:36:10.846Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="虚拟化">
 <meta property="article:tag" content="VT-x">
@@ -387,7 +387,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-06-30 00:23:39" itemprop="dateModified" datetime="2023-06-30T00:23:39+08:00">2023-06-30</time>
+        <time title="修改时间：2024-01-18 22:36:10" itemprop="dateModified" datetime="2024-01-18T22:36:10+08:00">2024-01-18</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -428,14 +428,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>22k</span>
+      <span>23k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>20 分钟</span>
+      <span>21 分钟</span>
     </span>
 </div>
 
@@ -897,7 +897,29 @@
 </tbody></table>
 </li>
 </ol>
-<h3 id="4-2-字段填充"><a href="#4-2-字段填充" class="headerlink" title="4.2 字段填充"></a>4.2 字段填充</h3><h2 id="5-VM-entry-control-fields"><a href="#5-VM-entry-control-fields" class="headerlink" title="5 VM-entry control fields"></a>5 VM-entry control fields</h2><p>该区域中的字段控制着 VM-entry 时处理器对 Guest state area 区域操作的行为。在 VM-entry 时处理器会检查这些字段，如果检查不通过，则会产生 VMfailValid，在 VM-exit information fields 的 VM-instruction error field 中保存错误号。<br>包含三个区域：</p>
+<h3 id="4-2-字段填充"><a href="#4-2-字段填充" class="headerlink" title="4.2 字段填充"></a>4.2 字段填充</h3><h2 id="5-VM-entry-control-fields"><a href="#5-VM-entry-control-fields" class="headerlink" title="5 VM-entry control fields"></a>5 VM-entry control fields</h2><div class="note success"><p>进行 VM-entry 操作时处理器会执行严格的检查，可以分为以下几个阶段。</p>
+<ol>
+<li>第一阶段：对 <code>VMLAUNCH</code> 或 <code>VMRESUME</code> 指令的执行进行基本检查。</li>
+<li>第二阶段：对当前 VMCS 内的 VM-execution、VM-exit 以及 VM-entry 控制区域和 host-state 区域进行检查。</li>
+<li>第三阶段：对当前 VMCS 内的 guest-state 区域进行检查，并加载 MSR。</li>
+<li>在所有的检查都通过后，处理器从 guest-state 区域里加载处理器状态和执行环境信息。如果设置需要加载 MSR，则接着从 VM-entry MSR-load MSR 列表区域里加载 MSR。</li>
+<li>VM-entry 操作附加动作会清由执行 <code>MONITOR</code> 指令而产生的地址监控，这个措施可以<strong>防止 guest 软件检测到自己处于虚拟机内</strong>。</li>
+<li>在成功完成 VM-entry 后，如果注入了一个向量事件，则通过 guest-IDT 立即 deliver 这个向量事件执行。如果存在 pending debug exception 事件，则在注入事件完成后 deliver 一个 <code>#DB</code> 异常执行。</li>
+</ol>
+</div>
+
+<div class="note info"><p>在整个 VM-entry 操作流程里，如果 VM-entry 失败可能产生以下三种结果：</p>
+<ol>
+<li><code>VMLAUNCH</code> 和 <code>VMRESUME</code> 指令<strong>产生异常</strong>（仅能产生 <code>#UD</code> 或 <code>#GP</code> 异常），从而执行相应的异常服务例程（如执行这两个指令的权限不够时会产生 <code>#GP</code> 异常）。《处理器虚拟化技术 P304》</li>
+<li><code>VMLAUNCH</code> 和 <code>VMRESUME</code> 指令产生 <code>VMfailInvalid</code> 或 <code>VMfailValid</code> 类型失败，处理器接着执行下一条指令（Hypervisor 中）。</li>
+<li><code>VMLAUNCH</code> 和 <code>VMRESUME</code> 指令的执行由于检查 guest-state 区域不通过，或者在加载 MSR 阶段失败而产生 VM-exit，从而转入 host-RIP 的入口点执行（进入VM-exit 处理函数）。</li>
+</ol>
+<p>更多具体的字段检查，详看《处理器虚拟化技术 P300》。</p>
+</div>
+
+
+
+<p>该区域中的字段控制着 VM-entry 时处理器对 Guest state area 区域操作的行为。在 VM-entry 时处理器会检查这些字段，如果检查不通过，则会产生 VMfailValid，在 VM-exit information fields 的 VM-instruction error field 中保存错误号。<br>包含三个区域：</p>
 <ol>
 <li>VM-entry Controls（32bits）</li>
 <li>VM-entry Controls for MSRs（32bits）</li>
@@ -911,6 +933,13 @@
 <p><img data-src="https://s2.loli.net/2023/04/21/pCcjZLun1gIseWP.png" alt="30.png"></p>
 <h3 id="5-1-字段解释"><a href="#5-1-字段解释" class="headerlink" title="5.1 字段解释"></a>5.1 字段解释</h3><p>类似于上面的 <em>VM-execution control fields</em> 字段一样，只要是 <em>Control Field</em> 都有<strong>控制域</strong>（前半部分）和<strong>数据域</strong>（后半部分）。</p>
 <p><img data-src="https://s2.loli.net/2023/04/21/jAdhTQSmX2ZI5GN.png" alt="31.png"></p>
+<div class="note success"><ul>
+<li><code>bit 31</code> 是有效位，为 1 时指示 <code>VM-entry interuption information</code> 字段有效，为 0 时无无效。<code>bits 10:8</code> 设置事件类型，包括7 个事件类型，如表 3-10 所示。</li>
+<li><code>bits 7:0</code> 设置中断或异常的向量号（IDT），当事件类型是NMI 时，向量号必须为2。事件类 型为 other 时，向量号必须为0值。</li>
+<li><code>VM-entry interruption information</code> 字段 <code>bit 11 == 1</code> 时，指示有错误码需要提交。在注入事件 delivery 时，错误码会被压入栈中。<strong>这个位只有在注入硬件异常事件时才能被置 1</strong>，否则会产生 VMfailValid 失败。能产生错误码的硬件异常是：#DF，#TS，#NP，#SS，#GP，#PF 及 #AC 这 7 类。注入其余的硬件异常不能将此位置 1。</li>
+</ul>
+</div>
+
 <div class="note danger"><p><strong>说明</strong>：事件注入机制目的是向 VM 中注入一个事件，使得每次 VM-entry 之后立即得到执行。而至于注入的事件会不会产生 VM-exit，需要根据注入事件（中断）类型查 <em>VM-execution Control</em> 等控制区域是否开启了对该类中断的监控，如果命中了就会产生 VM-exit（直接向量事件）。如果控制区域没有对注入的事件进行监控，那就不会马上产生 VM-exit，但是如果在中断&#x2F;异常分发的过程中产生了错误，那就会导致 VM-exit，这种 VM-exit 就叫做间接向量事件导致的 VM-exit。</p>
 </div>
 
@@ -936,12 +965,12 @@
 <tr>
 <td>软件中断</td>
 <td>软件中断指由 <code>INT</code> 指令执行的中断。</td>
-<td>中断时需要进行段权限检查 CPL。</td>
+<td>中断时需要进行段权限检查 CPL（在 delivery 期间）</td>
 </tr>
 <tr>
 <td>软件异常</td>
-<td>软件异常指由 <code>INT3</code> 与 <code>INTO</code> 指令产生的 #BP 与 #OF 异常。</td>
-<td></td>
+<td>软件异常指由 <code>INT3</code> 与 <code>INTO</code> 指令产生的 #BP 与 #OF 异常。64 位模式下 <code>INTO</code> 指令是无效的。</td>
+<td>中断时需要进行段权限检查 CPL（在 delivery 期间）</td>
 </tr>
 </tbody></table>
 <h3 id="5-2-字段填充"><a href="#5-2-字段填充" class="headerlink" title="5.2 字段填充"></a>5.2 字段填充</h3><h2 id="6-VM-exit-control-fields"><a href="#6-VM-exit-control-fields" class="headerlink" title="6 VM-exit control fields"></a>6 VM-exit control fields</h2><p>这些字段用来控制发生 VM-exit 时的处理器行为，决定如何进行 VM-exit 操作。</p>
@@ -1009,6 +1038,15 @@
 <p>32 位的 Exit reason 退出原因格式如下，[15:0] 具体指代原因见《Intel 卷3合集 24.9.1》 和《处理器虚拟化技术 3.10.1.2 VM-ext 原因》。</p>
 <p><img data-src="https://s2.loli.net/2023/04/29/W7mH6VRNAqEP5Zd.png" alt="38.png"></p>
 <p><strong>备注</strong>：在每次 VM-exit 时，需要先检查 VM-exit instruction error 字段，确定 VMX 指令是成功的，然后再输出具体的 VM-exit 原因信息。</p>
+<div class="note success"><p>由 VM-entry 失败而导致的 VM-exit 与在 guest 里产生的 VM-exit 的区分：</p>
+<ul>
+<li>exit reason 字段 <code>bits 31 = 1</code> 表示 VM-entry 失败而导致的 VM-exit。</li>
+<li>exit reason 字段 <code>bits 31 = 0</code> 表示在 guest 里产生的 VM-exit。</li>
+</ul>
+</div>
+
+
+
 <h3 id="7-2-直接-x2F-间接向量事件"><a href="#7-2-直接-x2F-间接向量事件" class="headerlink" title="7.2 直接&#x2F;间接向量事件"></a>7.2 直接&#x2F;间接向量事件</h3><p>这两个字段记录的是<strong>事件注入机制导致的 VM-exit</strong> 详细的信息。</p>
 <ul>
 <li>Information for VM Exits Due to Vectored Events，直接向量事件类。</li>
@@ -1046,7 +1084,7 @@
 </ul>
 <p><img data-src="https://s2.loli.net/2023/04/22/QSXOcr4dJgWnLT8.png" alt="35.png"></p>
 <p>上述指令企图在 Guest 里访问系统资源，这在处理器虚拟化架构下是不允许或被限制 的。VMX 架构下，这些指令的执行将产生 VM-exit 作为响应。</p>
-<p>那么，VMM 重新进人VM后，guest 应该从哪里开始执行呢？肯定不是指令本身。 guest 应该从引|起 VM-exit 的指令的下一条指令开始执行。这就是 <em>VM-exit instruction length</em> 字段的作用。</p>
+<p>那么，VMM 重新进入VM后，guest 应该从哪里开始执行呢？肯定不是指令本身。 guest 应该从引|起 VM-exit 的指令的下一条指令开始执行。这就是 <em>VM-exit instruction length</em> 字段的作用。</p>
 <p><strong>所有指令引起的 VM-exit 都是 fault 类型</strong>。也就是说：guest-state 区域的 guest-RIP 字段是指向引起 VM-exit 的指令的地址。<em>VM-exit instruction length</em> 字段保存这条指令的长度，VMM 在重新进入 VM 前，根据 <em>VM-exit instruction length</em> 字段的值来计算 guest 下一条指令的地址，然后设置 geust-RIP 字段的值。这个时候 <code>新的 geust-RIP = geust-RIP + VM-exit instruction length</code>。</p>
 <h3 id="7-5-VM-instruction-error"><a href="#7-5-VM-instruction-error" class="headerlink" title="7.5 VM-instruction error"></a>7.5 VM-instruction error</h3><p>当执行一条 VMX 指令时，如果发生 VMfailValid 失败，32 位的 <em>VM-instruetion error</em> 字段将记录指令的错误码。<strong>注意</strong>：如果 VMX 指令执行时产生异常，处理器会执行异常处理。此时，不会存在 VMfailValid 失败。</p>
 <div class="note danger"><p>VMX 指令执行的结果（判断 rflags 的 CF 或 ZF）：</p>
@@ -1066,6 +1104,14 @@
 <p>下表 2-5，列举了所有可能产生 VMfailValid 失败的原因，每个原因有唯一的指令错误码（<em>VM-instruetion error</em> 的值）。</p>
 <p><img data-src="https://s2.loli.net/2023/04/22/er4vpafoyGRQMhP.png" alt="36.png"></p>
 <p><strong>注意</strong>：上表是 如果 VMX 指令执行失败产生 VMfailValid 时对应的 <em>VM-instruetion error</em>。而 <strong>VMfaillnvalid</strong>：表示因 current-VMCS 指针无效而失败。当 current-VMCS 指针或 VMCS 内的 ID 值是无效时，VMX 指令会置 CF 标志位，指示执行失败。</p>
+<p>接下来的工作：</p>
+<ol>
+<li>《处理器虚拟化技术》4.12 写清楚注入事件（直接、间接）；</li>
+<li>第五章，写清楚指令、与事件引发的 VM-exit 处理流程；</li>
+<li>异常与 VM-exit 的优先级；</li>
+<li>重写本文第七章节（VM-exit 流程）；</li>
+<li>中断虚拟化。</li>
+</ol>
 
     </div>
 
@@ -1193,7 +1239,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">30:49</span>
+    <span title="站点阅读时长">30:50</span>
   </span>
 </div>
 <div class="busuanzi-count">
