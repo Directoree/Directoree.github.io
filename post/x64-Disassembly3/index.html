@@ -36,7 +36,7 @@
 <meta property="og:image" content="https://s2.loli.net/2022/10/26/lToEdBCway8bctH.png">
 <meta property="og:image" content="https://s2.loli.net/2022/10/24/4bMW1qHsR3QKNny.png">
 <meta property="article:published_time" content="2022-10-23T16:03:07.000Z">
-<meta property="article:modified_time" content="2023-06-17T15:05:00.542Z">
+<meta property="article:modified_time" content="2024-01-20T15:56:29.976Z">
 <meta property="article:author" content="Catecat">
 <meta property="article:tag" content="Windows内核">
 <meta property="article:tag" content="x64 异常处理">
@@ -238,7 +238,7 @@
 
       <!--noindex-->
       <section class="post-toc-wrap sidebar-panel">
-          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%9F%BA%E7%A1%80"><span class="nav-text">1 异常处理基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%8F%B6%E5%87%BD%E6%95%B0%E4%B8%8E%E9%9D%9E%E5%8F%B6%E5%87%BD%E6%95%B0"><span class="nav-text">1.1 叶函数与非叶函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-prolog-%E5%92%8C-epilog"><span class="nav-text">1.2 prolog 和 epilog</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-RUNTIME-FUNCTION"><span class="nav-text">2 RUNTIME_FUNCTION</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-UNWIND-INFO"><span class="nav-text">2.1 UNWIND_INFO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-UNWIND-CODE"><span class="nav-text">2.2 UNWIND_CODE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-x64%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3 x64堆栈回滚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Windbg%E8%B0%83%E8%AF%95%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3.1 Windbg调试堆栈回滚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-UNWIND-INFO%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3.2 UNWIND_INFO堆栈回滚</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4 异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%BC%82%E5%B8%B8%E4%BA%A7%E7%94%9F%E4%B8%8E%E9%87%87%E9%9B%86"><span class="nav-text">4.1 异常产生与采集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">4.2 异常分发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4.3 内核异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4.4 用户异常处理</span></a></li></ol></li></ol></div>
+          <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86%E5%9F%BA%E7%A1%80"><span class="nav-text">1 异常处理基础</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%8F%B6%E5%87%BD%E6%95%B0%E4%B8%8E%E9%9D%9E%E5%8F%B6%E5%87%BD%E6%95%B0"><span class="nav-text">1.1 叶函数与非叶函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-prolog-%E5%92%8C-epilog"><span class="nav-text">1.2 prolog 和 epilog</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-RUNTIME-FUNCTION"><span class="nav-text">2 RUNTIME_FUNCTION</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-UNWIND-INFO"><span class="nav-text">2.1 UNWIND_INFO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-UNWIND-CODE"><span class="nav-text">2.2 UNWIND_CODE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-x64%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3 x64堆栈回滚</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Windbg%E8%B0%83%E8%AF%95%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3.1 Windbg调试堆栈回滚</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-UNWIND-INFO%E5%A0%86%E6%A0%88%E5%9B%9E%E6%BB%9A"><span class="nav-text">3.2 UNWIND_INFO堆栈回滚</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4 异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%BC%82%E5%B8%B8%E4%BA%A7%E7%94%9F%E4%B8%8E%E9%87%87%E9%9B%86"><span class="nav-text">4.1 异常产生与采集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%BC%82%E5%B8%B8%E5%88%86%E5%8F%91"><span class="nav-text">4.2 异常分发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%86%85%E6%A0%B8%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4.3 内核异常处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E7%94%A8%E6%88%B7%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-text">4.4 用户异常处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-DB-%E8%B0%83%E8%AF%95%E5%BC%82%E5%B8%B8"><span class="nav-text">5 #DB 调试异常</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-DB-%E5%BC%82%E5%B8%B8%E7%9A%84%E7%B1%BB%E5%9E%8B"><span class="nav-text">5.1 #DB 异常的类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-DB-%E5%BC%82%E5%B8%B8%E7%9A%84%E5%A4%84%E7%90%86"><span class="nav-text">5.2 #DB 异常的处理</span></a></li></ol></li></ol></div>
       </section>
       <!--/noindex-->
 
@@ -368,7 +368,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2023-06-17 23:05:00" itemprop="dateModified" datetime="2023-06-17T23:05:00+08:00">2023-06-17</time>
+        <time title="修改时间：2024-01-20 23:56:29" itemprop="dateModified" datetime="2024-01-20T23:56:29+08:00">2024-01-20</time>
       </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -409,14 +409,14 @@
         <i class="far fa-file-word"></i>
       </span>
       <span class="post-meta-item-text">本文字数：</span>
-      <span>23k</span>
+      <span>24k</span>
     </span>
     <span class="post-meta-item" title="阅读时长">
       <span class="post-meta-item-icon">
         <i class="far fa-clock"></i>
       </span>
       <span class="post-meta-item-text">阅读时长 &asymp;</span>
-      <span>21 分钟</span>
+      <span>22 分钟</span>
     </span>
 </div>
 
@@ -628,7 +628,29 @@
 <li><a target="_blank" rel="noopener" href="https://www.52pojie.cn/thread-1663524-1-1.html">Windows 10 x64 异常分发</a></li>
 <li><a target="_blank" rel="noopener" href="https://revers.engineering/applied-re-exceptions/">Applied Reverse Engineering: Exceptions And Interrupts</a></li>
 </ul>
-<h3 id="4-1-异常产生与采集"><a href="#4-1-异常产生与采集" class="headerlink" title="4.1 异常产生与采集"></a>4.1 异常产生与采集</h3><h3 id="4-2-异常分发"><a href="#4-2-异常分发" class="headerlink" title="4.2 异常分发"></a>4.2 异常分发</h3><h3 id="4-3-内核异常处理"><a href="#4-3-内核异常处理" class="headerlink" title="4.3 内核异常处理"></a>4.3 内核异常处理</h3><h3 id="4-4-用户异常处理"><a href="#4-4-用户异常处理" class="headerlink" title="4.4 用户异常处理"></a>4.4 用户异常处理</h3><!-- flag of hidden posts -->
+<h3 id="4-1-异常产生与采集"><a href="#4-1-异常产生与采集" class="headerlink" title="4.1 异常产生与采集"></a>4.1 异常产生与采集</h3><h3 id="4-2-异常分发"><a href="#4-2-异常分发" class="headerlink" title="4.2 异常分发"></a>4.2 异常分发</h3><h3 id="4-3-内核异常处理"><a href="#4-3-内核异常处理" class="headerlink" title="4.3 内核异常处理"></a>4.3 内核异常处理</h3><h3 id="4-4-用户异常处理"><a href="#4-4-用户异常处理" class="headerlink" title="4.4 用户异常处理"></a>4.4 用户异常处理</h3><h2 id="5-DB-调试异常"><a href="#5-DB-调试异常" class="headerlink" title="5 #DB 调试异常"></a>5 #DB 调试异常</h2><h3 id="5-1-DB-异常的类型"><a href="#5-1-DB-异常的类型" class="headerlink" title="5.1 #DB 异常的类型"></a>5.1 #DB 异常的类型</h3><div class="note success"><p>当遇到一个硬件断点（指令执行、数据读写）或 single-step（单步调试）时，处理器将组织一个 #DB 异常，并提交处理器执行。</p>
+<p>在 x86&#x2F;x64 体系上的 #DB（调试）异常使用 1 号中断向量，分为 fault 和 trap 两类，共有 6 个触发方式。</p>
+<ul>
+<li>fault 类型的 #DB 有 2 类触发方式：<ul>
+<li>由执行断点触发。</li>
+<li>由访问调试寄存器触发（DR7.GD &#x3D; 1 时）。当断点对应的 <code>DR7.R/Wx = 00</code> 时，使用执行断点，在断点寄存器 DR0-DR3 里设置断点的地址。当 <code>DR7.GD = 1</code> 时，使用 DR 寄存器访问触发方式。在后续的指令中访问任何一个 DR 寄存器将产生 #DB 异常。</li>
+</ul>
+</li>
+<li>trap 类型 #DB 异常有 4 类触发方式：<ul>
+<li>读写硬件断点（根据 DR7 的 <code>R/Wx</code> 位来区分）。</li>
+<li>单步调试断点，设置 <code>Rflags.TF = 1</code> 时产生。单步调试分为指令单步调试及分支单步调试两种（单步调试在将 <code>eflags.TF</code> 置为 1 后，下一条指令执行完毕后触发，分支单步调试则在目标指令执行前触）</li>
+<li>I&#x2F;O 断点，I&#x2F;O 断点是指令访问的 I&#x2F;O  端口地址。在 <code>CR4.DE = 1</code> 时，DR7 的 <code>R/Wx = 10</code>，产生的就是 I&#x2F;O 读写断点。（见 <em>卷 3A—Chapter 17 Debug, Branch Profile, TSC, and Intel® Resource Director Technology. (Intel® RDT) Features—17.2 Debug Registers</em>。）</li>
+<li>在任务切换时，任务切换的 #DB 异常在执行完任务切换后，处理器检测到 TSS.T 为 1 时触发。（在 VMX 架构下，并不支持在 non-root operation 环境中使用任务切换机制。一旦发生任务切换，将产生 VM-exit 行为。因此，在 pending debug exception 字段中并不支持记录任务切换时产生的 #DB 异常。）</li>
+</ul>
+</li>
+</ul>
+<p>fault 和 trap 两类异常触发的位置不同，fault 类型如 DR 奇存器访问的 #DB 异常，在执行 <code>MOV-DR</code> 指令前触发，异常处理后还要继续执行该指令；trap 类型的异常，在执行完每一条指令后触发，异常处理后执行下一条指令。</p>
+</div>
+
+
+
+<h3 id="5-2-DB-异常的处理"><a href="#5-2-DB-异常的处理" class="headerlink" title="5.2 #DB 异常的处理"></a>5.2 #DB 异常的处理</h3><p>《处理器虚拟化技术》3.8.7.1</p>
+<!-- flag of hidden posts -->
     </div>
 
     
@@ -743,7 +765,7 @@
       <i class="fa fa-coffee"></i>
     </span>
       <span>站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">30:51</span>
+    <span title="站点阅读时长">30:59</span>
   </span>
 </div>
 <div class="busuanzi-count">
